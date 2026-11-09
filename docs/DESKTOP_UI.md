@@ -85,7 +85,7 @@ startup splash is undecorated and needs no inset correction.
 
 Menu commands come from `DesktopMenuCommands`: screens register what they can do while visible and clear it on dispose, so items are disabled when meaningless. The Article menu acts on the article open in the reader: Previous/Next article (⌘[ / ⌘]), bookmark (⌘D), Open in browser (⇧⌘O), Copy link (⇧⌘C), Expand reader (⇧⌘↩); Windows and Linux use Ctrl. View has Search (⌘F) and Toggle sidebar (⌃⌘S, Ctrl+B elsewhere). macOS also gets a Window menu (Minimize ⌘M, Zoom). Reader toolbar tooltips show the matching shortcut. There is no custom Edit menu: Compose text fields already handle the standard editing shortcuts, and menu accelerators would intercept them.
 
-Article list rows put the time at the trailing end of the source line; on hover or focus the bookmark and read toggles replace it, so rows never reserve a separate footer line. Card and hero layouts keep their footer.
+Article list rows put the time at the trailing end of the source line, so rows never reserve a separate footer line; card and hero layouts show it in their footer. Rows have no inline action buttons: hover only tints the row, and nothing appears or shifts. Bookmark and read/unread live in the right-click (or Shift+F10 / Menu key) context menu, the configurable trackpad swipe actions and, for the open article, the reader toolbar and the Article menu.
 
 In the multi-pane layout, search opens inline in the article-list pane: the sidebar and reader stay visible, results open in the reader pane, and Back or Escape returns to the list. The single-pane layout keeps search as its own screen.
 

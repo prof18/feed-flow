@@ -65,7 +65,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -88,9 +87,7 @@ import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.presentation.model.accessibilityState
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Icon
-import org.jetbrains.jewel.ui.component.IconButton
 import org.jetbrains.jewel.ui.component.Text
-import org.jetbrains.jewel.ui.icons.AllIconsKeys.Actions
 import org.jetbrains.jewel.ui.icons.AllIconsKeys.Nodes
 import org.jetbrains.jewel.ui.component.ContextMenuRepresentation as DesktopContextMenuRepresentation
 
@@ -103,7 +100,7 @@ private const val ArticleReadAlpha = 0.65f
 private const val ArticleSourceAlpha = 0.8f
 private const val ArticleDescriptionAlpha = 0.82f
 private const val ArticleDateAlpha = 0.8f
-private val InlineActionSize = 24.dp
+private val SourceLineMinHeight = 24.dp
 
 @Composable
 internal fun ArticleRow(
@@ -144,16 +141,6 @@ internal fun ArticleRow(
     val menuAnchor = with(LocalDensity.current) { DesktopDesignTokens.spaceSection.toPx() }
     val latestMarkAbove by rememberUpdatedState(onMarkAllAboveAsRead)
     val latestMarkBelow by rememberUpdatedState(onMarkAllBelowAsRead)
-    val footer: @Composable () -> Unit = {
-        ArticleFooterLine(
-            feedItem = feedItem,
-            feedFontSize = feedFontSize,
-            readAlpha = readAlpha,
-            showActions = isHovered || isFocused,
-            onBookmarkClick = onBookmarkClick,
-            onReadStatusClick = onReadStatusClick,
-        )
-    }
 
     androidx.compose.runtime.CompositionLocalProvider(
         LocalContextMenuRepresentation provides DesktopContextMenuRepresentation,
@@ -209,7 +196,6 @@ internal fun ArticleRow(
                             feedItemDisplaySettings = feedItemDisplaySettings,
                             readAlpha = readAlpha,
                             currentFeedFilter = currentFeedFilter,
-                            footer = footer,
                         )
                     } else {
                         Column(
@@ -223,16 +209,7 @@ internal fun ArticleRow(
                                 feedItemDisplaySettings = feedItemDisplaySettings,
                                 readAlpha = readAlpha,
                                 isCardRow = false,
-                                trailing = {
-                                    ArticleRowTrailing(
-                                        feedItem = feedItem,
-                                        feedFontSize = feedFontSize,
-                                        readAlpha = readAlpha,
-                                        showActions = isHovered || isFocused,
-                                        onBookmarkClick = onBookmarkClick,
-                                        onReadStatusClick = onReadStatusClick,
-                                    )
-                                },
+                                trailing = { ArticleInlineDate(feedItem, feedFontSize, readAlpha) },
                             )
                             Row(
                                 modifier = Modifier
@@ -421,7 +398,7 @@ private fun ArticleSourceLine(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .then(if (trailing != null) Modifier.heightIn(min = InlineActionSize) else Modifier)
+            .then(if (trailing != null) Modifier.heightIn(min = SourceLineMinHeight) else Modifier)
             .padding(bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -554,7 +531,6 @@ private fun ArticleHero(
     feedFontSize: FeedFontSizes,
     feedItemDisplaySettings: FeedItemDisplaySettings,
     readAlpha: Float,
-    footer: @Composable () -> Unit,
     currentFeedFilter: FeedFilter,
 ) {
     Column(Modifier.fillMaxWidth()) {
@@ -585,97 +561,7 @@ private fun ArticleHero(
                 feedItemDisplaySettings = feedItemDisplaySettings,
                 currentFeedFilter = currentFeedFilter,
             )
-            footer()
-        }
-    }
-}
-
-@Composable
-private fun ArticleFooterLine(
-    feedItem: FeedItem,
-    feedFontSize: FeedFontSizes,
-    readAlpha: Float,
-    showActions: Boolean,
-    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
-    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
-) {
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.weight(1f)) { ArticleDate(feedItem, feedFontSize, readAlpha) }
-        Box(Modifier.size(width = 64.dp, height = DesktopDesignTokens.iconActionMinSize)) {
-            if (showActions) {
-                ArticleHoverActions(
-                    feedItem = feedItem,
-                    buttonSize = DesktopDesignTokens.iconActionMinSize,
-                    onBookmarkClick = onBookmarkClick,
-                    onReadStatusClick = onReadStatusClick,
-                )
-            }
-        }
-    }
-}
-
-// List rows show the date until the row is hovered or focused, then swap it for the quick actions.
-@Composable
-private fun ArticleRowTrailing(
-    feedItem: FeedItem,
-    feedFontSize: FeedFontSizes,
-    readAlpha: Float,
-    showActions: Boolean,
-    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
-    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
-) {
-    if (showActions) {
-        ArticleHoverActions(
-            feedItem = feedItem,
-            buttonSize = InlineActionSize,
-            onBookmarkClick = onBookmarkClick,
-            onReadStatusClick = onReadStatusClick,
-        )
-    } else {
-        ArticleInlineDate(feedItem, feedFontSize, readAlpha)
-    }
-}
-
-@Composable
-private fun ArticleHoverActions(
-    feedItem: FeedItem,
-    buttonSize: Dp,
-    onBookmarkClick: (FeedItemId, Boolean) -> Unit,
-    onReadStatusClick: (FeedItemId, Boolean) -> Unit,
-) {
-    val strings = LocalFeedFlowStrings.current
-    Row {
-        IconButton(
-            onClick = { onBookmarkClick(FeedItemId(feedItem.id), !feedItem.isBookmarked) },
-            modifier = Modifier.size(buttonSize),
-        ) {
-            Icon(
-                key = Nodes.Bookmark,
-                contentDescription = if (feedItem.isBookmarked) {
-                    strings.menuRemoveFromBookmark
-                } else {
-                    strings.menuAddToBookmark
-                },
-                tint = if (feedItem.isBookmarked) {
-                    JewelTheme.globalColors.outlines.focused
-                } else {
-                    JewelTheme.globalColors.text.info
-                },
-            )
-        }
-        IconButton(
-            onClick = { onReadStatusClick(FeedItemId(feedItem.id), !feedItem.isRead) },
-            modifier = Modifier.size(buttonSize),
-        ) {
-            Icon(
-                key = Actions.Checked,
-                contentDescription = if (feedItem.isRead) {
-                    strings.menuMarkAsUnread
-                } else {
-                    strings.menuMarkAsRead
-                },
-                tint = JewelTheme.globalColors.text.info,
-            )
+            ArticleDate(feedItem, feedFontSize, readAlpha)
         }
     }
 }

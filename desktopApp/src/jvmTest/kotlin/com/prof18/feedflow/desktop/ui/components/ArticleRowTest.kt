@@ -109,27 +109,21 @@ class ArticleRowTest(private val articleLayout: FeedLayout) {
     }
 
     @Test
-    fun `focused quick actions change the intended article without opening it`() {
-        val opened = mutableListOf<FeedItemUrlInfo>()
-        val bookmarks = mutableListOf<Pair<FeedItemId, Boolean>>()
-        val readChanges = mutableListOf<Pair<FeedItemId, Boolean>>()
-        setRow(
-            onFeedItemClick = opened::add,
-            onBookmarkClick = { id, value -> bookmarks += id to value },
-            onReadStatusClick = { id, value -> readChanges += id to value },
-        )
-        rule.onNodeWithContentDescription(EnFeedFlowStrings.menuAddToBookmark).assertDoesNotExist()
-        rule.onNodeWithTag(ARTICLE_ROW_TAG).requestFocus()
-        rule.onNodeWithTag(ARTICLE_ROW_TAG).performKeyInput { pressKey(Key.Tab) }
-        val bookmark = rule.onNodeWithContentDescription(EnFeedFlowStrings.menuAddToBookmark)
-        bookmark.assertIsDisplayed().assertIsFocused().performKeyInput { pressKey(Key.Enter) }
-        bookmark.performKeyInput { pressKey(Key.Tab) }
-        rule.onNodeWithContentDescription(EnFeedFlowStrings.menuMarkAsRead)
-            .assertIsDisplayed().assertIsFocused().performKeyInput { pressKey(Key.Enter) }
+    fun `hovered or focused row keeps its date and shows no inline actions`() {
+        setRow()
+        val row = rule.onNodeWithTag(ARTICLE_ROW_TAG)
+        row.performMouseInput { moveTo(center) }
         rule.waitForIdle()
-        assertEquals(listOf(FeedItemId(ARTICLE_ID) to true), bookmarks)
-        assertEquals(listOf(FeedItemId(ARTICLE_ID) to true), readChanges)
-        assertEquals(0, opened.size)
+        assertNoInlineActions()
+        row.requestFocus()
+        rule.waitForIdle()
+        assertNoInlineActions()
+    }
+
+    private fun assertNoInlineActions() {
+        rule.onNodeWithText(ARTICLE_DATE).assertIsDisplayed()
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.menuAddToBookmark).assertDoesNotExist()
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.menuMarkAsRead).assertDoesNotExist()
     }
 
     @Test
@@ -247,6 +241,7 @@ class ArticleRowTest(private val articleLayout: FeedLayout) {
 
         const val ARTICLE_ID = "test-row"
         const val ARTICLE_TITLE = "Row article"
+        const val ARTICLE_DATE = "Today"
         const val ARTICLE_DESCRIPTION = "A sufficiently long article summary used to verify the row description."
         const val ARTICLE_ROW_TAG = "article_row_test_row"
 
@@ -274,7 +269,7 @@ class ArticleRowTest(private val articleLayout: FeedLayout) {
             ),
             pubDateMillis = null,
             isRead = false,
-            dateString = "Today",
+            dateString = ARTICLE_DATE,
             commentsUrl = null,
             isBookmarked = false,
         )

@@ -8,7 +8,6 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performKeyInput
@@ -103,20 +102,6 @@ class ArticleKeyboardNavigationTest(private val layout: FeedLayout) {
         last.performKeyInput { pressKey(Key.Enter) }
         rule.runOnIdle { assertEquals(listOf(items.last().id), opened.map { it.id }) }
 
-        last.performKeyInput { pressKey(Key.Tab) }
-        val bookmark = rule.onNodeWithContentDescription(EnFeedFlowStrings.menuAddToBookmark)
-        bookmark.assertIsDisplayed().assertIsFocused().performKeyInput { pressKey(Key.Spacebar) }
-        rule.runOnIdle {
-            assertEquals(listOf(FeedItemId(items.last().id) to true), bookmarks)
-            assertEquals(listOf(items.last().id), opened.map { it.id })
-        }
-        bookmark.performKeyInput {
-            keyDown(Key.ShiftLeft)
-            pressKey(Key.Tab)
-            keyUp(Key.ShiftLeft)
-        }
-        last.assertIsFocused()
-
         last.performKeyInput { pressKey(Key.Menu) }
         val settings = rule.onNodeWithText(EnFeedFlowStrings.openFeedSettings)
         settings.assertIsDisplayed().performKeyInput { pressKey(Key.DirectionDown) }
@@ -129,7 +114,7 @@ class ArticleKeyboardNavigationTest(private val layout: FeedLayout) {
             assertEquals(listOf(items.last().feedSource.websiteUrl), websites)
             assertEquals(listOf(items.last().id), opened.map { it.id })
             assertEquals(emptyList(), feedSettings)
-            assertEquals(listOf(FeedItemId(items.last().id) to true), bookmarks)
+            assertEquals(emptyList(), bookmarks)
         }
 
         for (index in ITEM_COUNT - 2 downTo 0) {

@@ -304,4 +304,5 @@
     <string name="desktop_accounts_services_title">Pakalpojumi</string>
     <string name="desktop_accounts_available_status">Pieejams</string>
     <string name="desktop_search_back_button">Atpakaļ</string>
+    <string name="add_feed_anyway_button">Pievienot tik un tā</string>
 </resources>

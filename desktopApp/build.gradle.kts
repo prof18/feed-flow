@@ -152,6 +152,8 @@ kotlin {
                 implementation(libs.spectre.core)
                 implementation(libs.spectre.recording)
                 implementation(libs.spectre.testing)
+                implementation(libs.spectre.agent)
+                runtimeOnly(libs.spectre.agent.runtime)
                 when {
                     isMacOS -> runtimeOnly(libs.spectre.recording.macos)
                     isLinux -> runtimeOnly(libs.spectre.recording.linux)

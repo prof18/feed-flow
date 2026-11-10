@@ -596,4 +596,5 @@
     <string name="article_unread_state">Chưa đọc</string>
     <string name="article_unread_bookmarked_state">Chưa đọc, đã lưu</string>
     <string name="unread_count_accessibility">%s chưa đọc</string>
+    <string name="reader_mode_unnamed_image_link">Mở hình ảnh</string>
 </resources>

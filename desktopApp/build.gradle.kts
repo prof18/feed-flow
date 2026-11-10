@@ -188,6 +188,30 @@ tasks.withType<Test>().configureEach {
     }
 }
 
+// Desktop E2E flows launch the real app (e2e/desktop/README.md). They run only through desktopE2eTest.
+val desktopE2ePackage = "com.prof18.feedflow.desktop.e2e.*"
+tasks.named<Test>("jvmTest") {
+    filter { excludeTestsMatching(desktopE2ePackage) }
+}
+val jvmTestCompilation = kotlin.jvm().compilations.getByName("test")
+tasks.register<Test>("desktopE2eTest") {
+    description = "Runs the desktop E2E flows against the real app (macOS, local only)."
+    group = "verification"
+    testClassesDirs = jvmTestCompilation.output.classesDirs
+    classpath = files(jvmTestCompilation.output.allOutputs, jvmTestCompilation.runtimeDependencyFiles)
+    val suite = providers.gradleProperty("feedflow.e2eSuite").orElse("all").get()
+    filter {
+        if (suite == "all") {
+            includeTestsMatching(desktopE2ePackage)
+        } else {
+            includeTestsMatching("com.prof18.feedflow.desktop.e2e.$suite.*")
+        }
+    }
+    maxParallelForks = 1
+    outputs.upToDateWhen { false }
+    systemProperty("feedflow.e2e.repoRoot", rootProject.projectDir.absolutePath)
+}
+
 val isAppStoreRelease = project.property("macOsAppStoreRelease").toString().toBoolean()
 val macSigningIdentity = "Marco Gomiero"
 // Full identity name for codesign. Compose's MacSigner derives this same form

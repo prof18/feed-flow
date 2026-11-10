@@ -1,5 +1,6 @@
-• Du bekommst für jeden neuen Artikel eine Benachrichtigung mit Vorschaubild
-• Wähle Schriftart und Titelgröße für den Reader, mit Live-Vorschau
-• Neue Artikel warten hinter einer Anzeige, damit die Liste beim Lesen nicht mehr springt
-• Artikel beim Scrollen ungelesen lassen, einstellbar pro Feed
-• Seiten mit Cloudflare-Prüfung lassen sich bestätigen, damit ihre Feeds und Artikel laden
+• Websites und Apps mit einem FeedFlow- oder feed://-Link öffnen „Feed hinzufügen“ mit bereits ausgefüllter Adresse
+• Die Artikelliste folgt mit, wenn du im Reader zum nächsten oder vorherigen Artikel wechselst
+• Antworten findest du in den neuen FAQ unter Einstellungen → Über
+• Öffne die Feed-Einstellungen direkt aus der Feed-Liste
+• Zurück schließt jetzt das Seitenmenü und führt von einem Filter zurück zur Zeitleiste
+• FeedFlow ist jetzt auf Rumänisch und Indonesisch verfügbar

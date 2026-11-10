@@ -1,5 +1,6 @@
-• Get a notification for each new article, with its thumbnail
-• Pick your reader font and title size, with a live preview
-• New articles wait behind a pill, so the list no longer jumps while you read
-• Keep articles unread while scrolling, set per feed
-• Sites behind Cloudflare checks can be verified so their feeds and articles load
+• Sites and apps that offer a FeedFlow or feed:// link can open the add-feed screen with the address filled in
+• The article list follows along when you move to the next or previous article in the reader
+• Find answers in the new FAQ, under Settings → About
+• Open Feed settings straight from the Feeds list
+• Back now closes the drawer and returns from a filter to the Timeline
+• FeedFlow is now available in Romanian and Indonesian

@@ -1,5 +1,6 @@
-• Recibe una notificación por cada artículo nuevo, con su miniatura
-• Elige la fuente y el tamaño del título del lector, con vista previa en vivo
-• Los artículos nuevos esperan tras una píldora, así la lista ya no salta mientras lees
-• Mantén los artículos sin leer al desplazarte, configurable por feed
-• Los sitios con verificación de Cloudflare se pueden validar para que carguen sus feeds y artículos
+• Los sitios y apps que ofrecen un enlace de FeedFlow o feed:// pueden abrir «Añadir feed» con la dirección ya rellenada
+• La lista de artículos te sigue cuando pasas al artículo siguiente o anterior en el lector
+• Encuentra respuestas en las nuevas preguntas frecuentes, en Ajustes → Acerca de
+• Abre la configuración del feed directamente desde la lista de feeds
+• Atrás ahora cierra el menú lateral y vuelve de un filtro a la Línea de tiempo
+• FeedFlow ya está disponible en rumano e indonesio

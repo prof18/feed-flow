@@ -1,5 +1,6 @@
-• Recevez une notification pour chaque nouvel article, avec sa miniature
-• Choisissez la police et la taille du titre du lecteur, avec aperçu en direct
-• Les nouveaux articles attendent derrière une pastille, la liste ne saute donc plus pendant la lecture
-• Gardez les articles non lus pendant le défilement, réglable par flux
-• Les sites protégés par Cloudflare peuvent être vérifiés pour que leurs flux et articles se chargent
+• Les sites et apps qui proposent un lien FeedFlow ou feed:// peuvent ouvrir « Ajouter un flux » avec l'adresse déjà remplie
+• La liste suit quand vous passez à l'article suivant ou précédent dans le lecteur
+• Trouvez des réponses dans la nouvelle FAQ, dans Paramètres → À propos
+• Ouvrez les paramètres du flux directement depuis la liste des flux
+• Retour ferme maintenant le menu latéral et ramène d'un filtre au Fil principal
+• FeedFlow est désormais disponible en roumain et en indonésien

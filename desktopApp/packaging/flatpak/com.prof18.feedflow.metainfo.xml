@@ -87,6 +87,22 @@
   </content_rating>
 
   <releases>
+  <release version="1.21.0" date="2026-11-10">
+      <description>
+            <p>Sites and apps that offer a FeedFlow or feed:// link can open the add-feed window with the address filled in.</p>
+            <p>The article list follows along when you move to the next or previous article in the reader.</p>
+            <p>Search the Settings window to find any option quickly.</p>
+            <p>Refreshing keeps your open article and your place in the list.</p>
+            <p>The background sync setting is now called Refresh while open.</p>
+            <p>Find answers in the new FAQ, under About.</p>
+            <p>Disconnecting an account now asks first and warns which data will be removed.</p>
+            <p>Categories with the same name are merged during cloud sync instead of stopping it.</p>
+            <p>Screen readers now announce whether an article is unread or bookmarked.</p>
+            <p>Very long code blocks in the reader show as plain text instead of failing to display.</p>
+            <p>Images that fail to load and have no description show an Open image link.</p>
+            <p>FeedFlow is now available in Romanian and Indonesian.</p>
+      </description>
+  </release>
   <release version="1.20.0" date="2026-11-04">
       <description>
             <p>Pick your reader font and title size, with a live preview.</p>

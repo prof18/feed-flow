@@ -1,5 +1,6 @@
-• Dostávaj oznámenie o každom novom článku s jeho náhľadom
-• Vyber si písmo a veľkosť nadpisu v čítačke so živým náhľadom
-• Nové články čakajú za štítkom, takže zoznam pri čítaní už neskáče
-• Nechaj články pri posúvaní neprečítané, nastaviteľné pre každý kanál
-• Weby s kontrolou Cloudflare možno overiť, aby sa ich kanály a články načítali
+• Weby a aplikácie s odkazom FeedFlow alebo feed:// môžu otvoriť „Pridať feed“ s už vyplnenou adresou
+• Zoznam článkov sa posúva s vami, keď v čítačke prejdete na ďalší alebo predchádzajúci článok
+• Odpovede nájdete v novom FAQ v Nastavenia → O aplikácii
+• Nastavenia feedu otvoríte priamo zo zoznamu feedov
+• Späť teraz zavrie bočné menu a z filtra sa vráti na Časovú os
+• FeedFlow je teraz dostupný v rumunčine a indonézštine

@@ -4,12 +4,16 @@
 
 export const platform = {
   id: 'android_phone',
-  canvas: { w: 1080, h: 2400, radius: 32, bg: '#f9f6f0' },
+  // 1200 wide, not Figma's 1080: Play rejects screenshots whose long side is
+  // more than twice the short one, and 1080x2400 is 2.22:1. The extra 120px
+  // is pure side margin (text and blobs shift right by 60, devices centre),
+  // so every vertical measurement still matches the Figma English board.
+  canvas: { w: 1200, h: 2400, radius: 32, bg: '#f9f6f0' },
 
   // Both decorative circles are identical on every screen in this platform.
   blobs: [
-    { x: 480, y: -120, size: 860, color: '#DFF1F4', opacity: 0.92 },
-    { x: -40, y: 980, size: 260, color: '#E8F6EF', opacity: 1 },
+    { x: 540, y: -120, size: 860, color: '#DFF1F4', opacity: 0.92 },
+    { x: 20, y: 980, size: 260, color: '#E8F6EF', opacity: 1 },
   ],
 
   // Two rhythms, both taken from Figma. `preferred` is the English board's
@@ -43,7 +47,7 @@ export const platform = {
   // Text boxes are capped so the right margin can never be tighter than the
   // left. Figma had screen 05's headline at 980 wide -- 8px from the edge.
   text: {
-    left: 92,
+    left: 152,
     maxWidth: 896,
     headline: { family: 'Montserrat', weight: 700, lineHeight: 0.98, color: '#273437' },
     sub: { family: 'Montserrat', weight: 400, size: 55, lineHeight: 'normal', color: '#565e71' },

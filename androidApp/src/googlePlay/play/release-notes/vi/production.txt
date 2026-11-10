@@ -1,5 +1,6 @@
-• Nhận thông báo cho mỗi bài viết mới, kèm ảnh thu nhỏ
-• Chọn phông chữ và cỡ tiêu đề của trình đọc, có xem trước trực tiếp
-• Bài viết mới chờ sau một nhãn, nên danh sách không còn nhảy khi bạn đọc
-• Giữ bài viết ở trạng thái chưa đọc khi cuộn, đặt riêng cho từng nguồn cấp
-• Các trang có bước kiểm tra Cloudflare có thể được xác minh để nguồn cấp và bài viết tải được
+• Các trang web và ứng dụng có liên kết FeedFlow hoặc feed:// có thể mở "Thêm nguồn tin" với địa chỉ đã được điền sẵn
+• Danh sách bài viết sẽ đi theo khi bạn chuyển sang bài tiếp theo hoặc trước đó trong trình đọc
+• Tìm câu trả lời trong FAQ mới, tại Cài đặt → Giới thiệu
+• Mở Thiết lập nguồn tin ngay từ danh sách nguồn tin
+• Nút Quay lại giờ đóng ngăn kéo và đưa bạn từ bộ lọc về Bảng tin của tôi
+• FeedFlow nay đã có tiếng Romania và tiếng Indonesia

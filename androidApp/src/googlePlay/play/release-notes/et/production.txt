@@ -1,5 +1,6 @@
-• Saa iga uue artikli kohta teavitus koos pisipildiga
-• Vali lugeri font ja pealkirja suurus otseeelvaatega
-• Uued artiklid ootavad märgi taga, nii et loend ei hüppa lugemise ajal enam
-• Hoia artiklid kerimisel lugemata, seadistatav iga voo jaoks
-• Cloudflare’i kontrolliga saite saab kinnitada, et nende vood ja artiklid laadiksid
+• Saidid ja rakendused, mis pakuvad FeedFlow' või feed:// linki, saavad avada „Lisa uudisvoog“ juba täidetud aadressiga
+• Artiklite loend liigub kaasa, kui lugejas järgmisele või eelmisele artiklile lähed
+• Vastused leiad uuest KKK-st: Seadistused → Rakenduse teave
+• Ava uudisvoo seadistused otse uudisvoogude loendist
+• Tagasi sulgeb nüüd külgmenüü ja viib filtrist tagasi Ajajoonele
+• FeedFlow on nüüd saadaval rumeenia ja indoneesia keeles

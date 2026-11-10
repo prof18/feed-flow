@@ -1,5 +1,6 @@
-• Minden új cikkről értesítést kapsz, a bélyegképével együtt
-• Válaszd ki az olvasó betűtípusát és a cím méretét, élő előnézettel
-• Az új cikkek egy jelzés mögött várnak, így a lista olvasás közben már nem ugrál
-• Görgetés közben is olvasatlanul hagyhatod a cikkeket, hírcsatornánként beállíthatóan
-• A Cloudflare-ellenőrzést használó oldalak megerősíthetők, hogy a hírcsatornáik és cikkeik betöltődjenek
+• A FeedFlow- vagy feed://-hivatkozást kínáló oldalak és appok kitöltött címmel nyithatják meg a „Hírforrás hozzáadása” képernyőt
+• A cikklista követi, amikor az olvasóban a következő vagy előző cikkre lépsz
+• Válaszokat az új GYIK-ban találsz: Beállítások → Névjegy
+• A hírfolyam beállításai közvetlenül a hírforrások listájából is megnyithatók
+• A Vissza gomb most bezárja az oldalsó menüt, és szűrőből visszavisz az Idővonalra
+• A FeedFlow mostantól románul és indonézül is elérhető

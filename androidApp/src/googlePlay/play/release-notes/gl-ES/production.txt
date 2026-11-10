@@ -1,5 +1,6 @@
-• Recibe unha notificación por cada artigo novo, coa súa miniatura
-• Escolle a fonte e o tamaño do título do lector, con vista previa en directo
-• Os artigos novos agardan tras unha pílula, así a lista xa non salta mentres le
-• Mantén os artigos sen ler ao desprazarte, configurable por feed
-• Os sitios coa verificación de Cloudflare pódense validar para que carguen os seus feeds e artigos
+• Os sitios e apps que ofrecen unha ligazón de FeedFlow ou feed:// poden abrir «Engadir canle» co enderezo xa cuberto
+• A lista de artigos acompaña cando pasas ao artigo seguinte ou anterior no lector
+• Atopa respostas nas novas PMF, en Axustes → Sobre
+• Abre os axustes da canle directamente desde a lista de canles
+• Atrás agora pecha o menú lateral e volve dun filtro á Cronoloxía
+• FeedFlow xa está dispoñible en romanés e indonesio

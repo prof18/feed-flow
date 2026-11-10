@@ -30,6 +30,7 @@ LANG_MAP = {
     "ja": "ja-JP",
     "lv": "lv",
     "pt-BR": "pt-BR",
+    "ro": "ro",
     "ru": "ru-RU",
     "sk": "sk",
     "ta": "ta-IN",

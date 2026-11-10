@@ -15,7 +15,7 @@ node verify.mjs                        # geometry vs Figma + margins, all locale
 ```
 
 Output lands in `build/<locale>/<platform>/<screen>.png` at exact store
-dimensions (Android phone 1080x2400, Play feature graphic 1024x500).
+dimensions (Android phone 1200x2400, Play's 2:1 maximum; Play feature graphic 1024x500).
 
 `serve.mjs` renders the same page the exporter screenshots, so the preview is
 byte-identical to what ships. Config and template edits apply on reload, so
@@ -123,7 +123,7 @@ A platform with no on-image copy sets `localised: false` and renders once into
 
 | id | canvas | screens | notes |
 |---|---|---|---|
-| `android_phone` | 1080x2400 | 5 + feature graphic | Play feature graphic is 1024x500 |
+| `android_phone` | 1200x2400 | 5 + feature graphic | Play feature graphic is 1024x500 |
 | `android_tablet` | 2560x1440 | 5 | one 16:9 set serves both Play tablet slots |
 | `iphone` | 1284x2778 | 5 | flattened device mockups |
 | `ipad` | 2732x2048 | 5 | flattened device mockups |

@@ -363,7 +363,8 @@ def main() -> int:
             target.write_text(json.dumps(generated, ensure_ascii=False, indent=2) + "\n")
 
     if args.screenshots:
-        for line in stage_screenshots(pathlib.Path(args.dir), pathlib.Path(args.screenshots), store_locales, args.dry_run):
+        shot_locales = [locale for locale in store_locales if wanted is None or locale in wanted]
+        for line in stage_screenshots(pathlib.Path(args.dir), pathlib.Path(args.screenshots), shot_locales, args.dry_run):
             print(("would stage " if args.dry_run else "staged ") + line)
 
     verb = "would update" if args.dry_run else "updated"

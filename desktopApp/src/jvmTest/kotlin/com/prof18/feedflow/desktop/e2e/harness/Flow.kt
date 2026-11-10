@@ -21,7 +21,7 @@ class Flow internal constructor(private val rule: DesktopE2eRule) {
         get() = requireNotNull(rule.session) { "the app is not running" }.automator
 
     fun awaitText(text: String, exact: Boolean = true, timeoutMs: Long = AWAIT_TIMEOUT_MS): NodeSnapshotDto =
-        await("text '$text'", timeoutMs) { automator.findByText(text, exact).firstOrNull { it.isVisible } }
+        await("text '$text'", timeoutMs) { automator.findByText(text, exact).firstOrNull { it.isOnScreen } }
 
     fun awaitTag(tag: String, timeoutMs: Long = AWAIT_TIMEOUT_MS): NodeSnapshotDto =
         await("tag '$tag'", timeoutMs) { automator.findByTestTag(tag).firstOrNull() }
@@ -31,12 +31,12 @@ class Flow internal constructor(private val rule: DesktopE2eRule) {
 
     fun awaitContentDescription(description: String, timeoutMs: Long = AWAIT_TIMEOUT_MS): NodeSnapshotDto =
         await("content description '$description'", timeoutMs) {
-            automator.findByContentDescription(description).firstOrNull { it.isVisible }
+            automator.findByContentDescription(description).firstOrNull { it.isOnScreen }
         }
 
     fun awaitGone(text: String, exact: Boolean = true, timeoutMs: Long = AWAIT_TIMEOUT_MS) {
         await("'$text' to disappear", timeoutMs) {
-            Unit.takeIf { automator.findByText(text, exact).none { it.isVisible } }
+            Unit.takeIf { automator.findByText(text, exact).none { it.isOnScreen } }
         }
     }
 
@@ -45,12 +45,12 @@ class Flow internal constructor(private val rule: DesktopE2eRule) {
     }
 
     fun assertAbsent(text: String, exact: Boolean = true) {
-        val found = automator.findByText(text, exact).filter { it.isVisible }
+        val found = automator.findByText(text, exact).filter { it.isOnScreen }
         check(found.isEmpty()) { "Expected no '$text' but found $found\n${treeHead()}" }
     }
 
     fun isShown(text: String, exact: Boolean = true): Boolean =
-        automator.findByText(text, exact).any { it.isVisible }
+        automator.findByText(text, exact).any { it.isOnScreen }
 
     fun nodesWithTagPrefix(prefix: String): List<NodeSnapshotDto> =
         automator.allNodes().filter { it.testTag?.startsWith(prefix) == true }
@@ -171,3 +171,7 @@ class Flow internal constructor(private val rule: DesktopE2eRule) {
         const val DRAG_DURATION_MS = 600L
     }
 }
+
+/** Off-screen nodes in lazy and scrolled containers report isVisible with 1x1 bounds at the window origin. */
+val NodeSnapshotDto.isOnScreen: Boolean
+    get() = isVisible && bounds.width > 1 && bounds.height > 1

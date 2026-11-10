@@ -16,7 +16,10 @@ object AppDataPathBuilder {
     }
 
     fun getAppDataPath(appEnvironment: AppEnvironment): String {
-        val appPath = if (appEnvironment.isDebug()) {
+        val e2eDataDir = DesktopE2eProperties.debugValue(appEnvironment, DesktopE2eProperties.DATA_DIR)
+        val appPath = if (e2eDataDir != null) {
+            e2eDataDir
+        } else if (appEnvironment.isDebug()) {
             "$appDataPath-dev"
         } else {
             appDataPath

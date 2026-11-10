@@ -1,8 +1,13 @@
 package com.prof18.feedflow.desktop.utils
 
+import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DesktopE2eProperties
+import com.prof18.feedflow.desktop.testing.DesktopE2eHooks
+import java.io.File
 import java.io.IOException
 import java.net.URI
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -98,5 +103,27 @@ class DesktopMailHandlerTest {
         assertTrue(result)
         assertFalse(sendMailCalled)
         assertTrue(fallbackCalled)
+    }
+
+    @Test
+    fun `E2E uri log records mail without sending it`() {
+        val log = File.createTempFile("ffe2e-uris", ".txt").apply { deleteOnExit() }
+        val properties = mapOf(DesktopE2eProperties.OPENED_URI_LOG to log.absolutePath)
+        DesktopE2eHooks.install(AppEnvironment.Debug) { properties[it] }
+        try {
+            var sendMailCalled = false
+
+            val result = openDesktopMailSafely(
+                url = "mailto:a@b.c",
+                sendMail = { sendMailCalled = true },
+                openFallback = { true },
+            )
+
+            assertTrue(result)
+            assertFalse(sendMailCalled)
+            assertEquals(listOf("mailto:a@b.c"), log.readLines())
+        } finally {
+            DesktopE2eHooks.reset()
+        }
     }
 }

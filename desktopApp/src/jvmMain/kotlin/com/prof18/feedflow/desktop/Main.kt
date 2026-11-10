@@ -44,6 +44,7 @@ import com.prof18.feedflow.desktop.startup.addFeedLinkInbox
 import com.prof18.feedflow.desktop.startup.bringToFront
 import com.prof18.feedflow.desktop.startup.handleStartupCrash
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
+import com.prof18.feedflow.desktop.testing.DesktopE2eHooks
 import com.prof18.feedflow.desktop.ui.DesktopWindowBackground
 import com.prof18.feedflow.desktop.ui.components.restoreInitialLinuxWindowSize
 import com.prof18.feedflow.desktop.ui.desktopMainWindowTitle
@@ -56,6 +57,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
 import com.prof18.feedflow.shared.domain.DesktopAutoRefreshScheduler
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
+import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.logging.DatabaseFailureReporterConfig
 import com.prof18.feedflow.shared.logging.reportDesktopDatabaseFailure
 import io.sentry.Sentry
@@ -75,6 +77,9 @@ import java.util.Properties
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
 
+private const val SEED_FAILED_EXIT_CODE = 86
+private const val SEED_FAILED_MARKER = "FEEDFLOW_E2E_SEED_FAILED"
+
 fun main(args: Array<String>) {
     var appConfig: DesktopConfig? = null
     try {
@@ -82,6 +87,25 @@ fun main(args: Array<String>) {
     } catch (e: Throwable) {
         reportStartupCrash(e, appConfig)
         exitProcess(1)
+    }
+}
+
+private suspend fun runE2eStartupSeed() {
+    try {
+        val spec = DesktopE2eHooks.seedSpec() ?: return
+        DI.koin.get<E2eSeedRunner>().run(
+            action = spec.action,
+            profileName = spec.profile,
+            accountName = spec.account,
+            audioUrl = spec.audioUrl,
+        )
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        System.err.println(SEED_FAILED_MARKER)
+        System.err.println(e.stackTraceToString())
+        System.err.flush()
+        exitProcess(SEED_FAILED_EXIT_CODE)
     }
 }
 
@@ -94,6 +118,7 @@ private fun runDesktopApp(args: Array<String>, onConfigReady: (DesktopConfig) ->
     launchLink?.let(AddFeedLinkParser::parse)?.let(addFeedLinkInbox::offer)
 
     val appConfig = createAppConfig(loadProperties(), isIcloudEnabled = setupICloudSupport())
+    DesktopE2eHooks.install(appConfig.appEnvironment)
     onConfigReady(appConfig)
     val dataFolder = File(AppDataPathBuilder.getAppDataPath(appConfig.appEnvironment))
     val lockResult = singleInstanceLock.acquire(dataFolder)
@@ -127,6 +152,7 @@ private fun runDesktopApp(args: Array<String>, onConfigReady: (DesktopConfig) ->
                     DI.koin.get<SqlDriver>()
                 },
                 afterDatabaseReady = {
+                    runE2eStartupSeed()
                     DI.koin.get<DesktopAutoRefreshScheduler>().start()
                     @Suppress("MagicNumber")
                     withContext(Dispatchers.Main) { initProgress = 0.6f }

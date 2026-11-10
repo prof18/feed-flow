@@ -48,8 +48,8 @@ android {
         minSdk = libs.versions.android.min.sdk.get().toInt()
         targetSdk = libs.versions.android.target.sdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = appVersionCode()
-        versionName = appVersionName()
+        versionCode = 6239
+        versionName = "1.21.0"
         buildConfigField("String", "REVENUECAT_API_KEY", "\"\"")
 
         addManifestPlaceholders(

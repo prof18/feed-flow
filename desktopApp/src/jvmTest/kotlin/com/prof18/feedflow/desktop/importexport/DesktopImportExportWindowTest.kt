@@ -17,7 +17,10 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.requestFocus
 import com.prof18.feedflow.core.model.FeedImportExportState
+import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DesktopE2eProperties
 import com.prof18.feedflow.desktop.settings.DesktopSettingsDialog
+import com.prof18.feedflow.desktop.testing.DesktopE2eHooks
 import com.prof18.feedflow.desktop.testing.ImportExportE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
@@ -30,12 +33,14 @@ import java.awt.Component
 import java.awt.Container
 import java.awt.Dialog
 import java.awt.FileDialog
+import java.awt.Frame
 import java.awt.Window
 import java.awt.event.KeyEvent
 import java.io.File
 import java.util.concurrent.atomic.AtomicReference
 import javax.swing.SwingUtilities
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
@@ -191,6 +196,45 @@ class DesktopImportExportWindowTest {
         rule.runOnIdle {
             assertEquals(0, exports)
             assertEquals(0, dismissals)
+        }
+    }
+
+    @Test
+    fun `scripted E2E file dialog answers with the response file and shows no native panel`() {
+        val response = File.createTempFile("ffe2e-response", ".txt").apply {
+            writeText("/tmp/feedflow-e2e.opml\n")
+            deleteOnExit()
+        }
+        DesktopE2eHooks.install(AppEnvironment.Debug) {
+            mapOf(DesktopE2eProperties.FILE_DIALOG_RESPONSE to response.absolutePath)[it]
+        }
+        try {
+            val chosen = AtomicReference<File?>()
+            var calls = 0
+            SwingUtilities.invokeAndWait {
+                val parent = Dialog(null as Frame?)
+                try {
+                    val picker = createImportExportFileDialog(
+                        parent = parent,
+                        dialogTitle = "Scripted picker",
+                        onCloseRequest = { file ->
+                            calls++
+                            chosen.set(file)
+                        },
+                        isLoadDialog = true,
+                        showNativePanel = true,
+                    )
+                    picker.isVisible = true
+                    assertFalse(picker.isShowing)
+                    picker.dispose()
+                } finally {
+                    parent.dispose()
+                }
+            }
+            assertEquals(1, calls)
+            assertEquals(File("/tmp/feedflow-e2e.opml"), chosen.get())
+        } finally {
+            DesktopE2eHooks.reset()
         }
     }
 

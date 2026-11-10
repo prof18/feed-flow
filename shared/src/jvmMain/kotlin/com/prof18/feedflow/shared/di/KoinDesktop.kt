@@ -7,6 +7,7 @@ import com.prof18.feedflow.core.model.FeedFetchTier
 import com.prof18.feedflow.core.utils.AppConfig
 import com.prof18.feedflow.core.utils.AppDataPathBuilder
 import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DesktopE2eProperties
 import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.FEEDFLOW_BROWSER_FALLBACK_HEADERS
 import com.prof18.feedflow.core.utils.FEEDFLOW_FALLBACK_USER_AGENT
@@ -117,13 +118,7 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
     }
 
     single<Settings> {
-        val preferences = Preferences.userRoot()
-        val nodeName = if (appEnvironment.isRelease()) {
-            "feedflow"
-        } else {
-            "feedflow-dev"
-        }
-        PreferencesSettings(preferences.node(nodeName))
+        PreferencesSettings(Preferences.userRoot().node(desktopPreferencesNodeName(appEnvironment)))
     }
 
     single {
@@ -232,3 +227,12 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
 
 internal actual fun platformLogWriters(): List<LogWriter> =
     listOf(platformLogWriter())
+
+internal fun desktopPreferencesNodeName(
+    appEnvironment: AppEnvironment,
+    read: (String) -> String? = System::getProperty,
+): String = if (appEnvironment.isRelease()) {
+    "feedflow"
+} else {
+    DesktopE2eProperties.debugValue(appEnvironment, DesktopE2eProperties.PREFS_NODE, read) ?: "feedflow-dev"
+}

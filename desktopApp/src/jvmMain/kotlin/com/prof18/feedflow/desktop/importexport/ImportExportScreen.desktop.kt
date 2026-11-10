@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.AwtWindow
 import com.prof18.feedflow.core.model.ArticleExportFilter
 import com.prof18.feedflow.core.model.FeedImportExportState
+import com.prof18.feedflow.desktop.testing.DesktopE2eHooks
+import com.prof18.feedflow.desktop.testing.FileDialogScript
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.utils.getUnixDeviceName
 import com.prof18.feedflow.shared.domain.csv.CsvInput
@@ -164,8 +166,13 @@ internal fun createImportExportFileDialog(
     showNativePanel: Boolean = true,
 ): FileDialog {
     val flag = if (isLoadDialog) FileDialog.LOAD else FileDialog.SAVE
+    val script = DesktopE2eHooks.fileDialogScript()
     val dialog = object : FileDialog(parent, dialogTitle, flag) {
         override fun setVisible(value: Boolean) {
+            if (script != FileDialogScript.NotScripted) {
+                if (value) onCloseRequest((script as? FileDialogScript.Choose)?.file)
+                return
+            }
             // macOS ignores hiding a shown panel from code, so tests skip the native panel to avoid leaking it.
             if (showNativePanel) super.setVisible(value)
             if (value) {

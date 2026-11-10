@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop.utils
 
 import androidx.compose.ui.platform.UriHandler
+import com.prof18.feedflow.desktop.testing.DesktopE2eHooks
 import java.awt.Desktop
 import java.net.URI
 
@@ -11,11 +12,13 @@ private const val MAX_PORT = 65_535
 
 internal fun UriHandler.openUriSafely(url: String): Boolean {
     val openableUri = url.toOpenableDesktopUri() ?: return false
+    if (DesktopE2eHooks.recordOpenedUri(openableUri)) return true
     return runCatching { openUri(openableUri) }.isSuccess
 }
 
 internal fun openDesktopUriSafely(url: String): Boolean {
     val openableUri = url.toOpenableDesktopUri() ?: return false
+    if (DesktopE2eHooks.recordOpenedUri(openableUri)) return true
     return runCatching { Desktop.getDesktop().browse(URI(openableUri)) }.isSuccess
 }
 

@@ -237,6 +237,44 @@ class HtmlRetrieverTest {
     }
 
     @Test
+    fun `method not allowed html is retried once with fallback user agent`() = runTest(testDispatcher) {
+        var primaryRequests = 0
+        var fallbackRequests = 0
+        val retriever = HtmlRetriever(
+            logger = testLogger,
+            client = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        primaryRequests++
+                        // AWS WAF answers its captcha action with 405 (seen on sportskeeda.com).
+                        respond(
+                            content = ByteArray(0),
+                            status = HttpStatusCode.MethodNotAllowed,
+                            headers = headersOf("x-amzn-waf-action", "captcha"),
+                        )
+                    }
+                }
+            },
+            forbiddenFallbackClient = HttpClient(MockEngine) {
+                engine {
+                    addHandler {
+                        fallbackRequests++
+                        respond(
+                            content = "<html>Success</html>",
+                            status = HttpStatusCode.OK,
+                            headers = headersOf(HttpHeaders.ContentType, "text/html"),
+                        )
+                    }
+                }
+            },
+        )
+
+        assertEquals("<html>Success</html>", retriever.retrieveHtml("https://example.com"))
+        assertEquals(1, primaryRequests)
+        assertEquals(1, fallbackRequests)
+    }
+
+    @Test
     fun `connection failure is retried once with fallback user agent`() = runTest(testDispatcher) {
         var primaryRequests = 0
         var fallbackRequests = 0

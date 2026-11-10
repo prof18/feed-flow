@@ -39,10 +39,10 @@ class HtmlRetriever(
         return try {
             val firstAttempt = retrieveFirstAttempt(url)
                 ?: return retrieveAttempt(url, forbiddenFallbackClient).result
-            if (firstAttempt.status == HttpStatusCode.Forbidden ||
+            if (firstAttempt.status in FALLBACK_USER_AGENT_STATUSES ||
                 firstAttempt.result is HtmlRetrievalResult.Challenge
             ) {
-                logger.d { "Retrying HTML retrieval with fallback user agent after HTTP 403" }
+                logger.d { "Retrying HTML retrieval with fallback user agent after HTTP ${firstAttempt.status.value}" }
                 retrieveAttempt(url, forbiddenFallbackClient).result
             } else {
                 firstAttempt.result
@@ -175,6 +175,10 @@ class HtmlRetriever(
         private const val MAX_RESPONSE_BYTES = 5L * 1024 * 1024 // 5 MB
         private const val IMAGE_ACCEPT_HEADER = "image/*"
         private val MISSING_STATUSES = setOf(HttpStatusCode.NotFound, HttpStatusCode.Gone)
+
+        // AWS WAF answers a captcha action with 405 to a GET that a browser user agent passes.
+        private val FALLBACK_USER_AGENT_STATUSES =
+            setOf(HttpStatusCode.Forbidden, HttpStatusCode.MethodNotAllowed)
         private val METHOD_UNAVAILABLE_STATUSES =
             setOf(HttpStatusCode.MethodNotAllowed, HttpStatusCode.NotImplemented)
         private const val READABLE_CONTENT_ACCEPT_HEADER =

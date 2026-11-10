@@ -52,7 +52,7 @@ io-coil = "3.6.3"
 jsystem-theme-detector = "3.9.1"
 jewel = "0.41.0-262.11879.100"
 jewelPlatform = "262.11879.111"
-spectre = "0.7.1"
+spectre = "0.9.0"
 junit = "4.13.2"
 junit-jupiter = "6.1.3"
 kermit = "2.2.0"
@@ -118,6 +118,8 @@ jewel-markdown-tables = { module = "org.jetbrains.jewel:jewel-markdown-extension
 jewel-markdown-strikethrough = { module = "org.jetbrains.jewel:jewel-markdown-extensions-gfm-strikethrough", version.ref = "jewel" }
 jewel-markdown-autolink = { module = "org.jetbrains.jewel:jewel-markdown-extensions-autolink", version.ref = "jewel" }
 spectre-core = { module = "dev.sebastiano.spectre:spectre-core", version.ref = "spectre" }
+spectre-agent = { module = "dev.sebastiano.spectre:spectre-agent", version.ref = "spectre" }
+spectre-agent-runtime = { module = "dev.sebastiano.spectre:spectre-agent-runtime", version.ref = "spectre" }
 spectre-recording = { module = "dev.sebastiano.spectre:spectre-recording", version.ref = "spectre" }
 spectre-recording-linux = { module = "dev.sebastiano.spectre:spectre-recording-linux", version.ref = "spectre" }
 spectre-recording-macos = { module = "dev.sebastiano.spectre:spectre-recording-macos", version.ref = "spectre" }

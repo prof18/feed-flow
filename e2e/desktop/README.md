@@ -44,10 +44,15 @@ The app reads these properties only in debug builds. A passing test deletes its 
 ## Known limitations
 
 - Menu-bar keyboard shortcuts (for example Cmd+N for Add feed) do not reach the app: Spectre sends synthetic keys to the Compose window, and the native macOS menu bar does not see them. Keys handled inside a window, such as Escape, Enter and the arrow keys, work.
-- Spectre's attach API has no secondary click, and neither the context-menu key, Shift+F10 nor a long click opens the article or sidebar context menus, so steps that need a context menu are not covered.
+- Spectre's attach API has no secondary click. Sidebar feed and category menus open with Shift+F10 on the focused row (`Flow.openSidebarMenu`). Article and search-result menus cannot be opened: clicking a row moves focus into the reader pane and no key returns it to the row, so those steps are not covered.
 - Window screenshots are refused on the attach path; evidence uses Spectre's `capture`, which returns a PNG of the window's content.
 - Spectre cannot resize windows, so flows run in the 1280×800 two-pane layout only.
 - The NoFeedsDialog cannot be reached: its only trigger, `onEmptyStateClick`, is passed to `DesktopHomeScreenContent` but never called. SM-001 asserts the empty-state message only.
+- Article images are inside the clickable row, whose merged semantics drop the image test tags (`article_image_*`), so flows cannot assert that an image is shown or hidden; SM-009 checks the persisted setting instead.
+- SM-004: removing a bookmark from the reader toolbar has no confirmation on desktop (`removeBookmarkDialogMessage` has no desktop caller).
+- SM-005: the article list's footer "Mark all as read" button acts without a confirmation; the confirmation belongs to the File menu entry, which Spectre cannot reach.
+- SM-007: the desktop reader has no "Listen to article" action (`readerModeTtsListen` has no desktop caller), and the long-press tooltip step is an Android gesture.
+- Settings has no in-window button; flows open it through the sidebar's add menu ("Import feed from OPML"), then pick the pane.
 
 ## Not applicable on desktop
 

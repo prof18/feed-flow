@@ -28,7 +28,7 @@
             <termEntry weblate-flags="terminology">
                 <descrip>Only for OPML import and export: the feed list as stored in an OPML file. Everywhere else say feeds.</descrip>
                 <langSet xml:lang="en"><tig><term>subscriptions</term></tig></langSet>
-                <langSet xml:lang="lv"><tig><term/></tig></langSet>
+                <langSet xml:lang="lv"><note from="translator">Lietot tikai OPML formāta datnes ievietošanas un izgūšanas gadījumā: plūsmu saraksts, kas saglabāts OPML datnē. Visur citur lietot vārdu "plūsmas".</note><tig><term>abonementi</term></tig></langSet>
             </termEntry>
             <termEntry weblate-flags="terminology">
                 <descrip>The title of a feed, shown on each article. Avoid: feed source.</descrip>
@@ -58,7 +58,7 @@
             <termEntry weblate-flags="terminology">
                 <descrip>Check the feeds for new articles (Refresh feeds, Background refresh). Avoid: download, sync, reload.</descrip>
                 <langSet xml:lang="en"><tig><term>refresh</term></tig></langSet>
-                <langSet xml:lang="lv"><tig><term/></tig></langSet>
+                <langSet xml:lang="lv"><note from="translator">Pārbauda, vai plūsmās ir jauni raksti (Atsvaidzināt plūsmas, Atsvaidzināšana fonā). Nelietot: lejupielādēt, sinhronizēt, pārlādēt.</note><tig><term>atsvaidzināt</term></tig></langSet>
             </termEntry>
             <termEntry weblate-flags="terminology">
                 <descrip>Keep feeds, read status and bookmarks the same across the user's devices through an account. Avoid: upload, refresh.</descrip>

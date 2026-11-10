@@ -291,4 +291,17 @@
     <string name="import_export_label">Ievietot un izgūt</string>
     <string name="choose_another_file_button">Atlasīt citu datni</string>
     <string name="invalid_opml_import_description">Nederīga OPML datne. Mēģiniet izgūt savas ziņu plūsmas kā OPML datni savā RSS lietotnē un ievietot to vēlreiz.</string>
+    <string name="menu_minimize">Minimizēt</string>
+    <string name="menu_window">Logs</string>
+    <string name="menu_article">Raksts</string>
+    <string name="desktop_accounts_feedbin_title">Feedbin</string>
+    <string name="desktop_accounts_bazqux_title">BazQux</string>
+    <string name="desktop_accounts_miniflux_title">Miniflux</string>
+    <string name="desktop_accounts_fresh_rss_title">FreshRSS</string>
+    <string name="desktop_accounts_icloud_title">iCloud</string>
+    <string name="desktop_accounts_dropbox_title">Dropbox</string>
+    <string name="article_unread_state">Nelasīts</string>
+    <string name="desktop_accounts_services_title">Pakalpojumi</string>
+    <string name="desktop_accounts_available_status">Pieejams</string>
+    <string name="desktop_search_back_button">Atpakaļ</string>
 </resources>

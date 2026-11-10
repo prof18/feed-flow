@@ -1,14 +1,14 @@
 ---
-title: "Which platforms is FeedFlow available on?"
+title: "Kādās operētājsistēmās ir pieejams FeedFlow?"
 weight: 10
 featured: true
 ---
 
 - **Android**: [Google
-  Play](https://play.google.com/store/apps/details?id=com.prof18.feedflow) and
+  Play](https://play.google.com/store/apps/details?id=com.prof18.feedflow) un
   [F-Droid](https://f-droid.org/packages/com.prof18.feedflow/)
-- **iPhone and iPad**: App Store, iOS and iPadOS 17 or later
-- **macOS**: App Store, Macs with Apple silicon
+- **iPhone un iPad**: App Store, iOS 17 un iPadOS 17 vai jaunākās versijās
+- **macOS**: App Store, Mac datori ar Apple procesoru
 - **Windows**: [Microsoft Store](https://apps.microsoft.com/detail/9n5t1rfbb6v5)
   or the installer from [GitHub
   releases](https://github.com/prof18/feed-flow/releases)

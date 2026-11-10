@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+    <channel>
+        <title>FeedFlow E2E Fixture Feed</title>
+        <link>https://example.com/</link>
+        <description>Local fixture feed for the desktop E2E suite.</description>
+        <item>
+            <title>Fixture item 1</title>
+            <link>https://example.com/fixture/1</link>
+            <guid isPermaLink="true">https://example.com/fixture/1</guid>
+            <pubDate>Thu, 15 Jan 2026 10:00:00 GMT</pubDate>
+            <description>First fixture item.</description>
+        </item>
+        <item>
+            <title>Fixture item 2</title>
+            <link>https://example.com/fixture/2</link>
+            <guid isPermaLink="true">https://example.com/fixture/2</guid>
+            <pubDate>Wed, 14 Jan 2026 10:00:00 GMT</pubDate>
+            <description>Second fixture item.</description>
+        </item>
+        <item>
+            <title>Fixture item 3</title>
+            <link>https://example.com/fixture/3</link>
+            <guid isPermaLink="true">https://example.com/fixture/3</guid>
+            <pubDate>Tue, 13 Jan 2026 10:00:00 GMT</pubDate>
+            <description>Third fixture item.</description>
+        </item>
+    </channel>
+</rss>

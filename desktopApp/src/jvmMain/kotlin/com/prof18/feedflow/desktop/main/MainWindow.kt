@@ -28,6 +28,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowPlacement
@@ -66,6 +67,7 @@ import com.prof18.feedflow.desktop.settings.DesktopSettingsCategory
 import com.prof18.feedflow.desktop.settings.DesktopSettingsSection
 import com.prof18.feedflow.desktop.settings.SettingsWindow
 import com.prof18.feedflow.desktop.startup.addFeedLinkInbox
+import com.prof18.feedflow.desktop.testing.MainWindowE2eIds
 import com.prof18.feedflow.desktop.toReaderMode
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -352,7 +354,10 @@ private fun FrameWindowScope.MainWindowContent(
             } else {
                 null
             }
-            MainWindowSurface(modifier = Modifier.fillMaxSize(), onSearch = onSearch) {
+            MainWindowSurface(
+                modifier = Modifier.fillMaxSize().testTag(MainWindowE2eIds.SURFACE),
+                onSearch = onSearch,
+            ) {
                 Box {
                     NavDisplay(
                         backStack = backStack,

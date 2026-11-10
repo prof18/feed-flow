@@ -20,12 +20,9 @@ appId: com.prof18.feedflow.debug
 # Other feed apps (Pocket Casts) also claim feed://, so Android may ask which app opens it.
 - runFlow:
     when:
-      visible: "Open with"
+      visible: "Open with.*"
     commands:
-      - tapOn: "FeedFlow"
-      - tapOn:
-          text: "Just once"
-          optional: true
+      - tapOn: "Just once"
 - assertVisible:
     id: add_feed_url_input
 - assertVisible:

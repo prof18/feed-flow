@@ -22,7 +22,7 @@ appId: com.prof18.feedflow.debug
     id: blocked_words_add_button
 - assertVisible:
     id: blocked_word_pixel
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - tapOn:
     id: settings_back_button
 - tapOn:

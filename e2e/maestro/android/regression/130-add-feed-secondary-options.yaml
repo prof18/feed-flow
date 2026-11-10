@@ -21,7 +21,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: add_feed_url_input
 - inputText: "https://www.youtube.com/@mkbhd"
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - assertVisible:
     id: add_feed_url_input
     text: "https://www.youtube.com/@mkbhd"
@@ -41,7 +41,7 @@ appId: com.prof18.feedflow.debug
 - longPressOn:
     id: add_feed_url_input
 - inputText: "https://example.com/rss.xml"
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - assertVisible:
     id: add_feed_url_input
     text: "https://example.com/rss.xml"
@@ -50,7 +50,7 @@ appId: com.prof18.feedflow.debug
 - longPressOn:
     id: add_feed_url_input
 - inputText: "https://www.youtube.com/@mkbhd"
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - assertVisible:
     id: add_feed_url_input
     text: "https://www.youtube.com/@mkbhd"
@@ -73,7 +73,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: add_feed_url_input
 - inputText: "https://www.youtube.com/@mkbhd"
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - assertVisible:
     id: add_feed_url_input
     text: "https://www.youtube.com/@mkbhd"

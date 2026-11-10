@@ -1,0 +1,11 @@
+appId: com.prof18.feedflow.debug
+---
+# hideKeyboard presses Back even when no soft keyboard is showing, which then leaves the screen.
+# A device with a hardware or virtual keyboard attached (scrcpy mirroring, a Bluetooth keyboard)
+# never shows Gboard's keys, so only hide the keyboard when its key holder is on screen.
+- runFlow:
+    when:
+      visible:
+        id: com.google.android.inputmethod.latin:id/keyboard_holder
+    commands:
+      - hideKeyboard

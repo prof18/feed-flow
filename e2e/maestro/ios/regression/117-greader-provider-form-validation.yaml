@@ -30,7 +30,7 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: accounts_provider_fresh_rss
 - assertVisible: "FreshRSS"
-- assertNotVisible: "This account uses the subscriptions stored on its server."
+- assertNotVisible: "This account uses the feeds stored on its server."
 - assertVisible:
     id: account_connect_button
     enabled: false
@@ -67,4 +67,4 @@ appId: com.prof18.feedflow.dev
     id: accounts_add_account
 - tapOn:
     id: accounts_provider_fresh_rss
-- assertVisible: "This account uses the subscriptions stored on its server."
+- assertVisible: "This account uses the feeds stored on its server."

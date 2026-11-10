@@ -42,7 +42,7 @@ appId: com.prof18.feedflow.debug
     text: "^Downloads?$"
 - tapOn:
     id: com.google.android.documentsui:id/option_menu_search
-- inputText: feedflow-articles-smoke.csv
+- inputText: smoke.csv
 - tapOn:
     id: com.google.android.documentsui:id/item_root
     containsDescendants:

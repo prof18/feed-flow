@@ -18,5 +18,5 @@ appId: com.prof18.feedflow.debug
 - tapOn: "Keep offline copies of articles you open"
 - tapOn: "Mark as read when scrolling"
 - tapOn: "Make offline copies when feeds refresh"
-- assertVisible: "Enabling this option will increase synchronization time and data usage.*"
+- assertVisible: "Enabling this option makes refreshing feeds slower and uses more data.*"
 - tapOn: "Confirm"

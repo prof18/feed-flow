@@ -23,7 +23,7 @@ appId: com.prof18.feedflow.debug
 # hardware Enter then makes Gboard commit that buffer with its physical-keyboard autocorrect
 # ("Reader" became "Header" or "Readery") instead of reaching the field's Done action. The IME
 # is visible here, so hideKeyboard's Back only closes it and leaves the query as typed.
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - assertVisible:
     id: article_row_e2e_article_reader_success
 - assertVisible:
@@ -77,7 +77,7 @@ appId: com.prof18.feedflow.debug
     text: "Reader"
 - tapOn:
     id: search_query_field
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - assertVisible:
     id: search_query_field
     text: "Reader"

@@ -26,7 +26,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: accounts_provider_fresh_rss
 - assertVisible: "FreshRSS"
-- assertNotVisible: "This account uses the subscriptions stored on its server."
+- assertNotVisible: "This account uses the feeds stored on its server."
 - assertVisible:
     id: account_connect_button
     enabled: false
@@ -39,7 +39,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: account_password_input
 - inputText: "e2e-pass"
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - tapOn:
     id: account_password_visibility
 - assertVisible: "e2e-pass"
@@ -69,7 +69,7 @@ appId: com.prof18.feedflow.debug
     id: settings_accounts
 - tapOn:
     id: accounts_provider_fresh_rss
-- assertVisible: "This account uses the subscriptions stored on its server."
+- assertVisible: "This account uses the feeds stored on its server."
 - tapOn:
     id: account_server_url_input
 - inputText: "https://e2e.example.com"
@@ -79,13 +79,13 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: account_password_input
 - inputText: "e2e-pass"
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - tapOn:
     id: account_connect_button
-- assertVisible: "Replace local subscriptions?"
+- assertVisible: "Replace local feeds?"
 - assertVisible: "Connecting replaces the feeds currently stored on this device.*"
 - tapOn: "Cancel"
-- assertNotVisible: "Replace local subscriptions?"
+- assertNotVisible: "Replace local feeds?"
 - back
 - tapOn:
     id: accounts_provider_bazqux

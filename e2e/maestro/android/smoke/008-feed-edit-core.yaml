@@ -28,7 +28,7 @@ appId: com.prof18.feedflow.debug
     id: edit_feed_name
 - eraseText: 100
 - inputText: E2E Renamed Android Feed
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - tapOn:
     id: edit_feed_hidden_toggle
 - scrollUntilVisible:

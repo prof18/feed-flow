@@ -43,7 +43,7 @@ appId: com.prof18.feedflow.debug
     id: feed_source_list_rename_input_e2e_feed_android_weekly
 - eraseText: 100
 - inputText: E2E Renamed Source
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - tapOn:
     id: feed_source_list_rename_save_e2e_feed_android_weekly
 - assertVisible:

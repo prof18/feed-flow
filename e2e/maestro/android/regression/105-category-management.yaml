@@ -46,7 +46,7 @@ appId: com.prof18.feedflow.debug
     text: "Category name"
 - eraseText: 100
 - inputText: "E2E Renamed Category"
-- hideKeyboard
+- runFlow: ../../shared/android-hide-keyboard.yaml
 - tapOn:
     text: "Save"
 - assertVisible:

@@ -78,7 +78,7 @@
             <termEntry weblate-flags="terminology">
                 <descrip>Bookmarks: articles the user keeps; they are never deleted automatically. Also the verb and bookmarked. Avoid: saved, save for later, favorites.</descrip>
                 <langSet xml:lang="en"><tig><term>bookmark</term></tig></langSet>
-                <langSet xml:lang="lv"><tig><term/></tig></langSet>
+                <langSet xml:lang="lv"><note from="translator">Saglabātie raksti: raksti, ko lietotājs patur savā kolekcijā; tie nekad netiek automātiski dzēsti. Darbības vārdu _**bookmark**_ tulkot kā "pievienot saglabātiem rakstiem", bet _**bookmarked**_ - kā "jau saglabātajos rakstos". Nelietot: saglabāts, saglabāt vēlākam laikam, izlase vai iecienītākie.</note><tig><term>saglabātais raksts</term></tig></langSet>
             </termEntry>
             <termEntry weblate-flags="terminology">
                 <descrip>A user-made group of feeds. The add button is New category. Avoid: folder, group.</descrip>

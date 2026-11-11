@@ -143,6 +143,27 @@ class DesktopOnlyFlowsTest {
         flow.awaitOpenedUri { it.startsWith("mailto:") }
     }
 
+    /**
+     * Markdown reader: desktop reaadermode/DesktopReaderContent.kt (buildReaderModeMarkdown) and
+     * DesktopReaderMarkdownRenderer.kt. The reader-mode seed stores the article as Markdown on desktop,
+     * the format the desktop reader caches, so the paragraph must render as text and not as source.
+     * Jewel's Markdown renderer exposes an inline image to accessibility by its Markdown source, so the
+     * image is found by its alt text in a node of its own.
+     */
+    @Test
+    fun `DSK-006 Markdown reader rendering`() {
+        val flow = e2e.start(Seed.ReaderMode)
+
+        flow.openArticle(READER_SUCCESS_ID)
+        flow.awaitReaderTitle(READER_SUCCESS_TITLE)
+        val paragraph = flow.awaitText(READER_PARAGRAPH)
+        val image = flow.await("the inline image") {
+            flow.nodes().firstOrNull { node -> node.texts.any { it.trim().startsWith("![$READER_IMAGE_ALT](") } }
+        }
+        assertTrue(image.key != paragraph.key)
+        assertTrue(flow.nodes().none { node -> node.texts.any { "<article>" in it || "<img" in it } })
+    }
+
     private fun com.prof18.feedflow.desktop.e2e.harness.Flow.treeRows(): List<String> =
         nodes().filter { it.role == "Tab" && it.key.startsWith("window:1:0:") && it.isOnScreen }
             .sortedBy { it.bounds.y }
@@ -160,5 +181,9 @@ class DesktopOnlyFlowsTest {
         const val SEARCH_CLEAR = "settings-search-clear"
         const val NEWEST_ID = "e2e-article-newest-unread"
         const val ANDROID_CENTRAL = "Android Central RSS Feed"
+        const val READER_SUCCESS_ID = "e2e-article-reader-success"
+        const val READER_SUCCESS_TITLE = "E2E Reader Mode Success Article: Interstitium"
+        const val READER_PARAGRAPH = "E2E cached reader content loaded from the seed fixture."
+        const val READER_IMAGE_ALT = "E2E reader image"
     }
 }

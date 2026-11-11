@@ -20,7 +20,9 @@ import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.feeditem.ReaderContentCacheMigration
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
+import com.prof18.feedflow.shared.domain.parser.readerContentFormat
 import com.prof18.feedflow.shared.test.KoinTestBase
+import com.prof18.klead.KleadOutput
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -116,6 +118,30 @@ class E2eSeedRunnerTest : KoinTestBase() {
         assertTrue(
             feedItemContentFileHandler.isContentAvailable(E2eSeedRunner.READER_SUCCESS_ARTICLE_ID),
         )
+    }
+
+    @Test
+    fun `reader-mode profile stores reader content in the format this platform caches`() = runTest {
+        seedRunner.resetAndSeed(E2eSeedProfile.READER_MODE)
+
+        val articles = listOf(
+            E2eSeedRunner.READER_SUCCESS_ARTICLE_ID,
+            E2eSeedRunner.READER_FALLBACK_ARTICLE_ID,
+            E2eSeedRunner.READER_LONG_ARTICLE_ID,
+        )
+        articles.forEach { id ->
+            val content = assertNotNull(feedItemContentFileHandler.loadFeedItemContent(id), id)
+            when (readerContentFormat) {
+                KleadOutput.MARKDOWN -> {
+                    assertFalse("<" in content, "$id holds HTML: $content")
+                    assertFalse(content.lines().any { it.startsWith("    ") }, "$id has an indented code block")
+                }
+                KleadOutput.HTML -> assertTrue(content.trim().startsWith("<article>"), id)
+            }
+        }
+        val success = feedItemContentFileHandler.loadFeedItemContent(E2eSeedRunner.READER_SUCCESS_ARTICLE_ID)
+        assertTrue("E2E cached reader content loaded from the seed fixture." in success.orEmpty())
+        assertTrue("E2E reader image" in success.orEmpty())
     }
 
     @Test

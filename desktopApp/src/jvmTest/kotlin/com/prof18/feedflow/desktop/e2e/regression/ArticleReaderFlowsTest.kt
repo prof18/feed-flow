@@ -310,6 +310,7 @@ class ArticleReaderFlowsTest {
         flow.click(source())
         flow.await("web content selected") { source().takeIf { !it.isSelected } }
         flow.awaitReaderTitle(READER_SUCCESS_TITLE)
+        flow.awaitText(READER_SUCCESS_PARAGRAPH)
         assertTrue(flow.nodes().first { it.testTag == flow.articleRow(READER_SUCCESS_ID) }.isSelected)
     }
 
@@ -476,6 +477,7 @@ class ArticleReaderFlowsTest {
         const val NO_IMAGE_DESCRIPTION = "Seeded item without media"
         const val OLD_ARTICLE_TITLE = "E2E Old Article Eligible For Delete: Venezia council"
         const val READER_SUCCESS_ID = "e2e-article-reader-success"
+        const val READER_SUCCESS_PARAGRAPH = "E2E cached reader content loaded from the seed fixture."
         const val READER_SUCCESS_TITLE = "E2E Reader Mode Success Article: Interstitium"
         const val FALLBACK_ID = "e2e-article-reader-fallback"
         const val FALLBACK_TITLE = "E2E Reader Mode Fallback Article: The Witcher 3"

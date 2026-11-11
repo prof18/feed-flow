@@ -8,6 +8,7 @@ from __future__ import annotations
 import fcntl
 import importlib.util
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -158,6 +159,7 @@ class RunnerDesktopTest(unittest.TestCase):
                     ("smoke",),
                     os.environ.copy(),
                     lock_path=lock,
+                    run_lock_path=root / "run.lock",
                     junit_dir=root / "junit",
                     evidence_dir=evidence,
                     gradle_command=["false"],
@@ -169,6 +171,51 @@ class RunnerDesktopTest(unittest.TestCase):
             self.assertEqual([], result.flow_results)
 
     @unittest.skipUnless(sys.platform == "darwin", "the desktop runner runs on macOS only")
+    def test_active_direct_run_keeps_its_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            evidence = root / "evidence"
+            evidence.mkdir()
+            marker = evidence / "keep.txt"
+            marker.write_text("active run")
+            run_lock = root / "run.lock"
+            # The test JVM holds run.lock with a POSIX lock (FileChannel.tryLock), owned by another process.
+            holder = subprocess.Popen(
+                [
+                    sys.executable,
+                    "-c",
+                    "import fcntl, sys, time\n"
+                    "f = open(sys.argv[1], 'w')\n"
+                    "fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)\n"
+                    "print('locked', flush=True)\n"
+                    "time.sleep(30)\n",
+                    str(run_lock),
+                ],
+                stdout=subprocess.PIPE,
+                text=True,
+            )
+            try:
+                self.assertEqual("locked", holder.stdout.readline().strip())
+                result = runner.run_desktop_tests(
+                    root,
+                    root / "out",
+                    ("smoke",),
+                    os.environ.copy(),
+                    lock_path=root / "runner.lock",
+                    run_lock_path=run_lock,
+                    junit_dir=root / "junit",
+                    evidence_dir=evidence,
+                    gradle_command=["false"],
+                )
+            finally:
+                holder.kill()
+                holder.wait()
+            self.assertEqual(1, len(result.setup_results))
+            self.assertNotEqual(0, result.setup_results[0].returncode)
+            self.assertIn("desktop e2e run is active", result.setup_results[0].log_path.read_text().lower())
+            self.assertTrue(marker.exists())
+
+    @unittest.skipUnless(sys.platform == "darwin", "the desktop runner runs on macOS only")
     def test_gradle_failure_without_results_is_one_setup_failure(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -178,6 +225,7 @@ class RunnerDesktopTest(unittest.TestCase):
                 ("smoke",),
                 os.environ.copy(),
                 lock_path=root / "runner.lock",
+                run_lock_path=root / "run.lock",
                 junit_dir=root / "junit",
                 evidence_dir=root / "evidence",
                 gradle_command=["sh", "-c", "echo Compilation failed; exit 1"],
@@ -201,7 +249,7 @@ class RunnerDesktopTest(unittest.TestCase):
                 runner, "DESKTOP_JUNIT_RESULTS_DIR", junit
             ), mock.patch.object(runner, "DESKTOP_EVIDENCE_DIR", root / "evidence"), mock.patch.object(
                 runner, "DESKTOP_RUNNER_LOCK", root / "runner.lock"
-            ), mock.patch.object(
+            ), mock.patch.object(runner, "DESKTOP_RUN_LOCK", root / "run.lock"), mock.patch.object(
                 runner, "desktop_gradle_command", side_effect=fake_gradle
             ), mock.patch.object(runner, "find_repo_root", return_value=root):
                 exit_code = runner.main()

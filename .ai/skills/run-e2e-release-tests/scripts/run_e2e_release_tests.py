@@ -29,6 +29,8 @@ SUITES = ("smoke", "regression", "desktoponly")
 DESKTOP_JUNIT_RESULTS_DIR = Path("desktopApp/build/test-results/desktopE2eTest")
 DESKTOP_EVIDENCE_DIR = Path("desktopApp/build/reports/desktop-e2e")
 DESKTOP_RUNNER_LOCK = Path("/tmp/ffe2e/runner.lock")
+# Held by the test JVM for a whole desktop E2E run (harness/E2eConstants.kt RUN_LOCK_FILE).
+DESKTOP_RUN_LOCK = Path("/tmp/ffe2e/run.lock")
 DESKTOP_CRASH_MARKER = "finished with non-zero exit value"
 DESKTOP_FAILING_TESTS_MARKER = "There were failing tests"
 COMMAND_TIMEOUT_RETURN_CODE = 124
@@ -770,12 +772,26 @@ def desktop_flow_results(cases: list[DesktopCase], output_dir: Path) -> list[Flo
     return results
 
 
+def desktop_run_active(run_lock_path: Path) -> bool:
+    """True while a test JVM holds the run lock. It is a POSIX lock (FileChannel.tryLock), so probe with lockf."""
+    if not run_lock_path.exists():
+        return False
+    with run_lock_path.open("a") as lock_file:
+        try:
+            fcntl.lockf(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            return True
+        fcntl.lockf(lock_file, fcntl.LOCK_UN)
+    return False
+
+
 def run_desktop_tests(
     repo_root: Path,
     output_dir: Path,
     suites: tuple[str, ...],
     env: dict[str, str],
     lock_path: Path | None = None,
+    run_lock_path: Path | None = None,
     junit_dir: Path | None = None,
     evidence_dir: Path | None = None,
     gradle_command: list[str] | None = None,
@@ -787,6 +803,7 @@ def run_desktop_tests(
             "desktop", [preflight_failure("desktop preflight", setup_log, "Desktop E2E runs only on macOS.")], []
         )
     lock_path = lock_path or DESKTOP_RUNNER_LOCK
+    run_lock_path = run_lock_path or DESKTOP_RUN_LOCK
     junit_dir = junit_dir or repo_root / DESKTOP_JUNIT_RESULTS_DIR
     evidence_dir = evidence_dir or repo_root / DESKTOP_EVIDENCE_DIR
     lock_path.parent.mkdir(parents=True, exist_ok=True)
@@ -795,6 +812,9 @@ def run_desktop_tests(
             fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError:
             message = f"Another desktop E2E runner is active ({lock_path} is locked)."
+            return PlatformRunResult("desktop", [preflight_failure("desktop preflight", setup_log, message)], [])
+        if desktop_run_active(run_lock_path):
+            message = f"A desktop E2E run is active ({run_lock_path} is locked); its results would be deleted."
             return PlatformRunResult("desktop", [preflight_failure("desktop preflight", setup_log, message)], [])
 
         setup_results: list[CommandResult] = []

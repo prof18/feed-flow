@@ -59,6 +59,14 @@ The app reads these properties only in debug builds. A passing test deletes its 
 - REG-155: in the two-pane layout "Open another feed" toggles the sidebar.
 - REG-157: desktop reorders by dragging sidebar rows directly; there are no reorder toggles.
 - REG-186: the URL-less article's context menu (no Share) is not covered, because article context menus cannot be opened.
+- REG-106, REG-109, REG-143, REG-152, REG-154, REG-168: the article and search-result context menu steps (bookmark, mark read, mark above/below, open comments, the action set) are not covered. REG-106 and REG-154 reach the same states through the reader toolbar.
+- REG-107: dragging a row with the mouse also clicks it, which opens the article and marks it read, so only the bookmark swipe direction is asserted.
+- REG-108: the grid layout renders as big image rows in the two-pane layout (grid needs the single-pane list).
+- REG-109: the feed order is changed in Settings → Feed list → Sort by Date; desktop has no home "Sort & filter" menu.
+- REG-160: the reader extracts the seeded articles from their live URLs instead of showing the seeded cached HTML, so the flow asserts the content-source toggle and the title, not the cached text.
+- REG-163: the row merges its title and image into one node, so the flow checks every RTL row renders; it cannot compare image and title positions.
+- REG-169: the Bookmarks footer's Mark all as read acts without the bookmarks-specific confirmation, which belongs to the File menu entry.
+- REG-184: the large-content articles point at e2e.feedflow.local, so the reader shows "Unable to parse article"; the flow follows the selected row.
 - Settings has no in-window button; flows open it through the sidebar's add menu ("Import feed from OPML"), then pick the pane.
 
 ## Not applicable on desktop
@@ -67,5 +75,14 @@ The app reads these properties only in debug builds. A passing test deletes its 
 | --- | --- | --- |
 | REG-156 | 156-feed-source-reorder-smoke.yaml | Feature not in the desktop app: there is no feed list screen in Settings (`grep -rln "feedSourceList" desktopApp/src/jvmMain` prints nothing); desktop reorders in the sidebar, covered by REG-157. |
 | REG-164 | 164-drawer-swipe-gesture.yaml | Android edge-swipe gesture; desktop has no drawer gesture in the two-pane layout. |
+| REG-111 | 111-reader-image-viewer.yaml | Feature not in the desktop app: no reader image viewer (`grep -rli "imageViewer" desktopApp/src/jvmMain` prints nothing; the viewer is Android's `ReaderModeE2eIds.IMAGE_VIEWER`). |
+| REG-165 | ios/regression/165-ios-reader-scroll-retention.yaml | iOS background/foreground cycle. |
+| REG-166 | 166-reader-rotation-retention.yaml | Device rotation. |
+| REG-174 | 174-podcast-audio-playback.yaml | Feature not in the desktop app: no in-app audio playback; the desktop audio banner hands the episode to another app (covered by REG-173). |
+| REG-175 | 175-now-playing-navigation.yaml | Feature not in the desktop app: no Now playing indicator (`audioNowPlaying` has no desktop caller). |
+| REG-176 | 176-reader-speech-playback.yaml | Feature not in the desktop app: no reader speech (`readerModeTtsListen` has no desktop caller). |
+| REG-181 | ios/regression/181-adaptive-navigation.yaml | iOS orientation changes; Spectre cannot resize desktop windows. |
+| REG-187 | ios/regression/187-scene-snackbar.yaml | iOS sheet presentation. |
+| REG-188 | ios/regression/188-ios-reader-link-scroll-retention.yaml | iOS in-app browser. |
 | REG-182 | 182-feed-verification-actions.yaml | Feature not in the desktop app: no feed verification UI (`grep -rli "verif" desktopApp/src/jvmMain` prints nothing). |
 | REG-185 | 185-back-closes-drawer-and-filter.yaml | Android system Back. |

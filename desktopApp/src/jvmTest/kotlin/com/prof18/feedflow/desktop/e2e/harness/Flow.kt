@@ -175,3 +175,9 @@ class Flow internal constructor(private val rule: DesktopE2eRule) {
 /** Off-screen nodes in lazy and scrolled containers report isVisible with 1x1 bounds at the window origin. */
 val NodeSnapshotDto.isOnScreen: Boolean
     get() = isVisible && bounds.width > 1 && bounds.height > 1
+
+/** A mouse drag between two screen points, for swipe gestures. */
+fun Flow.swipe(fromX: Int, fromY: Int, toX: Int, toY: Int, steps: Int = 20, durationMs: Long = 400) {
+    automator.swipe(fromX, fromY, toX, toY, steps, durationMs)
+    idle()
+}

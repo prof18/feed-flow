@@ -67,12 +67,22 @@ The app reads these properties only in debug builds. A passing test deletes its 
 - REG-163: the row merges its title and image into one node, so the flow checks every RTL row renders; it cannot compare image and title positions.
 - REG-169: the Bookmarks footer's Mark all as read acts without the bookmarks-specific confirmation, which belongs to the File menu entry.
 - REG-184: the large-content articles point at e2e.feedflow.local, so the reader shows "Unable to parse article"; the flow follows the selected row.
+- REG-121: the Reading pane has no Browser row; desktop opens links in the system default browser.
+- REG-123: the Android-only background sync Wi-Fi and charging restrictions are skipped.
+- REG-124: desktop has no home "more" menu; the flow uses the Refresh feeds toolbar button (not pressed), Settings → Feed list for order and read articles, and Settings → Sync & storage → Delete week-old articles.
+- REG-132: the crash-reporting switch renders only in release builds, so the flow asserts it is absent.
+- REG-172: the sidebar is toggled with the article list toolbar's navigation button; the View menu shortcut is not reachable.
 - Settings has no in-window button; flows open it through the sidebar's add menu ("Import feed from OPML"), then pick the pane.
 
 ## Not applicable on desktop
 
 | ID | Mobile flow | Reason |
 | --- | --- | --- |
+| REG-115 | 115-notifications-profile.yaml | Feature not in the desktop app: no notification settings (`settingsNotificationsEnableAllTitle` has no desktop caller; the desktop Notifier is a no-op, desktop/di/DI.kt). |
+| REG-126 | 126-deep-link-routing.yaml | Desktop handles only add-feed links (`grep -rn "feedflow://feed" desktopApp/src/jvmMain` prints nothing); covered by REG-189. |
+| REG-127 | 127-notifications-secondary-settings.yaml | Feature not in the desktop app: no notification settings (same check as REG-115). |
+| REG-128 | 128-notifications-empty-state.yaml | Feature not in the desktop app: no notification settings (same check as REG-115). |
+| REG-137 | 137-reading-behavior-browser-selector-persistence.yaml | Desktop opens links in the system default browser; BrowserManager.kt has no browser list. |
 | REG-156 | 156-feed-source-reorder-smoke.yaml | Feature not in the desktop app: there is no feed list screen in Settings (`grep -rln "feedSourceList" desktopApp/src/jvmMain` prints nothing); desktop reorders in the sidebar, covered by REG-157. |
 | REG-164 | 164-drawer-swipe-gesture.yaml | Android edge-swipe gesture; desktop has no drawer gesture in the two-pane layout. |
 | REG-111 | 111-reader-image-viewer.yaml | Feature not in the desktop app: no reader image viewer (`grep -rli "imageViewer" desktopApp/src/jvmMain` prints nothing; the viewer is Android's `ReaderModeE2eIds.IMAGE_VIEWER`). |
@@ -81,6 +91,8 @@ The app reads these properties only in debug builds. A passing test deletes its 
 | REG-174 | 174-podcast-audio-playback.yaml | Feature not in the desktop app: no in-app audio playback; the desktop audio banner hands the episode to another app (covered by REG-173). |
 | REG-175 | 175-now-playing-navigation.yaml | Feature not in the desktop app: no Now playing indicator (`audioNowPlaying` has no desktop caller). |
 | REG-176 | 176-reader-speech-playback.yaml | Feature not in the desktop app: no reader speech (`readerModeTtsListen` has no desktop caller). |
+| REG-177 | 177-widget-refresh-settings.yaml | Android home-screen widgets. |
+| REG-179 | 179-share-existing-feed.yaml | Android share intent; desktop add-feed links are covered by REG-189 and DSK-004. |
 | REG-181 | ios/regression/181-adaptive-navigation.yaml | iOS orientation changes; Spectre cannot resize desktop windows. |
 | REG-187 | ios/regression/187-scene-snackbar.yaml | iOS sheet presentation. |
 | REG-188 | ios/regression/188-ios-reader-link-scroll-retention.yaml | iOS in-app browser. |

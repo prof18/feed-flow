@@ -71,12 +71,14 @@ fun Flow.openSidebarMenu(name: String) {
 fun Flow.clickMenuItem(text: String) = click(await("menu item '$text'") { menuItem(text) })
 
 /** Opens one entry of the sidebar's Add feed menu (Add feed, Feed Suggestions, Import feed from OPML). */
-fun Flow.openAddMenuItem(item: String) {
+fun Flow.openAddMenuItem(item: String, addButtonDescription: String = strings.addFeed) {
     repeat(CLICK_ATTEMPTS) {
         click(
             await("sidebar add button") {
                 nodes().firstOrNull {
-                    strings.addFeed in it.contentDescriptions && it.key.startsWith("${MAIN_SURFACE}0:") && it.isOnScreen
+                    addButtonDescription in it.contentDescriptions &&
+                        it.key.startsWith("${MAIN_SURFACE}0:") &&
+                        it.isOnScreen
                 }
             },
         )

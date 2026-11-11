@@ -63,7 +63,7 @@ The app reads these properties only in debug builds. A passing test deletes its 
 - REG-107: dragging a row with the mouse also clicks it, which opens the article and marks it read, so only the bookmark swipe direction is asserted.
 - REG-108: the grid layout renders as big image rows in the two-pane layout (grid needs the single-pane list).
 - REG-109: the feed order is changed in Settings → Feed list → Sort by Date; desktop has no home "Sort & filter" menu.
-- REG-160: the reader extracts the seeded articles from their live URLs instead of showing the seeded cached HTML, so the flow asserts the content-source toggle and the title, not the cached text.
+- REG-160, DSK-006: the desktop reader renders cached content as Markdown, but the shared seed stores mobile reader HTML, so the seeded article shows its HTML source as a code block. REG-160 asserts the content-source toggle and the title; DSK-006 waits on a desktop-format reader fixture.
 - REG-163: the row merges its title and image into one node, so the flow checks every RTL row renders; it cannot compare image and title positions.
 - REG-169: the Bookmarks footer's Mark all as read acts without the bookmarks-specific confirmation, which belongs to the File menu entry.
 - REG-184: the large-content articles point at e2e.feedflow.local, so the reader shows "Unable to parse article"; the flow follows the selected row.
@@ -77,6 +77,8 @@ The app reads these properties only in debug builds. A passing test deletes its 
 - REG-120: the CSV rows reference the feed by an id derived from the original OPML URL, so this flow imports the committed OPML unchanged; its e2e.feedflow.local host is an mDNS name that fails locally after Done.
 - REG-133: the home pending-upload action lives only in the native File menu; the flow checks the Back up now button on the linked Dropbox account instead, without running it.
 - REG-134, REG-162, REG-167: the article list scrolls with Spectre's scroll wheel; rows are tall, so a flow scrolls in steps of 30 notches.
+- DSK-001: while a query is active the Settings sidebar lists results instead of panes, and the row highlight is a timed tint with no semantics, so the flow checks the About pane heading and the row.
+- DSK-002: the menu-bar shortcuts do not reach the app (see above); the flow checks the reader's Next button, which backs the same Article menu action.
 - Settings has no in-window button; flows open it through the sidebar's add menu ("Import feed from OPML"), then pick the pane.
 
 ## Not applicable on desktop

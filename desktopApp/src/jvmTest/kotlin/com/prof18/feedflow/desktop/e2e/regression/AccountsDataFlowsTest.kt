@@ -19,6 +19,7 @@ import com.prof18.feedflow.desktop.testing.AccountE2eIds
 import com.prof18.feedflow.desktop.testing.ImportExportE2eIds
 import com.prof18.feedflow.shared.e2e.E2eSeedAccount
 import com.prof18.feedflow.shared.e2e.E2eSeedProfile
+import dev.sebastiano.spectre.agent.transport.NodeSnapshotDto
 import org.junit.Rule
 import org.junit.Test
 import java.io.File
@@ -282,32 +283,49 @@ class AccountsDataFlowsTest {
 
     /**
      * mark read on scroll: shared keyset pagination (docs/PAGINATION.md) on the desktop list; scrolling uses
-     * Spectre's scrollWheel (FACT scroll).
+     * Spectre's scrollWheel (FACT scroll). Guards issue #1319 like the Maestro flow: offset pagination over
+     * the unread-only query skipped articles 041-080, so article 050 and the last article must be reachable.
      */
     @Test
     fun `REG-162 pagination scroll read`() {
         val flow = e2e.start(Seed.PaginationScrollRead)
-        val first = flow.await("the first page") { flow.visibleArticleRows().firstOrNull() }
-        val ids = mutableSetOf<String>()
-        repeat(PAGE_SCROLLS) {
-            flow.visibleArticleRows().mapNotNullTo(ids) { it.testTag }
-            flow.scroll(flow.visibleArticleRows().last(), SCROLL_STEP)
-        }
-        assertTrue(ids.size > PAST_FIRST_PAGE, "pages kept loading: saw ${ids.size} rows")
-        assertTrue(first.testTag in ids)
+        flow.awaitText(scrollReadTitle(1))
+
+        flow.scrollTimelineTo(scrollReadTitle(MID_PAGE_ARTICLE), down = true)
+        flow.idle()
+        flow.scrollTimelineTo(SKIP_NEEDLE_TITLE, down = true)
+        flow.scrollTimelineTo(scrollReadTitle(LAST_SCROLL_READ_ARTICLE), down = true)
     }
 
-    // scroll read keeps earlier rows reachable: shared pagination on the desktop list (FACT scroll)
+    /**
+     * scroll read keeps earlier rows reachable: shared pagination on the desktop list (FACT scroll). As in
+     * the Maestro flow, rows scrolled past and marked read stay in the same timeline: the flow scrolls back
+     * up to the first article, then down past the first page to article 050.
+     */
     @Test
     fun `REG-167 scroll read auto hide`() {
         val flow = e2e.start(Seed.PaginationScrollRead)
-        val first = flow.await("the first page") { flow.visibleArticleRows().firstOrNull() }
-        repeat(PAGE_SCROLLS) { flow.scroll(flow.visibleArticleRows().last(), SCROLL_STEP) }
-        val seen = flow.visibleArticleRows().mapNotNull { it.testTag }
-        assertTrue(seen.isNotEmpty())
-        flow.clickSidebar(flow.strings.drawerTitleRead)
-        flow.scrollToTag(requireNotNull(first.testTag))
+        flow.awaitText(scrollReadTitle(1))
+
+        flow.scrollTimelineTo(scrollReadTitle(MID_PAGE_ARTICLE), down = true)
+        flow.idle()
+        flow.scrollTimelineTo(scrollReadTitle(1), down = false)
+        flow.scrollTimelineTo(SKIP_NEEDLE_TITLE, down = true)
     }
+
+    /** Scrolls the timeline until a row showing [title] is on screen; up uses the topmost row as the anchor. */
+    private fun Flow.scrollTimelineTo(title: String, down: Boolean): NodeSnapshotDto {
+        fun found() = visibleArticleRows().firstOrNull { title in it.texts }
+        repeat(MAX_TIMELINE_SCROLLS) {
+            found()?.let { return it }
+            val rows = visibleArticleRows()
+            val anchor = (if (down) rows.lastOrNull() else rows.firstOrNull()) ?: return await(title) { found() }
+            scroll(anchor, if (down) SCROLL_STEP else -SCROLL_STEP)
+        }
+        return await("row '$title' after $MAX_TIMELINE_SCROLLS scrolls") { found() }
+    }
+
+    private fun scrollReadTitle(index: Int) = "E2E Scroll Read Article ${index.toString().padStart(3, '0')}"
 
     /** The sidebar's import entry opens Settings with the import and export section expanded. */
     private fun Flow.openImportExport() {
@@ -355,7 +373,10 @@ class AccountsDataFlowsTest {
         const val CSV_BOOKMARKED_READ = "E2E Imported CSV Bookmarked Read Article"
         const val NEEDLE_TITLE = "E2E Large Article 045: Pagination Needle"
         const val PAST_FIRST_PAGE = 41
-        const val PAGE_SCROLLS = 25
+        const val MID_PAGE_ARTICLE = 35
+        const val LAST_SCROLL_READ_ARTICLE = 90
+        const val MAX_TIMELINE_SCROLLS = 150
+        const val SKIP_NEEDLE_TITLE = "E2E Scroll Read Article 050: Skip Needle"
         const val SCROLL_STEP = 30
     }
 }

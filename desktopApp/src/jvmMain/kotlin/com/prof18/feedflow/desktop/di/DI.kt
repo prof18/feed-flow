@@ -5,6 +5,7 @@ import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.DesktopConfig
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.ui.coilImageLoader
+import com.prof18.feedflow.desktop.ui.imageCacheDirectory
 import com.prof18.feedflow.shared.di.getWith
 import com.prof18.feedflow.shared.di.initKoinDesktop
 import com.prof18.feedflow.shared.domain.notification.Notifier
@@ -34,6 +35,7 @@ object DI {
                         coilImageLoader(
                             context = PlatformContext.INSTANCE,
                             debug = appConfig.appEnvironment.isDebug(),
+                            diskCacheDirectory = imageCacheDirectory(appConfig.appEnvironment),
                         )
                     }
 

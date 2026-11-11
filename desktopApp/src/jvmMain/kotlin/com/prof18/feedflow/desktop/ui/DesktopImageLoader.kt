@@ -9,7 +9,11 @@ import coil3.network.httpHeaders
 import coil3.request.crossfade
 import coil3.svg.SvgDecoder
 import coil3.util.DebugLogger
+import com.prof18.feedflow.core.utils.AppEnvironment
+import com.prof18.feedflow.core.utils.DesktopE2eProperties
 import okio.FileSystem
+import okio.Path
+import okio.Path.Companion.toPath
 
 private val imageAcceptHeaderInterceptor = Interceptor { chain ->
     val request = chain.request
@@ -27,9 +31,24 @@ private val imageAcceptHeaderInterceptor = Interceptor { chain ->
     }
 }
 
+private const val IMAGE_CACHE_FOLDER = "image_cache"
+
+/**
+ * The shared temporary folder, except for a debug app started by the desktop E2E suite: its cache lives
+ * in the run's own data folder, so a flow never reads or clears the cache of a development app.
+ */
+internal fun imageCacheDirectory(
+    appEnvironment: AppEnvironment,
+    read: (String) -> String? = System::getProperty,
+): Path {
+    val e2eDataDir = DesktopE2eProperties.debugValue(appEnvironment, DesktopE2eProperties.DATA_DIR, read)
+    return (e2eDataDir?.toPath() ?: FileSystem.SYSTEM_TEMPORARY_DIRECTORY) / IMAGE_CACHE_FOLDER
+}
+
 fun coilImageLoader(
     context: PlatformContext,
     debug: Boolean,
+    diskCacheDirectory: Path = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / IMAGE_CACHE_FOLDER,
 ): ImageLoader {
     return ImageLoader.Builder(context)
         .components {
@@ -44,7 +63,7 @@ fun coilImageLoader(
         }
         .diskCache {
             DiskCache.Builder()
-                .directory(FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "image_cache")
+                .directory(diskCacheDirectory)
                 .maxSizeBytes(size = 512L * 1024 * 1024)
                 .build()
         }

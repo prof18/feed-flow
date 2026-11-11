@@ -6,7 +6,7 @@ import java.awt.Dimension
 import java.awt.Window
 import kotlin.math.roundToInt
 
-internal val MAIN_WINDOW_MINIMUM_SIZE = DpSize(width = 480.dp, height = 360.dp)
+internal val MAIN_WINDOW_MINIMUM_SIZE = DpSize(width = 360.dp, height = 294.dp)
 
 /**
  * The size the main window opens at: the saved size, kept on the screen but never below the minimum.

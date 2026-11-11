@@ -52,9 +52,20 @@ The app reads these properties only in debug builds. A passing test deletes its 
 - SM-004: removing a bookmark from the reader toolbar has no confirmation on desktop (`removeBookmarkDialogMessage` has no desktop caller).
 - SM-005: the article list's footer "Mark all as read" button acts without a confirmation; the confirmation belongs to the File menu entry, which Spectre cannot reach.
 - SM-007: the desktop reader has no "Listen to article" action (`readerModeTtsListen` has no desktop caller), and the long-press tooltip step is an Android gesture.
+- REG-101: the Add feed window stays open after a successful add, ready for the next feed; the flow closes it.
+- REG-104, REG-129, REG-131, REG-183: desktop has no feed list screen and no article-list "more" menu, so Feed settings opens from the sidebar feed menu. REG-104 does not cover the fetch-failed warning, which no seed profile provides.
+- REG-147: the empty-library view offers Add feed and Import and export only; the Accounts and Feed Suggestions buttons are in the unreachable NoFeedsDialog.
+- REG-148, REG-158: desktop has a next-feed button in the article list footer instead of the pull gesture.
+- REG-155: in the two-pane layout "Open another feed" toggles the sidebar.
+- REG-157: desktop reorders by dragging sidebar rows directly; there are no reorder toggles.
+- REG-186: the URL-less article's context menu (no Share) is not covered, because article context menus cannot be opened.
 - Settings has no in-window button; flows open it through the sidebar's add menu ("Import feed from OPML"), then pick the pane.
 
 ## Not applicable on desktop
 
 | ID | Mobile flow | Reason |
 | --- | --- | --- |
+| REG-156 | 156-feed-source-reorder-smoke.yaml | Feature not in the desktop app: there is no feed list screen in Settings (`grep -rln "feedSourceList" desktopApp/src/jvmMain` prints nothing); desktop reorders in the sidebar, covered by REG-157. |
+| REG-164 | 164-drawer-swipe-gesture.yaml | Android edge-swipe gesture; desktop has no drawer gesture in the two-pane layout. |
+| REG-182 | 182-feed-verification-actions.yaml | Feature not in the desktop app: no feed verification UI (`grep -rli "verif" desktopApp/src/jvmMain` prints nothing). |
+| REG-185 | 185-back-closes-drawer-and-filter.yaml | Android system Back. |

@@ -73,12 +73,16 @@ class AccountsDataFlowsTest {
         flow.clickSidebar(flow.strings.drawerTitleTimeline)
         flow.awaitText(CSV_UNREAD)
         flow.awaitText(CSV_BOOKMARKED_UNREAD)
+        flow.assertAbsent(CSV_READ)
         flow.clickSidebar(flow.strings.drawerTitleRead)
         flow.awaitText(CSV_READ)
         flow.awaitText(CSV_BOOKMARKED_READ)
+        flow.assertAbsent(CSV_UNREAD)
         flow.clickSidebar(flow.strings.drawerTitleBookmarks)
         flow.awaitText(CSV_BOOKMARKED_UNREAD)
         flow.awaitText(CSV_BOOKMARKED_READ)
+        flow.assertAbsent(CSV_READ)
+        flow.assertAbsent(CSV_UNREAD)
     }
 
     // bookmarked export: desktop importexport/ImportExportScreen.desktop.kt (articlesExportFilterBookmarked)
@@ -292,7 +296,7 @@ class AccountsDataFlowsTest {
         flow.awaitText(scrollReadTitle(1))
 
         flow.scrollTimelineTo(scrollReadTitle(MID_PAGE_ARTICLE), down = true)
-        flow.idle()
+        flow.awaitScrollReadFlush()
         flow.scrollTimelineTo(SKIP_NEEDLE_TITLE, down = true)
         flow.scrollTimelineTo(scrollReadTitle(LAST_SCROLL_READ_ARTICLE), down = true)
     }
@@ -308,7 +312,7 @@ class AccountsDataFlowsTest {
         flow.awaitText(scrollReadTitle(1))
 
         flow.scrollTimelineTo(scrollReadTitle(MID_PAGE_ARTICLE), down = true)
-        flow.idle()
+        flow.awaitScrollReadFlush()
         flow.scrollTimelineTo(scrollReadTitle(1), down = false)
         flow.scrollTimelineTo(SKIP_NEEDLE_TITLE, down = true)
     }
@@ -323,6 +327,16 @@ class AccountsDataFlowsTest {
             scroll(anchor, if (down) SCROLL_STEP else -SCROLL_STEP)
         }
         return await("row '$title' after $MAX_TIMELINE_SCROLLS scrolls") { found() }
+    }
+
+    /**
+     * HomeViewModel writes scrolled-past rows as read only after SCROLL_READ_DEBOUNCE (2 s) without scrolling,
+     * and the unread query then shrinks. Waiting past it, as the Maestro flows do, is what exposes a
+     * pagination that skips rows; Spectre's idle wait settles the UI only.
+     */
+    private fun Flow.awaitScrollReadFlush() {
+        Thread.sleep(SCROLL_READ_FLUSH_MS)
+        idle()
     }
 
     private fun scrollReadTitle(index: Int) = "E2E Scroll Read Article ${index.toString().padStart(3, '0')}"
@@ -376,6 +390,7 @@ class AccountsDataFlowsTest {
         const val MID_PAGE_ARTICLE = 35
         const val LAST_SCROLL_READ_ARTICLE = 90
         const val MAX_TIMELINE_SCROLLS = 150
+        const val SCROLL_READ_FLUSH_MS = 4_000L
         const val SKIP_NEEDLE_TITLE = "E2E Scroll Read Article 050: Skip Needle"
         const val SCROLL_STEP = 30
     }

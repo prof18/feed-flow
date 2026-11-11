@@ -118,6 +118,22 @@ class RunnerDesktopTest(unittest.TestCase):
             self.assertEqual("FAIL", runner.result_label(results[2]))
             self.assertEqual("NOT RUN", runner.result_label(None))
 
+    def test_methods_sharing_an_id_keep_separate_logs(self) -> None:
+        card = desktop_e2e.DesktopCase("regression", "ArticleReaderFlowsTest", "REG-108 card layout", "REG-108", 1.0, False, False, "card")
+        grid = desktop_e2e.DesktopCase("regression", "ArticleReaderFlowsTest", "REG-108 grid layout", "REG-108", 1.0, False, False, "grid")
+        with tempfile.TemporaryDirectory() as tmp:
+            results = runner.desktop_flow_results([card, grid], Path(tmp))
+            self.assertNotEqual(results[0].log_path, results[1].log_path)
+            self.assertIn("card", results[0].log_path.read_text())
+
+    def test_summary_keeps_planned_mobile_suites_without_results(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "e2e/maestro/android/smoke").mkdir(parents=True)
+            (root / "e2e/maestro/android/smoke/001-first.yaml").write_text("appId: x")
+            rows = runner.suite_summary_rows([], ("android", "desktop"), ("smoke", "desktoponly"), root)
+        self.assertEqual([("android", "smoke", 0, 0, 0, 0)], rows)
+
     def test_setup_failed_detection(self) -> None:
         crash = "Process 'Gradle Test Executor 3' finished with non-zero exit value 137"
         self.assertTrue(runner.desktop_setup_failed(returncode=1, log_text=crash, failed_cases=0))

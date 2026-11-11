@@ -314,4 +314,5 @@
     <string name="desktop_accounts_backup_description">Dublē ziņu plūsmas, rakstu lasīšanas statusus un saglabāto rakstu kolekciju.</string>
     <string name="remove_bookmark_dialog_message">Vai tiešām vēlaties noņemt šo rakstu no saglabātajiem rakstiem?</string>
     <string name="mark_all_bookmarks_read_dialog_message">Vai tiešām vēlaties visus saglabātos rakstus atzīmēt kā lasītus?</string>
+    <string name="account_disconnect_server_message">Ziņu plūsmas, raksti, saglabātie raksti un rakstu lasīšanas statuss tiks noņemti no šīs ierīces. Jūsu konts serverī netiks mainīts, un, atkārtoti izveidojot savienojumu, dati tiks lejupielādēti no jauna. Ziņu plūsmas, kas tika aizstātas savienojuma laikā, netiks atjaunotas.</string>
 </resources>

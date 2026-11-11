@@ -212,7 +212,7 @@ fun Flow.setSwitch(windowTitle: String, title: String, on: Boolean) {
 fun Flow.dropdownIn(windowTitle: String, label: String): NodeSnapshotDto =
     scrollInWindow(windowTitle, "dropdown '$label'") { it.role == "DropdownList" && label in it.contentDescriptions }
 
-fun Flow.choose(windowTitle: String, label: String, option: String) {
+fun Flow.choose(windowTitle: String, label: String, option: String, expectSelected: Boolean = true) {
     click(dropdownIn(windowTitle, label))
     val window = awaitWindow(windowTitle)
     click(
@@ -223,7 +223,9 @@ fun Flow.choose(windowTitle: String, label: String, option: String) {
             }
         },
     )
-    await("'$label' to show '$option'") { Unit.takeIf { option in dropdownIn(windowTitle, label).texts } }
+    if (expectSelected) {
+        await("'$label' to show '$option'") { Unit.takeIf { option in dropdownIn(windowTitle, label).texts } }
+    }
 }
 
 fun Flow.articleImage(id: String): String = "article_image_${id.replace(Regex("[^A-Za-z0-9_]"), "_")}"

@@ -51,7 +51,7 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-// Kept apart from DesktopSettingsWindowTest: a native Compose window running on the EDT sends snapshot
+// Kept apart from native-window tests: a native Compose window running on the EDT sends snapshot
 // notifications that invalidate this rule's layout nodes off the test thread, which Compose rejects.
 class DesktopSettingsContentTest {
     @get:Rule

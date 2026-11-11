@@ -1,5 +1,6 @@
 package com.prof18.feedflow.desktop.e2e.harness
 
+import dev.sebastiano.spectre.agent.SpectreAgentException
 import dev.sebastiano.spectre.agent.transport.NodeSnapshotDto
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
@@ -22,8 +23,18 @@ fun Flow.awaitTextIn(windowTitle: String, text: String, exact: Boolean = true): 
         nodesIn(windowTitle).firstOrNull { node -> node.isOnScreen && node.matches(text, exact) }
     }
 
-fun Flow.clickIn(windowTitle: String, text: String, exact: Boolean = true) =
+/**
+ * Clicks the node showing [text] in a window. A dialog that recomposes gives the node a new key, so a
+ * click that fails on the old key looks the node up again by its text instead of retrying the stale one.
+ */
+fun Flow.clickIn(windowTitle: String, text: String, exact: Boolean = true) {
+    repeat(CLICK_ATTEMPTS - 1) {
+        val clicked = runCatching { click(awaitTextIn(windowTitle, text, exact)) }
+        if (clicked.isSuccess) return
+        if (clicked.exceptionOrNull() !is SpectreAgentException) throw requireNotNull(clicked.exceptionOrNull())
+    }
     click(awaitTextIn(windowTitle, text, exact))
+}
 
 fun Flow.awaitTagIn(windowTitle: String, tag: String): NodeSnapshotDto =
     await("tag '$tag' in window '$windowTitle'") { nodesIn(windowTitle).firstOrNull { it.testTag == tag } }
@@ -220,16 +231,14 @@ fun Flow.dropdownIn(windowTitle: String, label: String): NodeSnapshotDto =
     scrollInWindow(windowTitle, "dropdown '$label'") { it.role == "DropdownList" && label in it.contentDescriptions }
 
 fun Flow.choose(windowTitle: String, label: String, option: String, expectSelected: Boolean = true) {
-    click(dropdownIn(windowTitle, label))
     val window = awaitWindow(windowTitle)
-    click(
-        await("option '$option' of '$label'") {
-            nodes().firstOrNull {
-                it.isOnScreen && it.role == "RadioButton" && it.texts.firstOrNull() == option &&
-                    it.key.startsWith("${window.surfaceId}:") && !it.key.startsWith("${window.surfaceId}:0:")
-            }
-        },
-    )
+    fun optionNode() = nodes().firstOrNull {
+        it.isOnScreen && it.role == "RadioButton" && it.texts.firstOrNull() == option &&
+            it.key.startsWith("${window.surfaceId}:") && !it.key.startsWith("${window.surfaceId}:0:")
+    }
+    // A click on the dropdown is sometimes lost while the pane recomposes; click until its menu opens.
+    clickUntil("the '$label' menu", target = { dropdownIn(windowTitle, label) }, done = { optionNode() != null })
+    click(await("option '$option' of '$label'") { optionNode() })
     if (expectSelected) {
         await("'$label' to show '$option'") { Unit.takeIf { option in dropdownIn(windowTitle, label).texts } }
     }

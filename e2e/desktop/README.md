@@ -23,7 +23,7 @@ The script runs `./gradlew --quiet --console=plain :desktopApp:desktopE2eTest -P
 
 `DesktopE2eRule` (`desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/e2e/harness/`) gives every test:
 
-- an isolated home at `/tmp/ffe2e/<8 letters>`, with the app's data folder in `data/` (`feedflow.e2e.dataDir`). The path is short on purpose: the app binds a Unix socket there and macOS limits socket paths to 104 bytes.
+- an isolated home at `/tmp/ffe2e/<8 letters>`, with the app's data folder in `data/` (`feedflow.e2e.dataDir`), which also holds the image cache, so a flow never touches a development app's cache. The path is short on purpose: the app binds a Unix socket there and macOS limits socket paths to 104 bytes.
 - the Java preferences node `feedflow-e2e` (`feedflow.e2e.prefsNode`), removed before and after each test. The rule stores a 1280×800 window size in it before each launch, because a fresh node opens an 800×600 window that uses the single-pane layout.
 - a startup seed (`feedflow.e2e.seed=<action>:<profile>[:<account>]`, plus `feedflow.e2e.seedAudioUrl`), applied through the shared `E2eSeedRunner` before the main window appears. The seed stores cached reader content in the format the platform caches: Markdown on desktop, HTML on Android and iOS. A failed seed exits the app with code 86 and the `FEEDFLOW_E2E_SEED_FAILED` marker on stderr.
 - a scripted answer for the import and export file dialog (`feedflow.e2e.fileDialogResponse`): the first line of `file-dialog-response.txt` is the chosen file, and an empty or missing file means Cancel.

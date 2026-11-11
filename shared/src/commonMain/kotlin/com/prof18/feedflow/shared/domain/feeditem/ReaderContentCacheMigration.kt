@@ -20,7 +20,7 @@ internal class ReaderContentCacheMigration(
         settingsRepository.setReaderContentCacheVersion(CURRENT_VERSION)
     }
 
-    private companion object {
+    internal companion object {
         const val CURRENT_VERSION = 2
     }
 }

@@ -142,7 +142,7 @@ Use the debug seeding deep links documented in that guide. Do not depend on live
 - The desktop suite lives in `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/e2e` and runs with `e2e/scripts/run-desktop.sh [smoke|regression|desktoponly|all]` or `./gradlew --quiet --console=plain :desktopApp:desktopE2eTest`; macOS only, local only, never on CI. It opens real FeedFlow windows, so run one at a time.
 - Follow `e2e/desktop/README.md` to write or run flows; flows reuse the mobile IDs and the shared `E2eSeedRunner` profiles.
 - `allTests` and `check` do not run it; `jvmTest` excludes the `e2e` package.
-- When a user-visible desktop feature changes, add or update its flow, or record why it cannot be covered in `e2e/desktop/README.md`.
+- When adding or changing a user-visible feature that exists on desktop, add or update its desktop flow alongside the Maestro coverage, if the behavior can be exercised with existing app UI, the `feedflow.e2e.seed` profiles, fixtures, or test tooling without adding production-only code paths. A desktop-only feature gets a `DSK-` flow in `desktoponly`. If desktop coverage is not feasible, record why in `e2e/desktop/README.md`, and keep the Desktop column of `e2e/maestro/maestro-e2e-tests.md` current. Do not mark a test done until the desktop flow passes.
 
 ### iOS Project Generation
 
@@ -193,7 +193,8 @@ Before handing off you must:
 4. If you changed iOS code, run `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 18 Pro' build -quiet` before handoff; rerun without `-quiet` only if you need the full diagnostics
 5. If you changed iOS code, run `.scripts/ios-tests.sh`
 6. If you changed user-visible behaviour, check whether a website FAQ answer needs updating or a new entry is warranted (see "Website FAQ")
-7. Fix any issues found during the above steps
+7. If you added or changed a user-visible feature, add or update its Maestro flows and, when the feature exists on desktop, its desktop E2E flow (see "Maestro E2E tests" and "Desktop E2E tests"), and run the flows you touched
+8. Fix any issues found during the above steps
 
 ### Initial Setup (for building from scratch)
 ```bash

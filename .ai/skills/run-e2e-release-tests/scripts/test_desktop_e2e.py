@@ -11,6 +11,8 @@ import os
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -100,6 +102,62 @@ class RunnerDesktopTest(unittest.TestCase):
     def test_all_platforms_and_suites_include_desktop(self) -> None:
         self.assertEqual(("android", "ios", "desktop"), runner.selected_platforms("all"))
         self.assertIn("desktoponly", runner.selected_suites("all"))
+
+    def test_desktop_runs_after_the_mobile_platforms(self) -> None:
+        events: list[str] = []
+        lock = threading.Lock()
+
+        def fake_run(platform: str, suites: tuple[str, ...]) -> str:
+            with lock:
+                events.append(f"start {platform}")
+            time.sleep(0.05)
+            with lock:
+                events.append(f"end {platform}")
+            return platform
+
+        plan = [("android", ("smoke",)), ("ios", ("smoke",)), ("desktop", ("smoke",))]
+        results = runner.run_planned_platforms(plan, fake_run)
+
+        self.assertEqual({"android": "android", "ios": "ios", "desktop": "desktop"}, results)
+        desktop_start = events.index("start desktop")
+        self.assertLess(events.index("end android"), desktop_start)
+        self.assertLess(events.index("end ios"), desktop_start)
+        # The two mobile platforms still overlap.
+        self.assertLess(events.index("start ios"), events.index("end android"))
+
+    def test_desktoponly_is_planned_for_desktop_only(self) -> None:
+        plan, notes = runner.plan_platforms(("android", "ios", "desktop"), ("smoke", "desktoponly"))
+        self.assertEqual(
+            [("android", ("smoke",)), ("ios", ("smoke",)), ("desktop", ("smoke", "desktoponly"))],
+            plan,
+        )
+        self.assertEqual([], notes)
+
+        plan, notes = runner.plan_platforms(("android", "ios", "desktop"), ("desktoponly",))
+        self.assertEqual([("desktop", ("desktoponly",))], plan)
+        self.assertEqual(2, len(notes))
+        self.assertIn("android", notes[0])
+
+    def test_mobile_desktoponly_run_is_refused(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            argv = ["run_e2e_release_tests.py", "--platform", "android", "--suite", "desktoponly", "--output-dir", tmp]
+            with mock.patch.object(sys, "argv", argv), mock.patch.object(
+                runner, "find_repo_root", return_value=Path(tmp)
+            ), mock.patch.object(runner, "run_platform_tests") as run_platform:
+                exit_code = runner.main()
+        self.assertEqual(2, exit_code)
+        run_platform.assert_not_called()
+
+    def test_mobile_suite_without_flows_is_a_setup_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "e2e/maestro/android/smoke").mkdir(parents=True)
+            (root / "e2e/maestro/android/smoke/001-first.yaml").write_text("appId: x")
+            failures = runner.missing_flow_failures(root, root / "out", "android", ("smoke", "regression"))
+            log_text = failures[0].log_path.read_text()
+        self.assertEqual(1, len(failures))
+        self.assertNotEqual(0, failures[0].returncode)
+        self.assertIn("e2e/maestro/android/regression", log_text)
 
     def test_desktop_flow_results(self) -> None:
         passed = desktop_e2e.DesktopCase("smoke", "SmokeFlowsTest", "SM-001 first launch empty", "SM-001", 2.0, True, False, "")

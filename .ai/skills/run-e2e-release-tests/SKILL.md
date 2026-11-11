@@ -51,7 +51,7 @@ Run FeedFlow's full local E2E release gate across Android, iOS and desktop, then
 
 ## Behavior
 
-When several platforms are selected, the script runs them in parallel. Each platform still builds and installs once, pushes fixtures, then runs every YAML flow for that platform in sorted order from:
+When Android and iOS are both selected, the script runs them in parallel; desktop runs after them, so its real app windows do not compete with the mobile builds for CPU and memory. The `desktoponly` suite runs on desktop only: with `--suite desktoponly` the mobile platforms are skipped with a note, and a run that leaves nothing to do (for example `--platform android --suite desktoponly`) exits with code 2. A requested Maestro suite folder with no YAML flows is a setup failure, not an empty pass. Each mobile platform still builds and installs once, pushes fixtures, then runs every YAML flow for that platform in sorted order from:
 
 - `e2e/maestro/android/smoke`
 - `e2e/maestro/android/regression`

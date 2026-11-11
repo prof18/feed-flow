@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Run FeedFlow Maestro release tests and write Markdown and HTML reports."""
+"""Run FeedFlow E2E release tests (Maestro on Android and iOS, Spectre on desktop) and write reports."""
 
 from __future__ import annotations
 
 import argparse
+import fcntl
 from concurrent.futures import ThreadPoolExecutor
 import html
 import json
@@ -18,10 +19,18 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
+from desktop_e2e import DesktopCase, parse_junit_dir
+
 
 ANDROID_APP_ID = "com.prof18.feedflow.debug"
 IOS_SIMULATOR_NAME = "iPhone 18 Pro"
-SUITES = ("smoke", "regression")
+SUITES = ("smoke", "regression", "desktoponly")
+# Desktop E2E suite (e2e/desktop/README.md); paths are relative to the repository root.
+DESKTOP_JUNIT_RESULTS_DIR = Path("desktopApp/build/test-results/desktopE2eTest")
+DESKTOP_EVIDENCE_DIR = Path("desktopApp/build/reports/desktop-e2e")
+DESKTOP_RUNNER_LOCK = Path("/tmp/ffe2e/runner.lock")
+DESKTOP_CRASH_MARKER = "finished with non-zero exit value"
+DESKTOP_FAILING_TESTS_MARKER = "There were failing tests"
 COMMAND_TIMEOUT_RETURN_CODE = 124
 MAESTRO_FLOW_TIMEOUT_SECONDS = 180
 MAESTRO_MAX_ATTEMPTS = 3
@@ -57,6 +66,7 @@ class FlowResult:
     returncode: int
     seconds: float
     log_path: Path
+    skipped: bool = False
 
 
 @dataclass
@@ -76,17 +86,17 @@ class PlatformRunResult:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run FeedFlow Maestro E2E release validation and generate HTML and Markdown reports."
+        description="Run FeedFlow E2E release validation (Android, iOS, desktop) and generate HTML and Markdown reports."
     )
     parser.add_argument(
         "--platform",
-        choices=("all", "android", "ios"),
+        choices=("all", "android", "ios", "desktop"),
         default="all",
         help="Platform suite to run. Defaults to all.",
     )
     parser.add_argument(
         "--suite",
-        choices=("all", "smoke", "regression"),
+        choices=("all", "smoke", "regression", "desktoponly"),
         default="all",
         help="Suite to run. Defaults to all.",
     )
@@ -266,7 +276,7 @@ def print_text(message: str) -> None:
 
 def selected_platforms(platform_arg: str) -> tuple[str, ...]:
     if platform_arg == "all":
-        return ("android", "ios")
+        return ("android", "ios", "desktop")
     return (platform_arg,)
 
 
@@ -718,6 +728,103 @@ def prepare_platform(
     return results
 
 
+def desktop_gradle_command(suite: str) -> list[str]:
+    return [
+        "./gradlew",
+        "--quiet",
+        "--console=plain",
+        ":desktopApp:desktopE2eTest",
+        f"-Pfeedflow.e2eSuite={suite}",
+    ]
+
+
+def desktop_setup_failed(returncode: int, log_text: str, failed_cases: int) -> bool:
+    """A failed Gradle run is a setup failure unless it only reports failing flows."""
+    if returncode == 0:
+        return False
+    return (
+        DESKTOP_CRASH_MARKER in log_text
+        or DESKTOP_FAILING_TESTS_MARKER not in log_text
+        or failed_cases == 0
+    )
+
+
+def desktop_flow_results(cases: list[DesktopCase], output_dir: Path) -> list[FlowResult]:
+    results: list[FlowResult] = []
+    for case in cases:
+        flow_path = Path("desktop") / case.suite / case.class_name / case.name
+        log_path = output_dir / "flows/desktop" / case.suite / case.class_name / f"{case.flow_id}.log"
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        log_path.write_text(case.details + "\n", encoding="utf-8")
+        results.append(
+            FlowResult(
+                platform="desktop",
+                suite=case.suite,
+                flow_path=flow_path,
+                returncode=0 if case.passed or case.skipped else 1,
+                seconds=case.seconds,
+                log_path=log_path,
+                skipped=case.skipped,
+            )
+        )
+    return results
+
+
+def run_desktop_tests(
+    repo_root: Path,
+    output_dir: Path,
+    suites: tuple[str, ...],
+    env: dict[str, str],
+    lock_path: Path | None = None,
+    junit_dir: Path | None = None,
+    evidence_dir: Path | None = None,
+    gradle_command: list[str] | None = None,
+) -> PlatformRunResult:
+    """Runs one Gradle invocation per suite; desktop needs no device, atc lease or feed restore."""
+    setup_log = output_dir / "setup/desktop/00-preflight.log"
+    if sys.platform != "darwin":
+        return PlatformRunResult(
+            "desktop", [preflight_failure("desktop preflight", setup_log, "Desktop E2E runs only on macOS.")], []
+        )
+    lock_path = lock_path or DESKTOP_RUNNER_LOCK
+    junit_dir = junit_dir or repo_root / DESKTOP_JUNIT_RESULTS_DIR
+    evidence_dir = evidence_dir or repo_root / DESKTOP_EVIDENCE_DIR
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("w") as lock_file:
+        try:
+            fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            message = f"Another desktop E2E runner is active ({lock_path} is locked)."
+            return PlatformRunResult("desktop", [preflight_failure("desktop preflight", setup_log, message)], [])
+
+        setup_results: list[CommandResult] = []
+        flow_results: list[FlowResult] = []
+        for suite in suites:
+            shutil.rmtree(junit_dir, ignore_errors=True)
+            shutil.rmtree(evidence_dir, ignore_errors=True)
+            command = gradle_command or desktop_gradle_command(suite)
+            gradle = run_command(
+                f"desktop {suite} suite",
+                command,
+                repo_root,
+                output_dir / f"setup/desktop/{suite}.log",
+                env=env,
+            )
+            suite_dir = output_dir / "desktop" / suite
+            cases: list[DesktopCase] = []
+            if junit_dir.is_dir():
+                shutil.copytree(junit_dir, suite_dir / "junit", dirs_exist_ok=True)
+                cases = parse_junit_dir(suite_dir / "junit")
+            if evidence_dir.is_dir():
+                shutil.copytree(evidence_dir, suite_dir / "evidence", dirs_exist_ok=True)
+            failed_cases = sum(1 for case in cases if not case.passed and not case.skipped)
+            log_text = read_log_text(gradle.log_path)
+            setup_returncode = 1 if desktop_setup_failed(gradle.returncode, log_text, failed_cases) else 0
+            setup_results.append(CommandResult(gradle.name, setup_returncode, gradle.seconds, gradle.log_path))
+            flow_results.extend(desktop_flow_results(cases, output_dir))
+        return PlatformRunResult("desktop", setup_results, flow_results)
+
+
 def run_platform_tests(
     repo_root: Path,
     output_dir: Path,
@@ -729,6 +836,8 @@ def run_platform_tests(
     maestro_env: list[str],
 ) -> PlatformRunResult:
     env = base_env.copy()
+    if platform == "desktop":
+        return run_desktop_tests(repo_root, output_dir, suites, env)
     setup_results = prepare_platform(repo_root, output_dir, platform, env, requested_target, leases)
     if not setup_failed(setup_results):
         if platform == "android":
@@ -938,6 +1047,30 @@ def analyze_failure(log_path: Path, returncode: int, context: str) -> FailureAna
     )
 
 
+def planned_flow_keys(
+    repo_root: Path,
+    platform: str,
+    suite: str,
+    flow_results: list[FlowResult],
+) -> list[str]:
+    """Rows a report lists for a platform and suite: Maestro YAML files, or the desktop JUnit cases."""
+    if platform == "desktop":
+        return sorted(
+            str(result.flow_path)
+            for result in flow_results
+            if result.platform == platform and result.suite == suite
+        )
+    return [str(path.relative_to(repo_root)) for path in flow_files(repo_root, platform, suite)]
+
+
+def is_failed(result: FlowResult) -> bool:
+    return result.returncode != 0
+
+
+def is_passed(result: FlowResult) -> bool:
+    return result.returncode == 0 and not result.skipped
+
+
 def write_report(
     report_path: Path,
     setup_results: dict[str, list[CommandResult]],
@@ -952,34 +1085,29 @@ def write_report(
         for result in results
         if result.returncode != 0
     ]
-    failed_flows = [result for result in flow_results if result.returncode != 0]
-    passed_flows = [result for result in flow_results if result.returncode == 0]
+    failed_flows = [result for result in flow_results if is_failed(result)]
+    passed_flows = [result for result in flow_results if is_passed(result)]
+    skipped_flows = [result for result in flow_results if result.skipped]
     status = "FAILED" if failed_setup or failed_flows else "PASSED"
 
-    lines.append(f"# Maestro Release Test Report")
+    lines.append(f"# E2E Release Test Report")
     lines.append("")
     lines.append(f"- Status: {status}")
     lines.append(f"- Generated: {datetime.now().isoformat(timespec='seconds')}")
     lines.append(f"- Platforms: {', '.join(platforms)}")
     lines.append(f"- Suites: {', '.join(suites)}")
-    lines.append(f"- Flow results: {len(passed_flows)} passed, {len(failed_flows)} failed")
+    lines.append(
+        f"- Flow results: {len(passed_flows)} passed, {len(failed_flows)} failed, {len(skipped_flows)} skipped"
+    )
     lines.append(f"- Log directory: `{report_path.parent}`")
     lines.append("")
 
     lines.append("## Summary")
     lines.append("")
-    lines.append("| Platform | Suite | Passed | Failed | Total |")
-    lines.append("| --- | --- | ---: | ---: | ---: |")
-    for platform in platforms:
-        for suite in suites:
-            matching = [
-                result
-                for result in flow_results
-                if result.platform == platform and result.suite == suite
-            ]
-            passed = sum(1 for result in matching if result.returncode == 0)
-            failed = sum(1 for result in matching if result.returncode != 0)
-            lines.append(f"| {platform} | {suite} | {passed} | {failed} | {len(matching)} |")
+    lines.append("| Platform | Suite | Passed | Failed | Skipped | Total |")
+    lines.append("| --- | --- | ---: | ---: | ---: | ---: |")
+    for platform, suite, passed, failed, skipped, total in suite_summary_rows(flow_results, platforms, suites):
+        lines.append(f"| {platform} | {suite} | {passed} | {failed} | {skipped} | {total} |")
     lines.append("")
 
     if failed_setup:
@@ -1016,7 +1144,7 @@ def write_report(
     lines.append("| Platform | Suite | Flow | Result | Seconds | Analysis | Log |")
     lines.append("| --- | --- | --- | --- | ---: | --- | --- |")
     for result in flow_results:
-        outcome = "PASS" if result.returncode == 0 else "FAIL"
+        outcome = result_label(result)
         analysis = analyze_failure(result.log_path, result.returncode, str(result.flow_path))
         analysis_text = "-" if result.returncode == 0 else analysis.classification
         lines.append(
@@ -1039,7 +1167,8 @@ def suite_summary_rows(
     flow_results: list[FlowResult],
     platforms: tuple[str, ...],
     suites: tuple[str, ...],
-) -> list[tuple[str, str, int, int, int]]:
+) -> list[tuple[str, str, int, int, int, int]]:
+    """Per platform and suite: passed, failed, skipped, total. Pairs with no results are left out."""
     rows = []
     for platform in platforms:
         for suite in suites:
@@ -1048,22 +1177,35 @@ def suite_summary_rows(
                 for result in flow_results
                 if result.platform == platform and result.suite == suite
             ]
-            passed = sum(1 for result in matching if result.returncode == 0)
-            failed = sum(1 for result in matching if result.returncode != 0)
-            rows.append((platform, suite, passed, failed, len(matching)))
+            if not matching:
+                continue
+            passed = sum(1 for result in matching if is_passed(result))
+            failed = sum(1 for result in matching if is_failed(result))
+            skipped = sum(1 for result in matching if result.skipped)
+            rows.append((platform, suite, passed, failed, skipped, len(matching)))
     return rows
 
 
-def result_class(returncode: int | None) -> str:
+def code_class(returncode: int | None) -> str:
     if returncode is None:
         return "not-run"
     return "passed" if returncode == 0 else "failed"
 
 
-def result_label(returncode: int | None) -> str:
-    if returncode is None:
+def result_class(result: FlowResult | None) -> str:
+    if result is None:
+        return "not-run"
+    if result.skipped:
+        return "skipped"
+    return code_class(result.returncode)
+
+
+def result_label(result: FlowResult | None) -> str:
+    if result is None:
         return "NOT RUN"
-    return "PASS" if returncode == 0 else "FAIL"
+    if result.skipped:
+        return "SKIP"
+    return "PASS" if result.returncode == 0 else "FAIL"
 
 
 def write_html_report(
@@ -1080,10 +1222,10 @@ def write_html_report(
         for result in results
         if result.returncode != 0
     ]
-    failed_flows = [result for result in flow_results if result.returncode != 0]
-    passed_flows = [result for result in flow_results if result.returncode == 0]
+    failed_flows = [result for result in flow_results if is_failed(result)]
+    passed_flows = [result for result in flow_results if is_passed(result)]
     total_planned = sum(
-        len(flow_files(repo_root, platform, suite))
+        len(planned_flow_keys(repo_root, platform, suite, flow_results))
         for platform in platforms
         for suite in suites
     )
@@ -1143,6 +1285,7 @@ def write_html_report(
         ".badge.passed { color: var(--pass); background: var(--pass-bg); }",
         ".badge.failed { color: var(--fail); background: var(--fail-bg); }",
         ".badge.not-run { color: var(--skip); background: var(--skip-bg); }",
+        ".badge.skipped { color: var(--skip); background: var(--skip-bg); }",
         ".analysis { max-width: 340px; }",
         ".evidence { color: var(--muted); max-width: 360px; }",
         ".empty { color: var(--muted); background: var(--paper); border: 1px dashed var(--line); border-radius: 8px; padding: 16px; }",
@@ -1178,17 +1321,18 @@ def write_html_report(
             "<div>",
             "<h2>Suite Summary</h2>",
             "<table>",
-            "<thead><tr><th>Platform</th><th>Suite</th><th>Passed</th><th>Failed</th><th>Ran</th></tr></thead>",
+            "<thead><tr><th>Platform</th><th>Suite</th><th>Passed</th><th>Failed</th><th>Skipped</th><th>Ran</th></tr></thead>",
             "<tbody>",
         ]
     )
-    for platform, suite, passed, failed, total in suite_summary_rows(flow_results, platforms, suites):
+    for platform, suite, passed, failed, skipped, total in suite_summary_rows(flow_results, platforms, suites):
         lines.append(
             "<tr>"
             f"<td>{html.escape(platform)}</td>"
             f"<td>{html.escape(suite)}</td>"
             f"<td>{passed}</td>"
             f"<td>{failed}</td>"
+            f"<td>{skipped}</td>"
             f"<td>{total}</td>"
             "</tr>"
         )
@@ -1197,7 +1341,7 @@ def write_html_report(
         platform_status = setup_status(setup_results, platform)
         lines.append(
             f'<details open><summary>{html.escape(platform.title())} setup '
-            f'<span class="badge {result_class(0 if platform_status == "passed" else None if platform_status == "not run" else 1)}">'
+            f'<span class="badge {code_class(0 if platform_status == "passed" else None if platform_status == "not run" else 1)}">'
             f"{html.escape(platform_status.upper())}</span></summary>"
         )
         lines.append(
@@ -1212,7 +1356,7 @@ def write_html_report(
             lines.append(
                 "<tr>"
                 f"<td>{html.escape(result.name)}</td>"
-                f'<td><span class="badge {result_class(result.returncode)}">{result.returncode}</span></td>'
+                f'<td><span class="badge {code_class(result.returncode)}">{result.returncode}</span></td>'
                 f"<td>{result.seconds:.1f}</td>"
                 f'<td class="analysis">{classification}</td>'
                 f'<td class="analysis">{reason}</td>'
@@ -1258,22 +1402,23 @@ def write_html_report(
     lines.append("<h2>All Tests</h2>")
     for platform in platforms:
         for suite in suites:
-            planned_flows = flow_files(repo_root, platform, suite)
+            planned_keys = planned_flow_keys(repo_root, platform, suite, flow_results)
+            if not planned_keys:
+                continue
             lines.append(
                 f"<details open><summary>{html.escape(platform.title())} {html.escape(suite)} "
-                f"({len(planned_flows)} tests)</summary>"
+                f"({len(planned_keys)} tests)</summary>"
             )
             lines.append("<table>")
             lines.append("<thead><tr><th>Result</th><th>Flow</th><th>Seconds</th><th>Analysis</th><th>Log</th></tr></thead>")
             lines.append("<tbody>")
-            for flow_path in planned_flows:
-                relative_flow = flow_path.relative_to(repo_root)
-                result = flow_result_by_key.get((platform, suite, str(relative_flow)))
-                status_class = result_class(result.returncode if result else None)
-                label = result_label(result.returncode if result else None)
+            for key in planned_keys:
+                result = flow_result_by_key.get((platform, suite, key))
+                status_class = result_class(result)
+                label = result_label(result)
                 seconds = f"{result.seconds:.1f}" if result else "-"
                 analysis_cell = "-"
-                if result and result.returncode != 0:
+                if result and is_failed(result):
                     analysis_cell = html.escape(
                         short_text(
                             analyze_failure(
@@ -1291,7 +1436,7 @@ def write_html_report(
                 lines.append(
                     "<tr>"
                     f'<td><span class="badge {status_class}">{label}</span></td>'
-                    f"<td><code>{html.escape(str(relative_flow))}</code></td>"
+                    f"<td><code>{html.escape(key)}</code></td>"
                     f"<td>{seconds}</td>"
                     f'<td class="analysis">{analysis_cell}</td>'
                     f"<td>{log_cell}</td>"
@@ -1317,7 +1462,10 @@ def main() -> int:
     print_line(f"Repo root: {repo_root}")
     print_line(f"Report directory: {output_dir}")
 
-    missing_tools = [tool for tool in ("maestro", "python3") if not command_exists(tool)]
+    needs_maestro = "android" in platforms or "ios" in platforms
+    missing_tools = [
+        tool for tool in (("maestro", "python3") if needs_maestro else ("python3",)) if not command_exists(tool)
+    ]
     if "android" in platforms and not command_exists("adb"):
         missing_tools.append("adb")
     if "ios" in platforms:
@@ -1344,6 +1492,7 @@ def main() -> int:
     requested_targets = {
         "android": args.android_serial or env.get("ANDROID_SERIAL"),
         "ios": args.ios_udid or env.get("SIMULATOR_UDID"),
+        "desktop": None,
     }
 
     setup_results: dict[str, list[CommandResult]] = {}
@@ -1395,7 +1544,7 @@ def main() -> int:
     failed_setup_count = sum(
         1 for results in setup_results.values() for result in results if result.returncode != 0
     )
-    failed_flow_count = sum(1 for result in flow_results if result.returncode != 0)
+    failed_flow_count = sum(1 for result in flow_results if is_failed(result))
 
     print_line(f"\nHTML report written: {html_report_path}")
     print_line(f"Markdown report written: {markdown_report_path}")

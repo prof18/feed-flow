@@ -1,11 +1,11 @@
 ---
 name: run-e2e-release-tests
-description: Run the full FeedFlow Maestro release validation suite and produce HTML and Markdown pass/fail reports. Use when the user asks to run all Maestro tests, validate E2E coverage before release, check Android and iOS Maestro flows, or summarize failed FeedFlow E2E flows.
+description: Run the full FeedFlow E2E release validation suites (Android and iOS through Maestro, desktop through Spectre) and produce HTML and Markdown pass/fail reports. Use when the user asks to run all Maestro or E2E tests, validate E2E coverage before release, check the Android, iOS or desktop flows, or summarize failed FeedFlow E2E flows.
 ---
 
 # Run E2E Release Tests
 
-Run FeedFlow's full local Maestro release gate across Android and iOS, then report what passed, what failed, and where the logs are.
+Run FeedFlow's full local E2E release gate across Android, iOS and desktop, then report what passed, what failed, and where the logs are.
 
 ## Workflow
 
@@ -25,6 +25,9 @@ Run FeedFlow's full local Maestro release gate across Android and iOS, then repo
    # iOS only
    python3 .ai/skills/run-e2e-release-tests/scripts/run_e2e_release_tests.py --platform ios
 
+   # Desktop only (macOS)
+   python3 .ai/skills/run-e2e-release-tests/scripts/run_e2e_release_tests.py --platform desktop
+
    # Smoke only while debugging
    python3 .ai/skills/run-e2e-release-tests/scripts/run_e2e_release_tests.py --suite smoke
    ```
@@ -38,7 +41,8 @@ Run FeedFlow's full local Maestro release gate across Android and iOS, then repo
 
 ## Preconditions
 
-- Maestro, `python3` and `adb` must be installed.
+- Maestro, `python3` and `adb` must be installed for Android and iOS; desktop needs only `python3` and the Gradle wrapper.
+- Desktop runs only on macOS. It opens real FeedFlow windows, needs no device and no atc lease, and must not overlap another desktop run: `/tmp/ffe2e/runner.lock` refuses a second runner, and the test JVM's `/tmp/ffe2e/run.lock` refuses a second Gradle run. See `e2e/desktop/README.md`.
 - Android needs a running device or emulator. Pick it with `--android-serial <serial>` (or `ANDROID_SERIAL`); without either, the script uses the only online device and fails setup when several are online. Every install, fixture push, flow, helper and restore is bound to that serial.
 - iOS needs a booted simulator. Pick it with `--ios-udid <udid>` (or `SIMULATOR_UDID`); otherwise the script uses the booted `iPhone 18 Pro`. The build targets that UDID.
 - iOS needs `iosApp/FeedFlow.xcodeproj`; the script generates it when missing.
@@ -47,16 +51,18 @@ Run FeedFlow's full local Maestro release gate across Android and iOS, then repo
 
 ## Behavior
 
-When both platforms are selected, the script runs Android and iOS in parallel. Each platform still builds and installs once, pushes fixtures, then runs every YAML flow for that platform in sorted order from:
+When several platforms are selected, the script runs them in parallel. Each platform still builds and installs once, pushes fixtures, then runs every YAML flow for that platform in sorted order from:
 
 - `e2e/maestro/android/smoke`
 - `e2e/maestro/android/regression`
 - `e2e/maestro/ios/smoke`
 - `e2e/maestro/ios/regression`
 
+Desktop runs one Gradle invocation per suite (`:desktopApp:desktopE2eTest -Pfeedflow.e2eSuite=<smoke|regression|desktoponly>`). Its rows come from the JUnit XML in `desktopApp/build/test-results/desktopE2eTest`, named `desktop/<suite>/<TestClass>/<method>`; skipped tests show as SKIP. The JUnit files and the failure evidence (`tree.txt`, window captures, app logs) are copied to `desktop/<suite>/junit` and `desktop/<suite>/evidence` in the report directory. A Gradle run that fails without failing tests (a compile error or a crashed test worker) is a desktop setup failure.
+
 Flows run the same way `e2e/scripts/run-android.sh` and `run-ios.sh` run them: the audio flows (174-176) go through `e2e/scripts/run-audio-playback.sh`, Android SM-007 through `android_reader_tooltip.py`, and Android REG-179 through `android_share_feed.py`, which sends the real share intent. Helper output lands under `helpers/android/` in the report directory.
 
-It continues after failed flows so the final report captures the full failure set. After the flows it restores the development feeds with `feedflow-restore-dev-feeds`. It exits non-zero when any setup step, flow or restore fails. Run it with output going to a file (or with `set -o pipefail`) when you rely on the exit code.
+It continues after failed flows so the final report captures the full failure set. After the Maestro flows it restores the development feeds with `feedflow-restore-dev-feeds`; desktop needs no restore because each desktop test uses an isolated home and preferences node. It exits non-zero when any setup step, flow or restore fails. Run it with output going to a file (or with `set -o pipefail`) when you rely on the exit code.
 
 Reports and logs are written under:
 

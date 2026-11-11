@@ -239,9 +239,9 @@
     <string name="reader_mode_archive_button">Atvērt archive.is vietnē</string>
     <string name="reader_mode_browser_button_content_description">Atvērt pārlūkā</string>
     <string name="delete_category">Dzēst kategoriju</string>
-    <string name="settings_clear_downloaded_articles">Dzēst lejupielādētos rakstus</string>
-    <string name="settings_clear_downloaded_articles_dialog_title">Vai tiešām vēlaties dzēst lejupielādētos rakstus?</string>
-    <string name="settings_clear_downloaded_articles_dialog_message">Viss bezsaistes lasīšanai lejupielādētais raksta saturs tiks dzēsts. Šo darbību nevar atsaukt.</string>
+    <string name="settings_clear_downloaded_articles">Dzēst rakstu bezsaistes kopijas</string>
+    <string name="settings_clear_downloaded_articles_dialog_title">Vai tiešām vēlaties dzēst rakstu bezsaistes kopijas?</string>
+    <string name="settings_clear_downloaded_articles_dialog_message">Visas pilno rakstu bezsaistes kopijas tiks dzēstas. Šo darbību nevar atsaukt.</string>
     <string name="settings_clear_image_cache">Tīrīt attēlu kešatmiņu</string>
     <string name="settings_clear_image_cache_dialog_title">Vai tiešām vēlaties tīrīt attēlu kešatmiņu?</string>
     <string name="settings_clear_image_cache_dialog_message">Visi kešatmiņā saglabātie attēli tiks dzēsti. Attēli tiks lejupielādēti pa jaunu, kad pārlūkosiet savus rakstus.</string>

@@ -27,7 +27,8 @@ Ziņu plūsmu sinhronizācija visās jūsu ierīcēs
 Uztur kārtību
 - Import and export feeds with OPML — migrate from any RSS tool.
 - Block keywords to filter out unwanted content.
-- Organize feeds into categories and bookmark articles for later.
+- Kārtojiet ziņu plūsmas kategorijās un pievienojiet rakstus saglabāto rakstu
+  kolekcijai.
 - Search across all your feeds to find articles quickly.
 
 Built for RSS, Atom, and the Open Web

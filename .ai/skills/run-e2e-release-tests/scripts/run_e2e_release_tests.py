@@ -753,7 +753,7 @@ def desktop_flow_results(cases: list[DesktopCase], output_dir: Path) -> list[Flo
     results: list[FlowResult] = []
     for case in cases:
         flow_path = Path("desktop") / case.suite / case.class_name / case.name
-        log_path = output_dir / "flows/desktop" / case.suite / case.class_name / f"{case.flow_id}.log"
+        log_path = output_dir / "flows/desktop" / case.suite / case.class_name / safe_log_name(Path(case.name))
         log_path.parent.mkdir(parents=True, exist_ok=True)
         log_path.write_text(case.details + "\n", encoding="utf-8")
         results.append(
@@ -1077,6 +1077,7 @@ def write_report(
     flow_results: list[FlowResult],
     platforms: tuple[str, ...],
     suites: tuple[str, ...],
+    repo_root: Path,
 ) -> None:
     lines: list[str] = []
     failed_setup = [
@@ -1106,7 +1107,7 @@ def write_report(
     lines.append("")
     lines.append("| Platform | Suite | Passed | Failed | Skipped | Total |")
     lines.append("| --- | --- | ---: | ---: | ---: | ---: |")
-    for platform, suite, passed, failed, skipped, total in suite_summary_rows(flow_results, platforms, suites):
+    for platform, suite, passed, failed, skipped, total in suite_summary_rows(flow_results, platforms, suites, repo_root):
         lines.append(f"| {platform} | {suite} | {passed} | {failed} | {skipped} | {total} |")
     lines.append("")
 
@@ -1167,8 +1168,9 @@ def suite_summary_rows(
     flow_results: list[FlowResult],
     platforms: tuple[str, ...],
     suites: tuple[str, ...],
+    repo_root: Path,
 ) -> list[tuple[str, str, int, int, int, int]]:
-    """Per platform and suite: passed, failed, skipped, total. Pairs with no results are left out."""
+    """Per platform and suite: passed, failed, skipped, total. Pairs with nothing planned are left out."""
     rows = []
     for platform in platforms:
         for suite in suites:
@@ -1177,7 +1179,7 @@ def suite_summary_rows(
                 for result in flow_results
                 if result.platform == platform and result.suite == suite
             ]
-            if not matching:
+            if not matching and not planned_flow_keys(repo_root, platform, suite, flow_results):
                 continue
             passed = sum(1 for result in matching if is_passed(result))
             failed = sum(1 for result in matching if is_failed(result))
@@ -1325,7 +1327,7 @@ def write_html_report(
             "<tbody>",
         ]
     )
-    for platform, suite, passed, failed, skipped, total in suite_summary_rows(flow_results, platforms, suites):
+    for platform, suite, passed, failed, skipped, total in suite_summary_rows(flow_results, platforms, suites, repo_root):
         lines.append(
             "<tr>"
             f"<td>{html.escape(platform)}</td>"
@@ -1532,7 +1534,7 @@ def main() -> int:
 
     markdown_report_path = output_dir / "report.md"
     html_report_path = output_dir / "report.html"
-    write_report(markdown_report_path, setup_results, flow_results, platforms, suites)
+    write_report(markdown_report_path, setup_results, flow_results, platforms, suites, repo_root)
     write_html_report(
         html_report_path,
         repo_root,

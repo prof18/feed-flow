@@ -11,6 +11,7 @@ import com.prof18.feedflow.desktop.e2e.harness.choose
 import com.prof18.feedflow.desktop.e2e.harness.clickIn
 import com.prof18.feedflow.desktop.e2e.harness.clickMenuItem
 import com.prof18.feedflow.desktop.e2e.harness.clickSidebar
+import com.prof18.feedflow.desktop.e2e.harness.clickUntil
 import com.prof18.feedflow.desktop.e2e.harness.closeWindow
 import com.prof18.feedflow.desktop.e2e.harness.dropdownIn
 import com.prof18.feedflow.desktop.e2e.harness.isOnScreen
@@ -59,7 +60,7 @@ class LibraryFlowsTest {
         flow.awaitTextIn(window, flow.strings.noCategory)
         flow.key(ESCAPE)
 
-        flow.typeInto(flow.awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT), flow.fixtureUrl(FIXTURE_FEED_PATH))
+        flow.typeInto(flow.urlInput(window), flow.fixtureUrl(FIXTURE_FEED_PATH))
         flow.await("Save to be enabled") { flow.saveButton(window).takeIf { !it.isDisabled } }
         flow.click(flow.saveButton(window))
         flow.await("the fixture feed in the sidebar", LONG_WAIT_MS) {
@@ -106,7 +107,7 @@ class LibraryFlowsTest {
         val flow = e2e.start(Seed.Empty, args = listOf(link))
         val window = flow.strings.addFeed
         flow.awaitWindow(window)
-        assertEquals(feedUrl, flow.awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT).editableText)
+        assertEquals(feedUrl, flow.urlInput(window).editableText)
         assertFalse(flow.saveButton(window).isDisabled)
         flow.clickIn(window, flow.strings.cancelButton)
         flow.awaitWindowGone(window)
@@ -115,7 +116,7 @@ class LibraryFlowsTest {
         val hostAndPath = feedUrl.removePrefix("http://")
         flow.restart(Seed.Empty, args = listOf("feed://$hostAndPath"))
         flow.awaitWindow(window)
-        assertEquals("https://$hostAndPath", flow.awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT).editableText)
+        assertEquals("https://$hostAndPath", flow.urlInput(window).editableText)
         flow.clickIn(window, flow.strings.cancelButton)
         flow.awaitWindowGone(window)
         flow.awaitText(flow.strings.emptyFeedMessage)
@@ -129,7 +130,7 @@ class LibraryFlowsTest {
 
         flow.openAddFeed()
         val window = flow.strings.addFeed
-        val input = flow.awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT)
+        val input = flow.urlInput(window)
         assertFalse(flow.hasShortsToggle(window))
         flow.typeInto(input, YOUTUBE_CHANNEL)
         assertFalse(flow.shortsToggle(window).isShortsChecked())
@@ -137,15 +138,15 @@ class LibraryFlowsTest {
         flow.await("Hide Shorts to be checked") { flow.shortsToggle(window).takeIf { it.isShortsChecked() } }
         flow.awaitTextIn(window, flow.strings.hideYoutubeShortsDescription)
 
-        flow.replaceText(flow.awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT), "https://example.com/rss.xml")
+        flow.replaceText(flow.urlInput(window), "https://example.com/rss.xml")
         flow.await("Hide Shorts to disappear") { Unit.takeIf { !flow.hasShortsToggle(window) } }
-        flow.replaceText(flow.awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT), YOUTUBE_CHANNEL)
+        flow.replaceText(flow.urlInput(window), YOUTUBE_CHANNEL)
         assertFalse(flow.shortsToggle(window).isShortsChecked())
         flow.clickIn(window, flow.strings.cancelButton)
         flow.awaitWindowGone(window)
 
         flow.openAddFeed()
-        flow.typeInto(flow.awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT), YOUTUBE_CHANNEL)
+        flow.typeInto(flow.urlInput(window), YOUTUBE_CHANNEL)
         assertFalse(flow.shortsToggle(window).isShortsChecked())
         flow.clickIn(window, flow.strings.cancelButton)
     }
@@ -201,18 +202,18 @@ class LibraryFlowsTest {
         flow.openFeedSettings(ANDROID_CENTRAL)
         val window = flow.strings.openFeedSettings
         assertTrue(flow.nodesIn(window).none { it.testTag == FeedFormE2eIds.EDIT_HIDE_YOUTUBE_SHORTS_TOGGLE })
-        flow.replaceText(flow.awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT), YOUTUBE_FEED_2)
+        flow.replaceText(flow.urlInput(window), YOUTUBE_FEED_2)
         val toggle = { flow.awaitTagIn(window, FeedFormE2eIds.EDIT_HIDE_YOUTUBE_SHORTS_TOGGLE) }
         assertEquals("Off", toggle().toggleableState)
         flow.click(toggle())
         flow.await("the no-Shorts playlist URL") {
-            flow.awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT).takeIf {
+            flow.urlInput(window).takeIf {
                 it.editableText?.contains("playlist_id=UULFsBjURrPoezykLs9EqgamOA") == true
             }
         }
         flow.click(toggle())
         flow.await("the channel URL") {
-            flow.awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT).takeIf {
+            flow.urlInput(window).takeIf {
                 it.editableText?.contains("channel_id=UCsBjURrPoezykLs9EqgamOA") == true
             }
         }
@@ -331,8 +332,9 @@ class LibraryFlowsTest {
         val flow = e2e.start(Seed.Empty)
         flow.awaitText(flow.strings.emptyFeedMessage)
 
-        flow.click(flow.strings.refreshFeeds)
-        flow.awaitText(flow.strings.noFeedsFoundMessage, timeoutMs = LONG_WAIT_MS)
+        flow.clickUntil("the no-feeds view", { flow.awaitText(flow.strings.refreshFeeds) }) {
+            flow.isShown(flow.strings.noFeedsFoundMessage)
+        }
 
         flow.click(flow.mainButton(flow.strings.addFeed))
         flow.awaitWindow(flow.strings.addFeed)
@@ -497,10 +499,12 @@ class LibraryFlowsTest {
         flow.awaitText(flow.strings.emptyFeedMessage)
         flow.awaitText(flow.strings.refreshFeeds)
 
-        flow.click(flow.strings.openAnotherFeed)
-        flow.awaitGone(flow.strings.drawerTitleTimeline)
-        flow.click(flow.strings.openAnotherFeed)
-        flow.sidebarRow(flow.strings.drawerTitleTimeline)
+        flow.clickUntil("the sidebar to hide", { flow.awaitText(flow.strings.openAnotherFeed) }) {
+            !flow.isShown(flow.strings.drawerTitleTimeline)
+        }
+        flow.clickUntil("the sidebar to show", { flow.awaitText(flow.strings.openAnotherFeed) }) {
+            flow.isShown(flow.strings.drawerTitleTimeline)
+        }
     }
 
     /**
@@ -513,8 +517,9 @@ class LibraryFlowsTest {
         val flow = e2e.start(Seed.ReorderDrag)
         flow.awaitTag(MAIN_SURFACE_TAG)
 
-        val pinned = flow.feedsUnder(flow.strings.drawerTitlePinnedFeeds)
-        assertTrue(pinned.size >= 2, "pinned feeds: $pinned")
+        val pinned = flow.await("two pinned feeds") {
+            runCatching { flow.feedsUnder(flow.strings.drawerTitlePinnedFeeds) }.getOrNull()?.takeIf { it.size >= 2 }
+        }
         flow.drag(flow.sidebarRow(pinned.first()), flow.sidebarRow(pinned.last()))
         flow.await("the pinned feeds to be reordered") {
             flow.feedsUnder(flow.strings.drawerTitlePinnedFeeds).takeIf { it != pinned && it.toSet() == pinned.toSet() }
@@ -565,6 +570,9 @@ class LibraryFlowsTest {
                 it.isOnScreen && it.role == "Button" && text in it.texts && it.key.startsWith("window:1:0:")
             }
         }
+
+    private fun com.prof18.feedflow.desktop.e2e.harness.Flow.urlInput(window: String) =
+        scrollInWindow(window, "the feed URL field") { it.testTag == FeedFormE2eIds.ADD_FEED_URL_INPUT }
 
     private fun com.prof18.feedflow.desktop.e2e.harness.Flow.hasShortsToggle(window: String) =
         nodesIn(window).any { it.testTag == FeedFormE2eIds.ADD_FEED_HIDE_YOUTUBE_SHORTS }
@@ -641,9 +649,9 @@ class LibraryFlowsTest {
     private fun com.prof18.feedflow.desktop.e2e.harness.Flow.checkYoutubeFeedAndPlaylist() {
         openAddFeed()
         val window = strings.addFeed
-        typeInto(awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT), YOUTUBE_FEED)
+        typeInto(urlInput(window), YOUTUBE_FEED)
         assertFalse(shortsToggle(window).isShortsChecked())
-        replaceText(awaitTagIn(window, FeedFormE2eIds.ADD_FEED_URL_INPUT), YOUTUBE_PLAYLIST)
+        replaceText(urlInput(window), YOUTUBE_PLAYLIST)
         await("Hide Shorts to disappear") { Unit.takeIf { !hasShortsToggle(window) } }
         clickIn(window, strings.cancelButton)
         awaitWindowGone(window)

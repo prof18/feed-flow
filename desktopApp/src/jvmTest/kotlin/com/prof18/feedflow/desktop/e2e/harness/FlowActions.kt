@@ -5,8 +5,9 @@ import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 
 private const val MAIN_SURFACE = "window:1:"
-private const val SCROLL_STEP = 5
-private const val MAX_SCROLLS = 40
+private const val SCROLL_STEP = 30
+private const val MAX_SCROLLS = 60
+private const val MAX_WINDOW_SCROLLS = 8
 private const val CLICK_ATTEMPTS = 3
 private const val RETRY_WAIT_MS = 3_000L
 
@@ -187,16 +188,20 @@ fun Flow.openArticle(id: String) {
 
 /** Scrolls a dialog window's content until [find] returns an on-screen node. */
 fun Flow.scrollInWindow(windowTitle: String, what: String, find: (NodeSnapshotDto) -> Boolean): NodeSnapshotDto {
-    repeat(MAX_SCROLLS) {
-        val nodes = nodesIn(windowTitle)
-        nodes.firstOrNull { it.isOnScreen && find(it) }?.let { return it }
-        val anchor = nodes
-            .filter { it.isOnScreen && it.role == null && it.texts.isNotEmpty() }
-            .maxByOrNull { it.bounds.y }
-            ?: return await(what) { nodesIn(windowTitle).firstOrNull { it.isOnScreen && find(it) } }
-        scroll(anchor, SCROLL_STEP)
+    fun found() = nodesIn(windowTitle).firstOrNull { it.isOnScreen && find(it) }
+    found()?.let { return it }
+    // A node above the viewport (the window scrolled down earlier) has empty bounds just like one below it,
+    // so search downwards first, then upwards.
+    for (direction in listOf(SCROLL_STEP, -SCROLL_STEP)) {
+        repeat(MAX_WINDOW_SCROLLS) {
+            val anchor = nodesIn(windowTitle)
+                .filter { it.isOnScreen && it.role == null && it.texts.isNotEmpty() }
+                .maxByOrNull { it.bounds.y } ?: return await(what) { found() }
+            scroll(anchor, direction)
+            found()?.let { return it }
+        }
     }
-    return await(what) { nodesIn(windowTitle).firstOrNull { it.isOnScreen && find(it) } }
+    return await(what) { found() }
 }
 
 /** A switch row in a dialog, found by its title. */

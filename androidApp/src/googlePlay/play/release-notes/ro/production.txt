@@ -1,0 +1,6 @@
+• Site-urile și aplicațiile care oferă un link FeedFlow sau feed:// pot deschide „Adaugă flux” cu adresa deja completată
+• Lista de articole te urmează când treci la articolul următor sau anterior în cititor
+• Găsește răspunsuri în noua secțiune Întrebări frecvente, din Setări → Despre
+• Deschide Setările fluxului direct din lista de fluxuri
+• Butonul Înapoi închide acum meniul lateral și te readuce dintr-un filtru la Cronologie
+• FeedFlow este acum disponibil în română și indoneziană

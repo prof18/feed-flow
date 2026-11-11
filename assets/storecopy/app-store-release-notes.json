@@ -209,6 +209,21 @@
       "• 没有链接的文章不再提供分享和订阅源网址。",
       "• 修复了应用进入后台时可能发生的崩溃。",
       "• FeedFlow 现已支持罗马尼亚语和印度尼西亚语。"
+    ],
+    "ro": [
+      "• Site-urile și aplicațiile care oferă un link FeedFlow sau feed:// pot deschide „Adaugă flux” cu adresa deja completată.",
+      "• Lista de articole te urmează când treci la articolul următor sau anterior în cititor.",
+      "• Reîmprospătarea în fundal este mai fiabilă, așa că notificările pentru articole noi sosesc la timp.",
+      "• Poziția ta într-un articol se păstrează când revii de la un link.",
+      "• Găsește răspunsuri în noua secțiune Întrebări frecvente, din Setări → Despre.",
+      "• Deschide Setările fluxului direct din lista de fluxuri.",
+      "• Deconectarea unui cont cere acum confirmare și te avertizează ce date vor fi eliminate.",
+      "• Categoriile cu același nume sunt combinate în timpul sincronizării în cloud, în loc să o oprească.",
+      "• Tastatura nu mai acoperă articolul când deschizi căutarea.",
+      "• VoiceOver îmbunătățit: etichete pentru butoanele doar cu pictogramă, stările necitit și marcat citite cu voce tare și zone de atingere mai mari.",
+      "• Articolele fără link nu mai oferă Distribuie sau URL-ul fluxului.",
+      "• A fost remediat un crash care putea apărea când aplicația trecea în fundal.",
+      "• FeedFlow este acum disponibil în română și indoneziană."
     ]
   },
   "macos": {
@@ -407,6 +422,20 @@
       "• 阅读器中很长的代码块会以纯文本显示，而不再无法显示。",
       "• 加载失败且没有描述的图片会显示“打开图片”链接。",
       "• FeedFlow 现已支持罗马尼亚语和印度尼西亚语。"
+    ],
+    "ro": [
+      "• Site-urile și aplicațiile care oferă un link FeedFlow sau feed:// pot deschide „Adaugă flux” cu adresa deja completată.",
+      "• Lista de articole te urmează când treci la articolul următor sau anterior în cititor.",
+      "• Caută în fereastra Setări pentru a găsi rapid orice opțiune.",
+      "• Reîmprospătarea păstrează articolul deschis și poziția ta în listă.",
+      "• Setarea de sincronizare în fundal se numește acum „Refresh while open”.",
+      "• Găsește răspunsuri în noua secțiune Întrebări frecvente, din Despre.",
+      "• Deconectarea unui cont cere acum confirmare și te avertizează ce date vor fi eliminate.",
+      "• Categoriile cu același nume sunt combinate în timpul sincronizării în cloud, în loc să o oprească.",
+      "• Cititoarele de ecran anunță acum dacă un articol este necitit sau marcat.",
+      "• Blocurile de cod foarte lungi din cititor apar ca text simplu în loc să nu se afișeze.",
+      "• Imaginile care nu se încarcă și nu au descriere afișează un link „Open image”.",
+      "• FeedFlow este acum disponibil în română și indoneziană."
     ]
   }
 }

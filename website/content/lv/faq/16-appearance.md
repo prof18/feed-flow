@@ -1,15 +1,15 @@
 ---
-title: "How do I change the theme, text size or layout?"
+title: "Kā izmainīt motīvu, teksta izmēru vai izkārtojumu?"
 weight: 160
 ---
 
 **Settings → Appearance**: theme (System, Light, Dark or Black), hiding unread
 counts, and reducing motion and animations (useful on e-ink screens).
 
-**Settings → Feed list**:
+**Iestatījumi → Ziņu plūsmu saraksts**:
 
 - layout: List, Card or Big image card, and a grid on wide screens
-- text scale
+- teksta mērogs
 - sorting: newest or oldest first
 - hiding the description, image, date, unread indicator, feed name or a title
   repeated in the description

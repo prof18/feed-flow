@@ -130,12 +130,19 @@ Full automated E2E checks before release:
 - `e2e/scripts/run-android.sh`
 - `e2e/scripts/run-ios.sh`
 
-When the user asks for the full Maestro release gate or a failure summary, use the repo-local `run-e2e-release-tests` skill. Its runner builds/installs both platforms, runs smoke + regression flows, continues after failures, and writes `report.html`, `report.md`, and logs under `.tmp/e2e-release-tests/<timestamp>/`.
+When the user asks for the full E2E release gate (Maestro or desktop) or a failure summary, use the repo-local `run-e2e-release-tests` skill. Its runner builds/installs Android and iOS, runs the desktop suite too, runs smoke + regression flows, continues after failures, and writes `report.html`, `report.md`, and logs under `.tmp/e2e-release-tests/<timestamp>/`.
 Each Maestro flow has a three-minute limit and the runner retries only driver/transport failures (up to three attempts). Treat a timeout or device-server failure as infrastructure first; inspect the archived per-attempt logs before changing app code.
 
 After any local Maestro run, restore the development subscriptions before handoff with `feedflow-restore-dev-feeds --platform android` or `--platform ios`. The all-platform wrapper and release runner do this automatically when the command is installed; run it explicitly after a single flow or a failed run.
 
 Use the debug seeding deep links documented in that guide. Do not depend on live feeds, OAuth, or previous app state in smoke or regression flows.
+
+### Desktop E2E tests
+
+- The desktop suite lives in `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/e2e` and runs with `e2e/scripts/run-desktop.sh [smoke|regression|desktoponly|all]` or `./gradlew --quiet --console=plain :desktopApp:desktopE2eTest`; macOS only, local only, never on CI. It opens real FeedFlow windows, so run one at a time.
+- Follow `e2e/desktop/README.md` to write or run flows; flows reuse the mobile IDs and the shared `E2eSeedRunner` profiles.
+- `allTests` and `check` do not run it; `jvmTest` excludes the `e2e` package.
+- When a user-visible desktop feature changes, add or update its flow, or record why it cannot be covered in `e2e/desktop/README.md`.
 
 ### iOS Project Generation
 

@@ -50,3 +50,7 @@ e2e/scripts/run-ios.sh
 e2e/scripts/run-android-smoke.sh
 e2e/scripts/run-ios-smoke.sh
 ```
+
+## Desktop
+
+The desktop E2E suite drives the real desktop app with Spectre; see [`desktop/README.md`](desktop/README.md) (`e2e/desktop/README.md`) for running and writing flows. Instead of the deep link, the desktop seed is the system property `feedflow.e2e.seed=<action>:<profile>[:<account>]`, with the same profiles as the mobile seed.

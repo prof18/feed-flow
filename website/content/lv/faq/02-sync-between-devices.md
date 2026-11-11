@@ -8,8 +8,9 @@ Go to **Settings → Feeds & accounts → Accounts** and connect the same accoun
 every device. FeedFlow supports two kinds of accounts:
 
 - **Dublēšanas pakalpojumus**: iCloud, Dropbox un Google disku. Jūsu RSS
-  plūsmas, kategorijas, lasītie raksti un grāmatzīmes tiek saglabāti jūsu
-  mākoņkrātuvē esošā datnē, un pārējās ierīces to izgūst no turienes.
+  plūsmas, kategorijas, rakstu lasīšanas statusi un saglabātie raksti tiek
+  saglabāti datnē jūsu mākoņkrātuvē, un pārējās jūsu ierīces izgūst šos datus no
+  turienes.
 - **Reader services**: FreshRSS, Miniflux, BazQux and Feedbin. Your feeds and
   read status live on the server, and FeedFlow syncs with it.
 

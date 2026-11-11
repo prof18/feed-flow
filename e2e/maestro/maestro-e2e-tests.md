@@ -162,7 +162,7 @@ Flows for features only the desktop app has. They live in `desktopApp/src/jvmTes
 | DSK-003 | `DesktopOnlyFlowsTest` | Feed tree keyboard navigation: Down and Up move focus between sidebar rows without changing the filter; Enter opens the focused feed. |
 | DSK-004 | `DesktopOnlyFlowsTest` | A second app instance started with a `feedflow://add` link exits 0 and the running app opens Add feed pre-filled. |
 | DSK-005 | `DesktopOnlyFlowsTest` | Settings → About & support → Report issue opens a `mailto:` link (recorded by the E2E URI log). |
-| DSK-006 | — | Markdown reader rendering. Not ported yet: the desktop reader renders cached content as Markdown, while the shared seed stores mobile reader HTML. |
+| DSK-006 | `DesktopOnlyFlowsTest` | Markdown reader rendering: the cached `reader-mode` article (stored as Markdown on desktop) shows its paragraph as text and its image by alt text, with no HTML source on screen. |
 
 ## Known Limitations
 

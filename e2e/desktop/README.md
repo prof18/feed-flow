@@ -25,7 +25,7 @@ The script runs `./gradlew --quiet --console=plain :desktopApp:desktopE2eTest -P
 
 - an isolated home at `/tmp/ffe2e/<8 letters>`, with the app's data folder in `data/` (`feedflow.e2e.dataDir`). The path is short on purpose: the app binds a Unix socket there and macOS limits socket paths to 104 bytes.
 - the Java preferences node `feedflow-e2e` (`feedflow.e2e.prefsNode`), removed before and after each test. The rule stores a 1280×800 window size in it before each launch, because a fresh node opens an 800×600 window that uses the single-pane layout.
-- a startup seed (`feedflow.e2e.seed=<action>:<profile>[:<account>]`, plus `feedflow.e2e.seedAudioUrl`), applied through the shared `E2eSeedRunner` before the main window appears. A failed seed exits the app with code 86 and the `FEEDFLOW_E2E_SEED_FAILED` marker on stderr.
+- a startup seed (`feedflow.e2e.seed=<action>:<profile>[:<account>]`, plus `feedflow.e2e.seedAudioUrl`), applied through the shared `E2eSeedRunner` before the main window appears. The seed stores cached reader content in the format the platform caches: Markdown on desktop, HTML on Android and iOS. A failed seed exits the app with code 86 and the `FEEDFLOW_E2E_SEED_FAILED` marker on stderr.
 - a scripted answer for the import and export file dialog (`feedflow.e2e.fileDialogResponse`): the first line of `file-dialog-response.txt` is the chosen file, and an empty or missing file means Cancel.
 - a log of every URL the app would open (`feedflow.e2e.openedUriLog`) in `opened-uris.txt`, instead of opening a browser or mail client.
 - a local fixture HTTP server for `e2e/fixtures`, started on first use of `fixtureUrl`.
@@ -63,7 +63,7 @@ The app reads these properties only in debug builds. A passing test deletes its 
 - REG-107: dragging a row with the mouse also clicks it, which opens the article and marks it read, so only the bookmark swipe direction is asserted.
 - REG-108: the grid layout renders as big image rows in the two-pane layout (grid needs the single-pane list).
 - REG-109: the feed order is changed in Settings → Feed list → Sort by Date; desktop has no home "Sort & filter" menu.
-- REG-160, DSK-006: the desktop reader renders cached content as Markdown, but the shared seed stores mobile reader HTML, so the seeded article shows its HTML source as a code block. REG-160 asserts the content-source toggle and the title; DSK-006 waits on a desktop-format reader fixture.
+- DSK-006: Jewel's Markdown renderer exposes an inline image to accessibility by its Markdown source (`![alt](url)`), so the flow finds the image by its alt text in a node of its own; it cannot check that the image loaded.
 - REG-163: the row merges its title and image into one node, so the flow checks every RTL row renders; it cannot compare image and title positions.
 - REG-169: the Bookmarks footer's Mark all as read acts without the bookmarks-specific confirmation, which belongs to the File menu entry.
 - REG-184: the large-content articles point at e2e.feedflow.local, so the reader shows "Unable to parse article"; the flow follows the selected row.

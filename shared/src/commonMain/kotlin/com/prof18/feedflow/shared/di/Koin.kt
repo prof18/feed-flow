@@ -724,6 +724,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             audioPositions = get(),
             appEnvironment = appConfig.appEnvironment,
             settings = get(),
+            readerContentFormat = readerContentFormat,
         )
     }
 

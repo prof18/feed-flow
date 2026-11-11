@@ -8,5 +8,6 @@ weight: 90
 - **Delete week-old articles**, in the menu, removes articles older than a week
   from the list you're viewing: the Timeline, a category or a single feed.
 
-Bookmarked articles are never deleted. Deleted articles don't come back on the
-next refresh, even if the website still lists them in its feed.
+Saglabātie raksti nekad netiek dzēsti. Dzēstie raksti pēc nākamās
+atsvaidzināšanas vairs netiek rādīti, pat ja vietne tos joprojām iekļauj savā
+ziņu plūsmā.

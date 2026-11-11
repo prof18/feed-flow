@@ -32,6 +32,8 @@ import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.main.applyMainWindowMinimumSize
+import com.prof18.feedflow.desktop.main.restoredMainWindowSize
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.startup.AlreadyRunningWindow
@@ -236,6 +238,7 @@ private fun runDesktopApp(args: Array<String>, onConfigReady: (DesktopConfig) ->
                 title = desktopMainWindowTitle(),
                 state = windowState,
                 init = { window ->
+                    window.applyMainWindowMinimumSize()
                     window.restoreInitialLinuxWindowSize(windowState.size) {
                         windowState.placement == WindowPlacement.Floating
                     }
@@ -434,8 +437,7 @@ private fun windowState(desktopWindowSettingsRepository: DesktopWindowSettingsRe
     val maxWidth = screenSize.width.dp
     val maxHeight = screenSize.height.dp
 
-    val width = savedWidthDp.dp.coerceAtMost(maxWidth)
-    val height = savedHeightDp.dp.coerceAtMost(maxHeight)
+    val (width, height) = restoredMainWindowSize(savedWidthDp, savedHeightDp, DpSize(maxWidth, maxHeight))
 
     val xPos = savedPositionX?.dp
         ?.coerceIn(0.dp, (maxWidth - width).coerceAtLeast(minimumValue = 0.dp))

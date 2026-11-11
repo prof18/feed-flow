@@ -288,6 +288,72 @@ def selected_suites(suite_arg: str) -> tuple[str, ...]:
     return (suite_arg,)
 
 
+DESKTOP_ONLY_SUITE = "desktoponly"
+MOBILE_PLATFORMS = ("android", "ios")
+
+
+def plan_platforms(
+    platforms: tuple[str, ...],
+    suites: tuple[str, ...],
+) -> tuple[list[tuple[str, tuple[str, ...]]], list[str]]:
+    """Suites per platform: desktoponly exists only for desktop, so mobile platforms skip it."""
+    plan: list[tuple[str, tuple[str, ...]]] = []
+    notes: list[str] = []
+    for platform in platforms:
+        platform_suites = tuple(
+            suite for suite in suites if platform == "desktop" or suite != DESKTOP_ONLY_SUITE
+        )
+        if platform_suites:
+            plan.append((platform, platform_suites))
+        else:
+            notes.append(f"Skipping {platform}: the {DESKTOP_ONLY_SUITE} suite has flows only on desktop.")
+    return plan, notes
+
+
+def run_planned_platforms(
+    plan: list[tuple[str, tuple[str, ...]]],
+    run_platform,
+) -> dict:
+    """Android and iOS run in parallel; desktop runs after them, so its windows do not compete with the
+    mobile builds for CPU and memory."""
+    mobile = [(platform, suites) for platform, suites in plan if platform in MOBILE_PLATFORMS]
+    others = [(platform, suites) for platform, suites in plan if platform not in MOBILE_PLATFORMS]
+    results = {}
+    if len(mobile) > 1:
+        print_line("Running Android and iOS suites in parallel.")
+        with ThreadPoolExecutor(max_workers=len(mobile)) as executor:
+            futures = {platform: executor.submit(run_platform, platform, suites) for platform, suites in mobile}
+            results.update({platform: future.result() for platform, future in futures.items()})
+    else:
+        results.update({platform: run_platform(platform, suites) for platform, suites in mobile})
+    for platform, suites in others:
+        if mobile:
+            print_line(f"Running the {platform} suites after the mobile platforms.")
+        results[platform] = run_platform(platform, suites)
+    return results
+
+
+def missing_flow_failures(
+    repo_root: Path,
+    output_dir: Path,
+    platform: str,
+    suites: tuple[str, ...],
+) -> list[CommandResult]:
+    """A requested Maestro suite with no flows is a setup failure, not an empty pass."""
+    failures: list[CommandResult] = []
+    for suite in suites:
+        if not flow_files(repo_root, platform, suite):
+            suite_dir = (repo_root / "e2e/maestro" / platform / suite).relative_to(repo_root)
+            failures.append(
+                preflight_failure(
+                    f"{platform} {suite} flows",
+                    output_dir / f"setup/{platform}/{suite}-no-flows.log",
+                    f"No Maestro flows in {suite_dir}.",
+                )
+            )
+    return failures
+
+
 def preflight_failure(name: str, log_path: Path, message: str) -> CommandResult:
     log_path.parent.mkdir(parents=True, exist_ok=True)
     log_path.write_text(message.rstrip() + "\n", encoding="utf-8")
@@ -858,6 +924,9 @@ def run_platform_tests(
     env = base_env.copy()
     if platform == "desktop":
         return run_desktop_tests(repo_root, output_dir, suites, env)
+    missing = missing_flow_failures(repo_root, output_dir, platform, suites)
+    if missing:
+        return PlatformRunResult(platform, missing, [])
     setup_results = prepare_platform(repo_root, output_dir, platform, env, requested_target, leases)
     if not setup_failed(setup_results):
         if platform == "android":
@@ -1478,11 +1547,21 @@ def main() -> int:
     output_dir = args.output_dir or repo_root / ".tmp/e2e-release-tests" / timestamp
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    platforms = selected_platforms(args.platform)
     suites = selected_suites(args.suite)
+    plan, plan_notes = plan_platforms(selected_platforms(args.platform), suites)
+    if not plan:
+        print(
+            f"Nothing to run: the {DESKTOP_ONLY_SUITE} suite has flows only on desktop "
+            "(use --platform desktop or all).",
+            file=sys.stderr,
+        )
+        return 2
+    platforms = tuple(platform for platform, _ in plan)
 
     print_line(f"Repo root: {repo_root}")
     print_line(f"Report directory: {output_dir}")
+    for note in plan_notes:
+        print_line(note)
 
     needs_maestro = "android" in platforms or "ios" in platforms
     missing_tools = [
@@ -1520,12 +1599,12 @@ def main() -> int:
     setup_results: dict[str, list[CommandResult]] = {}
     flow_results: list[FlowResult] = []
 
-    def run_platform(platform: str) -> PlatformRunResult:
+    def run_platform(platform: str, platform_suites: tuple[str, ...]) -> PlatformRunResult:
         return run_platform_tests(
             repo_root,
             output_dir,
             platform,
-            suites,
+            platform_suites,
             env,
             requested_targets[platform],
             leases,
@@ -1533,13 +1612,7 @@ def main() -> int:
         )
 
     try:
-        if len(platforms) > 1:
-            print_line("Running platform suites in parallel.")
-            with ThreadPoolExecutor(max_workers=len(platforms)) as executor:
-                futures = {platform: executor.submit(run_platform, platform) for platform in platforms}
-                platform_results = {platform: futures[platform].result() for platform in platforms}
-        else:
-            platform_results = {platform: run_platform(platform) for platform in platforms}
+        platform_results = run_planned_platforms(plan, run_platform)
     finally:
         if leases is not None:
             leases.release()

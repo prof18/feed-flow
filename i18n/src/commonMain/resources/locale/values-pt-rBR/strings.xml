@@ -395,4 +395,7 @@
     <string name="settings_notification_mode_category">Por categoria</string>
     <string name="settings_notification_mode_grouped">Combinados</string>
     <string name="sort_and_filter_button">Ordernar &amp; filtrar</string>
+    <string name="feed_already_exists_message">%s já está nos seus feeds.</string>
+    <string name="hide_youtube_shorts">Ocultar Shorts</string>
+    <string name="hide_youtube_shorts_description">Apenas vídeos regulares deste canal serão incluídos. Shorts e lives estão excluídos.</string>
 </resources>

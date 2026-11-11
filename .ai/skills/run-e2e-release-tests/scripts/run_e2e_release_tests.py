@@ -93,7 +93,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        help="Report directory. Defaults to .tmp/maestro-release-tests/<timestamp>.",
+        help="Report directory. Defaults to .tmp/e2e-release-tests/<timestamp>.",
     )
     parser.add_argument(
         "--android-serial",
@@ -1308,7 +1308,7 @@ def main() -> int:
     args = parse_args()
     repo_root = find_repo_root()
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    output_dir = args.output_dir or repo_root / ".tmp/maestro-release-tests" / timestamp
+    output_dir = args.output_dir or repo_root / ".tmp/e2e-release-tests" / timestamp
     output_dir.mkdir(parents=True, exist_ok=True)
 
     platforms = selected_platforms(args.platform)

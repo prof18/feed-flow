@@ -130,7 +130,7 @@ Full automated E2E checks before release:
 - `e2e/scripts/run-android.sh`
 - `e2e/scripts/run-ios.sh`
 
-When the user asks for the full Maestro release gate or a failure summary, use the repo-local `run-maestro-release-tests` skill. Its runner builds/installs both platforms, runs smoke + regression flows, continues after failures, and writes `report.html`, `report.md`, and logs under `.tmp/maestro-release-tests/<timestamp>/`.
+When the user asks for the full Maestro release gate or a failure summary, use the repo-local `run-e2e-release-tests` skill. Its runner builds/installs both platforms, runs smoke + regression flows, continues after failures, and writes `report.html`, `report.md`, and logs under `.tmp/e2e-release-tests/<timestamp>/`.
 Each Maestro flow has a three-minute limit and the runner retries only driver/transport failures (up to three attempts). Treat a timeout or device-server failure as infrastructure first; inspect the archived per-attempt logs before changing app code.
 
 After any local Maestro run, restore the development subscriptions before handoff with `feedflow-restore-dev-feeds --platform android` or `--platform ios`. The all-platform wrapper and release runner do this automatically when the command is installed; run it explicitly after a single flow or a failed run.

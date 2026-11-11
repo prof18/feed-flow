@@ -72,6 +72,11 @@ The app reads these properties only in debug builds. A passing test deletes its 
 - REG-124: desktop has no home "more" menu; the flow uses the Refresh feeds toolbar button (not pressed), Settings → Feed list for order and read articles, and Settings → Sync & storage → Delete week-old articles.
 - REG-132: the crash-reporting switch renders only in release builds, so the flow asserts it is absent.
 - REG-172: the sidebar is toggled with the article list toolbar's navigation button; the View menu shortcut is not reachable.
+- iCloud is unavailable in this debug build: the Accounts pane has no iCloud entry (setupICloudSupport() in Main.kt). REG-118 covers Dropbox only, and REG-138 and REG-142 check the entry is absent.
+- REG-117: the server subscriptions warning is not on desktop (`serverAccountSubscriptionsWarning` has no desktop caller), so its restart step is skipped.
+- REG-120: the CSV rows reference the feed by an id derived from the original OPML URL, so this flow imports the committed OPML unchanged; its e2e.feedflow.local host is an mDNS name that fails locally after Done.
+- REG-133: the home pending-upload action lives only in the native File menu; the flow checks the Back up now button on the linked Dropbox account instead, without running it.
+- REG-134, REG-162, REG-167: the article list scrolls with Spectre's scroll wheel; rows are tall, so a flow scrolls in steps of 30 notches.
 - Settings has no in-window button; flows open it through the sidebar's add menu ("Import feed from OPML"), then pick the pane.
 
 ## Not applicable on desktop

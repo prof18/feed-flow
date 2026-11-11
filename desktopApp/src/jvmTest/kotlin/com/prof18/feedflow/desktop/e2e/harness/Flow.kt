@@ -3,6 +3,7 @@ package com.prof18.feedflow.desktop.e2e.harness
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import dev.sebastiano.spectre.agent.AttachedAutomator
 import dev.sebastiano.spectre.agent.ExperimentalSpectreAgentApi
+import dev.sebastiano.spectre.agent.SpectreAgentException
 import dev.sebastiano.spectre.agent.transport.NodeSnapshotDto
 import dev.sebastiano.spectre.agent.transport.WindowSummaryDto
 import java.io.File
@@ -61,8 +62,26 @@ class Flow internal constructor(private val rule: DesktopE2eRule) {
 
     fun clickTag(tag: String) = click(awaitTag(tag))
 
+    /**
+     * Clicks a node. A window that has just opened can report a node before it is laid out, which
+     * Spectre refuses to click; the click is retried briefly with the node's latest snapshot.
+     */
     fun click(node: NodeSnapshotDto) {
-        automator.click(node)
+        var target = node
+        // A click on a window that is not focused can be swallowed, so focus the node's window first.
+        // Nodes in a popup layer (menus, dropdowns) are skipped: focusing would dismiss the popup.
+        if (node.key.split(':').getOrNull(2) == "0") runCatching { automator.focusWindow(node.key) }
+        repeat(CLICK_RETRIES) {
+            val clicked = runCatching { automator.click(target) }
+            if (clicked.isSuccess) {
+                idle()
+                return
+            }
+            if (clicked.exceptionOrNull() !is SpectreAgentException) throw requireNotNull(clicked.exceptionOrNull())
+            Thread.sleep(CLICK_RETRY_DELAY_MS)
+            target = automator.allNodes().firstOrNull { it.key == node.key } ?: target
+        }
+        automator.click(target)
         idle()
     }
 
@@ -169,6 +188,8 @@ class Flow internal constructor(private val rule: DesktopE2eRule) {
         const val TREE_LINES = 200
         const val DRAG_STEPS = 20
         const val DRAG_DURATION_MS = 600L
+        const val CLICK_RETRIES = 5
+        const val CLICK_RETRY_DELAY_MS = 300L
     }
 }
 

@@ -21,10 +21,10 @@ final class SnackbarPresentation {
         surfaces.removeAll { $0.id == id }
     }
 
-    func show(_ id: UUID) -> Bool {
+    func show(_ id: UUID, duration: Duration = .seconds(5)) -> Bool {
         guard messageID == nil else { return false }
         messageID = id
-        deadline = ContinuousClock.now + .seconds(5)
+        deadline = ContinuousClock.now + duration
         return true
     }
 

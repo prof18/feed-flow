@@ -7,6 +7,7 @@ object FeedSuggestionsE2eIds {
     const val EMPTY_STATE_BUTTON = "feed_suggestions_empty_state_button"
     const val EMPTY_STATE_OPTIONS_BUTTON = "feed_suggestions_empty_state_options_button"
     const val SCREEN = "feed_suggestions_screen"
+    const val UNDO_SNACKBAR = "feed_suggestions_undo_snackbar"
 
     fun category(categoryId: String): String =
         "feed_suggestions_category_${categoryId.toE2eIdSuffix()}"

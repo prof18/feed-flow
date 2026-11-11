@@ -72,10 +72,10 @@ class LibraryFlowsTest {
 
     /**
      * Feed suggestions window: desktop feedsuggestions/FeedSuggestionsContent.kt (FeedSuggestionsE2eIds,
-     * feedAddedMessageWithoutName)
+     * feedSuggestionAdded)
      *
-     * Adding a suggestion fetches the real feed afterwards, as on mobile; the flow asserts only the Added
-     * state and the new sidebar entry.
+     * A suggestion is saved without downloading it and its articles load with the refresh that runs when the
+     * window closes; the flow asserts only the Added state and the new sidebar entry.
      */
     @Test
     fun `REG-103 feed suggestions`() {
@@ -90,7 +90,7 @@ class LibraryFlowsTest {
         flow.click(flow.awaitTagIn(window, add))
         flow.await("the Added state", LONG_WAIT_MS) {
             flow.nodesIn(window).firstOrNull {
-                it.testTag == add && flow.strings.feedAddedMessageWithoutName in it.texts
+                it.testTag == add && flow.strings.feedSuggestionAdded in it.texts
             }
         }
         flow.clickIn(window, flow.strings.actionDone)

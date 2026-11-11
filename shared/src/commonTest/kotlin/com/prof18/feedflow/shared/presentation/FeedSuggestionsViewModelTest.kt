@@ -1,17 +1,16 @@
 package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
-import com.prof18.feedflow.core.model.FeedAddState
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.suggestions.suggestedFeeds
+import com.prof18.feedflow.shared.presentation.model.FeedSuggestionOperationStatus
 import com.prof18.feedflow.shared.test.KoinTestBase
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class FeedSuggestionsViewModelTest : KoinTestBase() {
 
@@ -34,7 +33,7 @@ class FeedSuggestionsViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `loadExistingFeeds updates feedStatesMapState`() = runTest {
+    fun `subscribed feeds are shown as added`() = runTest {
         val suggestedFeed = suggestedFeeds.first().feeds.first()
         val url = suggestedFeed.url
         databaseHelper.insertFeedSource(
@@ -50,13 +49,13 @@ class FeedSuggestionsViewModelTest : KoinTestBase() {
             ),
         )
 
-        viewModel.feedStatesMapState.test {
+        viewModel.operationStates.test {
             // Initial state might be empty or already contain the feed if loadExistingFeeds finished fast
             var item = awaitItem()
             if (item.isEmpty()) {
                 item = awaitItem()
             }
-            assertEquals(FeedAddState.Added, item[url])
+            assertEquals(FeedSuggestionOperationStatus.Added, item[url]?.status)
         }
     }
 
@@ -68,26 +67,6 @@ class FeedSuggestionsViewModelTest : KoinTestBase() {
         viewModel.selectedCategoryIdState.test {
             assertEquals(secondCategoryId, awaitItem())
         }
-    }
-
-    @Test
-    fun `addFeed updates state and database`() = runTest {
-        val suggestedFeed = suggestedFeeds.first().feeds.first()
-        val categoryName = "Tech"
-
-        viewModel.addFeed(suggestedFeed, categoryName)
-
-        viewModel.feedStatesMapState.test {
-            // It might go through Adding state
-            var item = awaitItem()
-            if (item[suggestedFeed.url] == FeedAddState.Adding) {
-                item = awaitItem()
-            }
-            assertEquals(FeedAddState.Added, item[suggestedFeed.url])
-        }
-
-        val sources = databaseHelper.getFeedSources()
-        assertTrue(sources.any { it.url == suggestedFeed.url })
     }
 
     @Test
@@ -108,12 +87,12 @@ class FeedSuggestionsViewModelTest : KoinTestBase() {
             ),
         )
 
-        viewModel.feedStatesMapState.test {
+        viewModel.operationStates.test {
             var item = awaitItem()
-            if (item[suggestedFeed.url] != FeedAddState.Added) {
+            if (item[suggestedFeed.url]?.status != FeedSuggestionOperationStatus.Added) {
                 item = awaitItem()
             }
-            assertEquals(FeedAddState.Added, item[suggestedFeed.url])
+            assertEquals(FeedSuggestionOperationStatus.Added, item[suggestedFeed.url]?.status)
 
             databaseHelper.deleteFeedSource(feedId)
 

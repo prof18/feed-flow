@@ -405,7 +405,6 @@
     <string name="widget_preview_note">Duvar kâğıdı, tema ve başlatıcı arka planı nihai sonucu etkileyebileceğinden, önizleme renkleri ana ekranınızda farklı görünebilir.</string>
     <string name="widget_content_bookmarks_description">Kaydedilen makaleleriniz</string>
     <string name="desktop_accounts_choose_service">Bağlantı ayrıntılarını görüntülemek için bir hizmet seçin.</string>
-    <string name="feed_suggestion_update_error">Akış eklendi ancak ilk güncellemesi tamamlanamadı. Akışlarınızı yenilemeyi deneyin.</string>
     <string name="reader_mode_tts_error">Bu makale sesli okunamadı. Tekrar deneyin.</string>
     <string name="support_the_project">Projeyi destekle</string>
     <string name="server_account_subscriptions_warning">Bu hesap sunucusunda depolanan abonelikleri kullanır.</string>
@@ -460,7 +459,6 @@
     <string name="desktop_accounts_back_to_services">Hizmetlere dön</string>
     <string name="desktop_search_result_context">\"%s\" için sonuçlar</string>
     <string name="delete_feed_button">Akışı sil</string>
-    <string name="feed_suggestion_refreshing">Makaleler yenileniyor…</string>
     <string name="settings_appearance">Görünüm</string>
     <string name="settings_feed_layout_grid">Izgara</string>
     <string name="blocked_word_removed">Engellenen kelime kaldırıldı.</string>

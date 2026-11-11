@@ -551,8 +551,6 @@
     <string name="feed_suggestions_empty_catalog">Няма налични предложения за емисии.</string>
     <string name="feed_suggestions_empty_category">Няма предложения за емисии в тази категория.</string>
     <string name="feed_suggestion_add_error">Не можах да завърша добавянето на тази емисия. Моля, опитайте отново.</string>
-    <string name="feed_suggestion_update_error">Каналът е добавен, но първоначалната му актуализация не можа да завърши. Опитайте да обновите емисията си.</string>
-    <string name="feed_suggestion_refreshing">Освежаване на статиите…</string>
     <string name="blocked_word_operation_error">Не можах да актуализирам тази блокирана дума. Моля, опитайте отново.</string>
     <string name="blocked_word_refresh_error">Блокираните думи са запазени, но списъкът със статии не можа да се актуализира. Опитайте отново.</string>
     <string name="blocked_word_saving">Запазване на блокираната дума…</string>

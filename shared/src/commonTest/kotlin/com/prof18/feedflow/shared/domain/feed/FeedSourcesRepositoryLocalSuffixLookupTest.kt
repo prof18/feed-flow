@@ -3,6 +3,7 @@ package com.prof18.feedflow.shared.domain.feed
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
@@ -202,6 +203,29 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
         assertIs<FeedAddedState.FeedAdded>(result)
         assertEquals(2, databaseHelper.getFeedSources().size)
     }
+
+    @Test
+    fun `addSuggestedFeed creates the missing category and files the feed in it`() = runTest(testDispatcher) {
+        setupLocalAccount()
+
+        feedSourcesRepository.addSuggestedFeed(suggestion, "Tech")
+
+        assertEquals("Tech", databaseHelper.getFeedSources().single().category?.title)
+        assertEquals("Tech", databaseHelper.getCategoryByName("Tech")?.title)
+    }
+
+    @Test
+    fun `addSuggestedFeed reuses an existing category with the same name`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        databaseHelper.insertCategories(listOf(FeedSourceCategory(id = "existing-tech", title = "Tech")))
+
+        feedSourcesRepository.addSuggestedFeed(suggestion, "Tech")
+
+        assertEquals("existing-tech", databaseHelper.getFeedSources().single().category?.id)
+        assertEquals(1, databaseHelper.getFeedSourceCategories().size)
+    }
+
+    private val suggestion = SuggestedFeed(name = "Example", url = "https://example.com/feed.rss", description = "")
 
     private fun articles(indices: IntRange): List<RssItem> = indices.map {
         RssItemGenerator.rssItem(link = "https://articles.example/$it", guid = "article-$it")

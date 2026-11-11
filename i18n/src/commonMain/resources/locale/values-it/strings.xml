@@ -531,8 +531,6 @@
     <string name="feed_suggestions_empty_catalog">Non sono disponibili suggerimenti di feed.</string>
     <string name="feed_suggestions_empty_category">Non ci sono suggerimenti di feed in questa categoria.</string>
     <string name="feed_suggestion_add_error">Non è stato possibile completare l’aggiunta di questo feed. Riprova.</string>
-    <string name="feed_suggestion_update_error">Feed aggiunto, ma non è stato possibile completare il primo aggiornamento. Prova ad aggiornare i tuoi feed.</string>
-    <string name="feed_suggestion_refreshing">Aggiornamento degli articoli…</string>
     <string name="blocked_word_operation_error">Non è stato possibile aggiornare questa parola bloccata. Riprova.</string>
     <string name="blocked_word_refresh_error">Parole bloccate salvate, ma non è stato possibile aggiornare l’elenco degli articoli. Riprova.</string>
     <string name="blocked_word_saving">Salvataggio della parola bloccata…</string>

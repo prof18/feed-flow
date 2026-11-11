@@ -524,8 +524,6 @@
     <string name="feed_suggestions_empty_catalog">Nu sunt disponibile sugestii de flux.</string>
     <string name="feed_suggestions_empty_category">Nu există sugestii de flux în această categorie.</string>
     <string name="feed_suggestion_add_error">Nu s-a putut finaliza adăugarea acestui flux. Te rog să încerci din nou.</string>
-    <string name="feed_suggestion_update_error">Flux adăugat, dar actualizarea sa inițială nu s-a putut finaliza. Încearcă să actualizezi fluxurile tale.</string>
-    <string name="feed_suggestion_refreshing">Actualizare articole…</string>
     <string name="blocked_word_operation_error">Nu s-a putut actualiza acest cuvânt blocat. Te rog să încerci din nou.</string>
     <string name="blocked_word_refresh_error">Cuvintele blocate salvate, dar lista articolelor nu s-a putut actualiza. Încearcă din nou.</string>
     <string name="blocked_word_saving">Salvare cuvânt blocat…</string>

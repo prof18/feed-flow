@@ -32,10 +32,27 @@ struct Snackbar: View {
                 }
             }
 
-            Spacer()
+            Spacer(minLength: Spacing.small)
+
+            if let action = message.action {
+                Button {
+                    action.handler()
+                    onDismiss()
+                } label: {
+                    Text(action.label)
+                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .foregroundStyle(Color.accentColor)
+                        .padding(.horizontal, Spacing.small)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(action.accessibilityIdentifier ?? SnackbarAccessibilityIdentifiers.action)
+            }
         }
-        .padding(.vertical, Spacing.medium)
-        .padding(.horizontal, Spacing.medium)
+        .padding(.vertical, message.action == nil ? Spacing.medium : Spacing.small)
+        .padding(.leading, Spacing.medium)
+        .padding(.trailing, message.action == nil ? Spacing.medium : Spacing.small)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(
@@ -83,7 +100,7 @@ struct Snackbar: View {
         .zIndex(100)
         .opacity(isExiting ? 0 : 1)
         .allowsHitTesting(!isExiting)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: message.action == nil ? .combine : .contain)
         .accessibilityHidden(isExiting)
         .accessibilityIdentifier(SnackbarAccessibilityIdentifiers.banner)
         .offset(isExiting ? hiddenOffset : .zero)

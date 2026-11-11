@@ -57,7 +57,7 @@ Run for broader functional coverage. Flow files live in `e2e/maestro/{android,io
 | ID | Flow | Profile | Platforms | Coverage | Desktop |
 | --- | --- | --- | --- | --- | --- |
 | REG-101 | `101-add-feed-form-validation.yaml` | `empty` | Android, iOS | Add Feed URL field validation, Save button starts disabled, category selector opens the Categories sheet. Android additionally types a URL via `inputText` and asserts the Save button becomes enabled. | `LibraryFlowsTest` |
-| REG-103 | `103-feed-suggestions.yaml` | `empty` | Android, iOS | Drawer → Feed Suggestions screen, Business category, add suggestion → "Added" confirmation. | `LibraryFlowsTest` |
+| REG-103 | `103-feed-suggestions.yaml` | `empty` | Android, iOS | Feed Suggestions → Business → add suggestion → "Business Insider added to Business" Undo snackbar; no redundant "Added to Business" row line. | `LibraryFlowsTest` |
 | REG-104 | `104-feed-source-list-management.yaml` | `content-rich` | Android, iOS | In Settings → Feeds, expand and collapse a category, tap a feed to open Feed settings, verify the category stays expanded after Back and after Save (iOS), rename inline (Android), confirm deletion, and check the fetch-failed warning. | `LibraryFlowsTest` |
 | REG-105 | `105-category-management.yaml` (+ iOS `105-category-add-validation.yaml`) | `content-rich` | Android, iOS | Add Feed category sheet: create new category, duplicate-name validation. Drawer category menu: rename, delete all feeds. The drawer "Delete category" path is dropped on both platforms — neither drawer renders categories that no longer own a feed source. iOS now drives the category name inputs through `inputText` rather than DEBUG hooks. | `LibraryFlowsTest` |
 | REG-106 | `106-article-context-menu.yaml` | `content-rich` | Android, iOS | Article long-press: Mark as read/unread, Add/Remove bookmark mutations. | `ArticleReaderFlowsTest` |
@@ -165,6 +165,8 @@ Flows for features only the desktop app has. They live in `desktopApp/src/jvmTes
 | DSK-006 | `DesktopOnlyFlowsTest` | Markdown reader rendering: the cached `reader-mode` article (stored as Markdown on desktop) shows its paragraph as text and its image by alt text, with no HTML source on screen. |
 
 ## Known Limitations
+
+- REG-103 verifies the saved category without depending on a live feed: a suggestion is saved without downloading it, and its articles load with the refresh that runs when Feed Suggestions closes. The mobile seed profiles cannot simulate a failed add; shared operation tests and desktop UI tests cover it.
 
 - **Reader top edge** — On iOS 26+, the article WebView runs beneath the floating navigation bar and insets its scroll content by the measured top bar height. On conventional iPhone/iPad, verify the initial title starts below the bar and scrolled text continues beneath it, as on the timeline. On iOS 27.1 Duo with a vertical toolbar, verify the same against the status bar in Device Hub. Compare before/after scrolling screenshots; Maestro text-presence assertions cannot detect a narrow clipped strip. Also confirm the reader bottom toolbar and audio accessory remain usable.
 - **Expanded Duo reader sidebar toggle** — With an article open on the unfolded Duo, hide Library, scroll the reader down and back up (including fast swipes), and confirm Show Sidebar remains visible and tappable throughout. Reopen Library while scrolled and repeat hide/show without losing the article. Verify screenshots, because native toolbar controls can remain in accessibility while visually minimized; repeat on a conventional iPad.

@@ -519,9 +519,12 @@
     <string name="feed_suggestions_description">Browse and add feeds to your collection</string>
     <string name="feed_suggestions_empty_catalog">No feed suggestions are available.</string>
     <string name="feed_suggestions_empty_category">No feed suggestions in this category.</string>
+    <string name="feed_suggestion_add">Add</string>
+    <string name="feed_suggestion_added">Added</string>
+    <string name="feed_suggestion_added_message">%s added to %s</string>
+    <string name="feed_suggestion_added_to">Added to %s</string>
+    <string name="feed_suggestion_undo">Undo</string>
     <string name="feed_suggestion_add_error">Couldn\'t finish adding this feed. Please try again.</string>
-    <string name="feed_suggestion_update_error">Feed added, but its initial update could not finish. Try refreshing your feeds.</string>
-    <string name="feed_suggestion_refreshing">Refreshing articles…</string>
     <string name="blocked_word_operation_error">Couldn\'t update this blocked word. Please try again.</string>
     <string name="blocked_word_refresh_error">Blocked words saved, but the article list could not update. Try again.</string>
     <string name="blocked_word_saving">Saving blocked word…</string>

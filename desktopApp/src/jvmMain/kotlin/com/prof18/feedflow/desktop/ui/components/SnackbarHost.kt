@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -92,7 +93,15 @@ private fun FeedbackContent(data: DesktopFeedbackData, modifier: Modifier = Modi
                     },
                 )
             }
-            .background(JewelTheme.globalColors.panelBackground, shape)
+            .shadow(elevation = 8.dp, shape = shape)
+            .background(
+                if (JewelTheme.isDark) {
+                    JewelTheme.globalColors.toolwindowBackground
+                } else {
+                    JewelTheme.globalColors.panelBackground
+                },
+                shape,
+            )
             .border(width = 1.dp, color = JewelTheme.globalColors.borders.normal, shape = shape)
             .padding(12.dp),
         itemVerticalAlignment = Alignment.CenterVertically,

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.RssFeed
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
@@ -33,15 +34,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.ui.components.FeedSourceLogoImage
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.core.model.FeedAddState
 import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
+import com.prof18.feedflow.shared.presentation.model.FeedSuggestionOperationState
+import com.prof18.feedflow.shared.presentation.model.FeedSuggestionOperationStatus
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 
@@ -49,17 +56,17 @@ import kotlinx.collections.immutable.ImmutableMap
 fun FeedSuggestionsContent(
     categories: ImmutableList<SuggestedFeedCategory>,
     selectedCategoryId: String?,
-    feedStatesMap: ImmutableMap<String, FeedAddState>,
+    operationStates: ImmutableMap<String, FeedSuggestionOperationState>,
     isLoading: Boolean,
     onCategorySelected: (String) -> Unit,
     onAddFeed: (SuggestedFeed, String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
+    val strings = LocalFeedFlowStrings.current
     val selectedCategory = selectedCategoryId?.let { categoryId ->
         categories.find { it.id == categoryId }
     } ?: categories.firstOrNull()
-
     val filteredFeeds = selectedCategory?.feeds.orEmpty()
 
     if (isLoading) {
@@ -72,56 +79,83 @@ fun FeedSuggestionsContent(
         ) {
             CircularProgressIndicator()
         }
-    } else {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .testTag(FeedSuggestionsE2eIds.SCREEN)
-                .padding(contentPadding),
-        ) {
-            Text(
-                text = LocalFeedFlowStrings.current.feedSuggestionsDescription,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .padding(horizontal = Spacing.regular)
-                    .padding(bottom = Spacing.small),
-            )
+        return
+    }
 
-            CategoryFilterRow(
-                categories = categories,
-                selectedCategoryId = selectedCategoryId,
-                onCategorySelected = onCategorySelected,
-            )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(FeedSuggestionsE2eIds.SCREEN)
+            .padding(contentPadding),
+    ) {
+        Text(
+            text = strings.feedSuggestionsDescription,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .padding(horizontal = Spacing.regular)
+                .padding(top = Spacing.xsmall, bottom = Spacing.regular),
+        )
 
-            HorizontalDivider(
-                thickness = 0.5.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                modifier = Modifier.padding(top = Spacing.small),
-            )
+        CategoryFilterRow(
+            categories = categories,
+            selectedCategoryId = selectedCategoryId,
+            onCategorySelected = onCategorySelected,
+        )
 
+        HorizontalDivider(
+            thickness = 0.5.dp,
+            color = MaterialTheme.colorScheme.outlineVariant,
+            modifier = Modifier.padding(top = Spacing.regular),
+        )
+
+        if (categories.isEmpty()) {
+            EmptySuggestionsState(
+                message = strings.feedSuggestionsEmptyCatalog,
+                modifier = Modifier.weight(1f),
+            )
+        } else if (filteredFeeds.isEmpty()) {
+            EmptySuggestionsState(
+                message = strings.feedSuggestionsEmptyCategory,
+                modifier = Modifier.weight(1f),
+            )
+        } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                contentPadding = PaddingValues(vertical = Spacing.small),
+                contentPadding = PaddingValues(top = Spacing.small, bottom = 88.dp),
             ) {
                 items(
                     items = filteredFeeds,
                     key = { it.url },
                 ) { feed ->
-                    val feedState = feedStatesMap[feed.url] ?: FeedAddState.NotAdded
+                    val operation = operationStates[feed.url]
                     SuggestedFeedListItem(
                         feed = feed,
-                        feedState = feedState,
-                        onAddFeed = {
-                            selectedCategory?.name?.let { categoryName ->
-                                onAddFeed(feed, categoryName)
-                            }
-                        },
+                        operation = operation,
+                        selectedCategoryName = selectedCategory?.name,
+                        onAction = { selectedCategory?.name?.let { onAddFeed(feed, it) } },
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun EmptySuggestionsState(message: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth().padding(Spacing.large),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
@@ -141,57 +175,45 @@ private fun CategoryFilterRow(
             items = categories,
             key = { it.id },
         ) { category ->
-            CategoryFilterChip(
-                category = category,
-                isSelected = category.id == selectedCategoryId,
+            FilterChip(
+                selected = category.id == selectedCategoryId,
                 onClick = { onCategorySelected(category.id) },
+                label = { Text(text = category.name) },
+                modifier = Modifier.testTag(FeedSuggestionsE2eIds.category(category.id)),
+                leadingIcon = {
+                    Text(text = category.icon, style = MaterialTheme.typography.bodyMedium)
+                },
             )
         }
     }
 }
 
 @Composable
-private fun CategoryFilterChip(
-    category: SuggestedFeedCategory,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    FilterChip(
-        selected = isSelected,
-        onClick = onClick,
-        label = { Text(text = category.name) },
-        modifier = modifier.testTag(FeedSuggestionsE2eIds.category(category.id)),
-        leadingIcon = {
-            Text(
-                text = category.icon,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        },
-    )
-}
-
-@Composable
 private fun SuggestedFeedListItem(
     feed: SuggestedFeed,
-    feedState: FeedAddState,
-    onAddFeed: () -> Unit,
+    operation: FeedSuggestionOperationState?,
+    selectedCategoryName: String?,
+    onAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val strings = LocalFeedFlowStrings.current
+    val actionLabel = when (operation?.status) {
+        FeedSuggestionOperationStatus.Adding -> strings.addingFeed
+        FeedSuggestionOperationStatus.AddFailed -> strings.retryButton
+        FeedSuggestionOperationStatus.Added -> strings.feedSuggestionAdded
+        null -> strings.feedSuggestionAdd
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .testTag(FeedSuggestionsE2eIds.row(feed.url))
-            .padding(horizontal = Spacing.regular, vertical = Spacing.small),
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(horizontal = Spacing.regular, vertical = Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
         val logo = feed.logoUrl
         if (logo != null) {
-            FeedSourceLogoImage(
-                imageUrl = logo,
-                size = 40.dp,
-            )
+            FeedSourceLogoImage(imageUrl = logo, size = 40.dp)
         } else {
             Icon(
                 imageVector = Icons.Default.RssFeed,
@@ -207,58 +229,95 @@ private fun SuggestedFeedListItem(
 
         Column(
             modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Text(
                 text = feed.name,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = feed.description,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
+                maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
+            SuggestedFeedFeedback(operation, selectedCategoryName)
         }
 
         AddButton(
-            feedState = feedState,
-            onClick = onAddFeed,
+            status = operation?.status,
+            actionLabel = actionLabel,
+            feedName = feed.name,
+            onClick = onAction,
             modifier = Modifier.testTag(FeedSuggestionsE2eIds.addButton(feed.url)),
         )
     }
 }
 
 @Composable
-private fun AddButton(
-    feedState: FeedAddState,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    when (feedState) {
-        FeedAddState.Added -> {
-            FilledTonalButton(
-                onClick = {},
-                modifier = modifier,
-                enabled = false,
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+private fun SuggestedFeedFeedback(operation: FeedSuggestionOperationState?, selectedCategoryName: String?) {
+    val strings = LocalFeedFlowStrings.current
+    if (operation == null) return
+    val addedToCategory = operation.addedToCategory?.takeIf { it != selectedCategoryName }
+
+    Column {
+        if (addedToCategory != null) {
+            Row(
+                modifier = Modifier.padding(top = Spacing.xsmall),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Spacing.xsmall),
             ) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
-                    modifier = Modifier.size(16.dp),
+                    modifier = Modifier.size(14.dp),
+                    tint = MaterialTheme.colorScheme.primary,
                 )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("Added", style = MaterialTheme.typography.labelMedium)
+                Text(
+                    text = strings.feedSuggestionAddedTo(addedToCategory),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
             }
         }
-        FeedAddState.Adding -> {
+
+        if (operation.status == FeedSuggestionOperationStatus.AddFailed) {
+            FeedbackError(strings.feedSuggestionAddError)
+        }
+    }
+}
+
+@Composable
+private fun FeedbackError(message: String) {
+    Text(
+        text = message,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.error,
+        modifier = Modifier
+            .padding(top = Spacing.xsmall)
+            .semantics { liveRegion = LiveRegionMode.Polite },
+    )
+}
+
+@Composable
+private fun AddButton(
+    status: FeedSuggestionOperationStatus?,
+    actionLabel: String,
+    feedName: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val strings = LocalFeedFlowStrings.current
+    val actionDescription = "$actionLabel · $feedName"
+    when (status) {
+        FeedSuggestionOperationStatus.Adding -> {
             OutlinedButton(
                 onClick = {},
-                modifier = modifier,
+                modifier = modifier.semantics { contentDescription = actionDescription },
                 enabled = false,
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
             ) {
@@ -269,19 +328,41 @@ private fun AddButton(
                 )
             }
         }
-        FeedAddState.NotAdded -> {
-            OutlinedButton(
-                onClick = onClick,
-                modifier = modifier,
+        FeedSuggestionOperationStatus.Added -> {
+            FilledTonalButton(
+                onClick = {},
+                modifier = modifier.semantics { contentDescription = actionDescription },
+                enabled = false,
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                ),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add,
+                    imageVector = Icons.Default.Check,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Add", style = MaterialTheme.typography.labelMedium)
+                Text(strings.feedSuggestionAdded, style = MaterialTheme.typography.labelMedium)
+            }
+        }
+        FeedSuggestionOperationStatus.AddFailed, null -> {
+            OutlinedButton(
+                onClick = onClick,
+                modifier = modifier.semantics { contentDescription = actionDescription },
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+            ) {
+                if (status == null) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                }
+                Text(actionLabel, style = MaterialTheme.typography.labelMedium)
             }
         }
     }

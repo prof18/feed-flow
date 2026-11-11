@@ -527,8 +527,6 @@
     <string name="feed_suggestions_empty_catalog">Aucune suggestion de flux n\'est disponible.</string>
     <string name="feed_suggestions_empty_category">Aucunes suggestions de flux dans cette catégorie.</string>
     <string name="feed_suggestion_add_error">L\'import de se flux n\'a pas pu être terminé. Veuillez ré-essayer.</string>
-    <string name="feed_suggestion_update_error">Flux ajouté, mais sa mise à jour initiale n\'a pas pu être complétée. Essayez d\'actualiser vos flux.</string>
-    <string name="feed_suggestion_refreshing">Actualisation des articles…</string>
     <string name="blocked_word_operation_error">Impossible de mettre à jour ce mot bloqué. Veuillez réessayer.</string>
     <string name="blocked_word_refresh_error">Mots bloqués sauvegardés, mais la liste des articles n\'a pas pu être mise à jour. Veuillez réessayer.</string>
     <string name="blocked_word_saving">Sauvegarde des mots bloqués…</string>

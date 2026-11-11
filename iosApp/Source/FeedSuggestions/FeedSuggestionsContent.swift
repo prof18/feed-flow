@@ -10,6 +10,7 @@ import FeedFlowKit
 import Nuke
 import NukeUI
 import SwiftUI
+import UIKit
 
 @MainActor
 struct FeedSuggestionsContent: View {
@@ -17,10 +18,13 @@ struct FeedSuggestionsContent: View {
 
     @State private var suggestedCategories: [SuggestedFeedCategory] = []
     @State private var selectedCategoryId: String = ""
-    @State private var feedStatesMap: [String: FeedAddState] = [:]
+    @State private var operationStates: [String: FeedSuggestionOperationState] = [:]
+    @State private var undoOffer: FeedSuggestionUndoOffer?
     @State private var isLoading: Bool = true
-    @Environment(\.dismiss)
-    private var dismiss
+    @State private var undoSnackbarId: UUID?
+
+    @Environment(AppState.self)
+    private var appState
 
     private var selectedCategory: SuggestedFeedCategory? {
         suggestedCategories.first(where: { $0.id == selectedCategoryId }) ?? suggestedCategories.first
@@ -30,8 +34,8 @@ struct FeedSuggestionsContent: View {
         selectedCategory?.feeds ?? []
     }
 
-    private func getFeedState(_ feedUrl: String) -> FeedAddState {
-        feedStatesMap[feedUrl] ?? .notAdded
+    private var undoTimeoutMillis: Int64 {
+        UIAccessibility.isVoiceOverRunning ? 30_000 : 10_000
     }
 
     var body: some View {
@@ -47,31 +51,46 @@ struct FeedSuggestionsContent: View {
                             selectedCategoryId = categoryId
                         }
                     )
-                    .padding(.vertical, Spacing.regular)
+                    .padding(.top, Spacing.small)
+                    .padding(.bottom, Spacing.regular)
 
                     Divider()
 
-                    ScrollView {
-                        LazyVStack(spacing: 0) {
-                            ForEach(filteredFeeds, id: \.url) { feed in
-                                VStack(spacing: 0) {
-                                    SuggestedFeedRow(
-                                        feed: feed,
-                                        feedState: getFeedState(feed.url),
-                                        onAddFeed: {
-                                            if let categoryName = selectedCategory?.name {
-                                                viewModel.addFeed(feed: feed, categoryName: categoryName)
+                    if filteredFeeds.isEmpty {
+                        let emptyMessage = suggestedCategories.isEmpty
+                            ? feedFlowStrings.feedSuggestionsEmptyCatalog
+                            : feedFlowStrings.feedSuggestionsEmptyCategory
+                        ContentUnavailableView(emptyMessage, systemImage: "lightbulb")
+                            .frame(maxHeight: .infinity)
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: 0) {
+                                ForEach(filteredFeeds, id: \.url) { feed in
+                                    VStack(alignment: .leading, spacing: 0) {
+                                        SuggestedFeedRow(
+                                            feed: feed,
+                                            operation: operationStates[feed.url],
+                                            selectedCategoryName: selectedCategory?.name,
+                                            onAddFeed: {
+                                                if let categoryName = selectedCategory?.name {
+                                                    viewModel.addFeed(
+                                                        feed: feed,
+                                                        categoryName: categoryName,
+                                                        undoTimeoutMillis: undoTimeoutMillis
+                                                    )
+                                                }
                                             }
-                                        }
-                                    )
+                                        )
 
-                                    if feed.url != filteredFeeds.last?.url {
-                                        Divider()
-                                            .padding(.leading, 64)
+                                        if feed.url != filteredFeeds.last?.url {
+                                            Divider()
+                                                .padding(.leading, 72)
+                                        }
                                     }
                                 }
                             }
                         }
+                        .contentMargins(.bottom, 96, for: .scrollContent)
                     }
                 }
                 .accessibilityIdentifier(FeedSuggestionsIds.screen)
@@ -79,6 +98,13 @@ struct FeedSuggestionsContent: View {
         }
         .navigationTitle(feedFlowStrings.feedSuggestionsTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .onDisappear {
+            showUndoSnackbar(for: nil)
+            viewModel.endVisit()
+        }
+        .onChange(of: undoOffer?.generation) { _, _ in
+            showUndoSnackbar(for: undoOffer)
+        }
         .task {
             for await categories in viewModel.suggestedCategoriesState {
                 self.suggestedCategories = categories.compactMap { $0 }
@@ -95,8 +121,13 @@ struct FeedSuggestionsContent: View {
             }
         }
         .task {
-            for await statesMap in viewModel.feedStatesMapState {
-                self.feedStatesMap = statesMap
+            for await states in viewModel.operationStates {
+                self.operationStates = states
+            }
+        }
+        .task {
+            for await offer in viewModel.undoOfferState {
+                self.undoOffer = offer
             }
         }
         .task {
@@ -104,6 +135,33 @@ struct FeedSuggestionsContent: View {
                 self.isLoading = loading as? Bool ?? false
             }
         }
+    }
+
+    private func showUndoSnackbar(for offer: FeedSuggestionUndoOffer?) {
+        if let previousId = undoSnackbarId {
+            let presentation = appState.snackbarPresentation
+            if presentation.messageID == previousId {
+                withAnimation { _ = presentation.beginDismissal(previousId) }
+            } else {
+                appState.snackbarQueue.removeAll { $0.id == previousId }
+            }
+            undoSnackbarId = nil
+        }
+        guard let offer else { return }
+        let snackbar = SnackbarData(
+            title: feedFlowStrings.feedSuggestionAddedMessage(offer.feedName, offer.categoryName),
+            subtitle: nil,
+            showBanner: true,
+            action: SnackbarAction(
+                label: feedFlowStrings.feedSuggestionUndo,
+                accessibilityIdentifier: FeedSuggestionsIds.undoButton
+            ) { [viewModel] in
+                viewModel.undoLastAdd(generation: offer.generation)
+            },
+            duration: .milliseconds(undoTimeoutMillis)
+        )
+        undoSnackbarId = snackbar.id
+        appState.snackbarQueue.append(snackbar)
     }
 }
 
@@ -169,11 +227,21 @@ private struct CategoryFilterChip: View {
 
 private struct SuggestedFeedRow: View {
     let feed: SuggestedFeed
-    let feedState: FeedAddState
+    let operation: FeedSuggestionOperationState?
+    let selectedCategoryName: String?
     let onAddFeed: () -> Void
 
+    private var errorMessage: String? {
+        operation?.status == .addFailed ? feedFlowStrings.feedSuggestionAddError : nil
+    }
+
+    private var addedToCategory: String? {
+        guard let category = operation?.addedToCategory, category != selectedCategoryName else { return nil }
+        return category
+    }
+
     var body: some View {
-        HStack(spacing: Spacing.regular) {
+        HStack(alignment: .top, spacing: Spacing.regular) {
             if let logoUrl = feed.logoUrl, let url = URL(string: logoUrl) {
                 LazyImage(request: ImageRequest.resized(url: url, size: CGSize(width: 40, height: 40))) { state in
                     if let image = state.image {
@@ -193,29 +261,54 @@ private struct SuggestedFeedRow: View {
                 FeedPlaceholderIcon()
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: Spacing.xxsmall) {
                 Text(feed.name)
                     .font(.headline)
                     .fontWeight(.bold)
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .accessibilityIdentifier(FeedSuggestionsIds.row(feed.url))
 
                 Text(feed.feedDescription)
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
+
+                if let addedToCategory {
+                    Label(
+                        feedFlowStrings.feedSuggestionAddedTo(addedToCategory),
+                        systemImage: "checkmark.circle.fill"
+                    )
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Color.accentColor)
+                    .labelStyle(.titleAndIcon)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, Spacing.xxsmall)
+                }
+
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
 
             Spacer()
 
             AddButton(
-                feedState: feedState,
-                accessibilityIdentifier: FeedSuggestionsIds.addButton(feed.url),
+                feed: feed,
+                operation: operation,
                 onTap: onAddFeed
             )
         }
+        .onChange(of: errorMessage) { _, message in
+            if let message {
+                UIAccessibility.post(notification: .announcement, argument: message)
+            }
+        }
         .padding(.horizontal, Spacing.regular)
-        .padding(.vertical, Spacing.small)
-        .accessibilityIdentifier(FeedSuggestionsIds.row(feed.url))
+        .padding(.vertical, Spacing.regular - Spacing.xsmall)
+        .accessibilityElement(children: .contain)
     }
 }
 
@@ -231,81 +324,61 @@ private struct FeedPlaceholderIcon: View {
 }
 
 private struct AddButton: View {
-    let feedState: FeedAddState
-    let accessibilityIdentifier: String
+    let feed: SuggestedFeed
+    let operation: FeedSuggestionOperationState?
     let onTap: () -> Void
 
+    private var label: String {
+        switch operation?.status {
+        case .adding: feedFlowStrings.addingFeed
+        case .addFailed: feedFlowStrings.retryButton
+        case .added: feedFlowStrings.feedSuggestionAdded
+        default: feedFlowStrings.feedSuggestionAdd
+        }
+    }
+
+    private var isBusy: Bool {
+        operation?.status == .adding
+    }
+
+    private var canAdd: Bool {
+        operation == nil || operation?.status == .addFailed
+    }
+
     var body: some View {
-        switch feedState {
-        case .added:
-            Button {} label: {
-                HStack(spacing: 4) {
+        Button(action: onTap) {
+            HStack(spacing: 4) {
+                if isBusy {
+                    ProgressView()
+                        .controlSize(.small)
+                } else if !canAdd {
                     Image(systemName: "checkmark")
                         .font(.system(size: 12, weight: .semibold))
-                    Text(feedFlowStrings.feedAddedMessageWithoutName)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(UIColor.secondarySystemFill))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(Color(UIColor.separator), lineWidth: 1)
-                )
-            }
-            .buttonStyle(.plain)
-            .foregroundColor(.secondary)
-            .disabled(true)
-            .accessibilityLabel(feedFlowStrings.feedAddedMessageWithoutName)
-            .accessibilityIdentifier(accessibilityIdentifier)
-
-        case .adding:
-            Button {} label: {
-                ProgressView()
-                    .controlSize(.small)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.clear)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(Color(UIColor.separator), lineWidth: 1)
-                    )
-            }
-            .buttonStyle(.plain)
-            .disabled(true)
-            .accessibilityLabel(feedFlowStrings.addingFeed)
-            .accessibilityIdentifier(accessibilityIdentifier)
-
-        case .notAdded:
-            Button(action: onTap) {
-                HStack(spacing: 4) {
+                } else if operation == nil {
                     Image(systemName: "plus")
                         .font(.system(size: 12, weight: .semibold))
-                    Text(feedFlowStrings.addFeed)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.clear)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(Color(UIColor.separator), lineWidth: 1)
-                )
+                Text(label)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .multilineTextAlignment(.center)
             }
-            .buttonStyle(.plain)
-            .foregroundColor(.primary)
-            .accessibilityIdentifier(accessibilityIdentifier)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .frame(minHeight: 44)
+            .background(
+                canAdd ? Color.clear : Color(UIColor.secondarySystemFill),
+                in: RoundedRectangle(cornerRadius: 8)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(Color(UIColor.separator), lineWidth: 1)
+            )
         }
+        .buttonStyle(.plain)
+        .foregroundStyle(canAdd ? .primary : .secondary)
+        .disabled(!canAdd)
+        .accessibilityLabel("\(label) · \(feed.name)")
+        .accessibilityIdentifier(FeedSuggestionsIds.addButton(feed.url))
     }
 }

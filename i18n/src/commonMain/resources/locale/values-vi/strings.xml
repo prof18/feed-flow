@@ -524,8 +524,6 @@
     <string name="feed_suggestions_empty_catalog">Không có nguồn tin đề xuất nào.</string>
     <string name="feed_suggestions_empty_category">Không có nguồn tin đề xuất nào trong danh mục này.</string>
     <string name="feed_suggestion_add_error">Không thể hoàn tất thêm nguồn tin này. Vui lòng thử lại.</string>
-    <string name="feed_suggestion_update_error">Đã thêm nguồn tin, nhưng quá trình cập nhật ban đầu chưa hoàn tất. Hãy thử làm mới những nguồn tin của bạn.</string>
-    <string name="feed_suggestion_refreshing">Đang làm mới các bài viết…</string>
     <string name="blocked_word_operation_error">Không thể cập nhật lọc từ khóa này. Vui lòng thử lại.</string>
     <string name="blocked_word_refresh_error">Đã lưu những từ khóa sẽ lọc, nhưng không thể cập nhật danh sách bài viết. Thử lại.</string>
     <string name="blocked_word_saving">Đang lưu từ khóa…</string>

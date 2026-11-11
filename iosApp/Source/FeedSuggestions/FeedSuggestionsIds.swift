@@ -2,6 +2,7 @@ enum FeedSuggestionsIds {
     static let drawerItem = "feed_suggestions_drawer_item"
     static let menuButton = "feed_suggestions_menu_button"
     static let screen = "feed_suggestions_screen"
+    static let undoButton = "feed_suggestions_undo"
 
     static func category(_ categoryId: String) -> String {
         "feed_suggestions_category_\(categoryId.e2eIdSuffix)"

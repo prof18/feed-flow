@@ -25,12 +25,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,12 +44,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -56,7 +58,6 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import com.prof18.feedflow.core.model.FeedAddState
 import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SuggestedFeedCategory
 import com.prof18.feedflow.desktop.home.drawer.sidebarRowBackground
@@ -68,6 +69,7 @@ import com.prof18.feedflow.desktop.ui.components.FeedFlowVerticalScrollbar
 import com.prof18.feedflow.desktop.ui.components.LocalWindowTopInset
 import com.prof18.feedflow.shared.presentation.model.FeedSuggestionOperationState
 import com.prof18.feedflow.shared.presentation.model.FeedSuggestionOperationStatus
+import com.prof18.feedflow.shared.presentation.model.FeedSuggestionUndoOffer
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentMapOf
@@ -85,13 +87,14 @@ import org.jetbrains.jewel.ui.icons.AllIconsKeys
 internal fun FeedSuggestionsContent(
     categories: ImmutableList<SuggestedFeedCategory>,
     selectedCategoryId: String?,
-    feedStates: ImmutableMap<String, FeedAddState>,
     isLoading: Boolean,
     onCategorySelected: (String) -> Unit,
     onAddFeed: (SuggestedFeed, String) -> Unit,
     onCloseRequest: () -> Unit,
     modifier: Modifier = Modifier,
     operationStates: ImmutableMap<String, FeedSuggestionOperationState> = persistentMapOf(),
+    undoOfferState: FeedSuggestionUndoOffer? = null,
+    onUndo: (Long) -> Unit = {},
 ) {
     val strings = LocalFeedFlowStrings.current
     val selected = categories.find { it.id == selectedCategoryId } ?: categories.firstOrNull()
@@ -133,24 +136,39 @@ internal fun FeedSuggestionsContent(
                     )
                 }
                 if (showCategories && wide) {
+                    Column(verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSmall)) {
+                        Text(
+                            "${selected.icon}  ${selected.name}",
+                            style = JewelTheme.defaultTextStyle.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 20.sp,
+                                lineHeight = 26.sp,
+                            ),
+                        )
+                        Text(
+                            strings.feedSuggestionsDescription,
+                            color = JewelTheme.globalColors.text.info,
+                        )
+                    }
+                } else {
                     Text(
-                        "${selected.icon}  ${selected.name}",
-                        style = JewelTheme.defaultTextStyle.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 20.sp,
-                            lineHeight = 26.sp,
-                        ),
+                        strings.feedSuggestionsDescription,
+                        color = JewelTheme.globalColors.text.info,
                     )
                 }
-                Text(
-                    strings.feedSuggestionsDescription,
-                    style = DesktopDesignTokens.metadataText,
-                    color = JewelTheme.globalColors.text.info,
-                )
                 Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    SuggestionFeedArea(isLoading, selected, feedState, feedStates, operationStates, onAddFeed)
+                    SuggestionFeedArea(isLoading, selected, feedState, operationStates, onAddFeed)
                 }
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection),
+                ) {
+                    SuggestionUndoStatus(
+                        offer = undoOfferState,
+                        onUndo = onUndo,
+                        modifier = Modifier.weight(1f),
+                    )
                     DefaultButton(
                         onClick = onCloseRequest,
                         modifier = Modifier.heightIn(min = suggestionActionHeight()).focusRequester(closeFocus),
@@ -198,7 +216,6 @@ private fun SuggestionFeedArea(
     isLoading: Boolean,
     selected: SuggestedFeedCategory?,
     feedState: LazyListState,
-    feedStates: ImmutableMap<String, FeedAddState>,
     operationStates: ImmutableMap<String, FeedSuggestionOperationState>,
     onAddFeed: (SuggestedFeed, String) -> Unit,
 ) {
@@ -217,8 +234,8 @@ private fun SuggestionFeedArea(
                 items(selected.feeds, key = { it.url }) { feed ->
                     SuggestedFeedRow(
                         feed = feed,
-                        state = feedStates[feed.url] ?: FeedAddState.NotAdded,
-                        operation = operationStates[feed.url]?.status,
+                        selectedCategoryName = selected.name,
+                        operation = operationStates[feed.url],
                         onAdd = { onAddFeed(feed, selected.name) },
                     )
                 }
@@ -272,72 +289,126 @@ private fun SuggestionCategory(
 @Composable
 private fun SuggestedFeedRow(
     feed: SuggestedFeed,
-    state: FeedAddState,
-    operation: FeedSuggestionOperationStatus?,
+    selectedCategoryName: String,
+    operation: FeedSuggestionOperationState?,
     onAdd: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier.fillMaxWidth().testTag(FeedSuggestionsE2eIds.row(feed.url)),
-        verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
-    ) {
-        BoxWithConstraints(Modifier.fillMaxWidth()) {
-            if (maxWidth < WideSuggestionRowWidth) {
-                Column(verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium)) {
-                    SuggestedFeedDetails(feed)
-                    SuggestedFeedAction(feed, state, operation, onAdd, Modifier.align(Alignment.End))
-                }
-            } else {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection),
-                ) {
-                    SuggestedFeedDetails(feed, Modifier.weight(1f))
-                    SuggestedFeedAction(feed, state, operation, onAdd)
-                }
+    BoxWithConstraints(modifier.fillMaxWidth().testTag(FeedSuggestionsE2eIds.row(feed.url))) {
+        if (maxWidth < WideSuggestionRowWidth) {
+            Column(verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium)) {
+                SuggestedFeedDetails(feed, operation, selectedCategoryName)
+                SuggestedFeedAction(feed, operation?.status, onAdd, Modifier.align(Alignment.End))
+            }
+        } else {
+            Row(horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection)) {
+                SuggestedFeedDetails(feed, operation, selectedCategoryName, Modifier.weight(1f))
+                SuggestedFeedAction(feed, operation?.status, onAdd)
             }
         }
-        SuggestedFeedFeedback(state, operation)
     }
 }
 
 @Composable
-private fun SuggestedFeedFeedback(state: FeedAddState, operation: FeedSuggestionOperationStatus?) {
+private fun SuggestedFeedStatus(operation: FeedSuggestionOperationState?, selectedCategoryName: String) {
+    if (operation == null) return
     val strings = LocalFeedFlowStrings.current
-    val errorMessage = when {
-        state == FeedAddState.NotAdded && operation == FeedSuggestionOperationStatus.AddFailed ->
-            strings.feedSuggestionAddError
-        state == FeedAddState.Added && operation == FeedSuggestionOperationStatus.UpdateFailed ->
-            strings.feedSuggestionUpdateError
-        else -> null
+    val failed = operation.status == FeedSuggestionOperationStatus.AddFailed
+    val errorMessage = if (failed) strings.feedSuggestionAddError else null
+    val addedToCategory = operation.addedToCategory?.takeIf { it != selectedCategoryName }
+    val addedTo = addedToCategory?.let { strings.feedSuggestionAddedTo(it) }
+    if (errorMessage == null && addedTo == null) return
+
+    Column(
+        modifier = Modifier.padding(top = DesktopDesignTokens.spaceSmall),
+        verticalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSmall),
+    ) {
+        if (addedTo != null) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSmall),
+            ) {
+                Icon(
+                    Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = JewelTheme.globalColors.text.info,
+                )
+                Text(addedTo, style = DesktopDesignTokens.metadataText, color = JewelTheme.globalColors.text.info)
+            }
+        }
+        if (errorMessage != null) {
+            SuggestedFeedError(errorMessage)
+        }
     }
-    if (errorMessage != null) {
-        Text(
-            errorMessage,
-            modifier = Modifier.semantics {
-                error(errorMessage)
-                liveRegion = LiveRegionMode.Polite
-            },
-            color = JewelTheme.globalColors.text.error,
-        )
-    } else if (operation == FeedSuggestionOperationStatus.Refreshing) {
-        Row(
-            modifier = Modifier.semantics {
-                liveRegion = LiveRegionMode.Polite
-                progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate
-            },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
-        ) {
-            CircularProgressIndicator()
-            Text(strings.feedSuggestionRefreshing)
+}
+
+@Composable
+private fun SuggestedFeedError(message: String) {
+    Text(
+        message,
+        modifier = Modifier.semantics {
+            error(message)
+            liveRegion = LiveRegionMode.Polite
+        },
+        style = DesktopDesignTokens.metadataText,
+        color = JewelTheme.globalColors.text.error,
+    )
+}
+
+@Composable
+private fun SuggestionUndoStatus(
+    offer: FeedSuggestionUndoOffer?,
+    onUndo: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val strings = LocalFeedFlowStrings.current
+    var undoneGeneration by remember { mutableStateOf<Long?>(null) }
+    val visibleOffer = offer?.takeIf { it.generation != undoneGeneration }
+    Box(modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+        if (visibleOffer != null) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceLarge),
+            ) {
+                Icon(
+                    Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = JewelTheme.globalColors.text.info,
+                )
+                Text(
+                    strings.feedSuggestionAddedMessage(visibleOffer.feedName, visibleOffer.categoryName),
+                    modifier = Modifier.weight(1f, fill = false),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                OutlinedButton(
+                    onClick = {
+                        undoneGeneration = visibleOffer.generation
+                        onUndo(visibleOffer.generation)
+                    },
+                    modifier = Modifier.heightIn(min = suggestionActionHeight())
+                        .testTag("feed_suggestion_undo")
+                        .semantics {
+                            contentDescription = "${strings.feedSuggestionUndo} · ${visibleOffer.feedName}"
+                        },
+                ) {
+                    Text(strings.feedSuggestionUndo)
+                }
+            }
         }
     }
 }
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun SuggestedFeedDetails(feed: SuggestedFeed, modifier: Modifier = Modifier) {
+private fun SuggestedFeedDetails(
+    feed: SuggestedFeed,
+    operation: FeedSuggestionOperationState?,
+    selectedCategoryName: String,
+    modifier: Modifier = Modifier,
+) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceSection)) {
         Box(
             modifier = Modifier.size(SuggestionLogoSize).clip(RoundedCornerShape(DesktopDesignTokens.spaceMedium)),
@@ -370,6 +441,7 @@ private fun SuggestedFeedDetails(feed: SuggestedFeed, modifier: Modifier = Modif
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+            SuggestedFeedStatus(operation, selectedCategoryName)
         }
     }
 }
@@ -377,45 +449,44 @@ private fun SuggestedFeedDetails(feed: SuggestedFeed, modifier: Modifier = Modif
 @Composable
 private fun SuggestedFeedAction(
     feed: SuggestedFeed,
-    state: FeedAddState,
-    operation: FeedSuggestionOperationStatus?,
+    status: FeedSuggestionOperationStatus?,
     onAdd: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val strings = LocalFeedFlowStrings.current
-    val currentState by rememberUpdatedState(state)
-    val currentOperation by rememberUpdatedState(operation)
+    val canAdd = status == null || status == FeedSuggestionOperationStatus.AddFailed
+    val currentCanAdd by rememberUpdatedState(canAdd)
     val add by rememberUpdatedState(onAdd)
-    val label = when (state) {
-        FeedAddState.NotAdded -> if (operation == FeedSuggestionOperationStatus.AddFailed) {
-            strings.retryButton
-        } else {
-            strings.addFeed
-        }
-        FeedAddState.Adding -> strings.addingFeed
-        FeedAddState.Added -> strings.feedAddedMessageWithoutName
+    val label = when (status) {
+        FeedSuggestionOperationStatus.Adding -> strings.addingFeed
+        FeedSuggestionOperationStatus.Added -> strings.feedSuggestionAdded
+        FeedSuggestionOperationStatus.AddFailed -> strings.retryButton
+        null -> strings.feedSuggestionAdd
     }
     OutlinedButton(
-        onClick = {
-            if (currentState == FeedAddState.NotAdded && !currentOperation.isBusy()) add()
-        },
-        enabled = state == FeedAddState.NotAdded && !operation.isBusy(),
+        onClick = { if (currentCanAdd) add() },
+        enabled = canAdd,
         modifier = modifier.heightIn(min = suggestionActionHeight())
             .testTag(FeedSuggestionsE2eIds.addButton(feed.url))
-            .semantics { contentDescription = "$label: ${feed.name}" },
+            .semantics { contentDescription = "$label · ${feed.name}" },
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(DesktopDesignTokens.spaceMedium),
         ) {
-            if (state == FeedAddState.Adding) CircularProgressIndicator()
+            when (status) {
+                FeedSuggestionOperationStatus.Adding -> CircularProgressIndicator()
+                FeedSuggestionOperationStatus.Added -> Icon(
+                    Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                )
+                else -> Unit
+            }
             Text(label)
         }
     }
 }
-
-private fun FeedSuggestionOperationStatus?.isBusy(): Boolean =
-    this == FeedSuggestionOperationStatus.Adding || this == FeedSuggestionOperationStatus.Refreshing
 
 @Composable
 @ReadOnlyComposable

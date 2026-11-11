@@ -23,8 +23,6 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: feed_suggestions_add_https___feeds2_feedburner_com_businessinsider
 - extendedWaitUntil:
-    visible:
-      text: "Added"
+    visible: "Business Insider added to Business"
     timeout: 5000
-- assertVisible:
-    id: feed_suggestions_add_https___feeds2_feedburner_com_businessinsider
+- assertNotVisible: "Added to Business"

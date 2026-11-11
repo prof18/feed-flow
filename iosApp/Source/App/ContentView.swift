@@ -200,7 +200,7 @@ private extension ContentView {
     private func presentSnackbar() async {
         guard let message = appState.snackbarQueue.first else { return }
         let presentation = appState.snackbarPresentation
-        let didShow = withAnimation { presentation.show(message.id) }
+        let didShow = withAnimation { presentation.show(message.id, duration: message.duration) }
         if didShow {
             AccessibilityNotification.Announcement(message.title).post()
         }

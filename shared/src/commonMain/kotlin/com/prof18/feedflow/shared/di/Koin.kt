@@ -98,8 +98,11 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -326,10 +329,16 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
+    // Undo and the closing backup must finish after the screen, and its ViewModel on iOS, goes away.
+    single(named(FEED_SUGGESTIONS_SCOPE)) {
+        CoroutineScope(SupervisorJob() + get<DispatcherProvider>().main)
+    } onClose { it?.cancel() }
+
     viewModel {
         FeedSuggestionsViewModel(
             feedSourcesRepository = get(),
             feedFetcherRepository = get(),
+            backgroundScope = get(named(FEED_SUGGESTIONS_SCOPE)),
         )
     }
 
@@ -821,3 +830,5 @@ internal expect fun getPlatformModule(appEnvironment: AppEnvironment): Module
 inline fun <reified T> Scope.getWith(vararg params: Any?): T {
     return get(parameters = { parametersOf(*params) })
 }
+
+private const val FEED_SUGGESTIONS_SCOPE = "feedSuggestionsScope"

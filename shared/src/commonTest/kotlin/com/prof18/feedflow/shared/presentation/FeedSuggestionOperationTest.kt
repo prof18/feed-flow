@@ -1,366 +1,196 @@
 package com.prof18.feedflow.shared.presentation
 
-import com.prof18.feedflow.core.model.FeedAddState
-import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FeedSource
+import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.SuggestedFeed
-import com.prof18.feedflow.shared.domain.feed.FeedFetcherRepository
-import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
+import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.presentation.model.FeedSuggestionOperationStatus
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.koin.test.get
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class FeedSuggestionOperationTest : KoinTestBase() {
 
+    private val deleted = mutableListOf<String>()
+    private var backups = 0
+    private var refreshes = 0
+
     @Test
-    fun `add immediately publishes adding and duplicate taps share one operation`() = runTest(testDispatcher) {
+    fun `add shows adding then added with an undo offer naming the category`() = runTest(testDispatcher) {
         val gate = CompletableDeferred<Unit>()
-        var addCalls = 0
-        var refreshCalls = 0
-        val viewModel = viewModel(
-            add = { _, _ ->
-                addCalls++
-                gate.await()
-            },
-            refresh = { refreshCalls++ },
-            exists = { false },
-        )
+        val model = viewModel(add = { feed, _ ->
+            gate.await()
+            subscribe(feed)
+        })
 
-        viewModel.addFeed(feedA, "Tech")
+        model.addFeed(feedA, "Tech")
         runCurrent()
-        val adding = viewModel.operationStates.value.getValue(feedA.url)
-        assertEquals(FeedSuggestionOperationStatus.Adding, adding.status)
-        assertEquals(FeedAddState.Adding, viewModel.feedStatesMapState.value[feedA.url])
-
-        viewModel.addFeed(feedA, "Tech")
-        runCurrent()
-        assertEquals(1, addCalls)
-        assertEquals(FeedSuggestionOperationStatus.Adding, viewModel.operationStates.value.getValue(feedA.url).status)
+        assertEquals(FeedSuggestionOperationStatus.Adding, model.status(feedA))
 
         gate.complete(Unit)
-        advanceUntilIdle()
-        assertEquals(1, refreshCalls)
-        assertEquals(FeedAddState.Added, viewModel.feedStatesMapState.value[feedA.url])
+        runCurrent()
+        assertEquals(FeedSuggestionOperationStatus.Added, model.status(feedA))
+        assertEquals("Tech", model.operationStates.value.getValue(feedA.url).addedToCategory)
+        val offer = assertNotNull(model.undoOfferState.value)
+        assertEquals(feedA.name, offer.feedName)
+        assertEquals("Tech", offer.categoryName)
     }
 
     @Test
-    fun `immediate duplicate tap before queued operation does not enqueue another save`() = runTest(testDispatcher) {
+    fun `taps while adding or after adding are ignored`() = runTest(testDispatcher) {
+        var calls = 0
         val gate = CompletableDeferred<Unit>()
-        var addCalls = 0
-        val viewModel = viewModel(
-            add = { _, _ ->
-                addCalls++
-                gate.await()
-            },
-            refresh = {},
-            exists = { false },
-        )
+        val model = viewModel(add = { feed, _ ->
+            calls++
+            gate.await()
+            subscribe(feed)
+        })
 
-        viewModel.addFeed(feedA, "Tech")
-        viewModel.addFeed(feedA, "Tech")
-        assertEquals(FeedSuggestionOperationStatus.Adding, viewModel.operationStates.value.getValue(feedA.url).status)
+        model.addFeed(feedA, "Tech")
+        model.addFeed(feedA, "Tech")
         runCurrent()
-
-        assertEquals(1, addCalls)
         gate.complete(Unit)
         advanceUntilIdle()
-        assertEquals(FeedSuggestionOperationStatus.Added, viewModel.operationStates.value.getValue(feedA.url).status)
-    }
-
-    @Test
-    fun `existing verified url becomes added without add or refresh`() = runTest(testDispatcher) {
-        var addCalls = 0
-        var refreshCalls = 0
-        val viewModel = viewModel(
-            add = { _, _ -> addCalls++ },
-            refresh = { refreshCalls++ },
-            exists = { it == feedA.url },
-        )
-
-        viewModel.addFeed(feedA, "Tech")
+        model.addFeed(feedA, "Tech")
         advanceUntilIdle()
 
-        assertEquals(0, addCalls)
-        assertEquals(0, refreshCalls)
-        assertEquals(FeedAddState.Added, viewModel.feedStatesMapState.value[feedA.url])
-        assertEquals(FeedSuggestionOperationStatus.Added, viewModel.operationStates.value.getValue(feedA.url).status)
+        assertEquals(1, calls)
     }
 
     @Test
-    fun `successful save publishes refreshing and blocks duplicate add`() = runTest(testDispatcher) {
-        val refreshGate = CompletableDeferred<Unit>()
-        var addCalls = 0
-        var refreshCalls = 0
-        val viewModel = viewModel(
-            add = { _, _ -> addCalls++ },
-            refresh = {
-                refreshCalls++
-                refreshGate.await()
-            },
-            exists = { false },
-        )
+    fun `a failed add shows the failure and can be retried`() = runTest(testDispatcher) {
+        var calls = 0
+        val model = viewModel(add = { feed, _ ->
+            calls++
+            if (calls == 1) error("offline")
+            subscribe(feed)
+        })
 
-        viewModel.addFeed(feedA, "Tech")
+        model.addFeed(feedA, "Tech")
+        advanceUntilIdle()
+        assertEquals(FeedSuggestionOperationStatus.AddFailed, model.status(feedA))
+
+        model.addFeed(feedA, "Tech")
+        advanceUntilIdle()
+        assertEquals(FeedSuggestionOperationStatus.Added, model.status(feedA))
+    }
+
+    @Test
+    fun `undo deletes the subscription and the row goes back to add`() = runTest(testDispatcher) {
+        val model = viewModel()
+
+        model.addFeed(feedA, "Tech")
         runCurrent()
-        val refreshing = viewModel.operationStates.value.getValue(feedA.url)
-        assertEquals(FeedSuggestionOperationStatus.Refreshing, refreshing.status)
-        assertEquals(FeedAddState.Added, viewModel.feedStatesMapState.value[feedA.url])
+        model.undoLastAdd(assertNotNull(model.undoOfferState.value).generation)
+        advanceUntilIdle()
 
-        viewModel.addFeed(feedA, "Tech")
+        assertEquals(listOf(feedA.url), deleted)
+        assertNull(model.undoOfferState.value)
+        assertNull(model.operationStates.value[feedA.url])
+    }
+
+    @Test
+    fun `an expired undo offer cannot remove the feed`() = runTest(testDispatcher) {
+        val model = viewModel()
+
+        model.addFeed(feedA, "Tech", undoTimeoutMillis = 30_000)
         runCurrent()
-        assertEquals(1, addCalls)
-        assertEquals(1, refreshCalls)
-        assertEquals(refreshing, viewModel.operationStates.value.getValue(feedA.url))
-
-        refreshGate.complete(Unit)
+        val generation = assertNotNull(model.undoOfferState.value).generation
+        advanceTimeBy(29_999)
+        assertNotNull(model.undoOfferState.value)
+        advanceTimeBy(2)
+        model.undoLastAdd(generation)
         advanceUntilIdle()
-        assertEquals(FeedSuggestionOperationStatus.Added, viewModel.operationStates.value.getValue(feedA.url).status)
+
+        assertNull(model.undoOfferState.value)
+        assertTrue(deleted.isEmpty())
     }
 
     @Test
-    fun `refresh failure preserves saved feed and reports update failure`() = runTest(testDispatcher) {
-        val viewModel = viewModel(
-            add = { _, _ -> },
-            refresh = { error("refresh failed") },
-            exists = { false },
-        )
+    fun `closing refreshes and backs up once after changes and a pending undo`() = runTest(testDispatcher) {
+        val model = viewModel()
 
-        viewModel.addFeed(feedA, "Tech")
+        model.endVisit()
         advanceUntilIdle()
+        assertEquals(0, backups)
+        assertEquals(0, refreshes)
 
-        assertEquals(FeedAddState.Added, viewModel.feedStatesMapState.value[feedA.url])
-        assertEquals(
-            FeedSuggestionOperationStatus.UpdateFailed,
-            viewModel.operationStates.value.getValue(feedA.url).status,
-        )
+        model.addFeed(feedA, "Tech")
+        model.addFeed(feedB, "Tech")
+        runCurrent()
+        assertEquals(0, backups)
+
+        model.undoLastAdd(assertNotNull(model.undoOfferState.value).generation)
+        model.endVisit()
+        advanceUntilIdle()
+        assertEquals(1, backups)
+        assertEquals(1, refreshes)
+        assertEquals(listOf(feedB.url), deleted)
+
+        model.endVisit()
+        advanceUntilIdle()
+        assertEquals(1, backups)
     }
 
     @Test
-    fun `genuine add failure can be retried and advances generation`() = runTest(testDispatcher) {
-        var addCalls = 0
-        val viewModel = viewModel(
-            add = { _, _ -> if (++addCalls == 1) error("add failed") },
-            refresh = {},
-            exists = { false },
-        )
-
-        viewModel.addFeed(feedA, "Tech")
+    fun `feeds already subscribed show as added and are not added again`() = runTest(testDispatcher) {
+        subscribe(feedA)
+        var calls = 0
+        val model = viewModel(add = { _, _ -> calls++ })
         advanceUntilIdle()
-        val failed = viewModel.operationStates.value.getValue(feedA.url)
-        assertEquals(FeedSuggestionOperationStatus.AddFailed, failed.status)
-        assertEquals(FeedAddState.NotAdded, viewModel.feedStatesMapState.value[feedA.url])
-
-        viewModel.addFeed(feedA, "Tech")
-        advanceUntilIdle()
-        val retried = viewModel.operationStates.value.getValue(feedA.url)
-        assertEquals(FeedSuggestionOperationStatus.Added, retried.status)
-        assertNotEquals(failed.generation, retried.generation)
-        assertEquals(FeedAddState.Added, viewModel.feedStatesMapState.value[feedA.url])
-        assertEquals(2, addCalls)
-    }
-
-    @Test
-    fun `add exception after commit is verified as added and is not duplicated`() = runTest(testDispatcher) {
-        var committed = false
-        var addCalls = 0
-        val viewModel = viewModel(
-            add = { _, _ ->
-                addCalls++
-                committed = true
-                error("commit response lost")
-            },
-            refresh = {},
-            exists = { committed },
-        )
-
-        viewModel.addFeed(feedA, "Tech")
-        advanceUntilIdle()
-
-        val state = viewModel.operationStates.value.getValue(feedA.url)
-        assertEquals(FeedSuggestionOperationStatus.UpdateFailed, state.status)
-        assertEquals(FeedAddState.Added, viewModel.feedStatesMapState.value[feedA.url])
-        viewModel.addFeed(feedA, "Tech")
-        advanceUntilIdle()
-        assertEquals(1, addCalls)
-        assertEquals(state, viewModel.operationStates.value.getValue(feedA.url))
-    }
-
-    @Test
-    fun `observed saved feed stays added when both save and verification report errors`() = runTest(testDispatcher) {
-        val sources = get<FeedSourcesRepository>()
-        lateinit var model: FeedSuggestionsViewModel
-        model = viewModel(
-            add = { feed, category ->
-                sources.addFeedSourceWithoutFetching(feed.url, feed.name, category, feed.logoUrl)
-                model.feedStatesMapState.first { it[feed.url] == FeedAddState.Added }
-                error("backup failed after commit")
-            },
-            refresh = {},
-            exists = { url ->
-                if (model.feedStatesMapState.value[url] == FeedAddState.Added) error("verification unavailable")
-                false
-            },
-        )
 
         model.addFeed(feedA, "Tech")
         advanceUntilIdle()
 
-        assertEquals(FeedAddState.Added, model.feedStatesMapState.value[feedA.url])
-        assertEquals(FeedSuggestionOperationStatus.UpdateFailed, model.operationStates.value.getValue(feedA.url).status)
+        val row = model.operationStates.value.getValue(feedA.url)
+        assertEquals(FeedSuggestionOperationStatus.Added, row.status)
+        assertNull(row.addedToCategory)
+        assertNull(model.undoOfferState.value)
+        assertEquals(0, calls)
     }
 
-    @Test
-    fun `existence check failure reports add failure and retry verifies before writing`() = runTest(testDispatcher) {
-        var existsCalls = 0
-        var addCalls = 0
-        val viewModel = viewModel(
-            add = { _, _ -> addCalls++ },
-            refresh = {},
-            exists = { if (++existsCalls == 1) error("lookup failed") else false },
-        )
-
-        viewModel.addFeed(feedA, "Tech")
-        advanceUntilIdle()
-        val first = viewModel.operationStates.value.getValue(feedA.url)
-        assertEquals(FeedSuggestionOperationStatus.AddFailed, first.status)
-        assertEquals(0, addCalls)
-
-        viewModel.addFeed(feedA, "Tech")
-        advanceUntilIdle()
-        val retried = viewModel.operationStates.value.getValue(feedA.url)
-        assertEquals(FeedSuggestionOperationStatus.Added, retried.status)
-        assertNotEquals(first.generation, retried.generation)
-        assertEquals(2, existsCalls)
-        assertEquals(1, addCalls)
-    }
-
-    @Test
-    fun `verification read failure reports add failure and retry preflight avoids duplicate write`() =
-        runTest(testDispatcher) {
-            var existsCalls = 0
-            var addCalls = 0
-            var committed = false
-            val viewModel = viewModel(
-                add = { _, _ ->
-                    addCalls++
-                    committed = true
-                    error("commit response lost")
-                },
-                refresh = {},
-                exists = {
-                    when (++existsCalls) {
-                        1 -> false
-                        2 -> error("verification read failed")
-                        else -> committed
-                    }
-                },
-            )
-
-            viewModel.addFeed(feedA, "Tech")
-            advanceUntilIdle()
-            val failed = viewModel.operationStates.value.getValue(feedA.url)
-            assertEquals(FeedSuggestionOperationStatus.AddFailed, failed.status)
-            assertEquals(FeedAddState.NotAdded, viewModel.feedStatesMapState.value[feedA.url])
-
-            viewModel.addFeed(feedA, "Tech")
-            advanceUntilIdle()
-
-            val retried = viewModel.operationStates.value.getValue(feedA.url)
-            assertEquals(FeedSuggestionOperationStatus.Added, retried.status)
-            assertNotEquals(failed.generation, retried.generation)
-            assertEquals(3, existsCalls)
-            assertEquals(1, addCalls)
-        }
-
-    @Test
-    fun `per url operation state is independent`() = runTest(testDispatcher) {
-        val gates = mapOf(feedA.url to CompletableDeferred<Unit>(), feedB.url to CompletableDeferred<Unit>())
-        val viewModel = viewModel(
-            add = { feed, _ -> gates.getValue(feed.url).await() },
-            refresh = {},
-            exists = { false },
-        )
-
-        viewModel.addFeed(feedA, "Tech")
-        viewModel.addFeed(feedB, "Tech")
-        runCurrent()
-        assertEquals(FeedSuggestionOperationStatus.Adding, viewModel.operationStates.value.getValue(feedA.url).status)
-        assertEquals(FeedSuggestionOperationStatus.Adding, viewModel.operationStates.value.getValue(feedB.url).status)
-
-        gates.getValue(feedA.url).complete(Unit)
-        runCurrent()
-        assertEquals(FeedSuggestionOperationStatus.Added, viewModel.operationStates.value.getValue(feedA.url).status)
-        assertEquals(FeedSuggestionOperationStatus.Adding, viewModel.operationStates.value.getValue(feedB.url).status)
-
-        gates.getValue(feedB.url).complete(Unit)
-        advanceUntilIdle()
-        assertEquals(FeedSuggestionOperationStatus.Added, viewModel.operationStates.value.getValue(feedB.url).status)
-    }
-
-    @Test
-    fun `cancellation is not published as add failure and does not refresh`() = runTest(testDispatcher) {
-        var refreshCalls = 0
-        val viewModel = viewModel(
-            add = { _, _ -> throw CancellationException("cancelled") },
-            refresh = { refreshCalls++ },
-            exists = { false },
-        )
-
-        viewModel.addFeed(feedA, "Tech")
-        runCurrent()
-
-        assertEquals(0, refreshCalls)
-        assertFalse(
-            viewModel.operationStates.value.getValue(feedA.url).status == FeedSuggestionOperationStatus.AddFailed,
-        )
-        assertTrue(viewModel.operationStates.value.getValue(feedA.url).status == FeedSuggestionOperationStatus.Adding)
-    }
-
-    @Test
-    fun `cancellation during refresh preserves added state without update failure`() = runTest(testDispatcher) {
-        var refreshCalls = 0
-        val viewModel = viewModel(
-            add = { _, _ -> },
-            refresh = {
-                refreshCalls++
-                throw CancellationException("refresh cancelled")
-            },
-            exists = { false },
-        )
-
-        viewModel.addFeed(feedA, "Tech")
-        runCurrent()
-
-        assertEquals(1, refreshCalls)
-        assertEquals(FeedAddState.Added, viewModel.feedStatesMapState.value[feedA.url])
-        assertEquals(
-            FeedSuggestionOperationStatus.Refreshing,
-            viewModel.operationStates.value.getValue(feedA.url).status,
-        )
-    }
-
-    private fun viewModel(
-        add: suspend (SuggestedFeed, FeedSourceCategory) -> Unit,
-        refresh: suspend () -> Unit,
-        exists: suspend (String) -> Boolean,
+    private fun TestScope.viewModel(
+        add: suspend (SuggestedFeed, String) -> Unit = { feed, _ -> subscribe(feed) },
     ): FeedSuggestionsViewModel = FeedSuggestionsViewModel(
-        feedSourcesRepository = get<FeedSourcesRepository>(),
-        feedFetcherRepository = get<FeedFetcherRepository>(),
+        feedSourcesRepository = get(),
+        feedFetcherRepository = get(),
+        backgroundScope = backgroundScope,
         addSuggestedFeed = add,
-        refreshFeeds = refresh,
-        feedExists = exists,
+        deleteFeed = { source: FeedSource ->
+            deleted += source.url
+            get<DatabaseHelper>().deleteFeedSource(source.id)
+        },
+        refreshFeeds = { refreshes++ },
+        backUp = { backups++ },
     )
+
+    private suspend fun subscribe(feed: SuggestedFeed) {
+        get<DatabaseHelper>().insertFeedSource(
+            listOf(
+                ParsedFeedSource(
+                    id = feed.url.hashCode().toString(),
+                    url = feed.url,
+                    title = feed.name,
+                    category = null,
+                    logoUrl = null,
+                    websiteUrl = null,
+                ),
+            ),
+        )
+    }
+
+    private fun FeedSuggestionsViewModel.status(feed: SuggestedFeed) = operationStates.value[feed.url]?.status
 
     private companion object {
         val feedA = SuggestedFeed(name = "Feed A", url = "https://a.example/feed.xml", description = "A")

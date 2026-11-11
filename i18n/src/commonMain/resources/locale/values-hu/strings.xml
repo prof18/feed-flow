@@ -524,8 +524,6 @@
     <string name="unread_count_accessibility">%s olvasatlan</string>
     <string name="feed_suggestions_empty_category">Eben a csoportban nincs hírfolyam javaslat.</string>
     <string name="feed_suggestion_add_error">Próbáld újra. Nem tudtam hozzáadni a hírfolyamot.</string>
-    <string name="feed_suggestion_update_error">Hírfolyam hozzáadva, de nem sikeres a feltöltés. Frissítsd a hírfolyamokat.</string>
-    <string name="feed_suggestion_refreshing">Cikkek frissítése…</string>
     <string name="blocked_word_operation_error">Nem frissítettem a blokkolt szót. Próbáld újra.</string>
     <string name="blocked_word_refresh_error">A blokkolt szót mentettem, de a cikket nem tudtam frissíteni. Próbáld újra.</string>
     <string name="blocked_word_saving">Blokkolt szó mentése…</string>

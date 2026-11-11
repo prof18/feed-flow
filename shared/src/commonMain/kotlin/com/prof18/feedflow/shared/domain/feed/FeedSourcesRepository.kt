@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.DataResult
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceWithUnreadCount
@@ -11,6 +12,7 @@ import com.prof18.feedflow.core.model.FeedSyncError
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.core.model.ParsedFeedSource
 import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
+import com.prof18.feedflow.core.model.SuggestedFeed
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.fold
 import com.prof18.feedflow.core.model.isError
@@ -83,7 +85,7 @@ internal class FeedSourcesRepository(
     fun getFeedSourcesWithUnreadCount(): Flow<List<FeedSourceWithUnreadCount>> =
         databaseHelper.getFeedSourcesWithUnreadCountFlow()
 
-    suspend fun deleteFeed(feedSource: FeedSource) {
+    suspend fun deleteFeed(feedSource: FeedSource, backUp: Boolean = true) {
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
                 gReaderRepository.deleteFeedSource(feedSource.id)
@@ -114,7 +116,7 @@ internal class FeedSourcesRepository(
                     return
                 }
                 feedSyncRepository.localEditCommitted(cloudSessionId)
-                feedSyncRepository.performBackup()
+                if (backUp) feedSyncRepository.performBackup()
             }
         }
     }
@@ -778,7 +780,8 @@ internal class FeedSourcesRepository(
         category: FeedSourceCategory?,
         logoUrl: String?,
         isNotificationEnabled: Boolean = false,
-    ) = withContext(dispatcherProvider.io) {
+        backUp: Boolean = true,
+    ): DataResult<Unit> = withContext(dispatcherProvider.io) {
         when (accountsRepository.getCurrentSyncAccount()) {
             SyncAccounts.FRESH_RSS, SyncAccounts.MINIFLUX, SyncAccounts.BAZQUX -> {
                 gReaderRepository.addFeedSource(
@@ -824,9 +827,22 @@ internal class FeedSourcesRepository(
                 databaseHelper.updateNotificationEnabledStatus(parsedFeedSource.id, isNotificationEnabled)
 
                 feedSyncRepository.localEditCommitted(cloudSessionId)
-                feedSyncRepository.performBackup()
+                if (backUp) feedSyncRepository.performBackup()
+                DataResult.Success(Unit)
             }
         }
+    }
+
+    // Feed Suggestions refreshes and backs up once when the screen closes, not after every add or Undo.
+    suspend fun addSuggestedFeed(feed: SuggestedFeed, categoryName: String) {
+        val category = databaseHelper.getCategoryByName(categoryName)
+            ?: FeedSourceCategory(id = categoryName.hashCode().toString(), title = categoryName)
+        val result = addFeedSourceWithoutFetching(feed.url, feed.name, category, feed.logoUrl, backUp = false)
+        check(result.isSuccess()) { "Unable to subscribe to ${feed.url}" }
+    }
+
+    suspend fun backupSuggestedFeeds() {
+        feedSyncRepository.enqueueBackup()
     }
 
     private sealed interface GuessOutcome {

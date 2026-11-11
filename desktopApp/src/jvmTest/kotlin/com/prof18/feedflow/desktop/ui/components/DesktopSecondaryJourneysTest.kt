@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.ArticleExportFilter
-import com.prof18.feedflow.core.model.FeedAddState
 import com.prof18.feedflow.core.model.FeedImportExportState
 import com.prof18.feedflow.core.model.ImportExportContentType
 import com.prof18.feedflow.core.model.ParsedFeedSource
@@ -45,6 +44,8 @@ import com.prof18.feedflow.desktop.testing.FeedSuggestionsE2eIds
 import com.prof18.feedflow.desktop.testing.ImportExportE2eIds
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
+import com.prof18.feedflow.shared.presentation.model.FeedSuggestionOperationState
+import com.prof18.feedflow.shared.presentation.model.FeedSuggestionOperationStatus
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
@@ -259,27 +260,27 @@ class DesktopSecondaryJourneysTest {
         content { Suggestions() }
         rule.onNodeWithText(suggestedFeed.url).assertIsDisplayed()
         rule.onNodeWithTag(FeedSuggestionsE2eIds.addButton(suggestedFeed.url))
-            .assertContentDescriptionEquals("${EnFeedFlowStrings.addFeed}: ${suggestedFeed.name}")
+            .assertContentDescriptionEquals("${EnFeedFlowStrings.feedSuggestionAdd} · ${suggestedFeed.name}")
     }
 
     @Test
     fun `suggestion add states keep a named disabled action and re-enable after explicit reset`() {
-        val states = mutableStateOf(persistentMapOf(suggestedFeed.url to FeedAddState.NotAdded))
+        val states = mutableStateOf(persistentMapOf<String, FeedSuggestionOperationState>())
         var additions = 0
         content { Suggestions(states = states.value, onAdd = { _, _ -> additions++ }) }
         val action = rule.onNodeWithTag(FeedSuggestionsE2eIds.addButton(suggestedFeed.url))
         val captured = action.fetchSemanticsNode().config[SemanticsActions.OnClick].action!!
-        rule.runOnIdle { states.value = persistentMapOf(suggestedFeed.url to FeedAddState.Adding) }
+        rule.runOnIdle { states.value = suggestedFeed.state(FeedSuggestionOperationStatus.Adding) }
         rule.onNodeWithText(EnFeedFlowStrings.addingFeed).assertIsDisplayed()
         action.assertIsNotEnabled()
         rule.runOnIdle {
             captured()
             assertEquals(0, additions)
         }
-        rule.runOnIdle { states.value = persistentMapOf(suggestedFeed.url to FeedAddState.Added) }
-        rule.onNodeWithText(EnFeedFlowStrings.feedAddedMessageWithoutName).assertIsDisplayed()
+        rule.runOnIdle { states.value = suggestedFeed.state(FeedSuggestionOperationStatus.Added) }
+        rule.onNodeWithText(EnFeedFlowStrings.feedSuggestionAdded).assertIsDisplayed()
         action.assertIsNotEnabled()
-        rule.runOnIdle { states.value = persistentMapOf(suggestedFeed.url to FeedAddState.NotAdded) }
+        rule.runOnIdle { states.value = persistentMapOf() }
         action.assertIsEnabled().performSemanticsAction(SemanticsActions.OnClick) { it() }
         rule.runOnIdle { assertEquals(1, additions) }
     }
@@ -290,7 +291,7 @@ class DesktopSecondaryJourneysTest {
         var additions = 0
         compact { Suggestions(onClose = { closes++ }, onAdd = { _, _ -> additions++ }) }
         rule.onNodeWithTag(FeedSuggestionsE2eIds.addButton(suggestedFeed.url)).performScrollTo()
-        assertReadableAction(EnFeedFlowStrings.addFeed)
+        assertReadableAction(EnFeedFlowStrings.feedSuggestionAdd)
         assertReadableAction(EnFeedFlowStrings.actionDone)
         rule.onNodeWithText(EnFeedFlowStrings.actionDone).performSemanticsAction(SemanticsActions.OnClick) { it() }
         rule.runOnIdle {
@@ -356,7 +357,6 @@ class DesktopSecondaryJourneysTest {
             FeedSuggestionsContent(
                 categories = categories,
                 selectedCategoryId = selected.value,
-                feedStates = persistentMapOf(),
                 isLoading = false,
                 onCategorySelected = { selected.value = it },
                 onAddFeed = { feed, category -> additions += feed to category },
@@ -379,7 +379,6 @@ class DesktopSecondaryJourneysTest {
             FeedSuggestionsContent(
                 categories = categories,
                 selectedCategoryId = "fixture-11",
-                feedStates = persistentMapOf(),
                 isLoading = false,
                 onCategorySelected = {},
                 onAddFeed = { _, _ -> },
@@ -442,7 +441,7 @@ class DesktopSecondaryJourneysTest {
     private fun Suggestions(
         modifier: Modifier = Modifier,
         categories: ImmutableList<SuggestedFeedCategory> = persistentListOf(suggestedCategory),
-        states: ImmutableMap<String, FeedAddState> = persistentMapOf(),
+        states: ImmutableMap<String, FeedSuggestionOperationState> = persistentMapOf(),
         loading: Boolean = false,
         onAdd: (SuggestedFeed, String) -> Unit = { _, _ -> },
         onClose: () -> Unit = {},
@@ -450,14 +449,17 @@ class DesktopSecondaryJourneysTest {
         FeedSuggestionsContent(
             categories = categories,
             selectedCategoryId = null,
-            feedStates = states,
             isLoading = loading,
             onCategorySelected = {},
             onAddFeed = onAdd,
             onCloseRequest = onClose,
             modifier = modifier,
+            operationStates = states,
         )
     }
+
+    private fun SuggestedFeed.state(status: FeedSuggestionOperationStatus) =
+        persistentMapOf(url to FeedSuggestionOperationState(status))
 
     private fun source(id: String, title: String) = ParsedFeedSource(
         id = id,

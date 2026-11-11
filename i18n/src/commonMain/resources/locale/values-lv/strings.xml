@@ -312,4 +312,6 @@
     <string name="article_unread_bookmarked_state">Nelasīts, saglabātajos rakstos</string>
     <string name="widget_content_bookmarks_description">Jūsu saglabāto rakstu kolekcija</string>
     <string name="desktop_accounts_backup_description">Dublē ziņu plūsmas, rakstu lasīšanas statusus un saglabāto rakstu kolekciju.</string>
+    <string name="remove_bookmark_dialog_message">Vai tiešām vēlaties noņemt šo rakstu no saglabātajiem rakstiem?</string>
+    <string name="mark_all_bookmarks_read_dialog_message">Vai tiešām vēlaties visus saglabātos rakstus atzīmēt kā lasītus?</string>
 </resources>

@@ -21,7 +21,7 @@ Sync That Fits Your Setup
 Uztur kārtību
 - Ievietot un izgūt ziņu plūsmas, izmantojot OPML.
 - Bloķēt atslēgvārdus, lai nerādītu traucējošās, nevēlamās, tēmas.
-- Categories, bookmarks, and search keep everything at your fingertips.
+- Kategorijas, saglabātie raksti un meklēšana — viss pa rokai.
 
 Make It Yours
 - Tumšs un gaišs motīvi.

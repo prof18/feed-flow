@@ -1,4 +1,4 @@
 interface:
-  display_name: "Run Maestro Release Tests"
-  short_description: "Run all FeedFlow Maestro E2E tests."
-  default_prompt: "Use $run-e2e-release-tests to run the full FeedFlow Maestro release suite and report failures."
+  display_name: "Run E2E Release Tests"
+  short_description: "Run all FeedFlow E2E tests on Android, iOS and desktop."
+  default_prompt: "Use $run-e2e-release-tests to run the full FeedFlow E2E release suites on Android, iOS and desktop and report failures."

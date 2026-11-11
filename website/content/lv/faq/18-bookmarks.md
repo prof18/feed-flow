@@ -1,5 +1,5 @@
 ---
-title: "How do bookmarks work? Is there a read-later list?"
+title: "Kā darbojas saglabātie raksti? Vai ir rakstu saraksts lasīšanai vēlāk?"
 weight: 180
 ---
 

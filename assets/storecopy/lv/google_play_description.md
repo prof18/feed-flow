@@ -28,7 +28,8 @@ Stay Organized with Feeds and Categories
 - Import and export feeds with OPML — migrate from any other RSS reader or news
   reader in minutes.
 - Block noisy keywords to filter out unwanted content from your feed.
-- Organize RSS feeds into categories and bookmark articles to read later.
+- Kārtojiet RSS ziņu plūsmas kategorijās un pievienojiet rakstus saglabāto
+  rakstu kolekcijai.
 - Search across all your feeds and articles to quickly find the content you
   need.
 

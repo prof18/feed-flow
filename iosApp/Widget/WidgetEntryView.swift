@@ -118,6 +118,14 @@ struct WidgetEntryView: View {
                         .foregroundColor(.primary)
                         .padding(.top, Spacing.xsmall)
                 }
+
+                if let dateString = feedItem.dateString {
+                    Text(dateString)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .padding(.top, Spacing.xsmall)
+                }
             }
         }
         .buttonStyle(PlainButtonStyle())

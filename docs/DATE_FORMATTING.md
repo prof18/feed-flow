@@ -18,5 +18,15 @@ The shared article formatter applies the selection to timeline, search, and widg
 dates. Settings previews also show the selected format. Sync refresh timestamps,
 feed parsing, and export filenames keep their existing formats.
 
+The iOS widget extension can't read the app's Keychain-backed settings, and
+`DateFormatterImpl` builds its parsing formats eagerly, which costs more memory than
+the extension can spare. The widget therefore uses `FeedDateFormatter` directly, the
+display half that `DateFormatterImpl` delegates to, and reads the date-format and
+time-format choices from a copy the app writes to the app-group defaults
+(`WidgetDateSettingsStore`) when either format changes, and once at launch for installs
+that chose their formats before the copy existed. Until the app has written that copy,
+the widget uses the default formats. The widget always shows the
+date; the Hide date setting applies to the app's lists only.
+
 Unit tests cover dotted dates and preference persistence. The Android and iOS
 SM-009 Maestro flows check dotted timeline dates before and after relaunch.

@@ -142,15 +142,19 @@ class FeedAppearanceSettingsRepository(
         settings.getString(FeedAppearanceSettingsFields.DATE_FORMAT.name, DateFormat.NORMAL.name)
             .let { DateFormat.valueOf(it) }
 
-    fun setDateFormat(format: DateFormat) =
+    fun setDateFormat(format: DateFormat) {
         settings.set(FeedAppearanceSettingsFields.DATE_FORMAT.name, format.name)
+        saveWidgetDateSettings(format, getTimeFormat())
+    }
 
     fun getTimeFormat(): TimeFormat =
         settings.getString(FeedAppearanceSettingsFields.TIME_FORMAT.name, TimeFormat.HOURS_24.name)
             .let { TimeFormat.valueOf(it) }
 
-    fun setTimeFormat(format: TimeFormat) =
+    fun setTimeFormat(format: TimeFormat) {
         settings.set(FeedAppearanceSettingsFields.TIME_FORMAT.name, format.name)
+        saveWidgetDateSettings(getDateFormat(), format)
+    }
 
     internal fun getFeedItemMappingSettings(): FeedItemMappingSettings = FeedItemMappingSettings(
         removeTitleFromDescription = getRemoveTitleFromDescription(),

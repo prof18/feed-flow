@@ -282,6 +282,11 @@ Widget-selection UX manual checklist (both platforms use the normal OS-owned wid
   `WidgetContentLogoLoaderTests` in the Swift simulator test target.
   SpringBoard's editor cannot be driven reliably by the current Maestro suite; do not count
   app deep-link coverage as coverage of this system picker.
+- iOS: place a small, medium and large widget, open the app and return to the Home Screen.
+  Confirm each article shows its date in the format chosen in Settings → Feed list; the widget
+  shows the date even when Hide date is on. The app-group
+  settings copy is covered by `WidgetDateSettingsStoreTest` and the format by `DateFormatterTest`;
+  the placed widget and the extension's memory use on a physical device remain manual checks.
   On iOS 26.5 Simulator, an ad-hoc-signed build may keep rendering Most Recent despite a saved
   selection: `linkd` cannot obtain the extension's team ID and rejects its AppEntity identifier.
   Validate with a development-signed test build (or a signed device build) before treating this

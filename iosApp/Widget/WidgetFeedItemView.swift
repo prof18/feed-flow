@@ -17,10 +17,19 @@ struct WidgetFeedItemView: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text(feedItem.feedSourceTitle)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
+                HStack(spacing: Spacing.xsmall) {
+                    Text(feedItem.feedSourceTitle)
+                        .lineLimit(1)
+
+                    if let dateString = feedItem.dateString {
+                        Text("•")
+                        Text(dateString)
+                            .lineLimit(1)
+                            .layoutPriority(1)
+                    }
+                }
+                .font(.caption2)
+                .foregroundColor(.secondary)
 
                 if let title = feedItem.title {
                     Text(title)

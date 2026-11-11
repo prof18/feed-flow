@@ -4,7 +4,6 @@ import co.touchlab.kermit.Logger
 import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.TimeFormat
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.UtcOffset
@@ -12,7 +11,6 @@ import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.DateTimeComponents.Companion.Format
 import kotlinx.datetime.format.DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET
 import kotlinx.datetime.format.DateTimeComponents.Formats.RFC_1123
-import kotlinx.datetime.format.DateTimeFormatBuilder
 import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
@@ -21,7 +19,6 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.format.optional
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -29,6 +26,8 @@ class DateFormatterImpl(
     private val logger: Logger,
     private val clock: Clock,
 ) : DateFormatter {
+    private val feedDateFormatter = FeedDateFormatter(clock)
+
     private val formats = listOf(
         ISO_DATE_TIME_OFFSET,
         RFC_1123,
@@ -763,53 +762,8 @@ class DateFormatterImpl(
         }
     }
 
-    override fun formatDateForFeed(millis: Long, dateFormat: DateFormat, timeFormat: TimeFormat): String {
-        val instant = Instant.fromEpochMilliseconds(millis)
-        val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-
-        val today: LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
-
-        val localDate = LocalDate(
-            year = dateTime.year,
-            month = dateTime.month.number,
-            day = dateTime.day,
-        )
-
-        val isToday = today == localDate
-        val isThisYear = today.year == localDate.year
-
-        val dateFormatBuilder = when {
-            isToday -> {
-                LocalDateTime.Format {
-                    hourAndMinute(timeFormat)
-                }
-            }
-
-            isThisYear -> {
-                LocalDateTime.Format {
-                    dayAndMonth(dateFormat)
-                    chars(" - ")
-                    hourAndMinute(timeFormat)
-                }
-            }
-
-            else -> {
-                LocalDateTime.Format {
-                    if (dateFormat == DateFormat.ISO) {
-                        yearMonthDay()
-                    } else {
-                        dayAndMonth(dateFormat)
-                        char(if (dateFormat == DateFormat.DAY_MONTH_DOT) '.' else '/')
-                        year()
-                    }
-                    chars(" - ")
-                    hourAndMinute(timeFormat)
-                }
-            }
-        }
-
-        return dateFormatBuilder.format(dateTime)
-    }
+    override fun formatDateForFeed(millis: Long, dateFormat: DateFormat, timeFormat: TimeFormat): String =
+        feedDateFormatter.format(millis, dateFormat, timeFormat)
 
     override fun formatDateForLastRefresh(millis: Long): String {
         val instant = Instant.fromEpochMilliseconds(millis)
@@ -930,58 +884,6 @@ class DateFormatterImpl(
             format.parse(dateString)
         } catch (_: Throwable) {
             null
-        }
-    }
-
-    private fun DateTimeFormatBuilder.WithDateTime.dayAndMonth(dateFormat: DateFormat) {
-        when (dateFormat) {
-            DateFormat.NORMAL -> {
-                day()
-                char('/')
-                monthNumber()
-            }
-
-            DateFormat.AMERICAN -> {
-                monthNumber()
-                char('/')
-                day()
-            }
-
-            DateFormat.DAY_MONTH_DOT -> {
-                day()
-                char('.')
-                monthNumber()
-            }
-
-            DateFormat.ISO -> {
-                yearMonthDay()
-            }
-        }
-    }
-
-    private fun DateTimeFormatBuilder.WithDateTime.yearMonthDay() {
-        year()
-        char('-')
-        monthNumber()
-        char('-')
-        day()
-    }
-
-    private fun DateTimeFormatBuilder.WithDateTime.hourAndMinute(timeFormat: TimeFormat) {
-        when (timeFormat) {
-            TimeFormat.HOURS_24 -> {
-                hour()
-                char(':')
-                minute()
-            }
-
-            TimeFormat.HOURS_12 -> {
-                amPmHour(padding = Padding.NONE)
-                char(':')
-                minute()
-                char(' ')
-                amPmMarker("AM", "PM")
-            }
         }
     }
 

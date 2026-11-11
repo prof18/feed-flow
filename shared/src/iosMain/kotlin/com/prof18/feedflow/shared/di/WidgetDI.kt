@@ -17,6 +17,9 @@ import com.prof18.feedflow.db.Feed_source_category
 import com.prof18.feedflow.db.Feed_source_preferences
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import com.prof18.feedflow.i18n.feedFlowStrings
+import com.prof18.feedflow.shared.domain.FeedDateFormatter
+import com.prof18.feedflow.shared.domain.widget.WidgetDateSettingsStore
+import kotlin.time.Clock
 
 private fun createWidgetDatabase(appEnvironment: AppEnvironment): Pair<FeedFlowDB, NativeSqliteDriver> {
     val sqlDriver = NativeSqliteDriver(
@@ -75,6 +78,8 @@ fun getFeedItems(
     val (database, sqlDriver) = createWidgetDatabase(appEnvironment)
     try {
         val isBookmarksFilter = filterType == "bookmarks"
+        val dateSettings = WidgetDateSettingsStore().read()
+        val dateFormatter = FeedDateFormatter(Clock.System)
         return database.feedItemQueries
             .selectFeedsForWidget(
                 isBookmarked = true.takeIf { isBookmarksFilter },
@@ -91,6 +96,9 @@ fun getFeedItems(
                     subtitle = item.subtitle,
                     imageUrl = item.image_url,
                     feedSourceTitle = item.feed_source_title,
+                    dateString = item.pub_date?.let { pubDate ->
+                        dateFormatter.format(pubDate, dateSettings.dateFormat, dateSettings.timeFormat)
+                    },
                 )
             }
     } finally {
@@ -161,6 +169,7 @@ data class FeedItemWidget(
     val subtitle: String?,
     val imageUrl: String?,
     val feedSourceTitle: String,
+    val dateString: String?,
 )
 
 data class WidgetContentOption(

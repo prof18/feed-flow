@@ -21,4 +21,4 @@ fun getAppGroupDatabasePath(): String {
     return directoryPath
 }
 
-internal const val IOS_APP_GROUP = "group.com.prof18.feedflow"
+const val IOS_APP_GROUP = "group.com.prof18.feedflow"

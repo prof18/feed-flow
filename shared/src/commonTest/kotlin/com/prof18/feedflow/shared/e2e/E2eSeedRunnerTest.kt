@@ -18,6 +18,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentCacheMigration
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
 import kotlinx.coroutines.flow.first
@@ -112,6 +113,19 @@ class E2eSeedRunnerTest : KoinTestBase() {
         assertEquals(ArticleOpenMode.FULL_ARTICLE, settingsRepository.getArticleOpenMode())
         assertEquals(FeedLayout.LIST, feedAppearanceSettingsRepository.getFeedLayout())
         assertEquals(DescriptionLineLimit.THREE, feedAppearanceSettingsRepository.getDescriptionLineLimit())
+        assertTrue(
+            feedItemContentFileHandler.isContentAvailable(E2eSeedRunner.READER_SUCCESS_ARTICLE_ID),
+        )
+    }
+
+    @Test
+    fun `seeded reader content survives the reader cache migration that runs after the seed`() = runTest {
+        val migration: ReaderContentCacheMigration by inject()
+        settingsRepository.setReaderContentCacheVersion(0)
+
+        seedRunner.resetAndSeed(E2eSeedProfile.READER_MODE)
+        migration.clearOutdatedContent()
+
         assertTrue(
             feedItemContentFileHandler.isContentAvailable(E2eSeedRunner.READER_SUCCESS_ARTICLE_ID),
         )

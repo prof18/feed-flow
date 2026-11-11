@@ -32,6 +32,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.audio.AudioPlaybackPositionRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
+import com.prof18.feedflow.shared.domain.feeditem.ReaderContentCacheMigration
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
@@ -163,6 +164,9 @@ class E2eSeedRunner internal constructor(
         settingsRepository.setForceEnglishEnabled(false)
         settingsRepository.setRefreshFeedsOnLaunch(false)
         settingsRepository.setNotificationMode(NotificationMode.FEED_SOURCE)
+        // Seeded reader content is written in the current format; without this, a seed applied before the
+        // home screen starts (desktop startup seed) is wiped by the cache migration that runs afterwards.
+        settingsRepository.setReaderContentCacheVersion(ReaderContentCacheMigration.CURRENT_VERSION)
 
         feedAppearanceSettingsRepository.setFeedOrder(FeedOrder.NEWEST_FIRST)
         feedAppearanceSettingsRepository.setRemoveTitleFromDescription(false)

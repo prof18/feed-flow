@@ -291,6 +291,14 @@ class ArticleReaderFlowsTest {
         flow.await("IBM Plex Sans selected") {
             flow.nodes().firstOrNull { it.role == "RadioButton" && IBM_PLEX in it.texts && it.isSelected }
         }
+
+        flow.click(flow.awaitText(flow.strings.readerModeResetToDefault))
+        flow.await("the system font selected after the reset") {
+            flow.nodes().firstOrNull {
+                it.role == "RadioButton" && flow.strings.readerFontSystem in it.texts && it.isSelected
+            }
+        }
+        assertTrue(flow.nodes().none { it.role == "RadioButton" && IBM_PLEX in it.texts && it.isSelected })
     }
 
     /**
@@ -307,6 +315,8 @@ class ArticleReaderFlowsTest {
         assertFalse(source().isSelected)
         flow.click(source())
         flow.await("feed content selected") { source().takeIf { it.isSelected } }
+        flow.awaitText(FEED_CONTENT_START, exact = false)
+        flow.awaitGone(READER_SUCCESS_PARAGRAPH)
         flow.click(source())
         flow.await("web content selected") { source().takeIf { !it.isSelected } }
         flow.awaitReaderTitle(READER_SUCCESS_TITLE)
@@ -364,6 +374,15 @@ class ArticleReaderFlowsTest {
         flow.clickReaderButton(flow.strings.nextArticle)
         flow.awaitReaderTitle(FALLBACK_TITLE)
         assertFalse(flow.readerButton(flow.strings.previousArticle).isDisabled)
+        assertFalse(flow.readerButton(flow.strings.nextArticle).isDisabled)
+        flow.clickReaderButton(flow.strings.nextArticle)
+        flow.awaitReaderTitle(READER_LONG_TITLE)
+        assertFalse(flow.readerButton(flow.strings.previousArticle).isDisabled)
+        flow.await("Next disabled on the last result") {
+            flow.readerButton(flow.strings.nextArticle).takeIf { it.isDisabled }
+        }
+        flow.clickReaderButton(flow.strings.previousArticle)
+        flow.awaitReaderTitle(FALLBACK_TITLE)
         flow.clickReaderButton(flow.strings.closeButtonContentDescription)
         flow.awaitText(READER_LONG_TITLE)
         assertTrue(flow.nodes().any { it.testTag == "search-query" && it.editableText == "Reader" })
@@ -478,6 +497,7 @@ class ArticleReaderFlowsTest {
         const val OLD_ARTICLE_TITLE = "E2E Old Article Eligible For Delete: Venezia council"
         const val READER_SUCCESS_ID = "e2e-article-reader-success"
         const val READER_SUCCESS_PARAGRAPH = "E2E cached reader content loaded from the seed fixture."
+        const val FEED_CONTENT_START = "This article ships no link at all"
         const val READER_SUCCESS_TITLE = "E2E Reader Mode Success Article: Interstitium"
         const val FALLBACK_ID = "e2e-article-reader-fallback"
         const val FALLBACK_TITLE = "E2E Reader Mode Fallback Article: The Witcher 3"

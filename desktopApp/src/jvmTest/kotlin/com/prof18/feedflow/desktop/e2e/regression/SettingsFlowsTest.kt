@@ -20,6 +20,7 @@ import com.prof18.feedflow.desktop.e2e.harness.setSwitch
 import com.prof18.feedflow.desktop.e2e.harness.sidebarCount
 import com.prof18.feedflow.desktop.e2e.harness.sidebarRow
 import com.prof18.feedflow.desktop.e2e.harness.switchIn
+import com.prof18.feedflow.desktop.e2e.harness.typeIntoFocused
 import com.prof18.feedflow.i18n.ItFeedFlowStrings
 import org.junit.Rule
 import org.junit.Test
@@ -185,6 +186,17 @@ class SettingsFlowsTest {
         flow.closeWindow(SETTINGS(flow))
         flow.scrollToText(OLD_ARTICLE_TITLE)
         flow.scrollToText(SEED_READ_TITLE)
+
+        flow.openSettings(flow.strings.settingsSyncAndStorage)
+        flow.clickSettingsButton(flow.strings.clearOldArticlesButton)
+        val dialog = flow.dialogTitle()
+        flow.clickIn(dialog, flow.strings.confirmButton)
+        flow.awaitWindowGone(dialog)
+        flow.closeWindow(SETTINGS(flow))
+        flow.click(flow.awaitContentDescription(flow.strings.searchButtonContentDescription))
+        flow.awaitTag(SEARCH_FIELD_TAG)
+        flow.typeIntoFocused(OLD_ARTICLE_SEARCH)
+        flow.awaitText(flow.strings.searchNoData(OLD_ARTICLE_SEARCH))
     }
 
     // About pane: desktop settings/AboutPane.kt (reportIssueButton, aboutButton, openSourceLicenses)
@@ -353,6 +365,8 @@ class SettingsFlowsTest {
     private companion object {
         val SETTINGS: (Flow) -> String = { it.strings.settingsTitle }
         const val OLD_ARTICLE_TITLE = "E2E Old Article Eligible For Delete: Venezia council"
+        const val OLD_ARTICLE_SEARCH = "Venezia council"
+        const val SEARCH_FIELD_TAG = "search-query"
         const val ABOUT_TEXT_START = "FeedFlow is a minimal RSS reader"
     }
 }

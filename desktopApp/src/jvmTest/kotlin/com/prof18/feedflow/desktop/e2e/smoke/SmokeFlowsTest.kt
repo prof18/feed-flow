@@ -278,10 +278,14 @@ class SmokeFlowsTest {
         flow.clickIn(settings, flow.strings.settingsFeedListTitle)
         flow.setSwitch(settings, flow.strings.settingsToggleShowReadArticles, on = true)
         assertFalse(flow.switchIn(settings, flow.strings.settingsHideReadItems).isDisabled)
+        flow.setSwitch(settings, flow.strings.settingsHideReadItems, on = true)
         flow.clickIn(settings, flow.strings.settingsReadingBehavior)
         flow.setSwitch(settings, flow.strings.toggleMarkReadWhenScrolling, on = true)
         flow.clickIn(settings, flow.strings.settingsFeedListTitle)
+        // Scroll marking disables auto-hide but keeps the saved preference.
         assertTrue(flow.switchIn(settings, flow.strings.settingsHideReadItems).isDisabled)
+        assertTrue(flow.isSwitchOn(settings, flow.strings.settingsHideReadItems))
+        flow.awaitTextIn(settings, flow.strings.settingsHideReadItemsDisabledWhileScrolling)
         flow.closeWindow(settings)
 
         flow.scrollToText(SEED_READ_TITLE)
@@ -291,7 +295,12 @@ class SmokeFlowsTest {
         flow.openSettings(flow.strings.settingsReadingBehavior)
         val openMode = flow.dropdownIn(settings, flow.strings.articleOpenMode)
         assertTrue(flow.strings.readerContentSourceFeed in openMode.texts)
+        flow.setSwitch(settings, flow.strings.toggleMarkReadWhenScrolling, on = false)
         flow.clickIn(settings, flow.strings.settingsFeedListTitle)
+        // Turning scroll marking off restores the auto-hide preference saved before the relaunch.
+        assertFalse(flow.switchIn(settings, flow.strings.settingsHideReadItems).isDisabled)
+        assertTrue(flow.isSwitchOn(settings, flow.strings.settingsHideReadItems))
+        flow.setSwitch(settings, flow.strings.settingsHideReadItems, on = false)
         flow.setSwitch(settings, flow.strings.settingsToggleShowReadArticles, on = false)
         flow.closeWindow(settings)
         flow.awaitGone(SEED_READ_TITLE)
@@ -348,6 +357,12 @@ class SmokeFlowsTest {
         flow.openSettings(flow.strings.settingsFilters)
         flow.clickTag(BlockedWordsE2eIds.deleteButton("Pixel"))
         flow.awaitTagGone(BlockedWordsE2eIds.row("Pixel"))
+        flow.closeWindow(flow.strings.settingsTitle)
+
+        // Removing the word brings the blocked articles back: the same search now finds them.
+        flow.replaceText(flow.awaitTag(SEARCH_FIELD_TAG), "Pixel")
+        flow.awaitText(SEED_BOOKMARKED_UNREAD_TITLE)
+        flow.awaitText(ARTICLE_WITH_COMMENTS)
     }
 
     // reader bookmark button: desktop reaadermode/ReaderModeScreen.desktop.kt

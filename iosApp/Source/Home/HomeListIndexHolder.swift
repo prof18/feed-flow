@@ -13,7 +13,7 @@ import Foundation
 class HomeListIndexHolder {
     @ObservationIgnored let homeViewModel: HomeViewModel?
 
-    private var visibleSnapshotKey: [VisibleFeedItemSnapshotKey] = []
+    private var visibleSnapshotKey: [VisibleFeedItemSnapshot] = []
 
     init(homeViewModel: HomeViewModel) {
         self.homeViewModel = homeViewModel
@@ -40,24 +40,16 @@ class HomeListIndexHolder {
         visibleSnapshotKey.removeAll()
     }
 
-    func visibleItemsChanged(_ visibleItems: [VisibleFeedItem]) {
-        let snapshotKey = visibleItems.map { item in
-            VisibleFeedItemSnapshotKey(
-                id: item.id,
-                index: Int(item.index)
-            )
-        }
-        guard snapshotKey != visibleSnapshotKey else { return }
-        visibleSnapshotKey = snapshotKey
-        let firstVisibleIndex = snapshotKey.map(\.index).min() ?? 0
+    func visibleItemsChanged(_ visibleItems: [VisibleFeedItemSnapshot]) {
+        guard visibleItems != visibleSnapshotKey else { return }
+        visibleSnapshotKey = visibleItems
+        let firstVisibleIndex = visibleItems.map(\.index).min() ?? 0
         homeViewModel?.onFeedListScrolledAwayFromTopChanged(isAwayFromTop: firstVisibleIndex > awayFromTopThreshold)
-        homeViewModel?.onVisibleFeedItemsChanged(visibleItems: visibleItems)
+        guard let homeViewModel else { return }
+        homeViewModel.onVisibleFeedItemsChanged(
+            visibleItems: visibleItems.map { VisibleFeedItem(id: $0.id, index: Int32($0.index)) }
+        )
     }
 }
 
 private let awayFromTopThreshold = 3
-
-private struct VisibleFeedItemSnapshotKey: Equatable {
-    let id: String
-    let index: Int
-}

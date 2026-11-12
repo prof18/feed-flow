@@ -26,12 +26,15 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
+import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItemDisplaySettings
 import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
+import com.prof18.feedflow.core.model.NavDrawerState
 import com.prof18.feedflow.core.model.NoFeedSourcesStatus
 import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.model.SwipeActionType
@@ -162,7 +165,11 @@ class DesktopNoFeedsStateTest {
             onDrawer = { calls += "drawer" },
             onNext = { calls += "next" },
         )
-        val labels = listOf(EnFeedFlowStrings.refreshFeeds, EnFeedFlowStrings.openAnotherFeed, "Kotlin")
+        val labels = listOf(
+            EnFeedFlowStrings.refreshFeeds,
+            EnFeedFlowStrings.openAnotherFeed,
+            EnFeedFlowStrings.nextFeedButton("Kotlin"),
+        )
         for (scale in listOf(1f, 2f)) {
             for (layoutDirection in LayoutDirection.entries) {
                 for (mode in listOf(ThemeMode.LIGHT, ThemeMode.DARK, ThemeMode.OLED)) {
@@ -202,7 +209,11 @@ class DesktopNoFeedsStateTest {
                 calls.clear()
             }
             assertReadableInHost(message)
-            listOf(EnFeedFlowStrings.emptyScreenBackToTimeline, EnFeedFlowStrings.openAnotherFeed, "Kotlin")
+            listOf(
+                EnFeedFlowStrings.emptyScreenBackToTimeline,
+                EnFeedFlowStrings.openAnotherFeed,
+                EnFeedFlowStrings.nextFeedButton("Kotlin"),
+            )
                 .forEach { label ->
                     assertReadableInHost(label)
                     rule.onNodeWithText(label).performClick()
@@ -211,6 +222,56 @@ class DesktopNoFeedsStateTest {
             assertEquals(listOf("timeline", "drawer", "next"), calls)
         }
     }
+
+    @Test
+    fun `empty timeline hides open another feed while the sidebar is visible`() {
+        setEmptyTimelineContent(
+            theme = mutableStateOf(ThemeMode.LIGHT),
+            fontScale = mutableFloatStateOf(1f),
+            direction = mutableStateOf(LayoutDirection.Ltr),
+            filter = mutableStateOf(FeedFilter.Timeline),
+            isDrawerOpen = true,
+        )
+        rule.onNodeWithText(EnFeedFlowStrings.refreshFeeds).assertIsDisplayed()
+        rule.onNodeWithText(EnFeedFlowStrings.openAnotherFeed).assertDoesNotExist()
+    }
+
+    @Test
+    fun `empty category shows its own state and Add feed`() {
+        var addFeedClicks = 0
+        setEmptyTimelineContent(
+            theme = mutableStateOf(ThemeMode.LIGHT),
+            fontScale = mutableFloatStateOf(1f),
+            direction = mutableStateOf(LayoutDirection.Ltr),
+            filter = mutableStateOf(FeedFilter.Category(feedCategory = emptyCategory)),
+            navDrawerState = emptyCategoryDrawer(),
+            onAddFeed = { addFeedClicks++ },
+        )
+        assertReadableInHost(EnFeedFlowStrings.emptyCategoryMessage)
+        rule.onNodeWithText(EnFeedFlowStrings.emptyCategoryHint).assertDoesNotExist()
+        rule.onNodeWithText(EnFeedFlowStrings.refreshFeeds).assertDoesNotExist()
+        rule.onNodeWithText(EnFeedFlowStrings.emptyFeedMessage).assertDoesNotExist()
+        rule.onNodeWithText(EnFeedFlowStrings.addFeed).performClick()
+        rule.runOnIdle { assertEquals(1, addFeedClicks) }
+    }
+
+    @Test
+    fun `empty category wins over the no-feeds state`() {
+        setEmptyTimelineContent(
+            theme = mutableStateOf(ThemeMode.LIGHT),
+            fontScale = mutableFloatStateOf(1f),
+            direction = mutableStateOf(LayoutDirection.Ltr),
+            filter = mutableStateOf(FeedFilter.Category(feedCategory = emptyCategory)),
+            navDrawerState = emptyCategoryDrawer(),
+            status = NoFeedSourcesStatus,
+        )
+        rule.onNodeWithText(EnFeedFlowStrings.emptyCategoryMessage).assertIsDisplayed()
+        rule.onNodeWithText(EnFeedFlowStrings.noFeedsFoundMessage).assertDoesNotExist()
+    }
+
+    private fun emptyCategoryDrawer() = NavDrawerState(
+        categories = persistentListOf(DrawerItem.DrawerCategory(category = emptyCategory, unreadCount = 0)),
+    )
 
     private fun assertReadableInHost(label: String) {
         val host = rule.onNodeWithTag("empty-state-host").fetchSemanticsNode().boundsInRoot
@@ -270,6 +331,10 @@ class DesktopNoFeedsStateTest {
         onTimeline: () -> Unit = {},
         onDrawer: () -> Unit = {},
         onNext: () -> Unit = {},
+        isDrawerOpen: Boolean = false,
+        navDrawerState: NavDrawerState = NavDrawerState(),
+        status: FeedUpdateStatus = FinishedFeedUpdateStatus,
+        onAddFeed: () -> Unit = {},
     ) {
         rule.setContent {
             CompositionLocalProvider(
@@ -281,16 +346,17 @@ class DesktopNoFeedsStateTest {
                     Box(Modifier.requiredSize(width = 360.dp, height = 500.dp).testTag("empty-state-host")) {
                         DesktopHomeScreenContent(
                             displayState = displayState(
-                                status = FinishedFeedUpdateStatus,
+                                status = status,
                                 filter = filter.value,
                                 nextFeedDisplayState = NextFeedDisplayState.NextFeedDisplayEnabledState("Kotlin"),
+                                navDrawerState = navDrawerState,
                             ),
                             feedListActions = feedListActions(
                                 onRefresh = onRefresh,
                                 onTimeline = onTimeline,
                                 onNext = onNext,
                             ),
-                            feedManagementActions = feedManagementActions {},
+                            feedManagementActions = feedManagementActions(onAddFeed),
                             shareBehavior = shareBehavior(),
                             listState = remember { LazyListState() },
                             snackbarHostState = remember { DesktopFeedbackState() },
@@ -298,6 +364,7 @@ class DesktopNoFeedsStateTest {
                             pendingNewArticlesCount = 0,
                             onShowNewArticlesClicked = {},
                             onImportExportClick = {},
+                            isDrawerOpen = isDrawerOpen,
                             onDrawerMenuClick = onDrawer,
                         )
                     }
@@ -310,9 +377,10 @@ class DesktopNoFeedsStateTest {
         status: FeedUpdateStatus,
         filter: FeedFilter = FeedFilter.Timeline,
         nextFeedDisplayState: NextFeedDisplayState = NextFeedDisplayState.NextFeedDisplayDisabledState,
+        navDrawerState: NavDrawerState = NavDrawerState(),
     ) = HomeDisplayState(
         feedItems = persistentListOf(),
-        navDrawerState = com.prof18.feedflow.core.model.NavDrawerState(),
+        navDrawerState = navDrawerState,
         unReadCount = 0,
         isUnreadCountHidden = false,
         feedUpdateStatus = status,
@@ -358,6 +426,8 @@ class DesktopNoFeedsStateTest {
         onDeleteCategoryClick = {},
         onOpenWebsite = {},
     )
+
+    private val emptyCategory = FeedSourceCategory(id = "empty", title = "Empty")
 
     private fun shareBehavior() = ShareBehavior(
         onShareClick = {},

@@ -164,6 +164,28 @@ class DesktopOnlyFlowsTest {
         assertTrue(flow.nodes().none { node -> node.texts.any { "<article>" in it || "<img" in it } })
     }
 
+    /**
+     * Empty category: desktop home/DesktopHomeScreenContent.kt (EmptyTimeline, isCategoryWithoutFeeds) and
+     * home/drawer/DesktopDrawerFeedSourcesByCategories.kt (showDisclosure). The content-rich seed has a
+     * category with no feeds.
+     */
+    @Test
+    fun `DSK-007 empty category state`() {
+        val flow = e2e.start(Seed.ContentRich)
+        flow.awaitText(SEED_NEWEST_TITLE)
+
+        flow.awaitText(flow.strings.emptyCategoryHint)
+        flow.clickSidebar(EMPTY_CATEGORY)
+        flow.awaitText(flow.strings.emptyCategoryMessage)
+        flow.awaitText(flow.strings.addFeed)
+        flow.assertAbsent(flow.strings.refreshFeeds)
+        val disclosures = setOf(
+            flow.strings.desktopCollapseFeedCategory(EMPTY_CATEGORY),
+            flow.strings.desktopExpandFeedCategory(EMPTY_CATEGORY),
+        )
+        assertTrue(flow.nodes().none { node -> node.contentDescriptions.any { it in disclosures } })
+    }
+
     private fun com.prof18.feedflow.desktop.e2e.harness.Flow.treeRows(): List<String> =
         nodes().filter { it.role == "Tab" && it.key.startsWith("window:1:0:") && it.isOnScreen }
             .sortedBy { it.bounds.y }
@@ -181,6 +203,7 @@ class DesktopOnlyFlowsTest {
         const val SEARCH_CLEAR = "settings-search-clear"
         const val NEWEST_ID = "e2e-article-newest-unread"
         const val ANDROID_CENTRAL = "Android Central RSS Feed"
+        const val EMPTY_CATEGORY = "Empty Category"
         const val READER_SUCCESS_ID = "e2e-article-reader-success"
         const val READER_SUCCESS_TITLE = "E2E Reader Mode Success Article: Interstitium"
         const val READER_PARAGRAPH = "E2E cached reader content loaded from the seed fixture."

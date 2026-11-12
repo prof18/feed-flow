@@ -274,6 +274,9 @@
     <string name="feed_name">Feed name</string>
     <string name="feed_edited_message">Feed %s updated</string>
     <string name="open_another_feed">Open another feed</string>
+    <string name="next_feed_button">Next: %s</string>
+    <string name="empty_category_message">No feeds in this category</string>
+    <string name="empty_category_hint">No feeds yet. Drag a feed here.</string>
     <string name="settings_feed_list_title">Feed list</string>
     <string name="settings_feed_list_scale_title">Text scale</string>
     <string name="settings_font_scale_title_example">Article Title</string>

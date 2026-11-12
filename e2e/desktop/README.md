@@ -56,7 +56,7 @@ The app reads these properties only in debug builds. A passing test deletes its 
 - REG-104, REG-129, REG-131, REG-183: desktop has no feed list screen and no article-list "more" menu, so Feed settings opens from the sidebar feed menu. REG-104 does not cover the fetch-failed warning, which no seed profile provides.
 - REG-147: the empty-library view offers Add feed and Import and export only; the Accounts and Feed Suggestions buttons are in the unreachable NoFeedsDialog.
 - REG-148, REG-158: desktop has a next-feed button in the article list footer instead of the pull gesture.
-- REG-155: in the two-pane layout "Open another feed" toggles the sidebar.
+- REG-155: "Open another feed" shows only while the sidebar is hidden, and shows the sidebar.
 - REG-157: desktop reorders by dragging sidebar rows directly; there are no reorder toggles.
 - REG-186: the URL-less article's context menu (no Share) is not covered, because article context menus cannot be opened.
 - REG-106, REG-109, REG-143, REG-152, REG-154, REG-168: the article and search-result context menu steps (bookmark, mark read, mark above/below, open comments, the action set) are not covered. REG-106 and REG-154 reach the same states through the reader toolbar.

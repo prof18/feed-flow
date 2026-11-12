@@ -3,6 +3,7 @@ package com.prof18.feedflow.desktop.home
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.NavDrawerState
@@ -54,6 +55,26 @@ class DesktopFeedTreeTest {
         assertEquals(expected = 3, actual = visibleIds.size)
         assertEquals(2, tree.sections.single { it.categoryWrapper.feedSourceCategory?.id == "news" }.members.size)
         assertTrue(tree.sections.single { it.categoryWrapper.feedSourceCategory?.id == "empty" }.members.isEmpty())
+    }
+
+    @Test
+    fun `only a loaded category without any feed counts as a category without feeds`() {
+        val empty = FeedSourceCategory("empty", "Empty", position = 1)
+        val pinnedOnly = FeedSourceCategory("pinned-only", "Pinned only", position = 2)
+        val pinned = item("pinned", pinnedOnly)
+        val drawer = NavDrawerState(
+            pinnedFeedSources = persistentListOf(pinned),
+            categories = persistentListOf(
+                DrawerItem.DrawerCategory(empty, 0),
+                DrawerItem.DrawerCategory(pinnedOnly, 0),
+            ),
+        )
+        assertTrue(isCategoryWithoutFeeds(drawer, FeedFilter.Category(feedCategory = empty)))
+        assertFalse(isCategoryWithoutFeeds(drawer, FeedFilter.Category(feedCategory = pinnedOnly)))
+        assertFalse(
+            isCategoryWithoutFeeds(drawer, FeedFilter.Category(feedCategory = FeedSourceCategory("gone", "Gone"))),
+        )
+        assertFalse(isCategoryWithoutFeeds(drawer, FeedFilter.Timeline))
     }
 
     @Test

@@ -163,6 +163,7 @@ Flows for features only the desktop app has. They live in `desktopApp/src/jvmTes
 | DSK-004 | `DesktopOnlyFlowsTest` | A second app instance started with a `feedflow://add` link exits 0 and the running app opens Add feed pre-filled. |
 | DSK-005 | `DesktopOnlyFlowsTest` | Settings → About & support → Report issue opens a `mailto:` link (recorded by the E2E URI log). |
 | DSK-006 | `DesktopOnlyFlowsTest` | Markdown reader rendering: the cached `reader-mode` article (stored as Markdown on desktop) shows its paragraph as text and its image by alt text, with no HTML source on screen. |
+| DSK-007 | `DesktopOnlyFlowsTest` | A category with no feeds shows "No feeds yet. Drag a feed here." under its sidebar header and no expand or collapse chevron; selecting it shows "No feeds in this category" with Add feed and no Refresh feeds. |
 
 ## Known Limitations
 

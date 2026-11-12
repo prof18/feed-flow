@@ -595,4 +595,9 @@
     <string name="article_unread_bookmarked_state">Ungelesen, mit Lesezeichen</string>
     <string name="unread_count_accessibility">%s ungelesen</string>
     <string name="reader_mode_unnamed_image_link">Bild öffnen</string>
+    <string name="feed_suggestion_undo">Rückgängig</string>
+    <string name="feed_suggestion_added_message">%s zu %s hinzugefügt</string>
+    <string name="feed_suggestion_added_to">Zu %s hinzugefügt</string>
+    <string name="feed_suggestion_add">Hinzufügen</string>
+    <string name="feed_suggestion_added">Hinzugefügt</string>
 </resources>

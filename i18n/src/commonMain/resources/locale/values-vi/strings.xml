@@ -595,4 +595,9 @@
     <string name="article_unread_bookmarked_state">Chưa đọc, đã lưu</string>
     <string name="unread_count_accessibility">%s chưa đọc</string>
     <string name="reader_mode_unnamed_image_link">Mở hình ảnh</string>
+    <string name="feed_suggestion_add">Thêm</string>
+    <string name="feed_suggestion_added">Đã thêm</string>
+    <string name="feed_suggestion_added_message">%s đã được thêm vào %s</string>
+    <string name="feed_suggestion_added_to">Đã thêm vào %s</string>
+    <string name="feed_suggestion_undo">Hoàn tác</string>
 </resources>

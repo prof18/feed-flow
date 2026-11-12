@@ -439,12 +439,12 @@
     <string name="desktop_settings_preview_title">Preview</string>
     <string name="desktop_settings_search_placeholder">Search settings</string>
     <string name="desktop_settings_search_no_results">No matching settings</string>
-    <string name="settings_left_swipe_action">Left swipe</string>
-    <string name="settings_right_swipe_action">Right swipe</string>
-    <string name="settings_swipe_action_toggle_read">Toggle read</string>
-    <string name="settings_swipe_action_toggle_bookmark">Toggle bookmark</string>
+    <string name="settings_left_swipe_action">Swipe left</string>
+    <string name="settings_right_swipe_action">Swipe right</string>
+    <string name="settings_swipe_action_toggle_read">Mark as read or unread</string>
+    <string name="settings_swipe_action_toggle_bookmark">Add or remove bookmark</string>
     <string name="settings_swipe_action_open_in_browser">Open in preferred browser</string>
-    <string name="settings_swipe_action_none">Disabled</string>
+    <string name="settings_swipe_action_none">None</string>
     <string name="settings_notification_no_feed">Looks like you haven\'t added any feeds yet. Add some to start receiving notifications!</string>
     <string name="settings_notification_check_period">Notification check frequency</string>
     <string name="settings_notifications_enable_all_title">Enable All Notifications</string>

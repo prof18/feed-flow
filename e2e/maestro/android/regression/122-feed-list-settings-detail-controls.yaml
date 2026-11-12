@@ -39,12 +39,12 @@ appId: com.prof18.feedflow.debug
 - tapOn: "12 hours"
 - assertVisible: "12 hours"
 - scrollUntilVisible:
-    element: "Left swipe"
+    element: "Swipe left"
     direction: DOWN
     timeout: 10000
-- tapOn: "Left swipe"
-- tapOn: "Toggle read"
-- assertVisible: "Toggle read"
-- tapOn: "Right swipe"
-- tapOn: "Toggle bookmark"
-- assertVisible: "Toggle bookmark"
+- tapOn: "Swipe left"
+- tapOn: "Mark as read or unread"
+- assertVisible: "Mark as read or unread"
+- tapOn: "Swipe right"
+- tapOn: "Add or remove bookmark"
+- assertVisible: "Add or remove bookmark"

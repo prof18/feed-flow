@@ -16,6 +16,7 @@ import com.prof18.feedflow.core.utils.withSuspensionGuard
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_DEBUG
 import com.prof18.feedflow.feedsync.database.data.SyncedDatabaseHelper.Companion.SYNC_DATABASE_NAME_PROD
 import com.prof18.feedflow.feedsync.database.data.prepareSyncDatabaseFile
+import com.prof18.feedflow.feedsync.database.data.removeSyncDatabaseJournals
 import com.prof18.feedflow.feedsync.dropbox.DropboxDataSource
 import com.prof18.feedflow.feedsync.dropbox.DropboxDownloadParam
 import com.prof18.feedflow.feedsync.dropbox.DropboxSettings
@@ -279,6 +280,7 @@ internal class FeedSyncIosWorker(
     private fun replaceClosedDatabase(url: NSURL): Boolean {
         val dbUrl = getDatabaseUrl()
         if (dbUrl != null) {
+            removeSyncDatabaseJournals(dbUrl)
             if (!NSFileManager.defaultManager.fileExistsAtPath(requireNotNull(dbUrl.path))) {
                 return NSFileManager.defaultManager.moveItemAtURL(url, dbUrl, null)
             }

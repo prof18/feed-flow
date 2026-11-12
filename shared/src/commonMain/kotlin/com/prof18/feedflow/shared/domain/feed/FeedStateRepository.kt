@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedUpdateStatus
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
+import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.db.SelectFeeds
 import com.prof18.feedflow.shared.data.FeedAppearanceSettingsRepository
@@ -41,8 +42,9 @@ internal class FeedStateRepository(
     private val errorMutableState: MutableSharedFlow<ErrorState> = MutableSharedFlow()
     val errorState = errorMutableState.asSharedFlow()
 
+    // Starts as loading: until the launch decides what to show, an empty list must not read as "nothing to read".
     private val updateMutableState: MutableStateFlow<FeedUpdateStatus> = MutableStateFlow(
-        FinishedFeedUpdateStatus,
+        StartedFeedUpdateStatus,
     )
     val updateState = updateMutableState.asStateFlow()
 
@@ -122,6 +124,11 @@ internal class FeedStateRepository(
             errorMutableState.emit(DatabaseError(DatabaseErrorCode.FeedRetrievalFailed))
             false
         }
+    }
+
+    // Ends the launch loading state when no fetch runs on launch; a fetch that already moved it on is left alone.
+    fun finishLaunchLoading() {
+        updateMutableState.compareAndSet(StartedFeedUpdateStatus, FinishedFeedUpdateStatus)
     }
 
     // Returns true when a fetch was held back while the list was scrolled and the list is now back at the top.

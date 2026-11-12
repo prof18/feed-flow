@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.presentation
 
+import app.cash.turbine.Event
 import app.cash.turbine.test
 import com.prof18.feedflow.core.domain.FeedSourceLogoRetriever
 import com.prof18.feedflow.core.domain.HtmlParser
@@ -14,6 +15,8 @@ import com.prof18.feedflow.core.model.FeedOperation
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
+import com.prof18.feedflow.core.model.FeedUpdateStatus
+import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
 import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.model.VisibleFeedItem
@@ -163,6 +166,44 @@ class HomeViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         assertEquals(1, fakeRssParser.callCount)
+    }
+
+    @Test
+    fun `loading state stays loading on launch until the fetch finishes`() = runTest(testDispatcher) {
+        settingsRepository.setRefreshFeedsOnLaunch(true)
+        val feedSource = createFeedSource(id = "source-1", title = "Source 1")
+        insertFeedSources(feedSource)
+        fakeRssParser.setChannel(feedSource.url, createChannel(title = "Feed", link = "https://example.com"))
+
+        val viewModel = getViewModel()
+
+        viewModel.loadingState.test {
+            assertTrue(awaitItem().isLoading())
+            viewModel.onAppLaunch()
+            advanceUntilIdle()
+
+            val states = cancelAndConsumeRemainingEvents()
+                .filterIsInstance<Event.Item<FeedUpdateStatus>>()
+                .map { it.value }
+            assertTrue(states.dropLast(1).all { it.isLoading() }, "Left loading before the fetch ended: $states")
+            assertIs<FinishedFeedUpdateStatus>(states.last())
+        }
+        assertTrue(viewModel.feedState.value.isEmpty())
+    }
+
+    @Test
+    fun `loading state finishes on launch when refresh on launch is disabled`() = runTest(testDispatcher) {
+        settingsRepository.setRefreshFeedsOnLaunch(false)
+        insertFeedSources(createFeedSource(id = "source-1", title = "Source 1"))
+
+        val viewModel = getViewModel()
+        assertTrue(viewModel.loadingState.value.isLoading())
+
+        viewModel.onAppLaunch()
+        advanceUntilIdle()
+
+        assertEquals(0, fakeRssParser.callCount)
+        assertIs<FinishedFeedUpdateStatus>(viewModel.loadingState.value)
     }
 
     @Test

@@ -32,6 +32,8 @@ class DesktopAutoRefreshSchedulerTest : KoinTestBase() {
     @Test
     fun `never does not schedule and period updates reschedule`() = runTest(testDispatcher) {
         val scheduler = createScheduler()
+        // The launch loading state would skip every tick on its own; start from the state after launch.
+        feedStateRepository.emitUpdateStatus(FinishedFeedUpdateStatus)
         settingsRepository.setSyncPeriod(SyncPeriod.NEVER)
         scheduler.start()
 

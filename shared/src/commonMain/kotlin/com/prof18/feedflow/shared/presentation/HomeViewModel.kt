@@ -174,8 +174,12 @@ class HomeViewModel internal constructor(
         viewModelScope.launch {
             readerContentCacheMigration.clearOutdatedContent()
         }
+        val refreshesOnLaunch = settingsRepository.getRefreshFeedsOnLaunch()
         viewModelScope.launch {
             feedStateRepository.getFeeds()
+            if (!refreshesOnLaunch) {
+                feedStateRepository.finishLaunchLoading()
+            }
         }
         getNewFeeds(isFirstLaunch = true)
     }

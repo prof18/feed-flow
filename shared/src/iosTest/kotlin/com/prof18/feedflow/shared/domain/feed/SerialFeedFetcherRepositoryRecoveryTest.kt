@@ -73,15 +73,32 @@ class SerialFeedFetcherRepositoryRecoveryTest : KoinTestBase() {
     }
 
     @Test
-    fun `an approved feed refreshes through the session and stays approved`() = runTest(testDispatcher) {
-        insert(challenged)
+    fun `an approved feed is left for the foreground and stays approved`() = runTest(testDispatcher) {
+        insert(normal, challenged)
         storeRecord(approvedRecord(challenged))
+        wrapper.channels[normal.url] = channel("normal")
         sessionHttp.enqueue(WebsiteSessionResponse.Body(ByteArray(0), "application/rss+xml", challenged.url))
 
         repository.fetchFeeds(forceRefresh = true)
 
-        assertEquals(setOf(challenged.id), timelineItems().map { it.feed_source_id }.toSet())
+        assertEquals(setOf(normal.id), timelineItems().map { it.feed_source_id }.toSet())
         assertEquals(RecoveryMode.SessionApproved, recoveryRepository.records(epoch).getValue(challenged.id).mode)
+        assertTrue(sessionHttp.requests.isEmpty())
+        assertEquals(listOf(normal.url), wrapper.requestedUrls)
+        val approvedSource = databaseHelper.getFeedSources().single { it.id == challenged.id }
+        assertEquals(null, approvedSource.lastSyncTimestamp)
+    }
+
+    @Test
+    fun `the quick refresh also leaves an approved feed for the foreground`() = runTest(testDispatcher) {
+        insert(challenged)
+        storeRecord(approvedRecord(challenged))
+        sessionHttp.enqueue(WebsiteSessionResponse.Body(ByteArray(0), "application/rss+xml", challenged.url))
+
+        repository.refreshFeedsQuickly(timeBudgetMillis = 15_000)
+
+        assertTrue(timelineItems().isEmpty())
+        assertTrue(sessionHttp.requests.isEmpty())
         assertEquals(0, wrapper.calls)
     }
 
@@ -152,11 +169,11 @@ class SerialFeedFetcherRepositoryRecoveryTest : KoinTestBase() {
     private class UrlRssParserWrapper : RssParserWrapper {
         val channels = mutableMapOf<String, RssChannel>()
         val challenged = mutableSetOf<String>()
-        var calls = 0
-            private set
+        val requestedUrls = mutableListOf<String>()
+        val calls: Int get() = requestedUrls.size
 
         override suspend fun getRssChannel(url: String, allowBrowserTier: Boolean): RssChannel {
-            calls++
+            requestedUrls += url
             if (url in challenged) {
                 throw FeedVerificationRequired(FeedChallenge(url, url, 403, null))
             }

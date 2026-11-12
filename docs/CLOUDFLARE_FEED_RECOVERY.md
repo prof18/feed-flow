@@ -158,7 +158,7 @@ development subscriptions as described in the Maestro guide.
 | Ordinary feed | Add and refresh succeed without a prompt; cold start is unchanged. |
 | Challenged Add or Edit | An explanation appears instead of an invalid-URL error. Confirming resumes automatically; failing or cancelling does not partially save the subscription. |
 | Challenged refresh | Existing articles stay available. Prompts appear only in the foreground; cancel and retry delays are respected. |
-| Saved-session refresh | Foreground and background refresh reuse the website session without opening the browser. |
+| Saved-session refresh | Foreground refresh, and background refresh on Android, reuse the website session without opening the browser. iOS background refresh skips these feeds: reading the clearance cookie would start WebKit in a background launch, and the cookie has usually expired by then. They refresh the next time the app is open. |
 | Reader | Verification replaces the fallback with reader content and lets another article on the same website reuse the session. |
 | Cancel or account change | Late results cannot update a different article or account or replace the previous offline copy. |
 | Clear | Every feed sharing that profile loses approval; other websites and existing articles are untouched. |

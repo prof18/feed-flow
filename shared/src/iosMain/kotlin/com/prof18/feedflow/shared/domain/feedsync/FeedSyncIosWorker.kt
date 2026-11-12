@@ -279,6 +279,9 @@ internal class FeedSyncIosWorker(
     private fun replaceClosedDatabase(url: NSURL): Boolean {
         val dbUrl = getDatabaseUrl()
         if (dbUrl != null) {
+            if (!removeJournalFiles(requireNotNull(dbUrl.path))) {
+                return false
+            }
             if (!NSFileManager.defaultManager.fileExistsAtPath(requireNotNull(dbUrl.path))) {
                 return NSFileManager.defaultManager.moveItemAtURL(url, dbUrl, null)
             }
@@ -304,6 +307,17 @@ internal class FeedSyncIosWorker(
         }
         return false
     }
+
+    // A WAL left by a process killed before its checkpoint belongs to the old database: SQLite would
+    // replay its pages onto the downloaded one and report it malformed on every later open.
+    private fun removeJournalFiles(databasePath: String): Boolean =
+        listOf("-wal", "-shm", "-journal").all { suffix ->
+            val path = databasePath + suffix
+            val fileManager = NSFileManager.defaultManager
+            val removed = !fileManager.fileExistsAtPath(path) || fileManager.removeItemAtPath(path, null)
+            if (!removed) logger.e { "Failed to remove stale sync database file $suffix" }
+            removed
+        }
 
     private suspend fun accountSpecificUpload(databasePath: NSURL, account: SyncAccounts) =
         when (account) {

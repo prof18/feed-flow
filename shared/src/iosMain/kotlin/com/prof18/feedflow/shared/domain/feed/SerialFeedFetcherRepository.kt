@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
 import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.FinishedFeedUpdateStatus
+import com.prof18.feedflow.core.model.RecoveryMode
 import com.prof18.feedflow.core.model.StartedFeedUpdateStatus
 import com.prof18.feedflow.core.utils.DispatcherProvider
 import com.prof18.feedflow.core.utils.withSuspensionGuard
@@ -32,7 +33,8 @@ import kotlin.time.TimeSource
 
 /**
  * Serial version of FeedFetcherRepository that processes feeds one at a time
- * to reduce resource usage during background processing on iOS.
+ * to reduce resource usage during background processing on iOS. Feeds that need a verified
+ * website's session are left for the foreground fetch.
  */
 class SerialFeedFetcherRepository internal constructor(
     private val dispatcherProvider: DispatcherProvider,
@@ -210,6 +212,10 @@ class SerialFeedFetcherRepository internal constructor(
         )
 
         val feedsToProcess = feedSourceUrls.mapNotNull { feedSource ->
+            if (needsWebsiteSession(recoveryRecords[feedSource.id], feedSource)) {
+                logger.d { "Skipping ${feedSource.url}: it needs the website session, left for the foreground" }
+                return@mapNotNull null
+            }
             val shouldRefresh = shouldRefreshFeed(
                 feedSource = feedSource,
                 cacheInfo = cacheInfoById[feedSource.id],
@@ -288,6 +294,12 @@ class SerialFeedFetcherRepository internal constructor(
             recoveryUpdate?.let { applyRecoveryUpdate(it, ticket) }
         }
     }
+
+    // A verified website's clearance cookie lives in its WebKit data store, so refreshing the feed
+    // would start WebKit in a background launch, and the short-lived cookie has usually expired by
+    // then anyway. The feed refreshes the next time the app is open, where a challenge can be solved.
+    private fun needsWebsiteSession(record: FeedRecoveryRecord?, feedSource: FeedSource): Boolean =
+        record?.mode == RecoveryMode.SessionApproved && record.subscriptionUrl == feedSource.url
 
     private fun clearedRecord(
         feedSource: FeedSource,

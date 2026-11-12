@@ -1,13 +1,10 @@
 package com.prof18.feedflow.feedsync.feedbin.domain.mapping
 
-import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.core.model.ArticleOpenMode
-import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.feedsync.feedbin.data.dto.EntryDTO
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -18,8 +15,7 @@ import kotlin.time.Instant
 class EntryDTOMapperTest {
 
     private val htmlParser = FakeHtmlParser()
-    private val dateFormatter = FakeDateFormatter()
-    private val mapper = EntryDTOMapper(htmlParser, dateFormatter)
+    private val mapper = EntryDTOMapper(htmlParser)
 
     private val feedSource = FeedSource(
         id = "source-1",
@@ -38,7 +34,7 @@ class EntryDTOMapperTest {
     )
 
     @Test
-    fun `mapToFeedItem maps fields and formats date when published is valid`() {
+    fun `mapToFeedItem maps fields and pub date when published is valid`() {
         val published = "2023-11-14T10:00:00Z"
         val entryDTO = createEntryDTO(
             id = 42,
@@ -61,8 +57,9 @@ class EntryDTOMapperTest {
         assertEquals("https://example.com/image.jpg", result.imageUrl)
         assertEquals(true, result.isRead)
         assertEquals(false, result.isBookmarked)
-        assertEquals("formatted-date", result.dateString)
-        assertEquals(Instant.parse(published).toEpochMilliseconds() / 1000, dateFormatter.lastMillis)
+        assertEquals(Instant.parse(published).toEpochMilliseconds(), result.pubDateMillis)
+        // The display date is not stored, so sync skips formatting it for every article
+        assertNull(result.dateString)
     }
 
     @Test
@@ -391,19 +388,5 @@ class EntryDTOMapperTest {
             val commentsUrl = regex.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
             return ParsedFeedContent(text = "Parsed Summary", commentsUrl = commentsUrl)
         }
-    }
-
-    private class FakeDateFormatter : DateFormatter {
-        var lastMillis: Long? = null
-            private set
-
-        override fun getDateMillisFromString(dateString: String): Long? = null
-        override fun formatDateForFeed(millis: Long, dateFormat: DateFormat, timeFormat: TimeFormat): String {
-            lastMillis = millis
-            return "formatted-date"
-        }
-        override fun formatDateForLastRefresh(millis: Long): String = "formatted-refresh"
-        override fun currentTimeMillis(): Long = 0
-        override fun getCurrentDateForExport(): String = "2023-11-14"
     }
 }

@@ -26,7 +26,6 @@ fun getFeedbinModule(appEnvironment: AppEnvironment) = module {
             databaseHelper = get(),
             entryDTOMapper = EntryDTOMapper(
                 htmlParser = get(),
-                dateFormatter = get(),
             ),
             dateFormatter = get(),
             dispatcherProvider = get(),
@@ -62,7 +61,6 @@ fun getFeedbinTestModule(
             databaseHelper = get(),
             entryDTOMapper = EntryDTOMapper(
                 htmlParser = get(),
-                dateFormatter = get(),
             ),
             dateFormatter = get(),
             dispatcherProvider = get(),

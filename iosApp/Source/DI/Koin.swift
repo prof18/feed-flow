@@ -7,6 +7,7 @@
 //
 
 import FeedFlowKit
+import FirebaseCore
 import Foundation
 
 private class NoOpNotifier: Notifier {
@@ -49,6 +50,8 @@ func startKoin(notifier: (any Notifier)? = nil, websiteRecovery: Bool = false) {
         telemetry: TelemetryReporter(),
         notifier: notifier ?? NoOpNotifier(),
         feedUrlProtocolClasses: [FeedConditionalGetURLProtocol.self],
+        // Firebase is configured after Koin starts in the app, and never in the share extension.
+        isCrashReportingConfigured: { KotlinBoolean(value: FirebaseApp.app() != nil) },
         websiteSessionBridge: websiteSessionBridge,
         websiteProfileCleaner: websiteProfileCleaner
     )

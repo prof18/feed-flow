@@ -60,6 +60,7 @@ import com.prof18.feedflow.shared.domain.recovery.toRecoveryBytes
 import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.domain.widget.WidgetDateSettingsStore
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
+import com.prof18.feedflow.shared.logging.GatedLogWriter
 import com.prof18.feedflow.shared.presentation.AboutAndSupportSettingsViewModel
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
@@ -117,6 +118,7 @@ fun initKoinIos(
     telemetry: Telemetry,
     notifier: Notifier,
     feedUrlProtocolClasses: List<*>,
+    isCrashReportingConfigured: () -> Boolean,
     websiteSessionBridge: IosWebsiteSessionBridge? = null,
     websiteProfileCleaner: WebsiteProfileCleaner? = null,
 ): KoinApplication = initKoin(
@@ -130,7 +132,10 @@ fun initKoinIos(
         platformName = UIDevice.currentDevice.systemName(),
         platformVersion = UIDevice.currentDevice.systemVersion,
     ),
-    crashReportingLogWriter = CrashlyticsLogWriter(),
+    crashReportingLogWriter = GatedLogWriter(
+        delegate = CrashlyticsLogWriter(),
+        isEnabled = isCrashReportingConfigured,
+    ),
     modules = listOf(
         module {
             single { dropboxDataSource }

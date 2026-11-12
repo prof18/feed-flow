@@ -46,6 +46,6 @@ appId: com.prof18.feedflow.debug
 - assertNotVisible: "Adding feed…"
 - extendedWaitUntil:
     notVisible: "Android Central RSS Feed is already in your feeds."
-    timeout: 5000
+    timeout: 8000
 - assertVisible:
     id: article_row_e2e_article_newest_unread

@@ -383,6 +383,8 @@
     <string name="desktop_delete_selected_feeds_message">Delete %d selected feeds and their articles? This action cannot be undone.</string>
     <string name="adding_feed">Adding feed...</string>
     <string name="error_feed_add">Something went wrong while adding the feed</string>
+    <string name="share_no_feed_link_found">No feed link found in the shared content.</string>
+    <string name="share_open_in_feedflow">Open in FeedFlow</string>
     <string name="widget_check_feed_sources">Add a feed to see its articles here.</string>
     <string name="widget_latest_items">Most Recent</string>
     <string name="widget_configuration_title">Widget Configuration</string>

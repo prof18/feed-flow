@@ -17,6 +17,7 @@ struct ShareView: View {
     enum UIState {
         case loading
         case success(message: String)
+        case info(message: String)
         case error(message: String)
         case idle
     }
@@ -37,6 +38,8 @@ struct ShareView: View {
                 Text(feedFlowStrings.addingFeed)
                     .font(.headline)
 
+                cancelButton
+
             case let .error(message):
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 50))
@@ -50,6 +53,15 @@ struct ShareView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 50))
                     .foregroundStyle(.green)
+                Text(message)
+                    .font(.headline)
+
+                doneButton
+
+            case let .info(message):
+                Image(systemName: "info.circle.fill")
+                    .font(.system(size: 50))
+                    .foregroundStyle(.secondary)
                 Text(message)
                     .font(.headline)
 
@@ -84,7 +96,7 @@ struct ShareView: View {
                     self.uiState = .success(message: message)
 
                 case let .feedAlreadyExists(existingState):
-                    self.uiState = .success(message: feedFlowStrings.feedAlreadyExistsMessage(existingState.feedName))
+                    self.uiState = .info(message: feedFlowStrings.feedAlreadyExistsMessage(existingState.feedName))
 
                 case .feedNotAdded:
                     self.uiState = .loading
@@ -119,13 +131,25 @@ struct ShareView: View {
             label: {
                 Text(feedFlowStrings.actionDone)
                     .font(.headline)
-                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .clipShape(.rect(cornerRadius: 10))
             }
         )
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .padding(.horizontal, Spacing.regular)
+        .padding(.top, Spacing.small)
+    }
+
+    private var cancelButton: some View {
+        Button(feedFlowStrings.cancelButton) {
+            extractionId = nil
+            extractionProgress?.cancel()
+            extensionContext?.cancelRequest(
+                withError: NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError)
+            )
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
         .padding(.horizontal, Spacing.regular)
         .padding(.top, Spacing.small)
     }

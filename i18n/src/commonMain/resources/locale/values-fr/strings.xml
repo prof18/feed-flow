@@ -595,4 +595,9 @@
     <string name="settings_desktop_refresh_while_open_description">Vérifie les nouveaux articles sans déplacer votre position dans la liste.</string>
     <string name="new_category_button">Nouvelle catégorie</string>
     <string name="reader_mode_unnamed_image_link">Ouvrir l\'image</string>
+    <string name="feed_suggestion_add">Ajouter</string>
+    <string name="feed_suggestion_added">Ajouté</string>
+    <string name="feed_suggestion_added_message">%s ajouté à %s</string>
+    <string name="feed_suggestion_added_to">Ajouté à %s</string>
+    <string name="feed_suggestion_undo">Annuler</string>
 </resources>

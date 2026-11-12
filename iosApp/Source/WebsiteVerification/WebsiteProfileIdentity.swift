@@ -32,7 +32,7 @@ enum WebsiteProfileIdentity {
 
     static func identity(profileId: String, userAgent: String, url: URL) async -> WebsiteReplayIdentity? {
         guard origin(url) != nil, let identifier = identifier(profileId: profileId),
-              await WKWebsiteDataStore.allDataStoreIdentifiers.contains(identifier) else { return nil }
+              await WebKitWebsiteDataStoreProvider.allIdentifiers().contains(identifier) else { return nil }
         let store = WKWebsiteDataStore(forIdentifier: identifier)
         let cookies = await store.httpCookieStore.allCookies()
         return WebsiteClearanceCookies.identity(cookies: cookies, url: url, userAgent: userAgent)

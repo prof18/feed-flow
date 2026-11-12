@@ -32,7 +32,9 @@ the device is charging and connected to Wi-Fi, and more often for apps you open
 regularly. It can take many hours, or not happen at all if you haven't opened
 FeedFlow for a while, if Low Power Mode is on, or if **Background App Refresh**
 is turned off for FeedFlow in the iOS Settings. Open FeedFlow to get the latest
-articles immediately.
+articles immediately. Feeds from a website you verified with **Verify website**
+are only checked while FeedFlow is open, because the website's check usually has
+to be passed again by then.
 
 **Desktop**: turn on **Refresh while open** to check for new articles while
 FeedFlow is running.

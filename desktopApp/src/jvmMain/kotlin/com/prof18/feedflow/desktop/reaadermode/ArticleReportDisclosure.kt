@@ -8,6 +8,7 @@ import com.prof18.feedflow.core.model.ArticleReportMessage
 import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackTone
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
 
@@ -36,6 +37,11 @@ internal fun ArticleReportDisclosure(
                     DesktopFeedbackDuration.Indefinite
                 } else {
                     DesktopFeedbackDuration.Short
+                },
+                tone = when (message) {
+                    ArticleReportMessage.SENDING -> DesktopFeedbackTone.Progress
+                    ArticleReportMessage.SENT -> DesktopFeedbackTone.Success
+                    else -> DesktopFeedbackTone.Error
                 },
             )
             dismissMessage()

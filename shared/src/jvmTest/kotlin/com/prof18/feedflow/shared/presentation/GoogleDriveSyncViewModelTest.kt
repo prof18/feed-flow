@@ -161,6 +161,28 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
         }
     }
 
+    @Test
+    fun `disconnect restores the linked state when revokeAccess fails`() = runTest {
+        resetState()
+        fakeGoogleDriveDataSource.restoreAuthResult = true
+        googleDriveSettings.setGoogleDriveLinked(true)
+        fakeGoogleDriveDataSource.revokeAccessException = GoogleDriveException(
+            causeException = IllegalStateException("boom"),
+            errorMessage = "failed",
+        )
+        val linkedViewModel: GoogleDriveSyncViewModel = getKoin().get()
+
+        linkedViewModel.googleDriveSyncMessageState.test {
+            val linkedState = linkedViewModel.googleDriveConnectionUiState.value
+            assertTrue(linkedState is AccountConnectionUiState.Linked)
+
+            linkedViewModel.disconnect()
+
+            assertEquals(GoogleDriveSynMessages.Error, awaitItem())
+            assertEquals(linkedState, linkedViewModel.googleDriveConnectionUiState.value)
+        }
+    }
+
     private fun resetState() {
         fakeGoogleDriveDataSource.reset()
         googleDriveSettings.clearAll()

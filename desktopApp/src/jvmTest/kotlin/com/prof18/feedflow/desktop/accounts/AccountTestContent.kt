@@ -128,6 +128,7 @@ internal class FakeDesktopAccount(val account: SyncAccounts) {
 
     fun fail() {
         draft.connectionError = ERROR
+        draft.syncError = ERROR
         draft.connectionErrorRevision++
         draft.submissionPending = false
         draft.authCodePending = false

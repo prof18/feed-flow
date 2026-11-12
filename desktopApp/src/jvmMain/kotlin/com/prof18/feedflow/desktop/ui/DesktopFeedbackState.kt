@@ -20,10 +20,11 @@ internal class DesktopFeedbackState {
         } else {
             DesktopFeedbackDuration.Indefinite
         },
+        tone: DesktopFeedbackTone = DesktopFeedbackTone.Info,
     ): DesktopFeedbackResult = queue.withLock {
         val completion = CompletableDeferred<DesktopFeedbackResult>()
         try {
-            currentFeedback = FeedbackMessage(message, actionLabel, duration, completion)
+            currentFeedback = FeedbackMessage(message, actionLabel, duration, tone, completion)
             completion.await()
         } finally {
             currentFeedback = null
@@ -36,6 +37,7 @@ private class FeedbackMessage(
     override val message: String,
     override val actionLabel: String?,
     override val duration: DesktopFeedbackDuration,
+    override val tone: DesktopFeedbackTone,
     private val completion: CompletableDeferred<DesktopFeedbackResult>,
 ) : DesktopFeedbackData {
     override fun dismiss() {
@@ -51,9 +53,14 @@ internal interface DesktopFeedbackData {
     val message: String
     val actionLabel: String?
     val duration: DesktopFeedbackDuration
+    val tone: DesktopFeedbackTone
     fun dismiss()
     fun performAction()
 }
 
 internal enum class DesktopFeedbackDuration { Short, Long, Indefinite }
+
+/** How a message reads at a glance: its icon, or a spinner for work still in progress. */
+internal enum class DesktopFeedbackTone { Success, Info, Error, Progress }
+
 internal enum class DesktopFeedbackResult { Dismissed, ActionPerformed }

@@ -3,6 +3,7 @@ package com.prof18.feedflow.desktop.ui.components
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
@@ -61,7 +62,7 @@ class FeedbackActionsTest {
                 }
             }
         }
-        rule.onNodeWithText(EnFeedFlowStrings.closeButtonContentDescription).performClick()
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.closeButtonContentDescription).performClick()
         rule.onNodeWithText(EnFeedFlowStrings.browserLaunchError).assertDoesNotExist()
         rule.runOnIdle { assertEquals(DesktopFeedbackResult.Dismissed, result) }
     }

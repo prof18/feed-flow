@@ -63,6 +63,12 @@ class LibraryFlowsTest {
         flow.typeInto(flow.urlInput(window), flow.fixtureUrl(FIXTURE_FEED_PATH))
         flow.await("Save to be enabled") { flow.saveButton(window).takeIf { !it.isDisabled } }
         flow.click(flow.saveButton(window))
+        // The confirmation sits inline in the action row; the form resets for the next feed right away.
+        val confirmation = flow.strings.feedAddedMessage(FIXTURE_FEED_TITLE)
+        flow.await("the inline add confirmation", LONG_WAIT_MS) {
+            flow.nodesIn(window).firstOrNull { it.isOnScreen && confirmation in it.texts }
+        }
+        assertEquals("", flow.urlInput(window).editableText)
         flow.await("the fixture feed in the sidebar", LONG_WAIT_MS) {
             flow.nodes().firstOrNull { it.role == "Tab" && it.texts.firstOrNull() == FIXTURE_FEED_TITLE }
         }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -54,8 +53,8 @@ import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import com.prof18.feedflow.desktop.ui.components.Dialog
+import com.prof18.feedflow.desktop.ui.components.InlineFeedbackStatus
 import com.prof18.feedflow.desktop.ui.components.ProgressButtonLabel
-import com.prof18.feedflow.desktop.ui.components.SnackbarHost
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -92,7 +91,7 @@ internal fun AddFeedForm(
     completionRevision: Int = 0,
     statusMessage: String? = null,
     topAppBar: @Composable () -> Unit = {},
-    snackbarHostState: DesktopFeedbackState? = null,
+    feedbackState: DesktopFeedbackState? = null,
 ) {
     val strings = LocalFeedFlowStrings.current
     var urlValue by remember { mutableStateOf(TextFieldValue(feedUrl)) }
@@ -170,8 +169,8 @@ internal fun AddFeedForm(
                     FeedSubmitLabel(if (forceRequired) strings.addFeedAnywayButton else strings.addFeed, showLoading)
                 }
             },
+            leadingAction = feedbackState?.let { state -> { InlineFeedbackStatus(state) } },
         )
-        snackbarHostState?.let { SnackbarHost(it, Modifier.align(Alignment.BottomCenter)) }
     }
 }
 
@@ -387,8 +386,7 @@ private fun FeedFormLayout(
             modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            leadingAction?.invoke()
-            Spacer(Modifier.weight(1f))
+            Box(Modifier.weight(1f).padding(end = 12.dp)) { leadingAction?.invoke() }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                 verticalArrangement = Arrangement.spacedBy(8.dp),

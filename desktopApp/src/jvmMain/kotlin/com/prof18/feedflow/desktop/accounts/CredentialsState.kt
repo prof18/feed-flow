@@ -23,6 +23,12 @@ internal class CredentialsState(internal val ownerScope: CoroutineScope? = null)
     var authCodeReady by mutableStateOf(false)
     var connectionError by mutableStateOf<String?>(null)
     var connectionErrorRevision by mutableIntStateOf(0)
+
+    /**
+     * The last failure while linked, shown under the sync status. Unlike [connectionError] it outlives
+     * [clear], which runs on every Linked emission; a new sync or unlinking resets it.
+     */
+    var syncError by mutableStateOf<String?>(null)
     internal var connectionObservationJob: Job? = null
     internal var observedConnectionState: AccountConnectionUiState? = null
     internal var observedLoginLoading: Boolean? = null

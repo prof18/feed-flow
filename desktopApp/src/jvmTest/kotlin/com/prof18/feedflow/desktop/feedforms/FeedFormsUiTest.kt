@@ -1,14 +1,19 @@
 package com.prof18.feedflow.desktop.feedforms
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -16,12 +21,17 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.CategoriesState
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.desktop.testing.FeedFormE2eIds
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackTone
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
+import com.prof18.feedflow.desktop.ui.components.InlineFeedbackStatusTag
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import org.junit.Rule
 import org.junit.Test
@@ -253,6 +263,49 @@ class FeedFormsUiTest {
         rule.onNodeWithTag(FeedFormE2eIds.NAME_INPUT).assertTextEquals("Replacement feed")
         rule.onNodeWithTag(FeedFormE2eIds.ADD_FEED_URL_INPUT)
             .assertTextEquals("https://replacement.example/rss.xml")
+    }
+
+    @Test
+    fun `add confirmation sits in the action row beside the buttons`() {
+        val feedback = DesktopFeedbackState()
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    LaunchedEffect(feedback) {
+                        feedback.showFeedback(
+                            message = EnFeedFlowStrings.feedAddedMessage("Il Post"),
+                            duration = DesktopFeedbackDuration.Indefinite,
+                            tone = DesktopFeedbackTone.Success,
+                        )
+                    }
+                    Box(Modifier.size(width = 560.dp, height = 420.dp)) {
+                        AddFeedForm(
+                            feedUrl = "",
+                            showError = false,
+                            showLoading = false,
+                            errorMessage = "",
+                            categoriesState = CategoriesState(),
+                            showNotificationToggle = false,
+                            isNotificationEnabled = false,
+                            canForceAdd = false,
+                            onFeedUrlUpdated = {},
+                            onAddFeed = {},
+                            categoryActions = TestCategoryActions,
+                            onNotificationToggleChanged = {},
+                            onForceAddFeed = {},
+                            onCancel = {},
+                            feedbackState = feedback,
+                        )
+                    }
+                }
+            }
+        }
+
+        val status = rule.onNodeWithTag(InlineFeedbackStatusTag).getUnclippedBoundsInRoot()
+        val cancel = rule.onNodeWithText(EnFeedFlowStrings.cancelButton).getUnclippedBoundsInRoot()
+        rule.onNodeWithText(EnFeedFlowStrings.closeButtonContentDescription).assertDoesNotExist()
+        assertTrue(status.right <= cancel.left, "status $status overlaps the Cancel button $cancel")
+        assertTrue(status.bottom > cancel.top && status.top < cancel.bottom, "status $status is not in the action row")
     }
 
     @Test

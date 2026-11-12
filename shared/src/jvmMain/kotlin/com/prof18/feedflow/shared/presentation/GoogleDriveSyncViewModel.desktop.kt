@@ -94,6 +94,7 @@ class GoogleDriveSyncViewModel internal constructor(
 
     fun disconnect() {
         viewModelScope.launch {
+            val linkedState = googleDriveSyncUiMutableState.value
             try {
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Loading }
                 googleDriveDataSource.revokeAccess()
@@ -101,6 +102,8 @@ class GoogleDriveSyncViewModel internal constructor(
                 accountsRepository.clearAccount()
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             } catch (_: GoogleDriveException) {
+                // The account is still linked: leave the loading state so the error and the controls show.
+                googleDriveSyncUiMutableState.update { linkedState }
                 gDriveSyncMessageMutableState.emit(GoogleDriveSynMessages.Error)
             }
         }

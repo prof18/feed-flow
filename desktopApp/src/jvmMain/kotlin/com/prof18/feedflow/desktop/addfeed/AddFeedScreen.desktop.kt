@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -17,10 +18,12 @@ import com.prof18.feedflow.desktop.feedforms.AddFeedForm
 import com.prof18.feedflow.desktop.feedforms.FeedCategoryActions
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackTone
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.Dialog
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
 import com.prof18.feedflow.shared.presentation.AddFeedViewModel
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -69,7 +72,8 @@ fun AddFeedScreenContent(
         if (initialUrl.isNotEmpty()) viewModel.updateFeedUrlTextFieldValue(initialUrl)
     }
     val latestOnFeedAdded by rememberUpdatedState(onFeedAdded)
-    val snackbarHostState = remember { DesktopFeedbackState() }
+    val feedbackState = remember { DesktopFeedbackState() }
+    val feedbackScope = rememberCoroutineScope()
     val strings = LocalFeedFlowStrings.current
     LaunchedEffect(Unit) {
         viewModel.feedAddedState.collect { state ->
@@ -98,7 +102,15 @@ fun AddFeedScreenContent(
                     } else {
                         strings.feedAddedMessageWithoutName
                     }
-                    snackbarHostState.showFeedback(message, duration = DesktopFeedbackDuration.Short)
+                    val tone = if (state is FeedAddedState.FeedAdded && !state.shortsFilterFallback) {
+                        DesktopFeedbackTone.Success
+                    } else {
+                        DesktopFeedbackTone.Info
+                    }
+                    // showFeedback suspends until the message goes away: the form must reset right now.
+                    feedbackScope.launch {
+                        feedbackState.showFeedback(message, duration = DesktopFeedbackDuration.Short, tone = tone)
+                    }
                     showLoading = false
                     feedUrl = ""
                     viewModel.updateFeedUrlTextFieldValue(feedUrl)
@@ -149,6 +161,6 @@ fun AddFeedScreenContent(
         onHideShortsToggleChanged = viewModel::updateHideShortsStatus,
         completionRevision = completionRevision,
         topAppBar = topAppBar,
-        snackbarHostState = snackbarHostState,
+        feedbackState = feedbackState,
     )
 }

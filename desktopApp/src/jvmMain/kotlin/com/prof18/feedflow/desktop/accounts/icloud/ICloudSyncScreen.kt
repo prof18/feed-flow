@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.SyncResult
 import com.prof18.feedflow.desktop.accounts.AccountConnectButton
@@ -13,11 +12,8 @@ import com.prof18.feedflow.desktop.accounts.AccountScreen
 import com.prof18.feedflow.desktop.accounts.CloudAccountContent
 import com.prof18.feedflow.desktop.accounts.CredentialsState
 import com.prof18.feedflow.desktop.accounts.ObserveAccountConnection
-import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
-import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.presentation.ICloudSyncViewModel
-import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -26,9 +22,7 @@ internal fun ICloudSyncScreen(
 ) {
     val viewModel = koinViewModel<ICloudSyncViewModel>()
     val uiState by viewModel.iCloudConnectionUiState.collectAsState()
-    val snackbarHostState = remember { DesktopFeedbackState() }
     val strings = LocalFeedFlowStrings.current
-    val scope = rememberCoroutineScope()
     val fallbackDraft = remember { CredentialsState() }
     val draft = credentialsState ?: fallbackDraft
 
@@ -40,17 +34,12 @@ internal fun ICloudSyncScreen(
         if (event is SyncResult.Error) {
             draft.connectionErrorRevision++
             draft.connectionError = strings.errorAccountSync(event.errorCode.code)
+            draft.syncError = strings.errorAccountSync(event.errorCode.code)
             draft.submissionPending = false
-            scope.launch {
-                snackbarHostState.showFeedback(
-                    strings.errorAccountSync(event.errorCode.code),
-                    duration = DesktopFeedbackDuration.Short,
-                )
-            }
         }
     }
 
-    AccountScreen(snackbarHostState) {
+    AccountScreen {
         ICloudAccountContent(
             uiState = uiState,
             credentialsState = draft,
@@ -91,6 +80,7 @@ internal fun ICloudAccountContent(
                     errorMessage = credentialsState.connectionError,
                     onConnect = {
                         credentialsState.connectionError = null
+                        credentialsState.syncError = null
                         onConnect()
                     },
                     state = credentialsState,

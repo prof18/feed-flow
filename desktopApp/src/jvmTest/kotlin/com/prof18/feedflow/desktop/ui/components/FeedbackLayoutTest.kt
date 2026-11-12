@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performSemanticsAction
@@ -75,14 +76,14 @@ class FeedbackLayoutTest {
                     val bounds = rule.onNodeWithTag(CONTENT_TAG).fetchSemanticsNode().boundsInRoot
                     assertReadable(message, bounds)
                     assertReadable(EnFeedFlowStrings.retryButton, bounds)
-                    assertReadable(EnFeedFlowStrings.closeButtonContentDescription, bounds)
+                    assertCloseInside(bounds)
                 }
             }
         }
     }
 
     @Test
-    fun `normal feedback keeps localized message and close label readable`() {
+    fun `long-lived feedback keeps localized message and close button readable`() {
         val state = DesktopFeedbackState()
         val theme = mutableStateOf(ThemeMode.LIGHT)
         val fontScale = mutableFloatStateOf(1f)
@@ -116,7 +117,7 @@ class FeedbackLayoutTest {
                     rule.runOnIdle { theme.value = mode }
                     val bounds = rule.onNodeWithTag(CONTENT_TAG).fetchSemanticsNode().boundsInRoot
                     assertReadable(message, bounds)
-                    assertReadable(EnFeedFlowStrings.closeButtonContentDescription, bounds)
+                    assertCloseInside(bounds)
                 }
             }
         }
@@ -134,6 +135,17 @@ class FeedbackLayoutTest {
         val layouts = mutableListOf<TextLayoutResult>()
         node.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
         assertTrue(!layouts.single().hasVisualOverflow, "$text must be fully readable: ${layouts.single().size}")
+    }
+
+    private fun assertCloseInside(content: Rect) {
+        val node = rule.onNodeWithContentDescription(EnFeedFlowStrings.closeButtonContentDescription)
+        node.assertIsDisplayed()
+        val bounds = node.fetchSemanticsNode().boundsInRoot
+        assertTrue(
+            bounds.left >= content.left && bounds.right <= content.right &&
+                bounds.top >= content.top && bounds.bottom <= content.bottom,
+            "close: $bounds in $content",
+        )
     }
 
     private companion object {

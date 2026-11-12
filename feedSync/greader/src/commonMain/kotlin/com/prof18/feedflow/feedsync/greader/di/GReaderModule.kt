@@ -26,7 +26,6 @@ fun getGReaderModule(appEnvironment: AppEnvironment) = module {
             databaseHelper = get(),
             itemContentDTOMapper = ItemContentDTOMapper(
                 htmlParser = get(),
-                dateFormatter = get(),
             ),
             dateFormatter = get(),
             dispatcherProvider = get(),
@@ -63,7 +62,6 @@ fun getGReaderTestModule(
             databaseHelper = get(),
             itemContentDTOMapper = ItemContentDTOMapper(
                 htmlParser = get(),
-                dateFormatter = get(),
             ),
             dateFormatter = get(),
             dispatcherProvider = get(),

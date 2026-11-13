@@ -303,7 +303,6 @@
     <string name="widget_background_opacity_title">Непрозорість фону: %s%%</string>
     <string name="widget_font_size_title">Розмір шрифту</string>
     <string name="reset_button">Скинути</string>
-    <string name="settings_feeds_and_accounts">Стрічки та облікові записи</string>
     <string name="settings_reading_behavior">Поведінка читання</string>
     <string name="settings_sync_and_storage">Синхронізація та сховище</string>
     <string name="settings_about_and_support">Про програму та підтримка</string>

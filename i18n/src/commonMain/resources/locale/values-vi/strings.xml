@@ -303,7 +303,6 @@
     <string name="widget_background_opacity_title">Độ trong suốt nền: %s%%</string>
     <string name="widget_font_size_title">Cỡ chữ</string>
     <string name="reset_button">Đặt lại</string>
-    <string name="settings_feeds_and_accounts">Nguồn tin &amp; tài khoản</string>
     <string name="settings_reading_behavior">Thói quen đọc</string>
     <string name="settings_sync_and_storage">Đồng bộ &amp; lưu trữ</string>
     <string name="settings_about_and_support">Giới thiệu &amp; hỗ trợ</string>
@@ -465,7 +464,6 @@
     <string name="hide_youtube_shorts_description">Chỉ những video thường từ kênh này mới được đưa vào. Không bao gồm video ngắn và phát trực tiếp.</string>
     <string name="hide_youtube_shorts_fallback">Không thể ẩn các video Shorts của kênh này nên toàn bộ nguồn tin đã được thêm vào.</string>
     <string name="date_format_day_month_dot">Day.Month</string>
-    <string name="settings_filters">Bộ lọc</string>
     <string name="desktop_resize_sidebar">Đổi cỡ thanh điều hướng (Trái/Phải)</string>
     <string name="desktop_resize_article_list">Đổi cỡ danh sách bài viết (Trái/Phải)</string>
     <string name="desktop_expand_reader">Mở rộng trình đọc</string>

@@ -7,8 +7,8 @@ FeedFlow has no server: new articles are checked on your device, in the backgrou
 
 To get notifications:
 
-1. On Android, set **Background sync** to a frequency other than **Never** (Settings → Sync & storage).
-2. Turn on notifications in **Settings → Feeds & accounts → Notifications**, for all feeds or for the feeds you choose, and allow FeedFlow to send notifications.
+1. On Android, set **Background sync** to a frequency other than **Never** (Settings → Sync & refresh).
+2. Turn on notifications in **Settings → Notifications**, for all feeds or for the feeds you choose, and allow FeedFlow to send notifications.
 3. Pick a **Notification grouping**: per article (with titles and images), by feed, by category, or all combined.
 
 **Android**: make sure battery optimisation is off for FeedFlow. Some phones, such as Huawei, Honor, Xiaomi and Samsung, also need FeedFlow to be allowed to run in the background or to auto-start.

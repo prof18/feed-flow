@@ -208,7 +208,6 @@
     <string name="widget_background_color_default">Sistēmas</string>
     <string name="reset_button">Atiestatīt</string>
     <string name="settings_theme_oled">Melns</string>
-    <string name="settings_feeds_and_accounts">Ziņu plūsmas un konti</string>
     <string name="bazqux_account_connected">Jūsu BazQux konts veiksmīgi pievienots</string>
     <string name="miniflux_last_sync">Pēdējo reizi sinhronizēts: %s</string>
     <string name="bazqux_last_sync">Pēdējo reizi sinhronizēts: %s</string>

@@ -287,7 +287,6 @@
     <string name="search_filter_bookmarks">收藏</string>
     <string name="feed_suggestions_title">消息來源建議</string>
     <string name="feed_suggestions_description">瀏覽並新增消息來源到你的訂閱清單</string>
-    <string name="settings_feeds_and_accounts">消息來源與帳戶</string>
     <string name="settings_reading_behavior">閱讀行為</string>
     <string name="settings_sync_and_storage">同步與儲存空間</string>
     <string name="change_category">變更分類</string>

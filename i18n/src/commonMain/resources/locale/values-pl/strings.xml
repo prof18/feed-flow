@@ -356,7 +356,6 @@
     <string name="cancel_button">Anuluj</string>
     <string name="reset_button">Zresetuj</string>
     <string name="settings_danger_title">Niebezpieczeństwo</string>
-    <string name="settings_feeds_and_accounts">Kanały i konta</string>
     <string name="settings_reading_behavior">Zwyczaje czytelnicze</string>
     <string name="settings_sync_and_storage">Synchronizacja i przechowywanie danych</string>
     <string name="settings_appearance">Wygląd</string>

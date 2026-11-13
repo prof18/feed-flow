@@ -228,7 +228,6 @@
     <string name="hide_youtube_shorts_description">Csak a csatornán található videókat tartalmazza. Az élő közvetítéseket és shortokat nem.</string>
     <string name="hide_youtube_shorts_fallback">Ezen a csatornán nem rejthetők el a shortok, így a teljes hírfolyam jelen van.</string>
     <string name="hide_youtube_shorts_edit_fallback">A shortokat nem lehet elrejteni ezen a csatornán. Mentve a többi változtatás.</string>
-    <string name="settings_filters">Szűrők</string>
     <string name="browser_launch_error">Nem nyitható hivatkozás. Ellenőrizd a böngésző beállításait.</string>
     <string name="about_the_app">Algoritmusok és fölösleges tartalmaktól mentes - időrendet betartó, tiszta, minimalista RSS hírfolyamolvasó a FeedFlow. Olvasd a cikkeket kedvenc böngésződben vagy olvasó módban figyelemelterelő elemek nélkül. Offline módban is bárhol olvasható. Szinkronizáld a hírfolyamaidat, jelöld meg ahol abbaghagytad az olvasást és könyvelzőzd Android, iOS, macOS, Windows, és Linux iCloud-ot használva, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin, vagy BazQux programokban. Csoportosítsd hírfolyamaidat, szortírozz kifejezésekre, OPML-formátumba exportálj, importálj mindent.</string>
     <string name="open_feed_website_button">Nyisd meg az oldalt</string>
@@ -534,7 +533,6 @@
     <string name="remove_bookmark_dialog_message">Biztosan eltávolítod a Könyjelzők közül a cikket?</string>
     <string name="reset_button">Újraindítás</string>
     <string name="settings_danger_title">Veszély</string>
-    <string name="settings_feeds_and_accounts">Hírfolyamok és fiókok</string>
     <string name="article_report_action">Hibás cikk jelentése</string>
     <string name="article_report_disclosure">A fejlesztőnek küldöd a cikk hivatkozását, az aplikáció és a rendszer verziószámát? Nem továbbítódnak a cikk és a fiókod adatai.</string>
     <string name="article_report_send">Elküld</string>

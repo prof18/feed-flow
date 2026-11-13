@@ -4,7 +4,7 @@ weight: 20
 featured: true
 ---
 
-Go to **Settings → Feeds & accounts → Accounts** and connect the same account on every device. FeedFlow supports two kinds of accounts:
+Go to **Settings → Sync & refresh → Accounts** and connect the same account on every device. FeedFlow supports two kinds of accounts:
 
 - **Backup services**: iCloud, Dropbox and Google Drive. Your feeds, categories, read articles and bookmarks are saved to a file in your own storage and picked up by your other devices.
 - **Reader services**: FreshRSS, Miniflux, BazQux and Feedbin. Your feeds and read status live on the server, and FeedFlow syncs with it.

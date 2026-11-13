@@ -328,7 +328,6 @@
     <string name="widget_text_color_dark">Koyu</string>
     <string name="settings_clear_downloaded_articles">İndirilen makaleleri temizle</string>
     <string name="reader_mode_comments_button_content_description">Yorumları aç</string>
-    <string name="settings_feeds_and_accounts">Akışlar ve hesaplar</string>
     <string name="desktop_search_loading">\"%s\" aranıyor…</string>
     <string name="more_options_button_content_description">Diğer seçenekler</string>
     <string name="audio_seek">Oynatma konumu</string>
@@ -502,7 +501,6 @@
     <string name="desktop_accounts_icloud_title">iCloud</string>
     <string name="reader_mode_fallback_open_browser_button">Tarayıcıda aç</string>
     <string name="desktop_collapse_all_feeds">Tümünü daralt</string>
-    <string name="settings_filters">Filtreler</string>
     <string name="desktop_accounts_connected_status">Bağlandı</string>
     <string name="settings_force_english">İngilizceye zorla</string>
     <string name="desktop_account_hide_password">Parolayı gizle</string>

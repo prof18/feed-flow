@@ -303,7 +303,6 @@
     <string name="widget_background_opacity_title">Taustavärvi läbipaistmatus: %s%%</string>
     <string name="widget_font_size_title">Kirjatüübi suurus</string>
     <string name="reset_button">Lähtesta</string>
-    <string name="settings_feeds_and_accounts">Uudisvood ja kasutajakontod</string>
     <string name="settings_reading_behavior">Käitumine lugemisel</string>
     <string name="settings_sync_and_storage">Sünkroonimine ja andmeruum</string>
     <string name="settings_about_and_support">Rakenduse teave ja kasutajatugi</string>
@@ -471,7 +470,6 @@
     <string name="article_report_disclosure">Kas saadad artikli lingi, rakenduse ja operatsioonisüsteemi versiooni arendajale? Kaasa ei lähe artikli sisu ega kasutajakonto üksikasjad.</string>
     <string name="article_report_sent">Teade on saadetud. Tänud!</string>
     <string name="article_report_failed">Teate saatmine ei õnnestunud. Palun proovi uuesti.</string>
-    <string name="settings_filters">Filtrid</string>
     <string name="desktop_pane_width">%s pikselit lai</string>
     <string name="desktop_search_back_button">Tagasi</string>
     <string name="desktop_search_clear_button">Tühjenda otsing</string>

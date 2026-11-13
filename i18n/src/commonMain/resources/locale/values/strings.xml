@@ -24,7 +24,6 @@
     <string name="feeds_import_done_message">Import done</string>
     <string name="feeds_export_done_message">Export done</string>
     <string name="settings_title">Settings</string>
-    <string name="settings_filters">Filters</string>
     <string name="browser_selection_button">Browser</string>
     <string name="import_feed_button">Import feed from OPML</string>
     <string name="export_feeds_button">Export feeds to OPML</string>
@@ -548,7 +547,6 @@
     <string name="cancel_button">Cancel</string>
     <string name="reset_button">Reset</string>
     <string name="settings_danger_title">Danger</string>
-    <string name="settings_feeds_and_accounts">Feeds &amp; accounts</string>
     <string name="article_report_action">Report broken article</string>
     <string name="article_report_disclosure">Send this article’s link, app version and OS version to the developer? No article content or account details will be sent.</string>
     <string name="article_report_send">Send</string>

@@ -303,7 +303,6 @@
     <string name="widget_background_opacity_title">背景不透明度：%s%%</string>
     <string name="widget_font_size_title">字体大小</string>
     <string name="reset_button">重置</string>
-    <string name="settings_feeds_and_accounts">订阅源和账号</string>
     <string name="settings_reading_behavior">阅读行为</string>
     <string name="settings_sync_and_storage">同步和存储</string>
     <string name="settings_about_and_support">关于和支持</string>
@@ -471,6 +470,5 @@
     <string name="article_report_sending">正在发送报告…</string>
     <string name="article_report_sent">报告已发送。感谢！</string>
     <string name="article_report_failed">无法发送报告。请重试。</string>
-    <string name="settings_filters">筛选器</string>
     <string name="desktop_resize_sidebar">调整导航窗格尺寸（左/右）</string>
 </resources>

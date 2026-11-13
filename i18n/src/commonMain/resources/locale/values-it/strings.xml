@@ -299,7 +299,6 @@
     <string name="cancel_button">Annulla</string>
     <string name="reset_button">Ripristina</string>
     <string name="settings_danger_title">Pericolo</string>
-    <string name="settings_feeds_and_accounts">Feed &amp; Accounts</string>
     <string name="settings_reading_behavior">Comportamento di lettura</string>
     <string name="settings_sync_and_storage">Sincronizzazione &amp; Archiviazione</string>
     <string name="settings_about_and_support">Informazioni &amp; Supporto</string>
@@ -471,7 +470,6 @@
     <string name="article_report_sending">Invio della segnalazione…</string>
     <string name="article_report_sent">Segnalazione inviata. Grazie!</string>
     <string name="article_report_failed">Impossibile inviare la segnalazione. Riprova.</string>
-    <string name="settings_filters">Filtri</string>
     <string name="desktop_resize_sidebar">Ridimensiona pannello di navigazione (Sinistra/Destra)</string>
     <string name="desktop_resize_article_list">Ridimensiona elenco articoli (Sinistra/Destra)</string>
     <string name="desktop_pane_width">%s pixel di larghezza</string>

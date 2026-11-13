@@ -297,7 +297,6 @@
     <string name="feed_suggestions_description">Naviguer et ajouter des flux à votre collection</string>
     <string name="reset_button">Réinitialiser</string>
     <string name="settings_danger_title">Attention : Zone dangereuse</string>
-    <string name="settings_feeds_and_accounts">Flux et comptes</string>
     <string name="settings_reading_behavior">Comportement de lecture</string>
     <string name="settings_sync_and_storage">Synchronisation et stockage</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Supprimer les copies hors ligne ?</string>
@@ -472,7 +471,6 @@
     <string name="desktop_delete_selected_feeds_message">Supprimer %d flux sélectionné et leurs articles ? Cette action ne peut être annulée.</string>
     <string name="desktop_expand_feed_category">Développer %s</string>
     <string name="desktop_collapse_feed_category">Réduire %s</string>
-    <string name="settings_filters">Filtres</string>
     <string name="desktop_resize_sidebar">Redimmensionner le panneau de navigation (Gauche/droite)</string>
     <string name="desktop_resize_article_list">Redimmensionner la liste des articles (Gauche/droite)</string>
     <string name="desktop_pane_width">%s pixels en largeur</string>

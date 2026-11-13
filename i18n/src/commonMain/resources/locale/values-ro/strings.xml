@@ -430,7 +430,6 @@
     <string name="cancel_button">Anulare</string>
     <string name="reset_button">Resetează</string>
     <string name="settings_danger_title">Pericol</string>
-    <string name="settings_feeds_and_accounts">Fluxuri și conturi</string>
     <string name="settings_reading_behavior">Mod de a citi</string>
     <string name="settings_sync_and_storage">Sincronizare și stocare</string>
     <string name="settings_appearance">Aspect</string>
@@ -464,7 +463,6 @@
     <string name="hide_youtube_shorts_description">Vor fi incluse doar videoclipurile obișnuite de pe acest canal. Videoclipurile scurte și transmisiunile live sunt excluse.</string>
     <string name="hide_youtube_shorts_fallback">Pentru acest canal nu a fost posibilă ascunderea videoclipurilor scurte, așa că s-a adăugat în schimb fluxul complet.</string>
     <string name="date_format_day_month_dot">Zi.Lună</string>
-    <string name="settings_filters">Filtre</string>
     <string name="desktop_resize_sidebar">Redimensionează panoul de navigare (stânga/dreapta)</string>
     <string name="desktop_resize_article_list">Redimensionează lista de articole (stânga/dreapta)</string>
     <string name="desktop_pane_width">%s pixeli lățime</string>

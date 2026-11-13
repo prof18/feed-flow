@@ -302,7 +302,6 @@
     <string name="widget_font_size_title">Textgröße</string>
     <string name="menu_view">Ansicht</string>
     <string name="reset_button">Zurücksetzen</string>
-    <string name="settings_feeds_and_accounts">Feeds &amp; Konten</string>
     <string name="settings_reading_behavior">Leseverhalten</string>
     <string name="settings_sync_and_storage">Synchronisation &amp; Speicher</string>
     <string name="settings_about_and_support">Über &amp; Support</string>
@@ -471,7 +470,6 @@
     <string name="article_report_sending">Bericht wird gesendet…</string>
     <string name="article_report_sent">Bericht wurde gesendet. Danke!</string>
     <string name="article_report_failed">Bericht konnte nicht gesendet werden. Bitte nochmals versuchen.</string>
-    <string name="settings_filters">Filter</string>
     <string name="desktop_resize_article_list">Größe der Artikelliste anpassen (Links/Rechts)</string>
     <string name="desktop_resize_sidebar">Größe der Navigationsleiste anpassen (Links/Rechts)</string>
     <string name="desktop_pane_width">%s Pixel breit</string>

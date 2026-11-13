@@ -305,7 +305,6 @@
     <string name="cancel_button">Batal</string>
     <string name="reset_button">Atur ulang</string>
     <string name="settings_danger_title">Berbahaya</string>
-    <string name="settings_feeds_and_accounts">Umpan &amp; akun</string>
     <string name="settings_reading_behavior">Perilaku membaca</string>
     <string name="settings_sync_and_storage">Sinkronisasi &amp; penyimpanan</string>
     <string name="settings_about_and_support">Tentang &amp; dukungan</string>
@@ -424,7 +423,6 @@
     <string name="hide_youtube_shorts_description">Hanya video reguler dari kanal ini yang akan disertakan. Shorts dan siaran langsung tidak disertakan.</string>
     <string name="hide_youtube_shorts_fallback">Shorts tidak dapat disembunyikan untuk kanal ini, sehingga umpan lengkap ditambahkan sebagai gantinya.</string>
     <string name="hide_youtube_shorts_edit_fallback">Shorts tidak dapat disembunyikan untuk kanal ini. Perubahan Anda yang lain telah disimpan.</string>
-    <string name="settings_filters">Filter</string>
     <string name="database_save_error">Tidak dapat menyimpan perubahan Anda. Coba lagi sebentar - kode kesalahan: %s</string>
     <string name="database_recovered_from_corruption">Data lokal Anda rusak, sehingga FeedFlow dimulai dengan basis data baru. Salinan data lama disimpan di folder data FeedFlow.</string>
     <string name="database_startup_locked">FeedFlow tidak dapat membuka datanya karena sedang digunakan oleh program lain. Tutup jendela FeedFlow lainnya, lalu buka kembali FeedFlow.</string>

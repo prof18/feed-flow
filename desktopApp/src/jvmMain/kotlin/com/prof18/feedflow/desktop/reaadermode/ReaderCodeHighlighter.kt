@@ -18,6 +18,8 @@ internal fun readerCodeHighlighter(dark: Boolean): CodeHighlighter = PlainTextOn
 private class PlainTextOnOverflowCodeHighlighter(
     private val delegate: CodeHighlighter,
 ) : CodeHighlighter {
+    // Deprecated in Jewel 0.42 but still abstract on CodeHighlighter, so it must stay implemented.
+    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
     override fun highlight(code: String, mimeType: MimeType?): Flow<AnnotatedString> =
         delegate.highlight(code, mimeType).plainTextOnOverflow(code)
 

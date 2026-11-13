@@ -39,7 +39,6 @@ private fun MenuStyle.withRoundedSelectionCorners(): MenuStyle = MenuStyle(
     icons = icons,
     metrics = MenuMetrics(
         cornerSize = metrics.cornerSize,
-        menuMargin = metrics.menuMargin,
         contentPadding = metrics.contentPadding,
         offset = metrics.offset,
         shadowSize = metrics.shadowSize,

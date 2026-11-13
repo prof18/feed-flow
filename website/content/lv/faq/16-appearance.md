@@ -19,5 +19,5 @@ counts, and reducing motion and animations (useful on e-ink screens).
 **In the reader**, the text settings button lets you change the font, font size,
 title size and line height.
 
-To jump back to the top of a long list, use the scroll-to-top button or
-double-tap the top bar.
+To jump back to the top of a long list, use the scroll-to-top button. On
+desktop, clicking the top bar also works.

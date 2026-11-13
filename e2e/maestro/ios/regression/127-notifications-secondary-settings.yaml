@@ -13,9 +13,13 @@ appId: com.prof18.feedflow.dev
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_notifications
+    direction: DOWN
+    timeout: 10000
 - tapOn:
-    id: settings_feeds_accounts
-- tapOn: "Notifications"
+    id: settings_notifications
 - tapOn:
     text: "Request Permission"
     optional: true
@@ -31,7 +35,8 @@ appId: com.prof18.feedflow.dev
 - assertVisible: "Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest."
 - tapOn:
     id: BackButton
-- tapOn: "Notifications"
+- tapOn:
+    id: settings_notifications
 - assertVisible: "Per article"
 - stopApp
 - launchApp
@@ -39,9 +44,13 @@ appId: com.prof18.feedflow.dev
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_notifications
+    direction: DOWN
+    timeout: 10000
 - tapOn:
-    id: settings_feeds_accounts
-- tapOn: "Notifications"
+    id: settings_notifications
 - assertVisible: "Per article"
 - tapOn: "Notification grouping"
 - tapOn: "All combined"

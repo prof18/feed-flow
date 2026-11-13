@@ -1,10 +1,7 @@
 import FeedFlowKit
 import SwiftUI
 
-struct SyncAndStorageScreen: View {
-    @Environment(AppState.self) 
-    private var appState
-    
+struct SyncAndRefreshScreen: View {
     @StateObject private var vmStoreOwner = VMStoreOwner<SyncAndStorageSettingsViewModel>(
         Deps.shared.getSyncAndStorageSettingsViewModel()
     )
@@ -18,20 +15,13 @@ struct SyncAndStorageScreen: View {
     )
 
     var body: some View {
-        SyncAndStorageScreenContent(
-            autoDeletePeriod: Binding(
-                get: { settingsState.autoDeletePeriod },
-                set: { vmStoreOwner.instance.updateAutoDeletePeriod(period: $0) }
-            ),
+        SyncAndRefreshScreenContent(
             refreshFeedsOnLaunch: Binding(
                 get: { settingsState.refreshFeedsOnLaunch },
                 set: { vmStoreOwner.instance.updateRefreshFeedsOnLaunch(enabled: $0) }
-            ),
-            onClearDownloadedArticles: {
-                vmStoreOwner.instance.clearDownloadedArticleContent()
-            }
+            )
         )
-        .navigationTitle(Text(feedFlowStrings.settingsSyncAndStorage))
+        .navigationTitle(Text(feedFlowStrings.settingsSyncAndRefresh))
         .navigationBarTitleDisplayMode(.inline)
         .task {
             for await state in vmStoreOwner.instance.state {

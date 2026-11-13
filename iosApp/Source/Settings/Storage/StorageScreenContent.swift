@@ -1,9 +1,8 @@
 import FeedFlowKit
 import SwiftUI
 
-struct SyncAndStorageScreenContent: View {
+struct StorageScreenContent: View {
     @Binding var autoDeletePeriod: AutoDeletePeriod
-    @Binding var refreshFeedsOnLaunch: Bool
     let onClearDownloadedArticles: () -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
@@ -11,11 +10,6 @@ struct SyncAndStorageScreenContent: View {
     var body: some View {
         Form {
             Section {
-                Toggle(isOn: $refreshFeedsOnLaunch) {
-                    Text(feedFlowStrings.settingsRefreshFeedsOnLaunch)
-                }
-                .accessibilityIdentifier(SyncAndStorageAccessibilityIdentifiers.refreshOnLaunch)
-
                 Picker(selection: $autoDeletePeriod) {
                     Text(feedFlowStrings.settingsAutoDeletePeriodDisabled)
                         .tag(AutoDeletePeriod.disabled)
@@ -30,7 +24,7 @@ struct SyncAndStorageScreenContent: View {
                 } label: {
                     Text(feedFlowStrings.settingsAutoDelete)
                 }
-                .accessibilityIdentifier(SyncAndStorageAccessibilityIdentifiers.autoDelete)
+                .accessibilityIdentifier(StorageAccessibilityIdentifiers.autoDelete)
 
                 ConfirmationButton(
                     title: feedFlowStrings.settingsClearDownloadedArticles,
@@ -38,7 +32,7 @@ struct SyncAndStorageScreenContent: View {
                     dialogMessage: feedFlowStrings.settingsClearDownloadedArticlesDialogMessage,
                     onConfirm: onClearDownloadedArticles
                 )
-                .accessibilityIdentifier(SyncAndStorageAccessibilityIdentifiers.clearDownloaded)
+                .accessibilityIdentifier(StorageAccessibilityIdentifiers.clearDownloaded)
             }
         }
         .scrollContentBackground(.hidden)

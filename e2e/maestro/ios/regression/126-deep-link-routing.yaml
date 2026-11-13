@@ -15,7 +15,7 @@ appId: com.prof18.feedflow.dev
     id: drawer_settings_button
 - scrollUntilVisible:
     element:
-      id: settings_sync_storage
+      id: settings_sync
     direction: DOWN
     timeout: 10000
 - openLink: feedflow://feed/e2e-article-reader-success

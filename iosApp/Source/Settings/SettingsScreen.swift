@@ -6,6 +6,8 @@ struct SettingsScreen: View {
     private var appState
     @Environment(\.dismiss)
     private var dismiss
+    @Environment(BrowserSelector.self)
+    private var browserSelector
     private let feedFlowStrings = Deps.shared.getStrings()
 
     let fetchFeeds: () -> Void
@@ -16,17 +18,54 @@ struct SettingsScreen: View {
 
             Form {
                 Section {
+                    NavigationLink(destination: FeedSourceListScreen()
+                        .environment(browserSelector)) {
+                        Label(feedFlowStrings.feedsTitle, systemImage: "dot.radiowaves.up.forward")
+                    }
+                    .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.settingsRow)
+
+                    NavigationLink(destination: AddFeedScreen()
+                        .environment(browserSelector)) {
+                        Label(feedFlowStrings.addFeed, systemImage: "plus.circle")
+                    }
+
+                    NavigationLink(destination: ImportExportScreen(fetchFeeds: fetchFeeds)) {
+                        Label(feedFlowStrings.importExportLabel, systemImage: "arrow.up.arrow.down")
+                    }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.importExportRow)
+
+                    NavigationLink(destination: BlockedWordsScreen()) {
+                        Label(feedFlowStrings.settingsBlockedWords, systemImage: "exclamationmark.triangle")
+                    }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.blockedWordsRow)
+                } header: {
+                    Text(feedFlowStrings.feedsTitle)
+                }
+
+                Section {
+                    NavigationLink(destination: SyncAndRefreshScreen()) {
+                        Label(feedFlowStrings.settingsSyncAndRefresh, systemImage: "arrow.triangle.2.circlepath")
+                    }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.syncRow)
+
+                    NavigationLink(destination: NotificationsSettingsScreen()) {
+                        Label(feedFlowStrings.settingsNotificationsTitle, systemImage: "bell")
+                    }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.notificationsRow)
+
+                    NavigationLink(destination: StorageScreen()) {
+                        Label(feedFlowStrings.settingsStorage, systemImage: "externaldrive")
+                    }
+                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.storageRow)
+                } header: {
+                    Text(feedFlowStrings.settingsSyncAndStorage)
+                }
+
+                Section {
                     NavigationLink(destination: AppearanceScreen()) {
                         Label(feedFlowStrings.settingsAppearance, systemImage: "paintbrush")
                     }
                     .accessibilityIdentifier(SettingsAccessibilityIdentifiers.appearanceRow)
-
-                    NavigationLink(destination: FeedsAndAccountsScreen(
-                        fetchFeeds: fetchFeeds
-                    )) {
-                        Label(feedFlowStrings.settingsFeedsAndAccounts, systemImage: "arrow.triangle.2.circlepath")
-                    }
-                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.feedsAndAccountsRow)
 
                     NavigationLink(destination: FeedListSettingsScreen()) {
                         Label(feedFlowStrings.settingsFeedListTitle, systemImage: "list.bullet.rectangle.portrait")
@@ -37,12 +76,11 @@ struct SettingsScreen: View {
                         Label(feedFlowStrings.settingsReadingBehavior, systemImage: "book")
                     }
                     .accessibilityIdentifier(SettingsAccessibilityIdentifiers.readingBehaviorRow)
+                } header: {
+                    Text(feedFlowStrings.settingsSectionDisplayAndReading)
+                }
 
-                    NavigationLink(destination: SyncAndStorageScreen()) {
-                        Label(feedFlowStrings.settingsSyncAndStorage, systemImage: "externaldrive")
-                    }
-                    .accessibilityIdentifier(SettingsAccessibilityIdentifiers.syncAndStorageRow)
-
+                Section {
                     if RevenueCatSupport.isAvailable {
                         NavigationLink {
                             SupportPaywallScreen()

@@ -34,7 +34,7 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: drawer_settings_button
 - assertVisible:
-    id: settings_feeds_accounts
+    id: feed_source_list_settings_row
 - openLink: feed://e2e.feedflow.local/feed.xml
 - tapOn:
     text: "^Open$"

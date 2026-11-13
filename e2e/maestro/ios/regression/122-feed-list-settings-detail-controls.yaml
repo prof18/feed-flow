@@ -11,6 +11,11 @@ appId: com.prof18.feedflow.dev
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_feed_list
+    direction: DOWN
+    timeout: 10000
 - tapOn:
     id: settings_feed_list
 - assertVisible: "Text scale"

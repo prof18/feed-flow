@@ -13,15 +13,24 @@ appId: com.prof18.feedflow.dev
     id: drawer_settings_button
 - scrollUntilVisible:
     element:
-      id: settings_sync_storage
+      id: settings_sync
     direction: DOWN
     timeout: 10000
 - tapOn:
-    id: settings_sync_storage
+    id: settings_sync
 - assertVisible:
     id: sync_storage_refresh_on_launch
 - tapOn:
     id: sync_storage_refresh_on_launch
+- tapOn:
+    id: BackButton
+- scrollUntilVisible:
+    element:
+      id: settings_storage
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: settings_storage
 - tapOn:
     id: sync_storage_auto_delete
 - tapOn: "One week old"

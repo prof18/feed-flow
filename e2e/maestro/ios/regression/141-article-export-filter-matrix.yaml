@@ -13,8 +13,11 @@ appId: com.prof18.feedflow.dev
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
-- tapOn:
-    id: settings_feeds_accounts
+- scrollUntilVisible:
+    element:
+      id: settings_import_export
+    direction: DOWN
+    timeout: 10000
 - tapOn:
     id: settings_import_export
 - tapOn:
@@ -37,8 +40,11 @@ appId: com.prof18.feedflow.dev
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
-- tapOn:
-    id: settings_feeds_accounts
+- scrollUntilVisible:
+    element:
+      id: settings_import_export
+    direction: DOWN
+    timeout: 10000
 - tapOn:
     id: settings_import_export
 - tapOn:
@@ -63,8 +69,11 @@ appId: com.prof18.feedflow.dev
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
-- tapOn:
-    id: settings_feeds_accounts
+- scrollUntilVisible:
+    element:
+      id: settings_import_export
+    direction: DOWN
+    timeout: 10000
 - tapOn:
     id: settings_import_export
 - tapOn:

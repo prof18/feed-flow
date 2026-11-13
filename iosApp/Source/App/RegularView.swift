@@ -224,8 +224,7 @@ struct RegularView: View {
         .modifier(AddFeedLinkPresenter(addFeedSheet: $addFeedSheet, closeOtherSheets: closeSheetsForAddFeedLink))
         .sheet(isPresented: $showSidebarSettingsSheet) {
             SettingsScreen(
-                fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false, forceRefresh: false) },
-                onDone: { homeViewModel.reloadFeedState() }
+                fetchFeeds: { homeViewModel.getNewFeeds(isFirstLaunch: false, forceRefresh: false) }
             )
                 .environment(appState)
                 .environment(browserSelector)

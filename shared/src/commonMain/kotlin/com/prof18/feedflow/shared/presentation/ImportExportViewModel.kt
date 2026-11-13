@@ -10,6 +10,7 @@ import com.prof18.feedflow.core.model.ImportExportContentType
 import com.prof18.feedflow.shared.domain.csv.CsvInput
 import com.prof18.feedflow.shared.domain.csv.CsvOutput
 import com.prof18.feedflow.shared.domain.feed.FeedImportExportRepository
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.opml.InvalidOpmlImportException
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
 import com.prof18.feedflow.shared.domain.opml.OpmlOutput
@@ -23,6 +24,7 @@ class ImportExportViewModel internal constructor(
     private val logger: Logger,
     private val dateFormatter: DateFormatter,
     private val feedImportExportRepository: FeedImportExportRepository,
+    private val feedStateRepository: FeedStateRepository,
 ) : ViewModel() {
 
     private val importerMutableState: MutableStateFlow<FeedImportExportState> = MutableStateFlow(
@@ -75,6 +77,7 @@ class ImportExportViewModel internal constructor(
             }
             try {
                 feedImportExportRepository.importArticlesFromCsv(csvInput)
+                feedStateRepository.getFeeds()
                 importerMutableState.update {
                     FeedImportExportState.ArticleImportSuccess
                 }

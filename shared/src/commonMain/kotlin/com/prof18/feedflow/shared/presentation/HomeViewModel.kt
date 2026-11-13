@@ -420,12 +420,6 @@ class HomeViewModel internal constructor(
         refreshCurrentFilter()
     }
 
-    fun reloadFeedState() {
-        launchAfterFlushingScrollReadState {
-            feedStateRepository.getFeeds()
-        }
-    }
-
     fun onShowNewArticlesClicked() {
         launchAfterFlushingScrollReadState {
             feedStateRepository.getFeeds()

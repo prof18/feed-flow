@@ -72,6 +72,10 @@ class ReadingBehaviorSettingsViewModel internal constructor(
         }
         if (!value) {
             feedStateRepository.reapplyAutoHideToCurrentList()
+        } else if (settingsRepository.getHideReadItems()) {
+            viewModelScope.launch {
+                feedStateRepository.getFeeds()
+            }
         }
     }
 
@@ -89,6 +93,11 @@ class ReadingBehaviorSettingsViewModel internal constructor(
         settingsRepository.setHideReadItems(value)
         stateMutableFlow.update {
             it.copy(isHideReadItemsEnabled = value)
+        }
+        if (!value) {
+            viewModelScope.launch {
+                feedStateRepository.getFeeds()
+            }
         }
     }
 }

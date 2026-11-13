@@ -71,7 +71,6 @@ struct HomeContent: View {
     let openDrawer: () -> Void
     let onFeedOrderChange: (FeedOrder) -> Void
     let onShowReadArticlesTimelineChange: (Bool) -> Void
-    let onSettingsDone: () -> Void
     let onShowNewArticlesClick: () -> Void
     let articleReveal: ArticleRevealRequest?
     let onArticleRevealed: (ArticleRevealRequest) -> Void
@@ -323,10 +322,7 @@ private extension HomeContent {
     func sheetContent(_ item: HomeSheetToShow) -> some View {
         switch item {
         case .settings:
-            SettingsScreen(
-                fetchFeeds: onRefresh,
-                onDone: onSettingsDone
-            )
+            SettingsScreen(fetchFeeds: onRefresh)
                 .environment(appState)
                 .environment(browserSelector)
                 .preferredColorScheme(appState.colorScheme)

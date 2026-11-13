@@ -1,0 +1,42 @@
+appId: com.prof18.feedflow.dev
+---
+# A timeline setting changed in Settings applies when the sheet is swiped down, not only on Done.
+- launchApp
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- assertVisible:
+    id: e2e_seed_complete
+- assertNotVisible:
+    text: "E2E Old Article Eligible For Delete.*"
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- tapOn:
+    id: settings_feed_list
+- scrollUntilVisible:
+    element:
+      id: feed_list_settings_order
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: feed_list_settings_order
+- tapOn:
+    text: "Oldest First"
+- tapOn:
+    id: BackButton
+- assertVisible:
+    id: settings_done_button
+- swipe:
+    start: "50%, 12%"
+    end: "50%, 95%"
+    duration: 600
+- assertNotVisible:
+    id: settings_done_button
+- tapOn:
+    id: drawer_timeline
+    optional: true
+- assertVisible:
+    text: "E2E Old Article Eligible For Delete.*"

@@ -138,9 +138,15 @@ class FeedListSettingsViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `updateRemoveTitleFromDescription updates state`() = runTest {
-        viewModel.updateRemoveTitleFromDescription(true)
-        assertTrue(viewModel.state.value.isRemoveTitleFromDescriptionEnabled)
+    fun `updateRemoveTitleFromDescription updates state and triggers getFeeds`() = runTest {
+        populateDatabase()
+
+        feedStateRepository.feedState.test {
+            assertEquals(emptyList(), awaitItem())
+            viewModel.updateRemoveTitleFromDescription(true)
+            assertTrue(viewModel.state.value.isRemoveTitleFromDescriptionEnabled)
+            awaitItem()
+        }
     }
 
     @Test

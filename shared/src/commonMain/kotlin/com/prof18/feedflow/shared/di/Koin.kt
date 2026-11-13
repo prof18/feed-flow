@@ -391,6 +391,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     viewModel {
         ImportExportViewModel(
             feedImportExportRepository = get(),
+            feedStateRepository = get(),
             logger = getWith("ImportExportViewModel"),
             dateFormatter = get(),
         )

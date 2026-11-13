@@ -143,9 +143,6 @@ struct HomeScreen: View {
             onShowReadArticlesTimelineChange: { [homeViewModel] value in
                 homeViewModel.updateShowReadArticlesTimeline(value: value)
             },
-            onSettingsDone: { [homeViewModel] in
-                homeViewModel.reloadFeedState()
-            },
             onShowNewArticlesClick: { [homeViewModel] in
                 homeViewModel.onShowNewArticlesClicked()
             },

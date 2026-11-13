@@ -9,7 +9,6 @@ struct SettingsScreen: View {
     private let feedFlowStrings = Deps.shared.getStrings()
 
     let fetchFeeds: () -> Void
-    let onDone: () -> Void
 
     var body: some View {
         NavigationStack {
@@ -67,7 +66,6 @@ struct SettingsScreen: View {
             .scrollContentBackground(.hidden)
             .toolbar {
                 Button {
-                    onDone()
                     dismiss()
                 } label: {
                     Text(feedFlowStrings.actionDone).bold()

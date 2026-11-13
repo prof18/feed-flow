@@ -6,6 +6,8 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.ImportExportContentType
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.database.DatabaseHelper
+import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.opml.InvalidOpmlImportException
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
@@ -37,6 +39,8 @@ class ImportExportViewModelTest : KoinTestBase() {
 
     private val fakeOpmlFeedHandler = FakeOpmlFeedHandler()
     private val viewModel: ImportExportViewModel by inject()
+    private val feedStateRepository: FeedStateRepository by inject()
+    private val databaseHelper: DatabaseHelper by inject()
 
     override fun getTestModules(): List<Module> = super.getTestModules() + module {
         single<Clock> { FakeClock.DEFAULT }
@@ -96,6 +100,16 @@ class ImportExportViewModelTest : KoinTestBase() {
 
         advanceUntilIdle()
         assertEquals(FeedImportExportState.ArticleImportSuccess, viewModel.importExportState.value)
+    }
+
+    @Test
+    fun `importArticles reloads the timeline with the imported articles`() = runTest {
+        databaseHelper.insertFeedSource(listOf(SAMPLE_FEED_SOURCE.copy(id = "source-1")))
+
+        viewModel.importArticles(createCsvInput(CSV_CONTENT))
+
+        advanceUntilIdle()
+        assertEquals(listOf("hash-1"), feedStateRepository.feedState.value.map { it.id })
     }
 
     @Test

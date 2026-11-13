@@ -162,6 +162,9 @@ class FeedListSettingsViewModel internal constructor(
         stateMutableFlow.update {
             it.copy(isRemoveTitleFromDescriptionEnabled = value)
         }
+        viewModelScope.launch {
+            feedStateRepository.getFeeds()
+        }
     }
 
     fun updateFeedOrder(feedOrder: com.prof18.feedflow.core.model.FeedOrder) {

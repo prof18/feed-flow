@@ -2,7 +2,7 @@
 <resources>
     <string name="feed_added_message">Flux %s adăugat</string>
     <string name="feed_already_exists_message">%s se află deja în fluxurile tale.</string>
-    <string name="feed_url">URL-ul fluxului</string>
+    <string name="feed_url">Linkul fluxului</string>
     <string name="feed_url_placeholder">https://domeniu.com/feed</string>
     <string name="add_feed">Adaugă flux</string>
     <string name="feeds_title">Fluxuri</string>
@@ -344,12 +344,12 @@
     <string name="file_menu">Fișier</string>
     <string name="exit_menu">Ieșire</string>
     <string name="menu_view">Vizualizare</string>
-    <string name="settings_left_swipe_action">Glisare spre stânga</string>
-    <string name="settings_right_swipe_action">Glisare spre dreapta</string>
-    <string name="settings_swipe_action_toggle_read">Declarat citit</string>
-    <string name="settings_swipe_action_toggle_bookmark">Stare marcaj</string>
+    <string name="settings_left_swipe_action">Glisează spre stânga</string>
+    <string name="settings_right_swipe_action">Glisează spre dreapta</string>
+    <string name="settings_swipe_action_toggle_read">Marchează drept citit sau necitit</string>
+    <string name="settings_swipe_action_toggle_bookmark">Adaugă sau elimină marcajul</string>
     <string name="settings_swipe_action_open_in_browser">Deschide în browserul preferat</string>
-    <string name="settings_swipe_action_none">Dezactivat</string>
+    <string name="settings_swipe_action_none">Niciuna</string>
     <string name="settings_notification_no_feed">Se pare că nu ai adăugat încă niciun flux. Adaugă câteva pentru a începe să primești notificări!</string>
     <string name="settings_notification_check_period">Frecvența verificării notificărilor</string>
     <string name="settings_notifications_enable_all_title">Activează toate notificările</string>
@@ -566,7 +566,7 @@
     <string name="database_startup_native">FeedFlow nu a putut încărca o componentă necesară. Reinstalează sau actualizează FeedFlow. Datele tale nu au fost modificate.</string>
     <string name="database_startup_generic">FeedFlow nu a putut deschide datele sale. Fișierele tale nu au fost șterse.</string>
     <string name="database_open_data_folder">Deschide folderul de date</string>
-    <string name="database_quit">Renunță</string>
+    <string name="database_quit">Ieși</string>
     <string name="desktop_already_running">FeedFlow rulează deja.</string>
     <string name="desktop_startup_crash">FeedFlow nu a putut porni. Detaliile de mai jos au fost salvate în %s. Atașează acel fișier atunci când raportezi problema.</string>
     <string name="desktop_startup_crash_no_log">FeedFlow nu a putut porni. Copiază detaliile de mai jos și include-le când raportezi problema.</string>
@@ -601,4 +601,11 @@
     <string name="reader_mode_opened_externally_title">Deschis în browserul tău</string>
     <string name="reader_mode_opened_externally_message">Acest link este un fișier, de exemplu un PDF, pe care FeedFlow nu îl poate afișa, așa că a fost deschis în browserul tău.</string>
     <string name="reader_mode_open_again_in_browser">Deschide în browser</string>
+    <string name="next_feed_button">Următorul: %s</string>
+    <string name="empty_category_message">Nu există fluxuri în această categorie</string>
+    <string name="empty_category_hint">Nu există încă fluxuri. Trage un flux aici.</string>
+    <string name="discard_changes_dialog_title">Renunți la modificări?</string>
+    <string name="discard_changes_dialog_message">Modificările aduse numelui, linkului sau categoriei nu vor fi salvate.</string>
+    <string name="discard_changes_confirm_button">Renunță</string>
+    <string name="keep_editing_button">Continuă editarea</string>
 </resources>

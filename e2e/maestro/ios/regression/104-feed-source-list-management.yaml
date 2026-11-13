@@ -35,13 +35,31 @@ appId: com.prof18.feedflow.dev
 - tapOn: "Android Central RSS Feed"
 - assertVisible: "Feed settings"
 - assertVisible:
-    id: edit_feed_save
+    id: edit_feed_done
 - tapOn:
     id: BackButton
 - assertVisible: "Android Central RSS Feed"
 - tapOn: "Android Central RSS Feed"
+- scrollUntilVisible:
+    element:
+      id: edit_feed_category_selector
+    direction: DOWN
 - tapOn:
-    id: edit_feed_save
+    id: edit_feed_category_selector
+- tapOn:
+    text: "News"
+- tapOn:
+    text: "Save"
+- assertNotVisible:
+    id: BackButton
+- tapOn:
+    id: edit_feed_cancel
+- assertVisible: "Discard changes\\?"
+- tapOn: "Discard"
+- assertVisible: "Android Central RSS Feed"
+- tapOn: "Android Central RSS Feed"
+- tapOn:
+    id: edit_feed_done
 - assertVisible: "Android Central RSS Feed"
 - longPressOn:
     text: "Android Central RSS Feed"

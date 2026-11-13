@@ -31,12 +31,11 @@ fun EmptyFeedView(
     onOpenDrawerClick: () -> Unit,
     onNavigateNext: () -> Unit,
     modifier: Modifier = Modifier,
-    showNextFeedButton: Boolean = false,
 ) {
     PullToNextLayout(
         modifier = modifier.fillMaxSize(),
         onNavigateNext = onNavigateNext,
-        enabled = !showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState,
+        enabled = nextFeedState is NextFeedDisplayEnabledState,
         indicator = { progress ->
             PullToNextIndicator(
                 progress = progress,
@@ -97,7 +96,7 @@ fun EmptyFeedView(
                 }
             }
 
-            if (showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState) {
+            if (nextFeedState is NextFeedDisplayEnabledState) {
                 NavigateNextButton(
                     title = nextFeedState.title,
                     onClick = onNavigateNext,

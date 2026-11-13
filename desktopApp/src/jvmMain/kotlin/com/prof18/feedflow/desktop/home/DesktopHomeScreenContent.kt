@@ -156,6 +156,7 @@ internal fun DesktopHomeScreenContent(
                     onImportExportClick = onImportExportClick,
                     showDrawerMenu = showDrawerMenu,
                     onDrawerMenuClick = onDrawerMenuClick,
+                    isDrawerOpen = isDrawerOpen,
                     onGridArrangementChanged = { isGrid = it },
                     isGrid = isGrid,
                     selectedArticleId = selectedArticleId,
@@ -210,6 +211,7 @@ private fun HomeFeedBody(
     onImportExportClick: () -> Unit,
     showDrawerMenu: Boolean,
     onDrawerMenuClick: () -> Unit,
+    isDrawerOpen: Boolean,
     onGridArrangementChanged: (Boolean) -> Unit,
     isGrid: Boolean,
     selectedArticleId: String?,
@@ -218,8 +220,11 @@ private fun HomeFeedBody(
 ) {
     val strings = LocalFeedFlowStrings.current
     val actionHeight = with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
+    val isEmptyCategory = remember(displayState.navDrawerState, displayState.currentFeedFilter) {
+        isCategoryWithoutFeeds(displayState.navDrawerState, displayState.currentFeedFilter)
+    }
     when {
-        displayState.feedUpdateStatus is NoFeedSourcesStatus -> Box(
+        displayState.feedUpdateStatus is NoFeedSourcesStatus && !isEmptyCategory -> Box(
             modifier = Modifier.fillMaxSize().padding(24.dp),
             contentAlignment = Alignment.Center,
         ) {
@@ -246,15 +251,17 @@ private fun HomeFeedBody(
                 }
             }
         }
-        !displayState.feedUpdateStatus.isLoading() && displayState.feedItems.isEmpty() -> {
+        isEmptyCategory || (!displayState.feedUpdateStatus.isLoading() && displayState.feedItems.isEmpty()) -> {
             // A settled empty timeline has no list to reveal into, so the request is cleared here.
             SideEffect(revealArticleId) { if (revealArticleId != null) onArticleRevealed() }
             EmptyTimeline(
                 currentFilter = displayState.currentFeedFilter,
+                isEmptyCategory = isEmptyCategory,
                 nextFeedState = displayState.nextFeedDisplayState,
                 onRefresh = feedListActions.refreshData,
                 onTimeline = feedListActions.onBackToTimelineClick,
-                onOpenDrawer = onDrawerMenuClick.takeIf { showDrawerMenu },
+                onAddFeed = feedManagementActions.onAddFeedClick,
+                onOpenDrawer = onDrawerMenuClick.takeIf { showDrawerMenu && !isDrawerOpen },
                 onNext = feedListActions.onNavigateNext,
             )
         }
@@ -379,9 +386,11 @@ private fun FeedListActions.openAndMarkRead(urlInfo: FeedItemUrlInfo) {
 @Composable
 private fun EmptyTimeline(
     currentFilter: FeedFilter,
+    isEmptyCategory: Boolean,
     nextFeedState: NextFeedDisplayState,
     onRefresh: () -> Unit,
     onTimeline: () -> Unit,
+    onAddFeed: () -> Unit,
     onOpenDrawer: (() -> Unit)?,
     onNext: () -> Unit,
 ) {
@@ -393,18 +402,28 @@ private fun EmptyTimeline(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
     ) {
-        Text(
-            when (currentFilter) {
-                FeedFilter.Read -> strings.readArticlesEmptyScreenMessage
-                FeedFilter.Bookmarks -> strings.bookmarkedArticlesEmptyScreenMessage
-                else -> strings.emptyFeedMessage
-            },
-        )
-        DefaultButton(
-            onClick = if (isSpecialFilter) onTimeline else onRefresh,
-            modifier = Modifier.heightIn(min = actionHeight),
-        ) {
-            Text(if (isSpecialFilter) strings.emptyScreenBackToTimeline else strings.refreshFeeds)
+        if (isEmptyCategory) {
+            Text(
+                text = strings.emptyCategoryMessage,
+                modifier = Modifier.semantics { heading() },
+            )
+            DefaultButton(onClick = onAddFeed, modifier = Modifier.heightIn(min = actionHeight)) {
+                Text(strings.addFeed)
+            }
+        } else {
+            Text(
+                when (currentFilter) {
+                    FeedFilter.Read -> strings.readArticlesEmptyScreenMessage
+                    FeedFilter.Bookmarks -> strings.bookmarkedArticlesEmptyScreenMessage
+                    else -> strings.emptyFeedMessage
+                },
+            )
+            DefaultButton(
+                onClick = if (isSpecialFilter) onTimeline else onRefresh,
+                modifier = Modifier.heightIn(min = actionHeight),
+            ) {
+                Text(if (isSpecialFilter) strings.emptyScreenBackToTimeline else strings.refreshFeeds)
+            }
         }
         if (onOpenDrawer != null) {
             OutlinedButton(onClick = onOpenDrawer, modifier = Modifier.heightIn(min = actionHeight)) {
@@ -413,7 +432,7 @@ private fun EmptyTimeline(
         }
         if (nextFeedState is NextFeedDisplayState.NextFeedDisplayEnabledState) {
             OutlinedButton(onClick = onNext, modifier = Modifier.heightIn(min = actionHeight)) {
-                Text(nextFeedState.title)
+                Text(strings.nextFeedButton(nextFeedState.title))
             }
         }
     }

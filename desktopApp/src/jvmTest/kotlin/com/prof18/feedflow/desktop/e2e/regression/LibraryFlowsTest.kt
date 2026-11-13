@@ -63,6 +63,12 @@ class LibraryFlowsTest {
         flow.typeInto(flow.urlInput(window), flow.fixtureUrl(FIXTURE_FEED_PATH))
         flow.await("Save to be enabled") { flow.saveButton(window).takeIf { !it.isDisabled } }
         flow.click(flow.saveButton(window))
+        // The confirmation sits inline in the action row; the form resets for the next feed right away.
+        val confirmation = flow.strings.feedAddedMessage(FIXTURE_FEED_TITLE)
+        flow.await("the inline add confirmation", LONG_WAIT_MS) {
+            flow.nodesIn(window).firstOrNull { it.isOnScreen && confirmation in it.texts }
+        }
+        assertEquals("", flow.urlInput(window).editableText)
         flow.await("the fixture feed in the sidebar", LONG_WAIT_MS) {
             flow.nodes().firstOrNull { it.role == "Tab" && it.texts.firstOrNull() == FIXTURE_FEED_TITLE }
         }
@@ -168,7 +174,8 @@ class LibraryFlowsTest {
         if (flow.nodesIn(window).any { flow.strings.enableNotificationsForFeed in it.texts }) {
             flow.setSwitch(window, flow.strings.enableNotificationsForFeed, on = true)
         }
-        flow.clickIn(window, flow.strings.actionSave)
+        assertTrue(flow.editSaveButton(window).isDisabled)
+        flow.clickIn(window, flow.strings.cancelButton)
         flow.awaitWindowGone(window)
         flow.awaitText(SEED_NEWEST_TITLE)
 
@@ -311,7 +318,8 @@ class LibraryFlowsTest {
         flow.openFeedSettings(ANDROID_CENTRAL)
         val window = flow.strings.openFeedSettings
         flow.choose(window, flow.strings.articleOpenMode, flow.strings.readerContentSourceWeb)
-        flow.clickIn(window, flow.strings.actionSave)
+        assertTrue(flow.editSaveButton(window).isDisabled)
+        flow.clickIn(window, flow.strings.cancelButton)
         flow.awaitWindowGone(window)
         flow.awaitText(SEED_NEWEST_TITLE)
 
@@ -472,8 +480,8 @@ class LibraryFlowsTest {
     }
 
     /**
-     * Next feed button: desktop ui/components/DesktopArticleList.kt:326 (nextFeedState title in the list
-     * footer), the desktop counterpart of the pull-to-next-feed gesture.
+     * Next feed button: desktop ui/components/DesktopArticleList.kt (ArticleFooter, "Next: <feed>" in the
+     * list footer), the desktop counterpart of the pull-to-next-feed gesture.
      */
     @Test
     fun `REG-148 pull to next feed`() {
@@ -482,29 +490,28 @@ class LibraryFlowsTest {
 
         flow.clickSidebar(ANDROID_CENTRAL)
         flow.awaitText(SEED_NEWEST_TITLE)
-        val next = flow.nextFeedButton()
-        val nextFeed = next.texts.first()
+        val (next, nextFeed) = flow.nextFeedButton(scrollTo = flow.strings.markAllReadButton)
         flow.click(next)
         flow.await("feed '$nextFeed' selected") { flow.sidebarRow(nextFeed).takeIf { it.isSelected } }
         assertFalse(flow.sidebarRow(ANDROID_CENTRAL).isSelected)
     }
 
     /**
-     * Open another feed: desktop home/DesktopHomeScreenContent.kt:409 (openAnotherFeed), which toggles the
-     * sidebar in the two-pane layout.
+     * Open another feed: desktop home/DesktopHomeScreenContent.kt (EmptyTimeline, openAnotherFeed). The
+     * button shows only while the sidebar is hidden, and shows the sidebar again.
      */
     @Test
     fun `REG-155 empty home open another feed`() {
         val flow = e2e.start(Seed.Empty)
         flow.awaitText(flow.strings.emptyFeedMessage)
-        flow.awaitText(flow.strings.refreshFeeds)
+        flow.sidebarRow(flow.strings.drawerTitleTimeline)
+        flow.assertAbsent(flow.strings.openAnotherFeed)
 
-        flow.clickUntil("the sidebar to hide", { flow.awaitText(flow.strings.openAnotherFeed) }) {
-            !flow.isShown(flow.strings.drawerTitleTimeline)
-        }
-        flow.clickUntil("the sidebar to show", { flow.awaitText(flow.strings.openAnotherFeed) }) {
-            flow.isShown(flow.strings.drawerTitleTimeline)
-        }
+        flow.click(flow.awaitContentDescription(flow.strings.drawerMenuButtonContentDescription))
+        flow.awaitGone(flow.strings.drawerTitleTimeline)
+        flow.click(flow.awaitText(flow.strings.openAnotherFeed))
+        flow.sidebarRow(flow.strings.drawerTitleTimeline)
+        flow.awaitGone(flow.strings.openAnotherFeed)
     }
 
     /**
@@ -546,13 +553,7 @@ class LibraryFlowsTest {
         flow.awaitText(PINNED_ARTICLE)
         flow.click(flow.scrollToText(flow.strings.markAllReadButton))
         flow.awaitText(flow.strings.emptyFeedMessage)
-        val next = flow.await("a next-feed button") {
-            flow.nodes().firstOrNull {
-                it.isOnScreen && it.role == "Button" && it.texts.size == 1 &&
-                    flow.nodes().any { tab -> tab.role == "Tab" && tab.texts.firstOrNull() == it.texts.first() }
-            }
-        }
-        val nextFeed = next.texts.first()
+        val (next, nextFeed) = flow.nextFeedButton()
         assertNotEquals(PINNED_FEED, nextFeed)
         flow.click(next)
         flow.await("feed '$nextFeed' selected") { flow.sidebarRow(nextFeed).takeIf { it.isSelected } }
@@ -562,6 +563,11 @@ class LibraryFlowsTest {
     private fun com.prof18.feedflow.desktop.e2e.harness.Flow.saveButton(window: String) =
         await("the $window save button") {
             nodesIn(window).lastOrNull { it.role == "Button" && strings.addFeed in it.texts }
+        }
+
+    private fun com.prof18.feedflow.desktop.e2e.harness.Flow.editSaveButton(window: String) =
+        await("the $window save button") {
+            nodesIn(window).lastOrNull { it.role == "Button" && strings.actionSave in it.texts }
         }
 
     private fun com.prof18.feedflow.desktop.e2e.harness.Flow.mainButton(text: String) =
@@ -610,13 +616,18 @@ class LibraryFlowsTest {
         awaitWindowGone(dialog)
     }
 
-    private fun com.prof18.feedflow.desktop.e2e.harness.Flow.nextFeedButton() =
+    // The button reads "Next: <feed>", so the matching sidebar Tab gives the feed title.
+    // Pass scrollTo only when that text exists: the empty state has no list footer to scroll to.
+    private fun com.prof18.feedflow.desktop.e2e.harness.Flow.nextFeedButton(
+        scrollTo: String? = null,
+    ): Pair<dev.sebastiano.spectre.agent.transport.NodeSnapshotDto, String> =
         await("the next-feed button") {
-            scrollToText(strings.markAllReadButton)
-            nodes().firstOrNull {
-                it.isOnScreen && it.role == "Button" && it.texts.size == 1 &&
-                    it.texts.first() != strings.markAllReadButton &&
-                    nodes().any { tab -> tab.role == "Tab" && tab.texts.firstOrNull() == it.texts.first() }
+            if (scrollTo != null) scrollToText(scrollTo)
+            val nodes = nodes()
+            val tabTitles = nodes.filter { it.role == "Tab" }.mapNotNull { it.texts.firstOrNull() }
+            nodes.firstNotNullOfOrNull { button ->
+                val title = tabTitles.firstOrNull { button.texts.singleOrNull() == strings.nextFeedButton(it) }
+                if (button.isOnScreen && button.role == "Button" && title != null) button to title else null
             }
         }
 

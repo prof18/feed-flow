@@ -49,15 +49,41 @@ class FeedSourceLogoRetrieverImplTest {
     }
 
     @Test
-    fun `drops a relative channel image when there is no link to resolve it against`() =
+    fun `resolves a relative channel image against the feed url when there is no link`() =
         runTest(testDispatcher) {
             val retriever = createRetriever(faviconUrl = null)
 
+            val result = retriever.getFeedSourceLogoUrl(
+                channelWithImage(link = null, imageUrl = "logo.png"),
+                feedUrl = "https://example.com/feed.xml",
+            )
+
+            assertEquals(expected = "https://example.com/logo.png", actual = result)
+        }
+
+    @Test
+    fun `drops a relative favicon when there is no link nor website to resolve it against`() =
+        runTest(testDispatcher) {
+            val retriever = createRetriever(faviconUrl = "favicon.ico")
+
             // Nothing to resolve the path against, so there is no logo to store.
-            val result = retriever.getFeedSourceLogoUrl(channelWithImage(link = null, imageUrl = "logo.png"))
+            val result = retriever.getFeedSourceLogoUrl(websiteLink = null)
 
             assertNull(result)
         }
+
+    @Test
+    fun `looks up the favicon of the feed domain for a channel without a link`() = runTest(testDispatcher) {
+        val retriever = createRetriever(faviconUrl = "https://www.youtube.com/s/desktop/abcd/img/favicon.ico")
+
+        // How a YouTube playlist feed parses: its only link points at the feed itself.
+        val result = retriever.getFeedSourceLogoUrl(
+            RssChannelGenerator.rssChannel(title = "Videos", link = null, image = null, items = emptyList()),
+            feedUrl = "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFBJycsmduvYEL83R_U4JriQ",
+        )
+
+        assertEquals(expected = "https://www.youtube.com/s/desktop/abcd/img/favicon.ico", actual = result)
+    }
 
     @Test
     fun `keeps an absolute channel image when there is no link`() = runTest(testDispatcher) {
@@ -65,6 +91,7 @@ class FeedSourceLogoRetrieverImplTest {
 
         val result = retriever.getFeedSourceLogoUrl(
             channelWithImage(link = null, imageUrl = "https://cdn.example.com/logo.png"),
+            feedUrl = "https://example.com/feed.xml",
         )
 
         assertEquals(expected = "https://cdn.example.com/logo.png", actual = result)

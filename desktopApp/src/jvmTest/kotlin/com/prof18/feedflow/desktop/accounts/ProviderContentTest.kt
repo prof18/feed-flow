@@ -76,6 +76,8 @@ class ProviderContentTest(private val account: SyncAccounts) {
             fake.link()
         }
         compose.onNodeWithTag(AccountE2eIds.CONNECTED_MESSAGE).assertExists()
+        // The failed attempt's error must not resurface as a sync error once the retry links.
+        compose.onNodeWithTag(AccountE2eIds.SYNC_ERROR_MESSAGE).assertDoesNotExist()
         assertEquals(
             if (fake.isServer) 1 else 2,
             compose.onAllNodesWithTag(AccountE2eIds.LAST_SYNC_LABEL).fetchSemanticsNodes().size,

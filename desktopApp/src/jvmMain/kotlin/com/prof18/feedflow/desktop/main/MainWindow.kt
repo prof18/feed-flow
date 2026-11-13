@@ -69,7 +69,9 @@ import com.prof18.feedflow.desktop.settings.SettingsWindow
 import com.prof18.feedflow.desktop.startup.addFeedLinkInbox
 import com.prof18.feedflow.desktop.testing.MainWindowE2eIds
 import com.prof18.feedflow.desktop.toReaderMode
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackTone
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.LocalReduceMotion
 import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
@@ -229,10 +231,12 @@ private fun MainWindowEffects(
             if (message is SyncResult.GoogleDriveNeedReAuth) {
                 snackbarHostState.showFeedback(
                     message = flowStrings.googleDriveAuthRetry,
+                    duration = DesktopFeedbackDuration.Long,
                 )
             } else if (message is SyncResult.Error) {
                 snackbarHostState.showFeedback(
                     message = flowStrings.errorAccountSync(message.errorCode.code),
+                    tone = DesktopFeedbackTone.Error,
                 )
             }
         }
@@ -244,6 +248,7 @@ private fun MainWindowEffects(
                 DesktopDatabaseErrorState.clear()
                 snackbarHostState.showFeedback(
                     message = flowStrings.databaseRecoveredFromCorruption,
+                    duration = DesktopFeedbackDuration.Long,
                 )
             }
         }

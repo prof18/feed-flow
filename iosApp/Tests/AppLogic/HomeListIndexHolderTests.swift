@@ -7,8 +7,8 @@ final class HomeListIndexHolderTests: XCTestCase {
         let holder = HomeListIndexHolder(fakeHomeViewModel: true)
 
         holder.visibleItemsChanged([
-            VisibleFeedItem(id: "a", index: 0),
-            VisibleFeedItem(id: "b", index: 1),
+            VisibleFeedItemSnapshot(id: "a", index: 0),
+            VisibleFeedItemSnapshot(id: "b", index: 1),
         ])
 
         XCTAssertTrue(holder.isVisible(id: "b"))
@@ -17,7 +17,7 @@ final class HomeListIndexHolderTests: XCTestCase {
 
     func testClearingForgetsTheVisibleRows() {
         let holder = HomeListIndexHolder(fakeHomeViewModel: true)
-        holder.visibleItemsChanged([VisibleFeedItem(id: "a", index: 0)])
+        holder.visibleItemsChanged([VisibleFeedItemSnapshot(id: "a", index: 0)])
 
         holder.clear()
 

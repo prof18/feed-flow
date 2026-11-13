@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
@@ -36,6 +37,7 @@ fun HomeAppBarDropdownMenu(
     showMenu: Boolean,
     feedFilter: FeedFilter,
     closeMenu: () -> Unit,
+    onRefreshClick: () -> Unit,
     onMarkAllReadClicked: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
@@ -140,18 +142,37 @@ fun HomeAppBarDropdownMenu(
         }
 
         DropdownMenuItem(
-            modifier = Modifier.testTag(HomeToolbarE2eIds.MARK_ALL_READ_MENU_ITEM),
-            onClick = { showMarkAllReadDialog = true },
+            modifier = Modifier.testTag(HomeToolbarE2eIds.REFRESH_MENU_ITEM),
+            onClick = {
+                closeMenu()
+                onRefreshClick()
+            },
             text = {
-                Text(LocalFeedFlowStrings.current.markAllReadButton)
+                Text(LocalFeedFlowStrings.current.refreshFeeds)
             },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.DoneAll,
+                    imageVector = Icons.Default.Refresh,
                     contentDescription = null,
                 )
             },
         )
+
+        if (feedFilter !is FeedFilter.Read) {
+            DropdownMenuItem(
+                modifier = Modifier.testTag(HomeToolbarE2eIds.MARK_ALL_READ_MENU_ITEM),
+                onClick = { showMarkAllReadDialog = true },
+                text = {
+                    Text(LocalFeedFlowStrings.current.markAllReadButton)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.DoneAll,
+                        contentDescription = null,
+                    )
+                },
+            )
+        }
 
         DropdownMenuItem(
             onClick = {

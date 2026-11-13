@@ -1,13 +1,10 @@
 package com.prof18.feedflow.feedsync.greader.domain.mapping
 
-import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.domain.ParsedFeedContent
 import com.prof18.feedflow.core.model.ArticleOpenMode
-import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
-import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.feedsync.greader.data.dto.ItemContentDTO
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,8 +14,7 @@ import kotlin.test.assertNull
 class ItemContentDTOMapperTest {
 
     private val fakeHtmlParser = FakeHtmlParser()
-    private val fakeDateFormatter = FakeDateFormatter()
-    private val mapper = ItemContentDTOMapper(fakeHtmlParser, fakeDateFormatter)
+    private val mapper = ItemContentDTOMapper(fakeHtmlParser)
 
     private val testFeedSource = FeedSource(
         id = "feed-1",
@@ -55,7 +51,8 @@ class ItemContentDTOMapperTest {
         assertEquals("<p>Article content</p>", result?.content)
         assertEquals(testFeedSource, result?.feedSource)
         assertEquals(1700000000000L, result?.pubDateMillis)
-        assertEquals("formatted-date", result?.dateString)
+        // The display date is not stored, so sync skips formatting it for every article
+        assertNull(result?.dateString)
     }
 
     @Test
@@ -374,14 +371,5 @@ class ItemContentDTOMapperTest {
             val commentsUrl = regex.find(html)?.groupValues?.get(1)?.takeIf { it.isNotBlank() }
             return ParsedFeedContent(text = html, commentsUrl = commentsUrl)
         }
-    }
-
-    private class FakeDateFormatter : DateFormatter {
-        override fun getDateMillisFromString(dateString: String): Long? = null
-        override fun formatDateForFeed(millis: Long, dateFormat: DateFormat, timeFormat: TimeFormat): String =
-            "formatted-date"
-        override fun formatDateForLastRefresh(millis: Long): String = "formatted-refresh"
-        override fun currentTimeMillis(): Long = 1700000000000L
-        override fun getCurrentDateForExport(): String = "2023-11-14"
     }
 }

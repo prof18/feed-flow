@@ -1,19 +1,15 @@
 package com.prof18.feedflow.feedsync.feedbin.domain.mapping
 
-import com.prof18.feedflow.core.domain.DateFormatter
 import com.prof18.feedflow.core.domain.HtmlParser
 import com.prof18.feedflow.core.model.AudioEnclosure
-import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
-import com.prof18.feedflow.core.model.TimeFormat
 import com.prof18.feedflow.core.utils.ContentImageUrlExtractor
 import com.prof18.feedflow.feedsync.feedbin.data.dto.EntryDTO
 import kotlin.time.Instant
 
 internal class EntryDTOMapper(
     private val htmlParser: HtmlParser,
-    private val dateFormatter: DateFormatter,
 ) {
 
     fun mapToFeedItem(
@@ -47,13 +43,7 @@ internal class EntryDTOMapper(
             feedSource = feedSource,
             pubDateMillis = pubDateMillis,
             isRead = isRead,
-            dateString = pubDateMillis?.let {
-                dateFormatter.formatDateForFeed(
-                    millis = it / 1000,
-                    dateFormat = DateFormat.NORMAL,
-                    timeFormat = TimeFormat.HOURS_24,
-                )
-            },
+            dateString = null, // This is not saved on database, so we can skip it for this mapper
             commentsUrl = commentsUrl,
             isBookmarked = isBookmarked,
         )

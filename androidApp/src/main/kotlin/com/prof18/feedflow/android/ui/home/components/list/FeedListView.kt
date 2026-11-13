@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +45,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -85,6 +87,8 @@ val FeedListMaxContentWidth = 720.dp
 private val GridContentPadding = Spacing.regular
 private val GridMinCellWidth = 280.dp
 
+internal const val NEXT_FEED_BUTTON_TAG = "next_feed_button"
+
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("MagicNumber")
 @Composable
@@ -114,7 +118,6 @@ fun FeedList(
     listState: LazyListState = rememberLazyListState(),
     gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     contentPadding: PaddingValues = PaddingValues(),
-    showNextFeedButton: Boolean = false,
     isGridLayoutEnabled: Boolean = true,
     isGridLayoutAllowed: Boolean = true,
     onMarkAllAboveAsRead: (String) -> Unit = {},
@@ -166,7 +169,7 @@ fun FeedList(
 
         PullToNextLayout(
             onNavigateNext = { onNavigateNext() },
-            enabled = !showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState,
+            enabled = nextFeedState is NextFeedDisplayEnabledState,
             indicator = { progress ->
                 PullToNextIndicator(
                     progress = progress,
@@ -215,7 +218,6 @@ fun FeedList(
                     item(span = StaggeredGridItemSpan.FullLine) {
                         FeedFooterButtons(
                             currentFeedFilter = currentFeedFilter,
-                            showNextFeedButton = showNextFeedButton,
                             nextFeedState = nextFeedState,
                             markAllAsRead = markAllAsRead,
                             onNavigateNext = onNavigateNext,
@@ -254,7 +256,6 @@ fun FeedList(
                         if (index == feedItems.size - 1) {
                             FeedFooterButtons(
                                 currentFeedFilter = currentFeedFilter,
-                                showNextFeedButton = showNextFeedButton,
                                 nextFeedState = nextFeedState,
                                 markAllAsRead = markAllAsRead,
                                 onNavigateNext = onNavigateNext,
@@ -433,25 +434,27 @@ private fun RevealFeedItemEffect(
 }
 
 @Composable
-private fun FeedFooterButtons(
+internal fun FeedFooterButtons(
     currentFeedFilter: FeedFilter,
-    showNextFeedButton: Boolean,
     nextFeedState: NextFeedDisplayState,
     markAllAsRead: () -> Unit,
     onNavigateNext: () -> Unit,
 ) {
-    if (currentFeedFilter !is FeedFilter.Read) {
-        MarkAllReadButton(
-            showNextFeedButton = showNextFeedButton,
-            nextFeedState = nextFeedState,
-            onClick = markAllAsRead,
-        )
-    }
-    if (showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState) {
-        NavigateNextButton(
-            title = nextFeedState.title,
-            onClick = onNavigateNext,
-        )
+    val hasNextFeed = nextFeedState is NextFeedDisplayEnabledState
+    if (currentFeedFilter is FeedFilter.Read && !hasNextFeed) return
+    Column(modifier = Modifier.navigationBarsPadding()) {
+        if (currentFeedFilter !is FeedFilter.Read) {
+            MarkAllReadButton(
+                nextFeedState = nextFeedState,
+                onClick = markAllAsRead,
+            )
+        }
+        if (nextFeedState is NextFeedDisplayEnabledState) {
+            NavigateNextButton(
+                title = nextFeedState.title,
+                onClick = onNavigateNext,
+            )
+        }
     }
 }
 
@@ -511,20 +514,17 @@ private fun ObserveVisibleGridFeedItems(
 
 @Composable
 private fun MarkAllReadButton(
-    showNextFeedButton: Boolean,
     nextFeedState: NextFeedDisplayState,
     onClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .navigationBarsPadding()
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         TextButton(
             modifier = Modifier
                 .padding(top = Spacing.small)
                 .padding(
-                    bottom = if (showNextFeedButton && nextFeedState is NextFeedDisplayEnabledState) {
+                    bottom = if (nextFeedState is NextFeedDisplayEnabledState) {
                         Spacing.small
                     } else {
                         Spacing.medium
@@ -544,12 +544,11 @@ internal fun NavigateNextButton(
     onClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .navigationBarsPadding()
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         TextButton(
             modifier = Modifier
+                .testTag(NEXT_FEED_BUTTON_TAG)
                 .padding(bottom = Spacing.medium)
                 .align(Alignment.Center),
             onClick = onClick,

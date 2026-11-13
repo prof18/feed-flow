@@ -26,6 +26,7 @@ import com.prof18.feedflow.desktop.main.LocalDesktopMenuCommands
 import com.prof18.feedflow.desktop.search.SearchScreen
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackTone
 import com.prof18.feedflow.desktop.ui.FeedListActions
 import com.prof18.feedflow.desktop.ui.FeedManagementActions
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -107,6 +108,7 @@ internal fun HomeScreen(
             snackbarHostState.showFeedback(
                 message = strings.browserLaunchError,
                 duration = DesktopFeedbackDuration.Short,
+                tone = DesktopFeedbackTone.Error,
             )
         }
     }
@@ -126,6 +128,7 @@ internal fun HomeScreen(
                             strings.databaseError(errorState.errorCode.code)
                         },
                         duration = DesktopFeedbackDuration.Short,
+                        tone = DesktopFeedbackTone.Error,
                     )
                 }
 
@@ -147,6 +150,7 @@ internal fun HomeScreen(
                     snackbarHostState.showFeedback(
                         message = strings.deleteFeedSourceError,
                         duration = DesktopFeedbackDuration.Short,
+                        tone = DesktopFeedbackTone.Error,
                     )
                 }
             }
@@ -362,7 +366,10 @@ internal fun HomeScreen(
             onShareClick = { urlTitle ->
                 copyToClipboard(urlTitle.url)
                 scope.launch {
-                    snackbarHostState.showFeedback(message = strings.linkCopiedSuccess)
+                    snackbarHostState.showFeedback(
+                        message = strings.linkCopiedSuccess,
+                        tone = DesktopFeedbackTone.Success,
+                    )
                 }
             },
             shareLinkTitle = strings.menuCopyLink,

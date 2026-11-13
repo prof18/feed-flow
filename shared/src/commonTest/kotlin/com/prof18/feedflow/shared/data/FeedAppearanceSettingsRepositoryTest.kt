@@ -3,7 +3,10 @@ package com.prof18.feedflow.shared.data
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.DateFormat
 import com.prof18.feedflow.core.model.FeedLayout
+import com.prof18.feedflow.core.model.FeedListSettingsState
 import com.prof18.feedflow.core.model.FeedOrder
+import com.prof18.feedflow.core.model.SwipeActionType
+import com.prof18.feedflow.core.model.SwipeActions
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.russhwolf.settings.MapSettings
 import com.russhwolf.settings.set
@@ -27,6 +30,19 @@ class FeedAppearanceSettingsRepositoryTest : KoinTestBase() {
             repository.setFeedOrder(FeedOrder.NEWEST_FIRST)
             assertEquals(FeedOrder.NEWEST_FIRST, awaitItem())
         }
+    }
+
+    @Test
+    fun `swipe actions are disabled on a fresh install`() {
+        val repository = FeedAppearanceSettingsRepository(MapSettings())
+        val defaultState = FeedListSettingsState()
+
+        assertEquals(
+            SwipeActions(leftSwipeAction = SwipeActionType.NONE, rightSwipeAction = SwipeActionType.NONE),
+            repository.swipeActions.value,
+        )
+        assertEquals(repository.swipeActions.value.leftSwipeAction, defaultState.leftSwipeActionType)
+        assertEquals(repository.swipeActions.value.rightSwipeAction, defaultState.rightSwipeActionType)
     }
 
     @Test

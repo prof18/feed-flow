@@ -2132,7 +2132,7 @@ class HomeViewModelTest : KoinTestBase() {
     }
 
     private class FakeFeedSourceLogoRetriever : FeedSourceLogoRetriever {
-        override suspend fun getFeedSourceLogoUrl(rssChannel: RssChannel): String? = null
+        override suspend fun getFeedSourceLogoUrl(rssChannel: RssChannel, feedUrl: String): String? = null
         override suspend fun getFeedSourceLogoUrl(websiteLink: String?): String? = null
         override suspend fun isStoredLogoStillAvailable(logoUrl: String): Boolean = true
         override suspend fun invalidateLookupCaches() = Unit

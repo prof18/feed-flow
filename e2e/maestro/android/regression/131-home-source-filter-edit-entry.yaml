@@ -33,8 +33,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: article_open_mode_full_article
 - assertVisible: "Reader \\(website\\)"
-- tapOn:
-    id: edit_feed_save
+- back
 - extendedWaitUntil:
     visible: "Android Central RSS Feed"
     timeout: 10000
@@ -42,3 +41,13 @@ appId: com.prof18.feedflow.debug
     id: home_more_menu_button
 - tapOn: "Feed settings"
 - assertVisible: "Reader \\(website\\)"
+- tapOn:
+    id: edit_feed_name
+- inputText: " X"
+- runFlow: ../../shared/android-hide-keyboard.yaml
+- back
+- assertVisible: "Discard changes\\?"
+- tapOn: "Keep editing"
+- back
+- tapOn: "Discard"
+- assertNotVisible: "Android Central RSS Feed X"

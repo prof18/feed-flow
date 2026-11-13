@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -20,8 +21,10 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.AccountSyncUIState
@@ -29,25 +32,24 @@ import com.prof18.feedflow.desktop.settings.SettingsActionRow
 import com.prof18.feedflow.desktop.settings.SettingsRow
 import com.prof18.feedflow.desktop.settings.SettingsSection
 import com.prof18.feedflow.desktop.testing.AccountE2eIds
-import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
-import com.prof18.feedflow.desktop.ui.components.SnackbarHost
+import com.prof18.feedflow.desktop.ui.components.FeedbackSuccessColor
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 internal fun AccountScreen(
-    snackbarHostState: DesktopFeedbackState,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     // The Accounts detail page draws the service header and back navigation.
+    // Errors show inline: next to the connect form, or under the sync status once linked.
     Column(modifier.fillMaxSize()) {
         Box(Modifier.weight(1f).fillMaxWidth()) {
             content()
-            SnackbarHost(snackbarHostState, Modifier.align(Alignment.BottomCenter))
         }
     }
 }
@@ -84,6 +86,10 @@ internal fun CloudAccountContent(
         if (uiState == AccountConnectionUiState.Unlinked) {
             disconnectConfirmed = false
         }
+        // A disconnect that failed returns to an idle linked state: allow another attempt.
+        if (uiState.canDisconnect()) {
+            disconnectConfirmed = false
+        }
     }
 
     when (uiState) {
@@ -100,9 +106,13 @@ internal fun CloudAccountContent(
                 uiState = uiState,
                 successMessage = successMessage,
                 noSyncMessage = noSyncMessage,
+                errorMessage = credentialsState?.syncError,
                 onBackupClick = onBackupClick?.let {
                     {
-                        if (latestUiState.canDisconnect()) latestOnBackupClick?.invoke()
+                        if (latestUiState.canDisconnect()) {
+                            credentialsState?.syncError = null
+                            latestOnBackupClick?.invoke()
+                        }
                     }
                 },
                 onRequestDisconnect = {
@@ -137,6 +147,7 @@ private fun LinkedAccountDetails(
     uiState: AccountConnectionUiState.Linked,
     successMessage: String,
     noSyncMessage: String,
+    errorMessage: String?,
     onBackupClick: (() -> Unit)?,
     onRequestDisconnect: () -> Unit,
     lastUploadMessage: ((String) -> String)?,
@@ -160,12 +171,28 @@ private fun LinkedAccountDetails(
                     Icon(
                         Icons.Filled.CheckCircle,
                         contentDescription = null,
-                        tint = ConnectedColor,
+                        tint = FeedbackSuccessColor,
                         modifier = Modifier.size(18.dp),
                     )
                 },
             )
             SyncStatus(uiState.syncState, noSyncMessage, lastUploadMessage, lastDownloadMessage)
+            if (errorMessage != null && idle) {
+                SettingsRow(
+                    title = errorMessage,
+                    modifier = Modifier
+                        .testTag(AccountE2eIds.SYNC_ERROR_MESSAGE)
+                        .semantics { liveRegion = LiveRegionMode.Polite },
+                    leading = {
+                        Icon(
+                            Icons.Outlined.ErrorOutline,
+                            contentDescription = null,
+                            tint = JewelTheme.globalColors.text.error,
+                            modifier = Modifier.size(18.dp),
+                        )
+                    },
+                )
+            }
         }
         SettingsSection {
             if (onBackupClick != null) {
@@ -217,8 +244,6 @@ private fun SyncStatus(
         }
     }
 }
-
-private val ConnectedColor = Color(color = 0xFF2F9E6B)
 
 @Composable
 private fun DisconnectConfirmationDialog(

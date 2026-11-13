@@ -5,6 +5,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import com.prof18.feedflow.core.model.AccountConnectionUiState
+import com.prof18.feedflow.core.model.AccountSyncUIState
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,6 +31,7 @@ internal fun <T> ObserveAccountConnection(
                     val previous = draft.observedConnectionState
                     draft.observedConnectionState = current
                     if (current is AccountConnectionUiState.Linked) draft.clear()
+                    if (current.startsNewSyncOutcome()) draft.syncError = null
                     if (previous == AccountConnectionUiState.Loading && current == AccountConnectionUiState.Unlinked) {
                         draft.submissionPending = false
                         draft.authCodePending = false
@@ -48,3 +50,7 @@ internal fun <T> ObserveAccountConnection(
         }
     }
 }
+
+private fun AccountConnectionUiState.startsNewSyncOutcome(): Boolean =
+    this == AccountConnectionUiState.Unlinked ||
+        (this is AccountConnectionUiState.Linked && syncState == AccountSyncUIState.Loading)

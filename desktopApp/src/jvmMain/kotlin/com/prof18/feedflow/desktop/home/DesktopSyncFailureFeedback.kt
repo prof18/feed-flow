@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.SyncFeedError
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackResult
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackTone
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.shared.presentation.model.syncErrorMessage
 
@@ -37,6 +38,7 @@ internal suspend fun showDesktopSyncFailureFeedback(
         message = strings.syncErrorMessage(errorCode),
         actionLabel = actionLabel,
         duration = duration,
+        tone = DesktopFeedbackTone.Error,
     )
     if (result != DesktopFeedbackResult.ActionPerformed) return
 

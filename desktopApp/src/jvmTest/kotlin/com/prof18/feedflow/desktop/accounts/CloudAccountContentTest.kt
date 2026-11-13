@@ -65,6 +65,38 @@ class CloudAccountContentTest {
     }
 
     @Test
+    fun `sync error shows inline under the linked status and clears on backup`() {
+        val credentials = CredentialsState()
+        var backupRequests = 0
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    CloudAccountContent(
+                        description = "",
+                        successMessage = "Account connected",
+                        noSyncMessage = "No sync yet",
+                        disconnectMessage = EnFeedFlowStrings.accountDisconnectBackupMessage,
+                        uiState = AccountConnectionUiState.Linked(AccountSyncUIState.None),
+                        credentialsState = credentials,
+                        onBackupClick = { backupRequests++ },
+                        onDisconnectClick = {},
+                        connectContent = {},
+                    )
+                }
+            }
+        }
+        rule.onNodeWithTag(AccountE2eIds.SYNC_ERROR_MESSAGE).assertDoesNotExist()
+
+        rule.runOnIdle { credentials.syncError = EnFeedFlowStrings.googleDriveSyncError }
+        rule.onNodeWithTag(AccountE2eIds.SYNC_ERROR_MESSAGE).assertExists()
+        rule.onNodeWithText(EnFeedFlowStrings.googleDriveSyncError).assertExists()
+
+        rule.onNodeWithTag("account_backup_button").performClick()
+        rule.onNodeWithTag(AccountE2eIds.SYNC_ERROR_MESSAGE).assertDoesNotExist()
+        rule.runOnIdle { assertEquals(1, backupRequests) }
+    }
+
+    @Test
     fun `disconnect asks for confirmation and cancel preserves account`() {
         var disconnectRequests = 0
         rule.setContent {
@@ -90,6 +122,42 @@ class CloudAccountContentTest {
             .performSemanticsAction(SemanticsActions.OnClick) { it() }
         rule.onNodeWithTag("confirmation-title").assertDoesNotExist()
         rule.runOnIdle { assertEquals(0, disconnectRequests) }
+    }
+
+    @Test
+    fun `disconnect can be retried after a failed attempt returns to the linked state`() {
+        var disconnectRequests = 0
+        val uiState = mutableStateOf<AccountConnectionUiState>(AccountConnectionUiState.Linked(AccountSyncUIState.None))
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    CloudAccountContent(
+                        description = "",
+                        successMessage = "Account connected",
+                        noSyncMessage = "No sync yet",
+                        disconnectMessage = EnFeedFlowStrings.accountDisconnectServerMessage,
+                        uiState = uiState.value,
+                        onBackupClick = null,
+                        onDisconnectClick = {
+                            disconnectRequests++
+                            uiState.value = AccountConnectionUiState.Loading
+                        },
+                        connectContent = {},
+                    )
+                }
+            }
+        }
+
+        repeat(2) { attempt ->
+            rule.onNodeWithTag(AccountE2eIds.DISCONNECT_BUTTON).performClick()
+            rule.onAllNodesWithText(EnFeedFlowStrings.accountDisconnectButton)[1]
+                .performSemanticsAction(SemanticsActions.OnClick) { it() }
+            rule.runOnIdle {
+                assertEquals(attempt + 1, disconnectRequests)
+                // The disconnect fails: the account is still linked.
+                uiState.value = AccountConnectionUiState.Linked(AccountSyncUIState.None)
+            }
+        }
     }
 
     @Test

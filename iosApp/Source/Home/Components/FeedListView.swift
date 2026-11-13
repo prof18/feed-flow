@@ -340,7 +340,7 @@ struct FeedListView: View {
             }
             .sorted { $0.minY < $1.minY }
             .map {
-                VisibleFeedItem(id: $0.id, index: Int32($0.index))
+                VisibleFeedItemSnapshot(id: $0.id, index: $0.index)
             }
         indexHolder.visibleItemsChanged(visibleItems)
     }

@@ -72,7 +72,8 @@ class FeedSourcesRepositoryYouTubeTest : KoinTestBase() {
         assertIs<FeedAddedState.FeedAdded>(repository.addFeedSource("youtube.com/watch?v=x&list=PL_test", null, false))
         assertEquals(feed, databaseHelper.getFeedSources().single().url)
         assertEquals(listOf(feed), rss.requestedUrls)
-        assertEquals(emptyList(), html.requestedUrls)
+        // The only page read is youtube.com, for its favicon.
+        assertEquals(listOf(YOUTUBE_HOME), html.requestedUrls)
     }
 
     @Test
@@ -307,7 +308,8 @@ class FeedSourcesRepositoryYouTubeTest : KoinTestBase() {
         assertIs<FeedAddedState.FeedAdded>(result)
         assertEquals(FEED_URL, databaseHelper.getFeedSources().single().url)
         assertEquals(listOf(FEED_URL), rss.requestedUrls)
-        assertEquals(emptyList(), html.requestedUrls)
+        // The only page read is youtube.com, for its favicon.
+        assertEquals(listOf(YOUTUBE_HOME), html.requestedUrls)
     }
 
     @Test
@@ -335,7 +337,7 @@ class FeedSourcesRepositoryYouTubeTest : KoinTestBase() {
 
         assertIs<FeedAddedState.FeedAdded>(result)
         assertEquals(FEED_URL, databaseHelper.getFeedSources().single().url)
-        assertEquals(listOf("https://www.youtube.com/@channel"), html.requestedUrls)
+        assertEquals(listOf("https://www.youtube.com/@channel", YOUTUBE_HOME), html.requestedUrls)
         assertEquals(listOf(FEED_URL), rss.requestedUrls)
     }
 
@@ -441,5 +443,6 @@ class FeedSourcesRepositoryYouTubeTest : KoinTestBase() {
         const val FEED_URL = "https://www.youtube.com/feeds/videos.xml?channel_id=$CHANNEL_ID"
         const val FILTERED_URL = "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFsBjURrPoezykLs9EqgamOA"
         const val OTHER_FEED_URL = "https://example.com/other.xml"
+        const val YOUTUBE_HOME = "https://www.youtube.com"
     }
 }

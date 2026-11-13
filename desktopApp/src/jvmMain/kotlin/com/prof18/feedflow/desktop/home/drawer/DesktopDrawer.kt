@@ -405,6 +405,8 @@ fun DesktopDrawer(
                         onMoveFeedSourcesToCategory = onMoveFeedSourcesToCategory,
                         dragState = dragState,
                         showFeedSources = false,
+                        showDisclosure = categorySection.drawerFeedSources.isNotEmpty(),
+                        showEmptyHint = categorySection.members.isEmpty(),
                     )
                 }
 

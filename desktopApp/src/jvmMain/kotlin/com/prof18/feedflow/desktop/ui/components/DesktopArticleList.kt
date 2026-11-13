@@ -329,7 +329,7 @@ private fun ArticleFooter(
                 onClick = onNavigateNext,
                 style = wrappingStyle,
                 modifier = Modifier.heightIn(min = 36.dp),
-            ) { Text(nextFeedState.title) }
+            ) { Text(LocalFeedFlowStrings.current.nextFeedButton(nextFeedState.title)) }
         }
     }
 }

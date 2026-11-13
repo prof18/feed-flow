@@ -67,13 +67,13 @@ class ArticleFooterLayoutTest(private val layout: FeedLayout) {
     @Test
     fun `next source footer label fits at enlarged text size`() {
         setFooterContent()
-        assertLabelFitsInAllConfigurations(NEXT_SOURCE_TITLE)
+        assertLabelFitsInAllConfigurations(EnFeedFlowStrings.nextFeedButton(NEXT_SOURCE_TITLE))
     }
 
     @Test
     fun `long next source footer label wraps at enlarged text size`() {
         setFooterContent(nextSourceTitle = LONG_SOURCE_TITLE)
-        assertLabelFitsInAllConfigurations(LONG_SOURCE_TITLE)
+        assertLabelFitsInAllConfigurations(EnFeedFlowStrings.nextFeedButton(LONG_SOURCE_TITLE))
     }
 
     @Test
@@ -82,7 +82,7 @@ class ArticleFooterLayoutTest(private val layout: FeedLayout) {
         var navigated = 0
         setFooterContent(onMarkAll = { marked++ }, onNext = { navigated++ })
         val mark = rule.onNodeWithText(EnFeedFlowStrings.markAllReadButton)
-        val next = rule.onNodeWithText(NEXT_SOURCE_TITLE)
+        val next = rule.onNodeWithText(EnFeedFlowStrings.nextFeedButton(NEXT_SOURCE_TITLE))
         mark.requestFocus()
         mark.assertIsFocused().performKeyInput { pressKey(Key.Spacebar) }
         mark.performKeyInput { pressKey(Key.Tab) }

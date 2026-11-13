@@ -101,6 +101,41 @@ class FeedFetcherRepositoryLogoRefreshTest : FeedFetcherRepositoryTestBase() {
     }
 
     @Test
+    fun `resolves a missing logo of a feed that answered not modified`() = runTest(testDispatcher) {
+        insertSource(logoUrl = null)
+        fakeRssParserWrapper.notModified = true
+        fakeLogoRetriever.websiteLogo = ROTATED_LOGO
+
+        fetch()
+
+        assertEquals(ROTATED_LOGO, storedLogoUrl())
+        assertEquals(listOf<String?>(WEBSITE_URL), fakeLogoRetriever.websiteResolutions)
+    }
+
+    @Test
+    fun `resolves a not modified feed without a website from its feed url`() = runTest(testDispatcher) {
+        insertSource(logoUrl = null, websiteUrl = null)
+        fakeRssParserWrapper.notModified = true
+        fakeLogoRetriever.websiteLogo = ROTATED_LOGO
+
+        fetch()
+
+        assertEquals(ROTATED_LOGO, storedLogoUrl())
+        assertEquals(listOf<String?>(FEED_URL), fakeLogoRetriever.websiteResolutions)
+    }
+
+    @Test
+    fun `passes the feed url for a channel that declares no link`() = runTest(testDispatcher) {
+        insertSource(logoUrl = null, websiteUrl = null)
+        fakeLogoRetriever.channelLogo = ROTATED_LOGO
+
+        fetch(channelLink = null)
+
+        assertEquals(ROTATED_LOGO, storedLogoUrl())
+        assertEquals(listOf(FEED_URL), fakeLogoRetriever.channelFeedUrls)
+    }
+
+    @Test
     fun `drops the memoised lookups before a refresh starts`() = runTest(testDispatcher) {
         insertSource(logoUrl = STORED_LOGO)
         fakeLogoRetriever.availableUrls += STORED_LOGO
@@ -110,28 +145,28 @@ class FeedFetcherRepositoryLogoRefreshTest : FeedFetcherRepositoryTestBase() {
         assertTrue(fakeLogoRetriever.invalidationCount >= 1)
     }
 
-    private suspend fun TestScope.fetch() {
+    private suspend fun TestScope.fetch(channelLink: String? = WEBSITE_URL) {
         setupLocalAccount()
-        fakeRssParserWrapper.channelLink = WEBSITE_URL
+        fakeRssParserWrapper.channelLink = channelLink
         feedFetcherRepository.fetchFeeds(forceRefresh = true)
         advanceUntilIdle()
     }
 
-    private suspend fun insertSource(logoUrl: String?) {
-        databaseHelper.insertFeedSource(listOf(feedSource(logoUrl).toParsedFeedSource()))
+    private suspend fun insertSource(logoUrl: String?, websiteUrl: String? = WEBSITE_URL) {
+        databaseHelper.insertFeedSource(listOf(feedSource(logoUrl, websiteUrl).toParsedFeedSource()))
     }
 
     private suspend fun storedLogoUrl(): String? =
         databaseHelper.getFeedSources().single { it.id == SOURCE_ID }.logoUrl
 
-    private fun feedSource(logoUrl: String?): FeedSource = FeedSource(
+    private fun feedSource(logoUrl: String?, websiteUrl: String?): FeedSource = FeedSource(
         id = SOURCE_ID,
         url = FEED_URL,
         title = "Logo Feed",
         category = null,
         lastSyncTimestamp = null,
         logoUrl = logoUrl,
-        websiteUrl = WEBSITE_URL,
+        websiteUrl = websiteUrl,
         fetchFailed = false,
         articleOpenMode = ArticleOpenMode.DEFAULT,
         isHiddenFromTimeline = false,
@@ -153,14 +188,16 @@ private class FakeFeedSourceLogoRetriever : FeedSourceLogoRetriever {
     val availableUrls = mutableSetOf<String>()
     val availabilityChecks = mutableListOf<String>()
     val channelResolutions = mutableListOf<String?>()
+    val channelFeedUrls = mutableListOf<String>()
     val websiteResolutions = mutableListOf<String?>()
     var channelLogo: String? = null
     var websiteLogo: String? = null
     var invalidationCount = 0
         private set
 
-    override suspend fun getFeedSourceLogoUrl(rssChannel: RssChannel): String? {
+    override suspend fun getFeedSourceLogoUrl(rssChannel: RssChannel, feedUrl: String): String? {
         channelResolutions += rssChannel.link
+        channelFeedUrls += feedUrl
         return channelLogo
     }
 

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -221,6 +222,8 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
     headerModifier: Modifier = Modifier,
     disclosureModifier: Modifier = Modifier,
     showFeedSources: Boolean = true,
+    showDisclosure: Boolean = true,
+    showEmptyHint: Boolean = false,
     topSpacing: Dp = 0.dp,
 ) {
     var headerPosition by remember { mutableStateOf(Offset.Zero) }
@@ -349,16 +352,29 @@ internal fun DesktopDrawerFeedSourceByCategoryItem(
             } else {
                 strings.desktopExpandFeedCategory(headerText)
             }
-            Tooltip(tooltip = { Text(disclosureLabel) }) {
-                IconButton(onClick = onCategoryExpand, modifier = disclosureModifier.size(24.dp)) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                        contentDescription = disclosureLabel,
-                        modifier = Modifier.size(16.dp).rotate(degrees),
-                        tint = JewelTheme.globalColors.text.normal,
-                    )
+            if (showDisclosure) {
+                Tooltip(tooltip = { Text(disclosureLabel) }) {
+                    IconButton(onClick = onCategoryExpand, modifier = disclosureModifier.size(24.dp)) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                            contentDescription = disclosureLabel,
+                            modifier = Modifier.size(16.dp).rotate(degrees),
+                            tint = JewelTheme.globalColors.text.normal,
+                        )
+                    }
                 }
+            } else {
+                Spacer(Modifier.size(24.dp))
             }
+        }
+
+        if (showEmptyHint) {
+            Text(
+                text = LocalFeedFlowStrings.current.emptyCategoryHint,
+                style = DesktopDesignTokens.metadataText,
+                color = JewelTheme.globalColors.text.info,
+                modifier = Modifier.padding(start = 20.dp, end = 8.dp, top = 6.dp, bottom = 8.dp),
+            )
         }
 
         if (showFeedSources) {

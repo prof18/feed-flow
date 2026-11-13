@@ -6,7 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.desktop.testing.NativeDesktopWindowFixture
 import com.prof18.feedflow.desktop.testing.NativeDesktopWindowFixtureRule
@@ -38,7 +37,7 @@ class SnackbarHostTest {
                     )
                 }
                 Box(Modifier.width(500.dp)) {
-                    SnackbarHost(state, Modifier.testTag(FEEDBACK_TAG))
+                    SnackbarHost(state)
                 }
             }
         }
@@ -57,7 +56,7 @@ class SnackbarHostTest {
     @Test
     fun `swiping feedback dismisses it and releases the pending message`() = runSpectreTest {
         val automator = spectre.automator
-        val feedback = automator.awaitVisibleNode(FEEDBACK_TAG)
+        val feedback = automator.awaitVisibleNode(FeedbackToastTag)
         automator.focusWindow(feedback)
         val center = feedback.centerOnScreen
         val halfWidth = feedback.boundsOnScreen.width / SWIPE_WIDTH_DIVISOR
@@ -67,12 +66,11 @@ class SnackbarHostTest {
             endX = center.x + halfWidth,
             endY = center.y,
         )
-        automator.waitUntilGone(tag = FEEDBACK_TAG)
+        automator.waitUntilGone(tag = FeedbackToastTag)
         SwingUtilities.invokeAndWait { assertNull(state.currentFeedback) }
     }
 
     private companion object {
-        const val FEEDBACK_TAG = "feedback"
         const val SWIPE_WIDTH_DIVISOR = 3
     }
 }

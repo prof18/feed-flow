@@ -2,6 +2,7 @@ package com.prof18.feedflow.shared.presentation
 
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCategory
 import com.prof18.feedflow.core.model.FeedSourceSettings
@@ -121,7 +122,7 @@ class EditFeedViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `editFeed saves keep unread on scroll`() = runTest {
+    fun `keep unread on scroll is saved without editFeed`() = runTest {
         val feedSource = createFeedSource(
             id = "source-save-keep-unread",
             title = "Newsletter",
@@ -134,13 +135,129 @@ class EditFeedViewModelTest : KoinTestBase() {
         viewModel.updateIsKeepUnreadOnScrollEnabled(true)
         advanceUntilIdle()
 
-        viewModel.feedEditedState.test {
-            viewModel.editFeed()
-            assertEquals(FeedEditedState.Loading, awaitItem())
-            assertEquals(FeedEditedState.FeedEdited("Newsletter"), awaitItem())
-        }
-
         assertTrue(databaseHelper.isKeepUnreadOnScrollEnabled(feedSource.id))
+    }
+
+    @Test
+    fun `preference switches are saved without editFeed`() = runTest {
+        val feedSource = createFeedSource(
+            id = "source-instant-preferences",
+            title = "Instant",
+        )
+        insertFeedSource(feedSource)
+
+        viewModel.loadFeedToEdit(feedSource)
+        advanceUntilIdle()
+
+        viewModel.updateArticleOpenMode(ArticleOpenMode.PREFERRED_BROWSER)
+        viewModel.updateIsHiddenFromTimeline(true)
+        viewModel.updateIsPinned(true)
+        viewModel.updateIsNotificationEnabled(true)
+        viewModel.updateIsHideImagesEnabled(true)
+        advanceUntilIdle()
+
+        val updatedFeedSource = databaseHelper.getFeedSource(feedSource.id)
+        assertNotNull(updatedFeedSource)
+        assertEquals(ArticleOpenMode.PREFERRED_BROWSER, updatedFeedSource.articleOpenMode)
+        assertTrue(updatedFeedSource.isHiddenFromTimeline)
+        assertTrue(updatedFeedSource.isPinned)
+        assertTrue(updatedFeedSource.isNotificationEnabled)
+        assertTrue(updatedFeedSource.isHideImagesEnabled)
+    }
+
+    @Test
+    fun `setting a switch to its current value does nothing`() = runTest {
+        val feedSource = createFeedSource(id = "source-unchanged", title = "Unchanged", isPinned = true)
+        insertFeedSource(feedSource)
+        databaseHelper.insertFeedSourcePreference(
+            feedSourceId = feedSource.id,
+            articleOpenMode = feedSource.articleOpenMode,
+            isHidden = false,
+            isPinned = true,
+            isNotificationEnabled = false,
+            isHideImagesEnabled = false,
+        )
+
+        viewModel.loadFeedToEdit(feedSource)
+        advanceUntilIdle()
+
+        viewModel.feedEditedState.test {
+            viewModel.updateIsPinned(true)
+            viewModel.updateIsHiddenFromTimeline(false)
+            viewModel.updateArticleOpenMode(feedSource.articleOpenMode)
+            viewModel.updateIsKeepUnreadOnScrollEnabled(false)
+            advanceUntilIdle()
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `hasUnsavedChangesState is false after load and after a switch`() = runTest {
+        val feedSource = createFeedSource(id = "source-clean", title = "Clean")
+        insertFeedSource(feedSource)
+
+        viewModel.loadFeedToEdit(feedSource)
+        advanceUntilIdle()
+        assertFalse(viewModel.hasUnsavedChangesState.value)
+
+        viewModel.updateIsPinned(true)
+        advanceUntilIdle()
+        assertFalse(viewModel.hasUnsavedChangesState.value)
+    }
+
+    @Test
+    fun `hasUnsavedChangesState follows the name`() = runTest {
+        val feedSource = createFeedSource(id = "source-dirty-name", title = "Old Name")
+        insertFeedSource(feedSource)
+
+        viewModel.loadFeedToEdit(feedSource)
+        advanceUntilIdle()
+
+        viewModel.updateFeedNameTextFieldValue("New Name")
+        advanceUntilIdle()
+        assertTrue(viewModel.hasUnsavedChangesState.value)
+
+        viewModel.updateFeedNameTextFieldValue("Old Name")
+        advanceUntilIdle()
+        assertFalse(viewModel.hasUnsavedChangesState.value)
+    }
+
+    @Test
+    fun `hasUnsavedChangesState follows the URL`() = runTest {
+        val feedSource = createFeedSource(id = "source-dirty-url", title = "Url Feed")
+        insertFeedSource(feedSource)
+
+        viewModel.loadFeedToEdit(feedSource)
+        advanceUntilIdle()
+
+        viewModel.updateFeedUrlTextFieldValue("https://example.com/other/rss.xml")
+        advanceUntilIdle()
+        assertTrue(viewModel.hasUnsavedChangesState.value)
+
+        viewModel.updateFeedUrlTextFieldValue(feedSource.url)
+        advanceUntilIdle()
+        assertFalse(viewModel.hasUnsavedChangesState.value)
+    }
+
+    @Test
+    fun `hasUnsavedChangesState follows the category`() = runTest {
+        val tech = FeedSourceCategory(id = "category-tech", title = "Tech")
+        val news = FeedSourceCategory(id = "category-news", title = "News")
+        databaseHelper.insertCategories(listOf(tech, news))
+        val feedSource = createFeedSource(id = "source-dirty-category", title = "Category Feed", category = tech)
+        insertFeedSource(feedSource)
+
+        viewModel.loadFeedToEdit(feedSource)
+        advanceUntilIdle()
+        assertFalse(viewModel.hasUnsavedChangesState.value)
+
+        viewModel.onCategorySelected(CategoryId(news.id))
+        advanceUntilIdle()
+        assertTrue(viewModel.hasUnsavedChangesState.value)
+
+        viewModel.onCategorySelected(CategoryId(tech.id))
+        advanceUntilIdle()
+        assertFalse(viewModel.hasUnsavedChangesState.value)
     }
 
     @Test

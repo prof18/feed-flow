@@ -12,6 +12,7 @@ import SwiftUI
 struct EditFeedScreenContent: View {
     @State private var showCategorySheet = false
     @State private var showDeleteFeedDialog = false
+    @State private var showDiscardDialog = false
     @FocusState private var isTextFieldFocused: Bool
 
     @Binding var feedURL: String
@@ -47,6 +48,8 @@ struct EditFeedScreenContent: View {
     let addFeed: () -> Void
     let updateCategoryName: (String, String) -> Void
     let onDeleteFeed: () -> Void
+    let hasUnsavedChanges: Bool
+    let onClose: () -> Void
 
     var body: some View {
         Form {
@@ -234,10 +237,39 @@ struct EditFeedScreenContent: View {
             updateFeedNameTextFieldValue(feedName)
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                saveButton
+            if hasUnsavedChanges {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(feedFlowStrings.cancelButton) {
+                        showDiscardDialog = true
+                    }
+                    .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.cancelButton)
+                    .confirmationDialog(
+                        feedFlowStrings.discardChangesDialogTitle,
+                        isPresented: $showDiscardDialog,
+                        titleVisibility: .visible
+                    ) {
+                        Button(feedFlowStrings.discardChangesConfirmButton, role: .destructive) {
+                            onClose()
+                        }
+                        Button(feedFlowStrings.keepEditingButton, role: .cancel) {}
+                    } message: {
+                        Text(feedFlowStrings.discardChangesDialogMessage)
+                    }
+                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                if hasUnsavedChanges {
+                    saveButton
+                } else {
+                    Button(feedFlowStrings.actionDone) {
+                        onClose()
+                    }
+                    .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.doneButton)
+                }
             }
         }
+        .navigationBarBackButtonHidden(hasUnsavedChanges)
+        .interactiveDismissDisabled(hasUnsavedChanges)
     }
 
     private var feedUrlSection: some View {
@@ -300,6 +332,6 @@ struct EditFeedScreenContent: View {
             }
         }
         .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.saveButton)
-        .disabled(feedURL.isEmpty)
+        .disabled(feedURL.isEmpty || isAddingFeed)
     }
 }

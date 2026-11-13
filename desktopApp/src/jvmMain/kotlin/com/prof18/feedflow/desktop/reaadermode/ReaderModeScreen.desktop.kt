@@ -78,6 +78,7 @@ import com.prof18.feedflow.desktop.main.ArticleMenuCommands
 import com.prof18.feedflow.desktop.main.LocalDesktopMenuCommands
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackTone
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import com.prof18.feedflow.desktop.ui.components.DesktopPopupMenu
@@ -138,6 +139,7 @@ internal fun ReaderModeScreen(
                 snackbarHostState.showFeedback(
                     message = strings.browserLaunchError,
                     duration = DesktopFeedbackDuration.Short,
+                    tone = DesktopFeedbackTone.Error,
                 )
             }
         }
@@ -169,6 +171,7 @@ internal fun ReaderModeScreen(
                 snackbarHostState.showFeedback(
                     message = strings.linkCopiedSuccess,
                     duration = DesktopFeedbackDuration.Short,
+                    tone = DesktopFeedbackTone.Success,
                 )
             }
         }

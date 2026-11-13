@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import com.prof18.feedflow.core.model.AccountConnectionUiState
+import com.prof18.feedflow.core.model.AccountSyncUIState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
@@ -100,6 +101,42 @@ class AccountConnectionObserverTest {
             assertEquals(0, handledMessages)
             assertEquals(0, draft?.connectionErrorRevision)
         }
+    }
+
+    @Test
+    fun `sync failure after linking survives the next linked state and a new sync clears it`() {
+        val uiState = MutableStateFlow<AccountConnectionUiState>(AccountConnectionUiState.Unlinked)
+        val messages = MutableSharedFlow<TestConnectionMessage>(extraBufferCapacity = 1)
+        var draft: CredentialsState? = null
+        rule.setContent {
+            val ownerScope = rememberCoroutineScope()
+            val rememberedDraft = remember { CredentialsState(ownerScope) }
+            SideEffect { draft = rememberedDraft }
+            ObserveAccountConnection(rememberedDraft, uiState, messages) { message ->
+                if (message is TestConnectionMessage.Failure) {
+                    rememberedDraft.connectionError = message.message
+                    rememberedDraft.syncError = message.message
+                }
+            }
+        }
+
+        rule.waitUntil(timeoutMillis = 5_000) {
+            messages.subscriptionCount.value > 0 && uiState.subscriptionCount.value > 0
+        }
+        // The order a first sync fails in: linked and loading, the failure, then linked and idle.
+        rule.runOnIdle { uiState.value = AccountConnectionUiState.Linked(AccountSyncUIState.Loading) }
+        rule.waitForIdle()
+        messages.tryEmit(TestConnectionMessage.Failure("First sync failed"))
+        rule.waitUntil(timeoutMillis = 5_000) { draft?.syncError == "First sync failed" }
+        rule.runOnIdle { uiState.value = AccountConnectionUiState.Linked(AccountSyncUIState.None) }
+        rule.waitForIdle()
+        rule.runOnIdle {
+            assertEquals("First sync failed", draft?.syncError)
+            assertEquals(null, draft?.connectionError)
+        }
+
+        rule.runOnIdle { uiState.value = AccountConnectionUiState.Linked(AccountSyncUIState.Loading) }
+        rule.waitUntil(timeoutMillis = 5_000) { draft?.syncError == null }
     }
 
     @Test

@@ -600,4 +600,6 @@
     <string name="feed_suggestion_added_message">%s đã được thêm vào %s</string>
     <string name="feed_suggestion_added_to">Đã thêm vào %s</string>
     <string name="feed_suggestion_undo">Hoàn tác</string>
+    <string name="share_no_feed_link_found">Không tìm thấy nguồn tin trong nội dung được chia sẻ.</string>
+    <string name="share_open_in_feedflow">Mở trong FeedFlow</string>
 </resources>

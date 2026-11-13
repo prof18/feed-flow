@@ -2,7 +2,6 @@ package com.prof18.feedflow.android.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
@@ -64,8 +62,7 @@ fun HomeFloatingToolbar(
     onDrawerMenuClick: () -> Unit,
     onMarkAllReadClicked: () -> Unit,
     onClearOldArticlesClicked: () -> Unit,
-    onClick: () -> Unit,
-    onDoubleClick: () -> Unit,
+    onRefreshClick: () -> Unit,
     onSearchClick: () -> Unit,
     onEditFeedClick: (FeedSource) -> Unit,
     onBackupClick: () -> Unit,
@@ -93,13 +90,7 @@ fun HomeFloatingToolbar(
     ) {
         Surface(
             modifier = Modifier
-                .weight(1f, fill = false)
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = { onClick() },
-                        onDoubleTap = { onDoubleClick() },
-                    )
-                },
+                .weight(1f, fill = false),
             shape = FloatingToolbarDefaults.ContainerShape,
             color = toolbarContainerColor,
             contentColor = MaterialTheme.colorScheme.onSurface,
@@ -193,6 +184,7 @@ fun HomeFloatingToolbar(
                         showMenu = showMenu,
                         feedFilter = currentFeedFilter,
                         closeMenu = { showMenu = false },
+                        onRefreshClick = onRefreshClick,
                         onMarkAllReadClicked = onMarkAllReadClicked,
                         onClearOldArticlesClicked = onClearOldArticlesClicked,
                         onEditFeedClick = { feedSource ->

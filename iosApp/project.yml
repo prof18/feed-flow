@@ -70,19 +70,19 @@ packages:
     exactVersion: 10.2.4
   Nuke:
     url: https://github.com/kean/Nuke
-    exactVersion: 13.2.1
+    exactVersion: 13.2.3
   SwiftDraw:
     url: https://github.com/swhitty/SwiftDraw
     exactVersion: 0.29.0
   Collections:
     url: https://github.com/apple/swift-collections
-    exactVersion: 1.7.5
+    exactVersion: 1.7.6
   GoogleSignIn:
     url: https://github.com/google/GoogleSignIn-iOS
     exactVersion: 10.1.0
   GoogleAPIClientForREST:
     url: https://github.com/google/google-api-objectivec-client-for-rest
-    exactVersion: 5.5.0
+    exactVersion: 5.5.1
   TelemetryDeck:
     url: https://github.com/TelemetryDeck/SwiftSDK
     exactVersion: 2.14.2
@@ -90,7 +90,7 @@ packages:
     path: Packages/Reader
   RevenueCat:
     url: https://github.com/RevenueCat/purchases-ios-spm.git
-    exactVersion: 5.100.0
+    exactVersion: 5.103.0
 
 aggregateTargets:
   FeedFlowKitBuilder:
@@ -541,6 +541,7 @@ targets:
       - path: Source/App/BackgroundTaskCompletion.swift
       - path: Source/App/Model/SnackbarPresentation.swift
       - path: Source/Home/HomeListIndexHolder.swift
+      - path: Source/Home/VisibleFeedItemSnapshot.swift
       - path: Source/Settings/Components/BrowserURLBuilder.swift
       - path: Source/Utils/FeedConditionalGetURLProtocol.swift
       - path: Source/Utils/ShareableURL.swift

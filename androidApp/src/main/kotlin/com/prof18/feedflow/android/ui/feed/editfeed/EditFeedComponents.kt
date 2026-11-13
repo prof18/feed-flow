@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalContentColor
@@ -59,7 +58,6 @@ fun EditFeedContent(
     onKeepUnreadOnScrollToggled: (Boolean) -> Unit,
     isMarkReadWhenScrollingEnabled: Boolean,
     onPinnedToggled: (Boolean) -> Unit,
-    editFeed: () -> Unit,
     onCategorySelectorClick: () -> Unit,
     showDeleteDialog: Boolean,
     onShowDeleteDialog: () -> Unit,
@@ -316,29 +314,9 @@ fun EditFeedContent(
         }
 
         item {
-            Button(
-                modifier = Modifier
-                    .padding(top = Spacing.small)
-                    .padding(bottom = Spacing.regular)
-                    .testTag(FeedFormE2eIds.SAVE_BUTTON)
-                    .fillMaxWidth(),
-                enabled = feedUrl.isNotBlank() && !showLoading,
-                onClick = editFeed,
-            ) {
-                if (showLoading) {
-                    CircularProgressIndicator(
-                        color = LocalContentColor.current,
-                        modifier = Modifier.size(ButtonDefaults.IconSize),
-                    )
-                } else {
-                    Text(LocalFeedFlowStrings.current.actionSave)
-                }
-            }
-        }
-
-        item {
             TextButton(
                 modifier = Modifier
+                    .padding(top = Spacing.small)
                     .padding(bottom = Spacing.regular)
                     .fillMaxWidth(),
                 onClick = onShowDeleteDialog,

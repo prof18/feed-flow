@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.prof18.feedflow.core.model.DrawerItem
 import com.prof18.feedflow.core.model.DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper
+import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.NavDrawerState
 
 internal fun projectDesktopFeedTree(drawer: NavDrawerState): DesktopFeedTreeProjection {
@@ -62,6 +63,13 @@ internal fun projectDesktopFeedTree(drawer: NavDrawerState): DesktopFeedTreeProj
         }
     }.sortedBy { it.position }
     return DesktopFeedTreeProjection(pinned, sections)
+}
+
+internal fun isCategoryWithoutFeeds(drawer: NavDrawerState, filter: FeedFilter): Boolean {
+    if (filter !is FeedFilter.Category) return false
+    val section = projectDesktopFeedTree(drawer).sections
+        .firstOrNull { it.id == "category:${filter.feedCategory.id}" }
+    return section != null && section.members.isEmpty()
 }
 
 // Navigation and management windows share application-scoped UI preferences.

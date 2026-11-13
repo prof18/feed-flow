@@ -35,6 +35,7 @@ import com.prof18.feedflow.shared.presentation.model.HomeDisplayState
 import com.prof18.feedflow.shared.presentation.model.NextFeedDisplayState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toImmutableList
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -139,6 +140,39 @@ class FeedSidebarExpansionTest {
         SOURCE_TITLES.forEach { rule.onNodeWithText(it, useUnmergedTree = true).assertDoesNotExist() }
     }
 
+    @Test
+    fun `category without feeds has no disclosure chevron and shows the drag hint`() {
+        val fixture = sidebarFixture(
+            extraCategories = listOf(FeedSourceCategory(id = "expansion-empty", title = EMPTY_TITLE, position = 1)),
+        )
+        rule.setContent {
+            CompositionLocalProvider(
+                LocalFeedFlowStrings provides EnFeedFlowStrings,
+                LocalDesktopFeedTreeState provides DesktopFeedTreeState(),
+            ) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    FeedSidebar(
+                        displayState = fixture.displayState,
+                        feedManagementActions = fixture.managementActions,
+                        onFeedFilterSelected = {},
+                        modifier = Modifier.requiredSize(width = 360.dp, height = 600.dp),
+                    )
+                }
+            }
+        }
+        rule.waitForIdle()
+
+        rule.onNodeWithText(EMPTY_TITLE, useUnmergedTree = true).assertExists()
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.desktopCollapseFeedCategory(EMPTY_TITLE))
+            .assertDoesNotExist()
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.desktopExpandFeedCategory(EMPTY_TITLE))
+            .assertDoesNotExist()
+        rule.onNodeWithContentDescription(EnFeedFlowStrings.desktopCollapseFeedCategory(CATEGORY_TITLE))
+            .assertExists()
+        // Only the empty category gets the hint, so exactly one node shows it.
+        rule.onNodeWithText(EnFeedFlowStrings.emptyCategoryHint, useUnmergedTree = true).assertExists()
+    }
+
     private fun sourceBounds(): Map<String, androidx.compose.ui.geometry.Rect> = SOURCE_TITLES.associateWith { title ->
         rule.onNodeWithText(title, useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
     }
@@ -159,7 +193,7 @@ class FeedSidebarExpansionTest {
         )
     }
 
-    private fun sidebarFixture(): SidebarFixture {
+    private fun sidebarFixture(extraCategories: List<FeedSourceCategory> = emptyList()): SidebarFixture {
         val category = FeedSourceCategory(id = "expansion-category", title = CATEGORY_TITLE, position = 0)
         val wrappedCategory = DrawerItem.DrawerFeedSource.FeedSourceCategoryWrapper(category)
         val sources = SOURCE_TITLES.mapIndexed { index, title ->
@@ -183,6 +217,9 @@ class FeedSidebarExpansionTest {
             )
         }
         val drawerState = NavDrawerState(
+            categories = extraCategories.map {
+                DrawerItem.DrawerCategory(category = it, unreadCount = 0)
+            }.toImmutableList(),
             feedSourcesByCategory = persistentMapOf(wrappedCategory to sources),
         )
         return SidebarFixture(
@@ -220,6 +257,7 @@ class FeedSidebarExpansionTest {
 
     private companion object {
         const val CATEGORY_TITLE = "Local research"
+        const val EMPTY_TITLE = "Empty shelf"
         const val SIDEBAR_TAG = "sidebar-expansion-regression"
         val SOURCE_TITLES = listOf("Local feed alpha", "Local feed beta", "Local feed gamma")
     }

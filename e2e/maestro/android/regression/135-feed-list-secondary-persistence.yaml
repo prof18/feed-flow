@@ -26,13 +26,13 @@ appId: com.prof18.feedflow.debug
 - tapOn: "Time format"
 - tapOn: "12 hours"
 - scrollUntilVisible:
-    element: "Left swipe"
+    element: "Swipe left"
     direction: DOWN
     timeout: 10000
-- tapOn: "Left swipe"
-- tapOn: "Toggle read"
-- tapOn: "Right swipe"
-- tapOn: "Toggle bookmark"
+- tapOn: "Swipe left"
+- tapOn: "Mark as read or unread"
+- tapOn: "Swipe right"
+- tapOn: "Add or remove bookmark"
 - tapOn:
     id: settings_back_button
 - tapOn:
@@ -59,8 +59,8 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - assertVisible: "12 hours"
 - scrollUntilVisible:
-    element: "Left swipe"
+    element: "Swipe left"
     direction: DOWN
     timeout: 10000
-- assertVisible: "Toggle read"
-- assertVisible: "Toggle bookmark"
+- assertVisible: "Mark as read or unread"
+- assertVisible: "Add or remove bookmark"

@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalUriHandler
 import com.prof18.feedflow.core.model.AccountConnectionUiState
 import com.prof18.feedflow.core.model.DropboxSynMessages
@@ -13,12 +12,9 @@ import com.prof18.feedflow.desktop.accounts.CloudAccountContent
 import com.prof18.feedflow.desktop.accounts.CredentialsState
 import com.prof18.feedflow.desktop.accounts.DropboxAuthorizationForm
 import com.prof18.feedflow.desktop.accounts.ObserveAccountConnection
-import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
-import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.utils.openUriSafely
 import com.prof18.feedflow.shared.presentation.DropboxSyncViewModel
-import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -27,19 +23,17 @@ internal fun DropboxSyncScreen(
 ) {
     val viewModel = koinViewModel<DropboxSyncViewModel>()
     val uiState by viewModel.dropboxConnectionUiState.collectAsState()
-    val snackbarHostState = remember { DesktopFeedbackState() }
     val uriHandler = LocalUriHandler.current
     val strings = LocalFeedFlowStrings.current
-    val scope = rememberCoroutineScope()
     val fallbackDraft = remember { CredentialsState() }
     val draft = credentialsState ?: fallbackDraft
 
     fun showError(message: String) {
         draft.connectionError = message
+        draft.syncError = message
         draft.connectionErrorRevision++
         draft.submissionPending = false
         draft.authCodePending = false
-        scope.launch { snackbarHostState.showFeedback(message, duration = DesktopFeedbackDuration.Short) }
     }
 
     ObserveAccountConnection(
@@ -58,7 +52,7 @@ internal fun DropboxSyncScreen(
         }
     }
 
-    AccountScreen(snackbarHostState) {
+    AccountScreen {
         DropboxAccountContent(
             uiState = uiState,
             credentialsState = draft,
@@ -100,10 +94,12 @@ internal fun DropboxAccountContent(
                 errorMessage = credentialsState.connectionError,
                 onStartAuth = {
                     credentialsState.connectionError = null
+                    credentialsState.syncError = null
                     onStartAuth()
                 },
                 onConfirmCode = { code ->
                     credentialsState.connectionError = null
+                    credentialsState.syncError = null
                     onConfirmCode(code)
                 },
             )

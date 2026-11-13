@@ -452,7 +452,7 @@ internal class FeedSourcesRepository(
         val title = rssChannelMapper.getFeedTitle(rssChannel)
 
         if (title != null) {
-            val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
+            val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel, feedUrl = urlToSave)
 
             val parsedFeedSource = ParsedFeedSource(
                 id = urlToSave.hashCode().toString(),

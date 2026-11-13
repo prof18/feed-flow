@@ -9,6 +9,7 @@ appId: com.prof18.feedflow.dev
     id: e2e_seed_complete
 - tapOn:
     id: home_more_menu_button
+- assertVisible: "Refresh feeds"
 - assertVisible: "Sort & filter"
 - assertVisible: "Delete week-old articles"
 - tapOn: "Sort & filter"
@@ -33,3 +34,14 @@ appId: com.prof18.feedflow.dev
 - tapOn: "Confirm"
 - assertNotVisible:
     text: "E2E Old Article Eligible For Delete.*"
+
+# The Read filter hides Mark all as read and keeps Refresh feeds.
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_read
+- tapOn:
+    id: home_more_menu_button
+- assertVisible: "Refresh feeds"
+- assertNotVisible:
+    id: home_mark_all_read_menu_item

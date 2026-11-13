@@ -20,6 +20,7 @@ import com.prof18.feedflow.desktop.BrowserManager
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackDuration
 import com.prof18.feedflow.desktop.ui.DesktopFeedbackState
+import com.prof18.feedflow.desktop.ui.DesktopFeedbackTone
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopSearchScreenContent
 import com.prof18.feedflow.desktop.ui.components.DesktopSnackbarHost
@@ -66,6 +67,7 @@ internal fun SearchScreen(
                 snackbarHostState.showFeedback(
                     message = strings.browserLaunchError,
                     duration = DesktopFeedbackDuration.Short,
+                    tone = DesktopFeedbackTone.Error,
                 )
             }
         }
@@ -83,6 +85,7 @@ internal fun SearchScreen(
                             strings.databaseError(errorState.errorCode.code)
                         },
                         duration = DesktopFeedbackDuration.Short,
+                        tone = DesktopFeedbackTone.Error,
                     )
                 }
 
@@ -90,6 +93,7 @@ internal fun SearchScreen(
                     snackbarHostState.showFeedback(
                         message = strings.syncErrorMessage(errorState.errorCode),
                         duration = DesktopFeedbackDuration.Short,
+                        tone = DesktopFeedbackTone.Error,
                     )
                 }
 
@@ -97,6 +101,7 @@ internal fun SearchScreen(
                     snackbarHostState.showFeedback(
                         message = strings.deleteFeedSourceError,
                         duration = DesktopFeedbackDuration.Short,
+                        tone = DesktopFeedbackTone.Error,
                     )
                 }
             }

@@ -28,13 +28,13 @@ appId: com.prof18.feedflow.dev
 - tapOn: "Time format"
 - tapOn: "12 hours"
 - scrollUntilVisible:
-    element: "Left swipe"
+    element: "Swipe left"
     direction: DOWN
     timeout: 10000
-- tapOn: "Left swipe"
-- tapOn: "Toggle read"
-- tapOn: "Right swipe"
-- tapOn: "Toggle bookmark"
+- tapOn: "Swipe left"
+- tapOn: "Mark as read or unread"
+- tapOn: "Swipe right"
+- tapOn: "Add or remove bookmark"
 - tapOn:
     id: BackButton
 - tapOn:
@@ -61,8 +61,8 @@ appId: com.prof18.feedflow.dev
 - assertVisible: "Year-Month-Day"
 - assertVisible: "12 hours"
 - scrollUntilVisible:
-    element: "Left swipe"
+    element: "Swipe left"
     direction: DOWN
     timeout: 10000
-- assertVisible: "Toggle read"
-- assertVisible: "Toggle bookmark"
+- assertVisible: "Mark as read or unread"
+- assertVisible: "Add or remove bookmark"

@@ -8,4 +8,6 @@ enum EditFeedAccessibilityIdentifiers {
     static let pinnedToggle = "edit_feed_pinned_toggle"
     static let categorySelector = "edit_feed_category_selector"
     static let saveButton = "edit_feed_save"
+    static let doneButton = "edit_feed_done"
+    static let cancelButton = "edit_feed_cancel"
 }

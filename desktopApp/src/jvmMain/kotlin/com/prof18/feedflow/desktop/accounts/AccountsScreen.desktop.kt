@@ -19,7 +19,12 @@ import kotlinx.collections.immutable.toImmutableList
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun AccountsScreen(modifier: Modifier = Modifier, drafts: AccountDrafts = rememberAccountDrafts()) {
+internal fun AccountsScreen(
+    modifier: Modifier = Modifier,
+    drafts: AccountDrafts = rememberAccountDrafts(),
+    onBack: (() -> Unit)? = null,
+    backLabel: String = "",
+) {
     val viewModel = koinViewModel<AccountsViewModel>()
     val currentAccount by viewModel.accountsState.collectAsState()
     val supportedAccounts = remember(viewModel) { viewModel.getSupportedAccounts().toImmutableList() }
@@ -28,6 +33,8 @@ internal fun AccountsScreen(modifier: Modifier = Modifier, drafts: AccountDrafts
         supportedAccounts = supportedAccounts,
         modifier = modifier.fillMaxSize(),
         drafts = drafts,
+        onBack = onBack,
+        backLabel = backLabel,
     ) { account, _, _, credentials ->
         DesktopAccountDetail(account, credentials)
     }

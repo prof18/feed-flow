@@ -392,7 +392,10 @@ private fun FrameWindowScope.MainWindowContent(
                                 snackbarHostState = snackbarHostState,
                                 dialogWindowNavigator = dialogWindowNavigator,
                                 onAccountsRequested = {
-                                    dialogWindowNavigator.openSettings(DesktopSettingsCategory.ACCOUNTS)
+                                    dialogWindowNavigator.openSettings(
+                                        DesktopSettingsCategory.SYNC,
+                                        DesktopSettingsSection.ACCOUNTS,
+                                    )
                                 },
                                 onEditFeedRequested = { feedSource ->
                                     feedSourceToEdit = feedSource
@@ -445,7 +448,7 @@ private fun FrameWindowScope.MainWindowContent(
                     },
                     onImportExportClick = {
                         dialogWindowNavigator.openSettings(
-                            DesktopSettingsCategory.SYNC_STORAGE,
+                            DesktopSettingsCategory.FEEDS,
                             DesktopSettingsSection.IMPORT_EXPORT,
                         )
                     },
@@ -507,7 +510,7 @@ private fun EntryProviderScope<NavKey>.screens(
             snackbarHostState = snackbarHostState,
             onImportExportClick = {
                 dialogWindowNavigator.openSettings(
-                    DesktopSettingsCategory.SYNC_STORAGE,
+                    DesktopSettingsCategory.FEEDS,
                     DesktopSettingsSection.IMPORT_EXPORT,
                 )
             },

@@ -43,8 +43,8 @@ class SettingsPageRetentionTest {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
                     val draft = rememberBlockedWordDraft()
-                    SettingsContent(DesktopSettingsCategory.FILTERS) { category ->
-                        if (category == DesktopSettingsCategory.FILTERS) {
+                    SettingsContent(DesktopSettingsCategory.FEEDS) { category ->
+                        if (category == DesktopSettingsCategory.FEEDS) {
                             BlockedWordsContent(
                                 words = persistentListOf(),
                                 onAddWord = { word ->
@@ -73,13 +73,13 @@ class SettingsPageRetentionTest {
         }
         rule.onNodeWithTag(BlockedWordsE2eIds.INPUT).performTextReplacement("fixture")
         rule.onNodeWithTag(BlockedWordsE2eIds.ADD_BUTTON).performClick()
-        rule.onNodeWithText(EnFeedFlowStrings.settingsAccounts).performClick()
+        rule.onNodeWithText(EnFeedFlowStrings.settingsSyncAndRefresh).performClick()
         rule.runOnIdle {
             operations.value = persistentMapOf(
                 "fixture" to operations.value.getValue("fixture").copy(status = BlockedWordOperationStatus.Applied),
             )
         }
-        rule.onNodeWithText(EnFeedFlowStrings.settingsFilters).performClick()
+        rule.onNodeWithText(EnFeedFlowStrings.feedsTitle).performClick()
         rule.onNodeWithTag(BlockedWordsE2eIds.INPUT).assertTextEquals("")
         rule.runOnIdle { assertEquals(1, adds) }
     }
@@ -93,8 +93,8 @@ class SettingsPageRetentionTest {
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
-                    SettingsContent(DesktopSettingsCategory.SYNC_STORAGE) { category ->
-                        if (category == DesktopSettingsCategory.SYNC_STORAGE) {
+                    SettingsContent(DesktopSettingsCategory.FEEDS) { category ->
+                        if (category == DesktopSettingsCategory.FEEDS) {
                             ImportExportContent(
                                 feedImportExportState = operation.value,
                                 onRetryClick = {},
@@ -113,9 +113,9 @@ class SettingsPageRetentionTest {
             }
         }
         rule.onNodeWithText(EnFeedFlowStrings.exportStartedMessage).assertExists()
-        rule.onNodeWithText(EnFeedFlowStrings.settingsAccounts).performClick()
+        rule.onNodeWithText(EnFeedFlowStrings.settingsSyncAndRefresh).performClick()
         rule.runOnIdle { operation.value = FeedImportExportState.ExportSuccess }
-        rule.onNodeWithText(EnFeedFlowStrings.settingsSyncAndStorage).performClick()
+        rule.onNodeWithText(EnFeedFlowStrings.feedsTitle).performClick()
         rule.onNodeWithTag(ImportExportE2eIds.FEED_EXPORT_SUCCESS).assertExists()
         rule.runOnIdle { assertEquals(0, completions) }
         rule.onNodeWithTag(ImportExportE2eIds.DONE).performClick()

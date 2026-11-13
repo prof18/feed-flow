@@ -4,6 +4,7 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.desktop.accounts.desktopTitle
 import com.prof18.feedflow.desktop.accounts.isBackupProvider
 import com.prof18.feedflow.desktop.settings.DesktopSettingsCategory
+import com.prof18.feedflow.desktop.settings.DesktopSettingsSection
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import java.text.Normalizer
 import java.util.Locale
@@ -41,15 +42,31 @@ internal fun settingsSearchIndex(
         strings.settingsForceEnglish,
     )
 
-    val accounts = strings.settingsAccounts
-    page(DesktopSettingsCategory.ACCOUNTS, accounts)
+    val accounts = strings.settingsSyncAndRefresh
+    page(DesktopSettingsCategory.SYNC, accounts)
+    add(
+        SettingsSearchEntry(
+            category = DesktopSettingsCategory.SYNC,
+            title = strings.settingsAccounts,
+            pageTitle = accounts,
+            section = DesktopSettingsSection.ACCOUNTS,
+        ),
+    )
     supportedAccounts.filter { it != SyncAccounts.LOCAL }.distinct().forEach { account ->
         val section = if (account.isBackupProvider()) {
             strings.desktopAccountsBackupServicesTitle
         } else {
             strings.desktopAccountsReaderServicesTitle
         }
-        add(SettingsSearchEntry(DesktopSettingsCategory.ACCOUNTS, account.desktopTitle(strings), accounts, section))
+        add(
+            SettingsSearchEntry(
+                category = DesktopSettingsCategory.SYNC,
+                title = account.desktopTitle(strings),
+                pageTitle = strings.settingsAccounts,
+                sectionTitle = section,
+                section = DesktopSettingsSection.ACCOUNTS,
+            ),
+        )
     }
 
     val feedList = strings.settingsFeedListTitle
@@ -106,33 +123,54 @@ internal fun settingsSearchIndex(
         strings.readerModeLineHeight,
     )
 
-    val filters = strings.settingsFilters
-    page(DesktopSettingsCategory.FILTERS, filters)
-    page(DesktopSettingsCategory.FILTERS, filters, strings.settingsBlockedWords)
+    val feeds = strings.feedsTitle
+    page(DesktopSettingsCategory.FEEDS, feeds)
+    add(
+        SettingsSearchEntry(
+            category = DesktopSettingsCategory.FEEDS,
+            title = strings.importExportLabel,
+            pageTitle = feeds,
+            section = DesktopSettingsSection.IMPORT_EXPORT,
+        ),
+    )
+    add(
+        SettingsSearchEntry(
+            category = DesktopSettingsCategory.FEEDS,
+            title = strings.settingsBlockedWords,
+            pageTitle = feeds,
+            section = DesktopSettingsSection.BLOCKED_WORDS,
+        ),
+    )
 
-    val syncStorage = strings.settingsSyncAndStorage
-    page(DesktopSettingsCategory.SYNC_STORAGE, syncStorage)
     rows(
-        DesktopSettingsCategory.SYNC_STORAGE,
-        syncStorage,
-        null,
+        DesktopSettingsCategory.SYNC,
+        accounts,
+        strings.settingsRefreshSectionTitle,
         strings.settingsRefreshFeedsOnLaunch,
         strings.settingsDesktopRefreshWhileOpen,
-        strings.settingsAutoDelete,
-        strings.importExportLabel,
     )
     // The mobile apps call the same setting "Background sync"; keep that wording searchable on desktop.
     add(
         SettingsSearchEntry(
-            DesktopSettingsCategory.SYNC_STORAGE,
+            DesktopSettingsCategory.SYNC,
             strings.settingsSyncPeriod,
-            syncStorage,
+            accounts,
+            sectionTitle = strings.settingsRefreshSectionTitle,
             targetTitle = strings.settingsDesktopRefreshWhileOpen,
         ),
     )
+
+    val storage = strings.settingsStorage
+    page(DesktopSettingsCategory.STORAGE, storage)
     rows(
-        DesktopSettingsCategory.SYNC_STORAGE,
-        syncStorage,
+        DesktopSettingsCategory.STORAGE,
+        storage,
+        null,
+        strings.settingsAutoDelete,
+    )
+    rows(
+        DesktopSettingsCategory.STORAGE,
+        storage,
         strings.settingsDangerTitle,
         strings.clearOldArticlesButton,
         strings.settingsClearDownloadedArticles,
@@ -181,4 +219,6 @@ internal data class SettingsSearchEntry(
     val sectionTitle: String? = null,
     // Title of the row or SettingsSection to highlight; null only opens the page.
     val targetTitle: String? = null,
+    // Subpage of the category the entry lives in; null for the category's root page.
+    val section: DesktopSettingsSection? = null,
 )

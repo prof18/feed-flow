@@ -21,12 +21,15 @@ import com.prof18.feedflow.core.model.FeedLayout
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.desktop.DesktopConfig
+import com.prof18.feedflow.desktop.accounts.AccountDrafts
+import com.prof18.feedflow.desktop.accounts.desktopTitle
 import com.prof18.feedflow.desktop.accounts.rememberAccountDrafts
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.importexport.ImportExportFilePickers
 import com.prof18.feedflow.desktop.importexport.ImportExportScreen
 import com.prof18.feedflow.desktop.importexport.rememberImportExportFilePickerState
 import com.prof18.feedflow.desktop.main.DesktopDialogWindowNavigator
+import com.prof18.feedflow.desktop.settings.blocked.BlockedWordDraft
 import com.prof18.feedflow.desktop.settings.blocked.BlockedWordsScreen
 import com.prof18.feedflow.desktop.settings.blocked.rememberBlockedWordDraft
 import com.prof18.feedflow.desktop.settings.search.clearSettingsSearch
@@ -36,6 +39,7 @@ import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDialogWindow
 import com.prof18.feedflow.shared.data.DesktopHomeSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
+import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.AccountsViewModel
 import com.prof18.feedflow.shared.presentation.FeedListSettingsViewModel
 import com.prof18.feedflow.shared.presentation.ImportExportViewModel
@@ -108,6 +112,7 @@ internal fun SettingsWindow(
         val strings = LocalFeedFlowStrings.current
         val appConfig = remember { DI.koin.get<DesktopConfig>() }
         val supportedAccounts = remember(accountsViewModel) { accountsViewModel.getSupportedAccounts() }
+        val currentAccount by accountsViewModel.accountsState.collectAsState()
         // Same rule as FeedListPane's grid switch, which is only shown for these layouts.
         val isGridToggleVisible = feedListSettingsState.feedLayout == FeedLayout.CARD ||
             feedListSettingsState.feedLayout == FeedLayout.BIG_IMAGE
@@ -123,6 +128,7 @@ internal fun SettingsWindow(
             initialCategory = navigator.settingsCategory,
             sectionKey = navigator.settingsSection?.name,
             onCategorySelected = navigator::selectSettingsCategory,
+            onSectionSelected = navigator::selectSettingsSection,
             modifier = modifier,
             searchEntries = searchEntries,
             searchState = searchState,
@@ -141,7 +147,16 @@ internal fun SettingsWindow(
                     isHideUnreadCountEnabled = settingsState.isHideUnreadCountEnabled,
                     onHideUnreadCountToggled = menuBarViewModel::updateHideUnreadCount,
                 )
-                DesktopSettingsCategory.ACCOUNTS -> AccountsPane(accountDrafts)
+                DesktopSettingsCategory.SYNC -> SyncCategory(
+                    section = navigator.settingsSection,
+                    onSectionSelected = navigator::selectSettingsSection,
+                    accountDrafts = accountDrafts,
+                    currentAccountTitle = currentAccount.desktopTitle(strings),
+                    isRefreshFeedsOnLaunchEnabled = settingsState.isRefreshFeedsOnLaunchEnabled,
+                    syncPeriod = settingsState.syncPeriod,
+                    onRefreshFeedsOnLaunchToggled = menuBarViewModel::updateRefreshFeedsOnLaunch,
+                    onSyncPeriodSelected = menuBarViewModel::updateSyncPeriod,
+                )
                 DesktopSettingsCategory.FEED_LIST -> FeedListPane(
                     fontSizesState = fontSizesState,
                     settingsState = feedListSettingsState,
@@ -186,30 +201,26 @@ internal fun SettingsWindow(
                     readerTitleFontSize = readerFonts.titleFontSize,
                     onReaderTitleFontSizeChanged = settingsRepository::setReaderModeTitleFontSize,
                 )
-                DesktopSettingsCategory.FILTERS -> BlockedWordsScreen(blockedWordDraft)
-                DesktopSettingsCategory.SYNC_STORAGE -> {
-                    if (navigator.settingsSection == DesktopSettingsSection.IMPORT_EXPORT) {
+                DesktopSettingsCategory.FEEDS -> FeedsCategory(
+                    section = navigator.settingsSection,
+                    onSectionSelected = navigator::selectSettingsSection,
+                    blockedWordDraft = blockedWordDraft,
+                    importExport = {
                         ImportExportScreen(
                             onCloseRequest = { navigator.selectSettingsSection(null) },
                             triggerFeedFetch = triggerFeedFetch,
                             pickerState = pickerState,
                             viewModel = importExportViewModel,
                         )
-                    } else {
-                        SyncStoragePane(
-                            isRefreshFeedsOnLaunchEnabled = settingsState.isRefreshFeedsOnLaunchEnabled,
-                            autoDeletePeriod = settingsState.autoDeletePeriod,
-                            syncPeriod = settingsState.syncPeriod,
-                            onRefreshFeedsOnLaunchToggled = menuBarViewModel::updateRefreshFeedsOnLaunch,
-                            onSyncPeriodSelected = menuBarViewModel::updateSyncPeriod,
-                            onAutoDeletePeriodSelected = menuBarViewModel::updateAutoDeletePeriod,
-                            onClearDownloadedArticles = menuBarViewModel::clearDownloadedArticleContent,
-                            onImportExport = { navigator.selectSettingsSection(DesktopSettingsSection.IMPORT_EXPORT) },
-                            onClearOldArticles = onClearOldArticles,
-                            canClearOldArticles = canClearOldArticles,
-                        )
-                    }
-                }
+                    },
+                )
+                DesktopSettingsCategory.STORAGE -> StoragePane(
+                    autoDeletePeriod = settingsState.autoDeletePeriod,
+                    onAutoDeletePeriodSelected = menuBarViewModel::updateAutoDeletePeriod,
+                    onClearDownloadedArticles = menuBarViewModel::clearDownloadedArticleContent,
+                    onClearOldArticles = onClearOldArticles,
+                    canClearOldArticles = canClearOldArticles,
+                )
                 DesktopSettingsCategory.ABOUT -> AboutPane(
                     isCrashReportingEnabled = settingsState.isCrashReportingEnabled,
                     onCrashReportingToggled = { enabled ->
@@ -219,5 +230,62 @@ internal fun SettingsWindow(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun FeedsCategory(
+    section: DesktopSettingsSection?,
+    onSectionSelected: (DesktopSettingsSection?) -> Unit,
+    blockedWordDraft: BlockedWordDraft,
+    importExport: @Composable () -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    when (section) {
+        DesktopSettingsSection.IMPORT_EXPORT -> SettingsSubpage(
+            backLabel = strings.feedsTitle,
+            onBack = { onSectionSelected(null) },
+            content = importExport,
+        )
+        DesktopSettingsSection.BLOCKED_WORDS -> SettingsSubpage(
+            backLabel = strings.feedsTitle,
+            onBack = { onSectionSelected(null) },
+        ) {
+            BlockedWordsScreen(draft = blockedWordDraft)
+        }
+        else -> FeedsPane(
+            onImportExport = { onSectionSelected(DesktopSettingsSection.IMPORT_EXPORT) },
+            onBlockedWords = { onSectionSelected(DesktopSettingsSection.BLOCKED_WORDS) },
+        )
+    }
+}
+
+@Composable
+private fun SyncCategory(
+    section: DesktopSettingsSection?,
+    onSectionSelected: (DesktopSettingsSection?) -> Unit,
+    accountDrafts: AccountDrafts,
+    currentAccountTitle: String,
+    isRefreshFeedsOnLaunchEnabled: Boolean,
+    syncPeriod: SyncPeriod,
+    onRefreshFeedsOnLaunchToggled: (Boolean) -> Unit,
+    onSyncPeriodSelected: (SyncPeriod) -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    if (section == DesktopSettingsSection.ACCOUNTS) {
+        AccountsPane(
+            drafts = accountDrafts,
+            onBack = { onSectionSelected(null) },
+            backLabel = strings.settingsSyncAndRefresh,
+        )
+    } else {
+        SyncPane(
+            currentAccountTitle = currentAccountTitle,
+            onAccounts = { onSectionSelected(DesktopSettingsSection.ACCOUNTS) },
+            isRefreshFeedsOnLaunchEnabled = isRefreshFeedsOnLaunchEnabled,
+            syncPeriod = syncPeriod,
+            onRefreshFeedsOnLaunchToggled = onRefreshFeedsOnLaunchToggled,
+            onSyncPeriodSelected = onSyncPeriodSelected,
+        )
     }
 }

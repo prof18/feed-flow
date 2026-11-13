@@ -2,6 +2,7 @@ package com.prof18.feedflow.desktop.settings.search
 
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.desktop.settings.DesktopSettingsCategory
+import com.prof18.feedflow.desktop.settings.DesktopSettingsSection
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -59,8 +60,34 @@ class SettingsSearchIndexTest {
         assertTrue(entries.search(EnFeedFlowStrings.desktopAccountsIcloudTitle).isEmpty())
         val dropbox = entries.search("dropbox")
         assertEquals(1, dropbox.size)
-        assertEquals(DesktopSettingsCategory.ACCOUNTS, dropbox.single().category)
+        assertEquals(DesktopSettingsCategory.SYNC, dropbox.single().category)
         assertNull(dropbox.single().targetTitle)
+        assertEquals(DesktopSettingsSection.ACCOUNTS, dropbox.single().section)
+    }
+
+    @Test
+    fun refreshRowsBelongToSync() {
+        val entries = index()
+
+        assertEquals(
+            DesktopSettingsCategory.SYNC,
+            entries.single { it.title == EnFeedFlowStrings.settingsRefreshFeedsOnLaunch }.category,
+        )
+        assertEquals(
+            DesktopSettingsCategory.FEEDS,
+            entries.single { it.title == EnFeedFlowStrings.importExportLabel }.category,
+        )
+    }
+
+    @Test
+    fun feedsRowsOpenTheirSubpages() {
+        val entries = index()
+
+        val blockedWords = entries.single { it.title == EnFeedFlowStrings.settingsBlockedWords }
+        assertEquals(DesktopSettingsCategory.FEEDS, blockedWords.category)
+        assertEquals(DesktopSettingsSection.BLOCKED_WORDS, blockedWords.section)
+        val importExport = entries.single { it.title == EnFeedFlowStrings.importExportLabel }
+        assertEquals(DesktopSettingsSection.IMPORT_EXPORT, importExport.section)
     }
 
     @Test
@@ -101,11 +128,11 @@ class SettingsSearchIndexTest {
     fun `every page title is an entry without target`() {
         val pageTitles = mapOf(
             DesktopSettingsCategory.GENERAL to EnFeedFlowStrings.settingsAppTitle,
-            DesktopSettingsCategory.ACCOUNTS to EnFeedFlowStrings.settingsAccounts,
+            DesktopSettingsCategory.FEEDS to EnFeedFlowStrings.feedsTitle,
+            DesktopSettingsCategory.SYNC to EnFeedFlowStrings.settingsSyncAndRefresh,
+            DesktopSettingsCategory.STORAGE to EnFeedFlowStrings.settingsStorage,
             DesktopSettingsCategory.FEED_LIST to EnFeedFlowStrings.settingsFeedListTitle,
             DesktopSettingsCategory.READING to EnFeedFlowStrings.settingsReadingBehavior,
-            DesktopSettingsCategory.FILTERS to EnFeedFlowStrings.settingsFilters,
-            DesktopSettingsCategory.SYNC_STORAGE to EnFeedFlowStrings.settingsSyncAndStorage,
             DesktopSettingsCategory.ABOUT to EnFeedFlowStrings.settingsAboutAndSupport,
         )
         val entries = index()

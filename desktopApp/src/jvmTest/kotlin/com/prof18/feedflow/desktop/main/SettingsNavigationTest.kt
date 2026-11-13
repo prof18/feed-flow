@@ -11,10 +11,10 @@ class SettingsNavigationTest {
     @Test
     fun `settings shortcuts reuse one window and request activation of the target page`() {
         val navigator = DesktopDialogWindowNavigator()
-        navigator.openSettings(DesktopSettingsCategory.ACCOUNTS)
+        navigator.openSettings(DesktopSettingsCategory.SYNC)
         val firstActivation = navigator.settingsActivationRequest
-        navigator.openSettings(DesktopSettingsCategory.SYNC_STORAGE, DesktopSettingsSection.IMPORT_EXPORT)
-        assertEquals(DesktopSettingsCategory.SYNC_STORAGE, navigator.settingsCategory)
+        navigator.openSettings(DesktopSettingsCategory.FEEDS, DesktopSettingsSection.IMPORT_EXPORT)
+        assertEquals(DesktopSettingsCategory.FEEDS, navigator.settingsCategory)
         assertEquals(DesktopSettingsSection.IMPORT_EXPORT, navigator.settingsSection)
         assertEquals(1, DesktopDialogWindowDestination.entries.count(navigator::isOpen))
         assertTrue(navigator.settingsActivationRequest > firstActivation)
@@ -34,9 +34,9 @@ class SettingsNavigationTest {
     @Test
     fun `explicit page shortcut exits a nested settings section`() {
         val navigator = DesktopDialogWindowNavigator()
-        navigator.openSettings(DesktopSettingsCategory.SYNC_STORAGE, DesktopSettingsSection.IMPORT_EXPORT)
-        navigator.openSettings(DesktopSettingsCategory.FILTERS)
-        assertEquals(DesktopSettingsCategory.FILTERS, navigator.settingsCategory)
+        navigator.openSettings(DesktopSettingsCategory.FEEDS, DesktopSettingsSection.IMPORT_EXPORT)
+        navigator.openSettings(DesktopSettingsCategory.FEEDS)
+        assertEquals(DesktopSettingsCategory.FEEDS, navigator.settingsCategory)
         assertNull(navigator.settingsSection)
     }
 }

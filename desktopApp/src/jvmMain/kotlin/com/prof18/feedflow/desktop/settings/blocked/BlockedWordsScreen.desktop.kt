@@ -107,7 +107,7 @@ internal fun BlockedWordsContent(
         }
     }
     Column(modifier = modifier.fillMaxSize()) {
-        SettingsPage(title = strings.settingsFilters, modifier = Modifier.weight(1f)) {
+        SettingsPage(title = strings.settingsBlockedWords, modifier = Modifier.weight(1f)) {
             SettingsSection(title = strings.addWordPlaceholder, footer = strings.blockedWordsDescription) {
                 SettingsBlock {
                     BlockedWordInput(onAddWord, inputFocus, operationStates, draft)

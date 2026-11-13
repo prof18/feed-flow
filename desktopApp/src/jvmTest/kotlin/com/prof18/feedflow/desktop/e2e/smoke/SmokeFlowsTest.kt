@@ -333,14 +333,15 @@ class SmokeFlowsTest {
         flow.click(flow.awaitTagIn(settings, ImportExportE2eIds.DONE))
     }
 
-    // Filters pane: desktop settings/blocked/BlockedWordsScreen.desktop.kt (BlockedWordsE2eIds)
+    // Feeds → Blocked words subpage: desktop settings/blocked/BlockedWordsScreen.desktop.kt (BlockedWordsE2eIds)
     // search: desktop ui/components/DesktopSearchScreenContent.kt:283
     @Test
     fun `SM-012 blocked words`() {
         val flow = e2e.start(Seed.ContentRich)
         flow.awaitText(SEED_NEWEST_TITLE)
 
-        flow.openSettings(flow.strings.settingsFilters)
+        flow.openSettings(flow.strings.feedsTitle)
+        flow.clickIn(flow.strings.settingsTitle, flow.strings.settingsBlockedWords)
         flow.typeInto(flow.awaitTag(BlockedWordsE2eIds.INPUT), "Pixel")
         flow.clickTag(BlockedWordsE2eIds.ADD_BUTTON)
         flow.awaitTag(BlockedWordsE2eIds.row("Pixel"))
@@ -354,7 +355,8 @@ class SmokeFlowsTest {
         flow.assertAbsent(SEED_BOOKMARKED_UNREAD_TITLE)
         flow.assertAbsent(ARTICLE_WITH_COMMENTS)
 
-        flow.openSettings(flow.strings.settingsFilters)
+        flow.openSettings(flow.strings.feedsTitle)
+        flow.clickIn(flow.strings.settingsTitle, flow.strings.settingsBlockedWords)
         flow.clickTag(BlockedWordsE2eIds.deleteButton("Pixel"))
         flow.awaitTagGone(BlockedWordsE2eIds.row("Pixel"))
         flow.closeWindow(flow.strings.settingsTitle)

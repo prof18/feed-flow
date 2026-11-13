@@ -167,8 +167,8 @@ class DesktopAccountsContentTest {
     fun `returning from another settings category retains selected account detail`() {
         compose.setContent {
             TestTheme {
-                SettingsContent(DesktopSettingsCategory.ACCOUNTS) { category ->
-                    if (category == DesktopSettingsCategory.ACCOUNTS) {
+                SettingsContent(DesktopSettingsCategory.SYNC) { category ->
+                    if (category == DesktopSettingsCategory.SYNC) {
                         AccountsContent()
                     } else {
                         Text(category.name, Modifier.testTag(OTHER_CATEGORY_TAG))
@@ -179,7 +179,7 @@ class DesktopAccountsContentTest {
         compose.onNodeWithTag(AccountE2eIds.providerRow(SyncAccounts.MINIFLUX)).performClick()
         compose.onNodeWithText(EnFeedFlowStrings.settingsFeedListTitle).performClick()
         compose.onNodeWithTag(OTHER_CATEGORY_TAG).assertTextEquals(DesktopSettingsCategory.FEED_LIST.name)
-        compose.onNodeWithText(EnFeedFlowStrings.settingsAccounts).performClick()
+        compose.onNodeWithText(EnFeedFlowStrings.settingsSyncAndRefresh).performClick()
 
         compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(SyncAccounts.MINIFLUX.name)
     }
@@ -190,8 +190,8 @@ class DesktopAccountsContentTest {
         compose.setContent {
             TestTheme {
                 val drafts = rememberAccountDrafts()
-                SettingsContent(DesktopSettingsCategory.ACCOUNTS) { category ->
-                    if (category == DesktopSettingsCategory.ACCOUNTS) {
+                SettingsContent(DesktopSettingsCategory.SYNC) { category ->
+                    if (category == DesktopSettingsCategory.SYNC) {
                         DesktopAccountsContent(
                             currentAccount = SyncAccounts.LOCAL,
                             supportedAccounts = SUPPORTED_ACCOUNTS,
@@ -212,7 +212,7 @@ class DesktopAccountsContentTest {
         }
         compose.onNodeWithTag("account-username-draft").assertTextEquals("fixture-user")
         compose.onNodeWithText(EnFeedFlowStrings.settingsFeedListTitle).performClick()
-        compose.onNodeWithText(EnFeedFlowStrings.settingsAccounts).performClick()
+        compose.onNodeWithText(EnFeedFlowStrings.settingsSyncAndRefresh).performClick()
         compose.onNodeWithTag("account-username-draft").assertTextEquals("fixture-user")
     }
 

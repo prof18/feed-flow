@@ -66,11 +66,11 @@ class SettingsCategoryLayoutTest(
 
         val categories = listOf(
             DesktopSettingsCategory.GENERAL to EnFeedFlowStrings.settingsAppTitle,
-            DesktopSettingsCategory.ACCOUNTS to EnFeedFlowStrings.settingsAccounts,
+            DesktopSettingsCategory.FEEDS to EnFeedFlowStrings.feedsTitle,
+            DesktopSettingsCategory.SYNC to EnFeedFlowStrings.settingsSyncAndRefresh,
+            DesktopSettingsCategory.STORAGE to EnFeedFlowStrings.settingsStorage,
             DesktopSettingsCategory.FEED_LIST to EnFeedFlowStrings.settingsFeedListTitle,
             DesktopSettingsCategory.READING to EnFeedFlowStrings.settingsReadingBehavior,
-            DesktopSettingsCategory.FILTERS to EnFeedFlowStrings.settingsFilters,
-            DesktopSettingsCategory.SYNC_STORAGE to EnFeedFlowStrings.settingsSyncAndStorage,
             DesktopSettingsCategory.ABOUT to EnFeedFlowStrings.settingsAboutAndSupport,
         )
 

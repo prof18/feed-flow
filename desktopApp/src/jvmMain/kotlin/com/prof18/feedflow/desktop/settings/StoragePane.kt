@@ -6,49 +6,22 @@ import coil3.SingletonImageLoader
 import coil3.compose.LocalPlatformContext
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
-import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun SyncStoragePane(
-    isRefreshFeedsOnLaunchEnabled: Boolean,
+internal fun StoragePane(
     autoDeletePeriod: AutoDeletePeriod,
-    syncPeriod: SyncPeriod,
-    onRefreshFeedsOnLaunchToggled: (Boolean) -> Unit,
-    onSyncPeriodSelected: (SyncPeriod) -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     onClearDownloadedArticles: () -> Unit,
-    onImportExport: () -> Unit = {},
     onClearOldArticles: () -> Unit = {},
     canClearOldArticles: Boolean = true,
 ) {
     val strings = LocalFeedFlowStrings.current
     val context = LocalPlatformContext.current
     val scope = rememberCoroutineScope()
-    SettingsPage(title = strings.settingsSyncAndStorage) {
+    SettingsPage(title = strings.settingsStorage) {
         SettingsSection {
-            SettingsSwitch(
-                title = strings.settingsRefreshFeedsOnLaunch,
-                checked = isRefreshFeedsOnLaunchEnabled,
-                onCheckedChange = onRefreshFeedsOnLaunchToggled,
-            )
-            SettingsChoice(
-                title = strings.settingsDesktopRefreshWhileOpen,
-                supportingText = strings.settingsDesktopRefreshWhileOpenDescription,
-                selected = syncPeriod,
-                choices = persistentListOf(
-                    SyncPeriod.NEVER to strings.settingsSyncPeriodNever,
-                    SyncPeriod.FIFTEEN_MINUTES to strings.settingsSyncPeriodFifteenMinutes,
-                    SyncPeriod.THIRTY_MINUTES to strings.settingsSyncPeriodThirtyMinutes,
-                    SyncPeriod.ONE_HOUR to strings.settingsSyncPeriodOneHour,
-                    SyncPeriod.TWO_HOURS to strings.settingsSyncPeriodTwoHours,
-                    SyncPeriod.SIX_HOURS to strings.settingsSyncPeriodSixHours,
-                    SyncPeriod.TWELVE_HOURS to strings.settingsSyncPeriodTwelveHours,
-                    SyncPeriod.ONE_DAY to strings.settingsSyncPeriodOneDay,
-                ),
-                onSelected = onSyncPeriodSelected,
-            )
             SettingsChoice(
                 title = strings.settingsAutoDelete,
                 selected = autoDeletePeriod,
@@ -60,13 +33,6 @@ internal fun SyncStoragePane(
                     AutoDeletePeriod.ONE_MONTH to strings.settingsAutoDeletePeriodOneMonth,
                 ),
                 onSelected = onAutoDeletePeriodSelected,
-            )
-        }
-        SettingsSection {
-            SettingsActionRow(
-                title = strings.importExportLabel,
-                onClick = onImportExport,
-                showChevron = true,
             )
         }
         SettingsSection(title = strings.settingsDangerTitle) {

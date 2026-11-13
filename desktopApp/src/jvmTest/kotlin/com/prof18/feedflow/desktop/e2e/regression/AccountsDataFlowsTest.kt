@@ -1,6 +1,7 @@
 package com.prof18.feedflow.desktop.e2e.regression
 
 import com.prof18.feedflow.core.model.SyncAccounts
+import com.prof18.feedflow.desktop.accounts.ACCOUNT_PROVIDERS_TAG
 import com.prof18.feedflow.desktop.e2e.harness.DesktopE2eRule
 import com.prof18.feedflow.desktop.e2e.harness.Flow
 import com.prof18.feedflow.desktop.e2e.harness.SEED_NEWEST_TITLE
@@ -191,7 +192,7 @@ class AccountsDataFlowsTest {
     /**
      * Dropbox linked state: desktop accounts/AccountComponents.kt.
      *
-     * Not covered: the iCloud linked state; the iCloud entry is absent from the Accounts pane in this
+     * Not covered: the iCloud linked state; the iCloud entry is absent from the Sync & refresh pane in this
      * debug build (setupICloudSupport() in Main.kt).
      */
     @Test
@@ -251,7 +252,7 @@ class AccountsDataFlowsTest {
     }
 
     /**
-     * Not covered: the iCloud entry is absent from the Accounts pane in this debug build
+     * Not covered: the iCloud entry is absent from the Sync & refresh pane in this debug build
      * (setupICloudSupport() in Main.kt), so the unlink flow cannot run. The flow checks the entry is absent.
      */
     @Test
@@ -262,7 +263,7 @@ class AccountsDataFlowsTest {
     }
 
     /**
-     * Not covered: the iCloud Backup action, because the iCloud entry is absent from the Accounts pane in
+     * Not covered: the iCloud Backup action, because the iCloud entry is absent from the Sync & refresh pane in
      * this debug build (setupICloudSupport() in Main.kt).
      */
     @Test
@@ -350,7 +351,9 @@ class AccountsDataFlowsTest {
 
     private fun Flow.openAccounts() {
         awaitTag(MAIN_SURFACE_TAG)
-        openSettings(strings.settingsAccounts)
+        openSettings(strings.settingsSyncAndRefresh)
+        clickIn(SETTINGS, strings.settingsAccounts)
+        awaitTagIn(SETTINGS, ACCOUNT_PROVIDERS_TAG)
     }
 
     private fun Flow.provider(account: SyncAccounts) = awaitTagIn(SETTINGS, AccountE2eIds.providerRow(account))

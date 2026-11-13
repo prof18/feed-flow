@@ -34,12 +34,13 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.Feed
 import androidx.compose.material.icons.automirrored.outlined.ViewList
 import androidx.compose.material.icons.outlined.AutoStories
-import androidx.compose.material.icons.outlined.FilterAlt
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.ManageAccounts
+import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.runtime.Composable
@@ -109,6 +110,7 @@ internal fun SettingsContent(
     modifier: Modifier = Modifier,
     sectionKey: String? = null,
     onCategorySelected: (DesktopSettingsCategory) -> Unit = {},
+    onSectionSelected: (DesktopSettingsSection?) -> Unit = {},
     searchEntries: List<SettingsSearchEntry> = emptyList(),
     searchState: TextFieldState = rememberTextFieldState(),
     searchFocusRequester: FocusRequester = remember { FocusRequester() },
@@ -117,11 +119,11 @@ internal fun SettingsContent(
     val strings = LocalFeedFlowStrings.current
     val categories = listOf(
         DesktopSettingsCategory.GENERAL to strings.settingsAppTitle,
-        DesktopSettingsCategory.ACCOUNTS to strings.settingsAccounts,
+        DesktopSettingsCategory.FEEDS to strings.feedsTitle,
+        DesktopSettingsCategory.SYNC to strings.settingsSyncAndRefresh,
+        DesktopSettingsCategory.STORAGE to strings.settingsStorage,
         DesktopSettingsCategory.FEED_LIST to strings.settingsFeedListTitle,
         DesktopSettingsCategory.READING to strings.settingsReadingBehavior,
-        DesktopSettingsCategory.FILTERS to strings.settingsFilters,
-        DesktopSettingsCategory.SYNC_STORAGE to strings.settingsSyncAndStorage,
         DesktopSettingsCategory.ABOUT to strings.settingsAboutAndSupport,
     )
     val categoryListState = rememberSingleSelectionLazyListState(initialSelectedKey = initialCategory)
@@ -129,6 +131,7 @@ internal fun SettingsContent(
     val saveableStateHolder = rememberSaveableStateHolder()
     var selectedCategory by remember(initialCategory) { mutableStateOf(initialCategory) }
     val categorySelected by rememberUpdatedState(onCategorySelected)
+    val sectionSelected by rememberUpdatedState(onSectionSelected)
     val selectCategory: (DesktopSettingsCategory) -> Unit = { category ->
         categoryListState.selectedKeys = setOf(category)
         selectedCategory = category
@@ -148,6 +151,7 @@ internal fun SettingsContent(
     }
     val openResult: (SettingsSearchEntry) -> Unit = { entry ->
         selectCategory(entry.category)
+        entry.section?.let(sectionSelected)
         jumpId += 1
         // Always set, even without a target, so panes leave their subpages.
         jump = SettingsSearchJump(id = jumpId, targetTitle = entry.targetTitle)
@@ -278,15 +282,16 @@ private fun SettingsCategoryRow(
 
 private fun DesktopSettingsCategory.icon(): ImageVector = when (this) {
     DesktopSettingsCategory.GENERAL -> Icons.Outlined.Tune
-    DesktopSettingsCategory.ACCOUNTS -> Icons.Outlined.ManageAccounts
+    DesktopSettingsCategory.FEEDS -> Icons.AutoMirrored.Outlined.Feed
+    DesktopSettingsCategory.SYNC -> Icons.Outlined.Sync
+    DesktopSettingsCategory.STORAGE -> Icons.Outlined.Storage
     DesktopSettingsCategory.FEED_LIST -> Icons.AutoMirrored.Outlined.ViewList
     DesktopSettingsCategory.READING -> Icons.Outlined.AutoStories
-    DesktopSettingsCategory.FILTERS -> Icons.Outlined.FilterAlt
-    DesktopSettingsCategory.SYNC_STORAGE -> Icons.Outlined.Sync
     DesktopSettingsCategory.ABOUT -> Icons.Outlined.Info
 }
 
 internal const val SETTINGS_CATEGORIES_TAG = "settings-categories"
+internal const val SETTINGS_BACK_LINK_TAG = "settings-back-link"
 private val NAVIGATION_WIDTH = 216.dp
 private val NAVIGATION_MIN_WIDTH = 184.dp
 private val NAVIGATION_COMPACT_BREAKPOINT = 800.dp
@@ -735,3 +740,44 @@ private val SWITCH_HEIGHT = 20.dp
 private val SWITCH_THUMB = 16.dp
 private val SWITCH_INSET = 2.dp
 private const val DISABLED_ALPHA = 0.45f
+
+/** A settings page opened from a row of a category page, with a link back to that page. */
+@Composable
+internal fun SettingsSubpage(
+    backLabel: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Column(modifier.fillMaxSize()) {
+        SettingsBackLink(label = backLabel, onBack = onBack)
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            content()
+        }
+    }
+}
+
+@Composable
+internal fun SettingsBackLink(
+    label: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val color = JewelTheme.globalColors.outlines.focused
+    Row(
+        modifier = modifier
+            .padding(start = 20.dp, top = 8.dp)
+            .testTag(SETTINGS_BACK_LINK_TAG)
+            .clickable(role = Role.Button, onClick = onBack)
+            .padding(vertical = 4.dp, horizontal = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.size(18.dp),
+        )
+        Text(label, color = color)
+    }
+}

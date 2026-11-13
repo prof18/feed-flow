@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.desktop.settings.SettingsActionRow
+import com.prof18.feedflow.desktop.settings.SettingsBackLink
 import com.prof18.feedflow.desktop.settings.SettingsPage
 import com.prof18.feedflow.desktop.settings.SettingsRow
 import com.prof18.feedflow.desktop.settings.SettingsSection
@@ -58,6 +59,8 @@ internal fun DesktopAccountsContent(
     supportedAccounts: ImmutableList<SyncAccounts>,
     modifier: Modifier = Modifier,
     drafts: AccountDrafts = rememberAccountDrafts(),
+    onBack: (() -> Unit)? = null,
+    backLabel: String = "",
     detailContent: @Composable (SyncAccounts, () -> Unit, Boolean, CredentialsState) -> Unit,
 ) {
     val strings = LocalFeedFlowStrings.current
@@ -76,12 +79,18 @@ internal fun DesktopAccountsContent(
 
     Box(modifier.fillMaxSize()) {
         if (selected == null) {
-            AccountsOverview(
-                currentAccount = currentAccount,
-                providers = providers,
-                onOpen = open,
-                scrollState = overviewScrollState,
-            )
+            Column(Modifier.fillMaxSize()) {
+                if (onBack != null) {
+                    SettingsBackLink(label = backLabel, onBack = onBack)
+                }
+                AccountsOverview(
+                    currentAccount = currentAccount,
+                    providers = providers,
+                    onOpen = open,
+                    scrollState = overviewScrollState,
+                    modifier = Modifier.weight(1f),
+                )
+            }
         } else {
             AccountDetailPage(provider = selected, onBack = back) {
                 key(selected.account) {
@@ -98,10 +107,11 @@ private fun AccountsOverview(
     providers: ImmutableList<DesktopAccountPresentation>,
     onOpen: (SyncAccounts) -> Unit,
     scrollState: ScrollState,
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalFeedFlowStrings.current
     val isLocal = currentAccount == SyncAccounts.LOCAL
-    SettingsPage(title = strings.settingsAccounts, scrollState = scrollState) {
+    SettingsPage(title = strings.settingsAccounts, modifier = modifier, scrollState = scrollState) {
         SettingsSection(
             footer = if (isLocal) null else strings.desktopAccountsSingleProviderExplanation,
         ) {

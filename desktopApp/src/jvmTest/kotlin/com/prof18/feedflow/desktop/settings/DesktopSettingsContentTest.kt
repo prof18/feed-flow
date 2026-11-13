@@ -70,8 +70,8 @@ class DesktopSettingsContentTest {
             pressKey(Key.Enter)
         }
 
-        compose.onNodeWithText(EnFeedFlowStrings.settingsAccounts).assertIsSelected()
-        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.ACCOUNTS.name)
+        compose.onNodeWithText(EnFeedFlowStrings.feedsTitle).assertIsSelected()
+        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.FEEDS.name)
     }
 
     @Test
@@ -88,10 +88,10 @@ class DesktopSettingsContentTest {
     }
 
     @Test
-    fun `filters has a dedicated settings navigation page`() {
+    fun `feeds has a dedicated settings navigation page`() {
         compose.setContent { SettingsContent(DesktopSettingsCategory.GENERAL) }
-        compose.onNodeWithText("Filters").performClick()
-        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals("FILTERS")
+        compose.onNodeWithText(EnFeedFlowStrings.feedsTitle).performClick()
+        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.FEEDS.name)
     }
 
     @Test
@@ -102,7 +102,7 @@ class DesktopSettingsContentTest {
         val categoryList = compose.onNodeWithTag(SETTINGS_CATEGORIES_TAG)
         categoryList.requestFocus()
         categoryList.performKeyInput {
-            repeat(times = 3) { pressKey(Key.DirectionDown) }
+            repeat(times = 5) { pressKey(Key.DirectionDown) }
             pressKey(Key.Enter)
         }
         val readingCategory = compose.onNodeWithText(EnFeedFlowStrings.settingsReadingBehavior)
@@ -147,7 +147,7 @@ class DesktopSettingsContentTest {
         val categoryList = compose.onNodeWithTag(SETTINGS_CATEGORIES_TAG)
         categoryList.requestFocus()
         categoryList.performKeyInput {
-            repeat(2) { pressKey(Key.DirectionDown) }
+            repeat(times = 4) { pressKey(Key.DirectionDown) }
             pressKey(Key.Enter)
         }
         compose.runOnIdle {
@@ -159,14 +159,14 @@ class DesktopSettingsContentTest {
 
         categoryList.requestFocus()
         categoryList.performKeyInput {
-            repeat(times = 4) { pressKey(Key.DirectionDown) }
+            repeat(times = 2) { pressKey(Key.DirectionDown) }
             pressKey(Key.Enter)
         }
         compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.ABOUT.name)
 
         categoryList.requestFocus()
         categoryList.performKeyInput {
-            repeat(times = 4) { pressKey(Key.DirectionUp) }
+            repeat(times = 2) { pressKey(Key.DirectionUp) }
             pressKey(Key.Enter)
         }
 
@@ -187,6 +187,21 @@ class DesktopSettingsContentTest {
 
         compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.GENERAL.name)
         field.assertTextContains("unread count")
+    }
+
+    @Test
+    fun `choosing a result inside a subpage opens that subpage`() {
+        var section: DesktopSettingsSection? = null
+        compose.setContent {
+            SettingsContent(DesktopSettingsCategory.GENERAL, onSectionSelected = { section = it })
+        }
+
+        val field = compose.onNodeWithTag(SETTINGS_SEARCH_FIELD_TAG)
+        field.performTextInput("dropbox")
+        field.performKeyInput { pressKey(Key.Enter) }
+
+        compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.SYNC.name)
+        compose.runOnIdle { assertEquals(DesktopSettingsSection.ACCOUNTS, section) }
     }
 
     @Test
@@ -311,6 +326,7 @@ class DesktopSettingsContentTest {
     private fun SettingsContent(
         initialCategory: DesktopSettingsCategory,
         onCategorySelected: (DesktopSettingsCategory) -> Unit = {},
+        onSectionSelected: (DesktopSettingsSection?) -> Unit = {},
         searchEntries: List<SettingsSearchEntry> = settingsSearchIndex(
             strings = EnFeedFlowStrings,
             supportedAccounts = listOf(SyncAccounts.DROPBOX),
@@ -335,6 +351,7 @@ class DesktopSettingsContentTest {
                     initialCategory = initialCategory,
                     modifier = Modifier.fillMaxSize(),
                     searchEntries = searchEntries,
+                    onSectionSelected = onSectionSelected,
                     content = paneContent,
                 )
             }

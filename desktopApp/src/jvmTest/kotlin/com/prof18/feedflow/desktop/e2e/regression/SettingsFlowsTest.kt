@@ -34,22 +34,23 @@ class SettingsFlowsTest {
     val e2e = DesktopE2eRule()
 
     /**
-     * refresh on launch, refresh while open, auto-delete, delete offline copies: desktop
-     * settings/SyncStoragePane.kt (settingsRefreshFeedsOnLaunch, settingsDesktopRefreshWhileOpen,
-     * settingsAutoDelete, settingsClearDownloadedArticles)
+     * refresh on launch, refresh while open: desktop settings/SyncRefreshSection.kt (settingsRefreshFeedsOnLaunch,
+     * settingsDesktopRefreshWhileOpen); auto-delete, delete offline copies: desktop settings/StoragePane.kt
+     * (settingsAutoDelete, settingsClearDownloadedArticles)
      */
     @Test
     fun `REG-113 sync storage settings`() {
         val flow = e2e.start(Seed.ContentRich)
         flow.awaitText(SEED_NEWEST_TITLE)
 
-        flow.openSettings(flow.strings.settingsSyncAndStorage)
+        flow.openSettings(flow.strings.settingsSyncAndRefresh)
         flow.setSwitch(SETTINGS(flow), flow.strings.settingsRefreshFeedsOnLaunch, on = true)
         flow.choose(
             SETTINGS(flow),
             flow.strings.settingsDesktopRefreshWhileOpen,
             flow.strings.settingsSyncPeriodOneHour,
         )
+        flow.clickIn(SETTINGS(flow), flow.strings.settingsStorage)
         flow.choose(SETTINGS(flow), flow.strings.settingsAutoDelete, flow.strings.settingsAutoDeletePeriodOneWeek)
         flow.clickSettingsButton(flow.strings.settingsClearDownloadedArticles)
         flow.cancelDialog(flow.strings.settingsClearDownloadedArticlesDialogTitle)
@@ -141,7 +142,8 @@ class SettingsFlowsTest {
     }
 
     /**
-     * refresh while open and delete offline copies: desktop settings/SyncStoragePane.kt
+     * refresh while open: desktop settings/SyncRefreshSection.kt; delete offline copies: desktop
+     * settings/StoragePane.kt
      *
      * Skipped: the Android-only background sync Wi-Fi and charging restrictions.
      */
@@ -150,9 +152,10 @@ class SettingsFlowsTest {
         val flow = e2e.start(Seed.ContentRich)
         flow.awaitText(SEED_NEWEST_TITLE)
 
-        flow.openSettings(flow.strings.settingsSyncAndStorage)
+        flow.openSettings(flow.strings.settingsSyncAndRefresh)
         val refreshWhileOpen = flow.dropdownIn(SETTINGS(flow), flow.strings.settingsDesktopRefreshWhileOpen)
         assertTrue(flow.strings.settingsSyncPeriodNever in refreshWhileOpen.texts)
+        flow.clickIn(SETTINGS(flow), flow.strings.settingsStorage)
         flow.clickSettingsButton(flow.strings.settingsClearDownloadedArticles)
         flow.awaitTextIn(
             flow.strings.settingsClearDownloadedArticlesDialogTitle,
@@ -164,7 +167,7 @@ class SettingsFlowsTest {
     /**
      * Desktop has no home "more" menu: Refresh feeds is a toolbar button (not pressed: it would fetch live
      * feeds), sort and show-read live in Settings → Feed list, and Delete week-old articles in Settings →
-     * Sync & storage.
+     * Storage.
      */
     @Test
     fun `REG-124 home overflow secondary actions`() {
@@ -179,7 +182,7 @@ class SettingsFlowsTest {
         flow.openSettings(flow.strings.settingsFeedListTitle)
         flow.choose(SETTINGS(flow), flow.strings.settingsFeedOrderTitle, flow.strings.settingsFeedOrderOldestFirst)
         flow.setSwitch(SETTINGS(flow), flow.strings.settingsToggleShowReadArticles, on = true)
-        flow.clickIn(SETTINGS(flow), flow.strings.settingsSyncAndStorage)
+        flow.clickIn(SETTINGS(flow), flow.strings.settingsStorage)
         flow.clickSettingsButton(flow.strings.clearOldArticlesButton)
         flow.awaitTextIn(flow.dialogTitle(), flow.strings.clearOldArticlesDialogMessage, exact = false)
         flow.cancelDialog(flow.dialogTitle())
@@ -187,7 +190,7 @@ class SettingsFlowsTest {
         flow.scrollToText(OLD_ARTICLE_TITLE)
         flow.scrollToText(SEED_READ_TITLE)
 
-        flow.openSettings(flow.strings.settingsSyncAndStorage)
+        flow.openSettings(flow.strings.settingsStorage)
         flow.clickSettingsButton(flow.strings.clearOldArticlesButton)
         val dialog = flow.dialogTitle()
         flow.clickIn(dialog, flow.strings.confirmButton)
@@ -259,27 +262,29 @@ class SettingsFlowsTest {
         }
     }
 
-    // sync and storage persistence: desktop settings/SyncStoragePane.kt
+    // sync and storage persistence: desktop settings/SyncRefreshSection.kt and settings/StoragePane.kt
     @Test
     fun `REG-136 sync storage secondary persistence`() {
         val flow = e2e.start(Seed.ContentRich)
         flow.awaitText(SEED_NEWEST_TITLE)
 
-        flow.openSettings(flow.strings.settingsSyncAndStorage)
+        flow.openSettings(flow.strings.settingsSyncAndRefresh)
         flow.choose(
             SETTINGS(flow),
             flow.strings.settingsDesktopRefreshWhileOpen,
             flow.strings.settingsSyncPeriodOneHour,
         )
+        flow.clickIn(SETTINGS(flow), flow.strings.settingsStorage)
         flow.choose(SETTINGS(flow), flow.strings.settingsAutoDelete, flow.strings.settingsAutoDeletePeriodOneWeek)
         flow.closeWindow(SETTINGS(flow))
 
         flow.relaunch()
-        flow.openSettings(flow.strings.settingsSyncAndStorage)
+        flow.openSettings(flow.strings.settingsSyncAndRefresh)
         assertTrue(
             flow.strings.settingsSyncPeriodOneHour in
                 flow.dropdownIn(SETTINGS(flow), flow.strings.settingsDesktopRefreshWhileOpen).texts,
         )
+        flow.clickIn(SETTINGS(flow), flow.strings.settingsStorage)
         assertTrue(
             flow.strings.settingsAutoDeletePeriodOneWeek in
                 flow.dropdownIn(SETTINGS(flow), flow.strings.settingsAutoDelete).texts,

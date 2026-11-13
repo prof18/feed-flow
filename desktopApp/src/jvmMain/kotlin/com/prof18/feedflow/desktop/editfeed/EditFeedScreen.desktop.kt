@@ -50,6 +50,7 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
     val categories by vm.categoriesState.collectAsState()
     val showNotifications by vm.showNotificationToggleState.collectAsState()
     val markReadWhenScrolling by vm.markReadWhenScrollingEnabledState.collectAsState()
+    val hasUnsavedChanges by vm.hasUnsavedChangesState.collectAsState()
     val strings = LocalFeedFlowStrings.current
     var loading by remember { mutableStateOf(false) }
     var completionRevision by remember { mutableIntStateOf(0) }
@@ -125,6 +126,7 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
             validate = vm::validateCategoryName,
         ),
         onCancel = onCloseRequest,
+        hasUnsavedChanges = hasUnsavedChanges,
         editFeed = vm::editFeed,
         onShowDeleteDialog = { showDelete = true }, showDeleteDialog = showDelete,
         onDismissDeleteDialog = { showDelete = false }, onConfirmDelete = vm::deleteFeed,

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
@@ -183,7 +184,21 @@ class FeedFormsUiTest {
         rule.onNodeWithText(EnFeedFlowStrings.keepUnreadWhenScrollingForFeedDisabled).assertExists()
     }
 
-    private fun setEditFeedFormContent(isMarkReadWhenScrollingEnabled: Boolean) {
+    @Test
+    fun `edit form disables Save without unsaved changes`() {
+        setEditFeedFormContent(isMarkReadWhenScrollingEnabled = true, hasUnsavedChanges = false)
+
+        rule.onNodeWithText(EnFeedFlowStrings.actionSave).assertIsNotEnabled()
+    }
+
+    @Test
+    fun `edit form enables Save with unsaved changes`() {
+        setEditFeedFormContent(isMarkReadWhenScrollingEnabled = true, hasUnsavedChanges = true)
+
+        rule.onNodeWithText(EnFeedFlowStrings.actionSave).assertIsEnabled()
+    }
+
+    private fun setEditFeedFormContent(isMarkReadWhenScrollingEnabled: Boolean, hasUnsavedChanges: Boolean = true) {
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
@@ -212,6 +227,7 @@ class FeedFormsUiTest {
                         showDeleteDialog = false,
                         onDismissDeleteDialog = {},
                         onConfirmDelete = {},
+                        hasUnsavedChanges = hasUnsavedChanges,
                     )
                 }
             }

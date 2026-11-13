@@ -23,7 +23,7 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - tapOn: "Enable notifications for new articles"
 - tapOn:
-    id: edit_feed_save
+    id: edit_feed_done
 - extendedWaitUntil:
     visible: "Timeline"
     timeout: 10000

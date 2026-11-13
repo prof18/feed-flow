@@ -220,6 +220,7 @@ internal fun EditFeedForm(
     modifier: Modifier = Modifier,
     completionRevision: Int = 0,
     onCancel: (() -> Unit)? = null,
+    hasUnsavedChanges: Boolean = true,
     youTubeOptions: YouTubeOptionsState = YouTubeOptionsState(),
     onHideShortsToggled: (Boolean) -> Unit = {},
 ) {
@@ -235,7 +236,8 @@ internal fun EditFeedForm(
     val submission = rememberFeedSubmissionState(showLoading, completionRevision)
     val nameFocus = rememberFeedFieldFocus(submission.busy, completionRevision)
     val latestEdit by rememberUpdatedState(editFeed)
-    val submit = { submission.submit(nameValue.text.isNotEmpty() && urlValue.text.isNotBlank(), latestEdit) }
+    val canSave = hasUnsavedChanges && nameValue.text.isNotEmpty() && urlValue.text.isNotBlank()
+    val submit = { submission.submit(canSave, latestEdit) }
     val actionHeight = feedFormActionHeight()
     FeedFormLayout(
         modifier = modifier,
@@ -338,7 +340,7 @@ internal fun EditFeedForm(
             DefaultButton(
                 onClick = submit,
                 modifier = Modifier.heightIn(min = actionHeight),
-                enabled = nameValue.text.isNotEmpty() && urlValue.text.isNotBlank() && !submission.busy,
+                enabled = canSave && !submission.busy,
             ) { FeedSubmitLabel(strings.actionSave, showLoading) }
         },
     )

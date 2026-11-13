@@ -174,7 +174,8 @@ class LibraryFlowsTest {
         if (flow.nodesIn(window).any { flow.strings.enableNotificationsForFeed in it.texts }) {
             flow.setSwitch(window, flow.strings.enableNotificationsForFeed, on = true)
         }
-        flow.clickIn(window, flow.strings.actionSave)
+        assertTrue(flow.editSaveButton(window).isDisabled)
+        flow.clickIn(window, flow.strings.cancelButton)
         flow.awaitWindowGone(window)
         flow.awaitText(SEED_NEWEST_TITLE)
 
@@ -317,7 +318,8 @@ class LibraryFlowsTest {
         flow.openFeedSettings(ANDROID_CENTRAL)
         val window = flow.strings.openFeedSettings
         flow.choose(window, flow.strings.articleOpenMode, flow.strings.readerContentSourceWeb)
-        flow.clickIn(window, flow.strings.actionSave)
+        assertTrue(flow.editSaveButton(window).isDisabled)
+        flow.clickIn(window, flow.strings.cancelButton)
         flow.awaitWindowGone(window)
         flow.awaitText(SEED_NEWEST_TITLE)
 
@@ -561,6 +563,11 @@ class LibraryFlowsTest {
     private fun com.prof18.feedflow.desktop.e2e.harness.Flow.saveButton(window: String) =
         await("the $window save button") {
             nodesIn(window).lastOrNull { it.role == "Button" && strings.addFeed in it.texts }
+        }
+
+    private fun com.prof18.feedflow.desktop.e2e.harness.Flow.editSaveButton(window: String) =
+        await("the $window save button") {
+            nodesIn(window).lastOrNull { it.role == "Button" && strings.actionSave in it.texts }
         }
 
     private fun com.prof18.feedflow.desktop.e2e.harness.Flow.mainButton(text: String) =

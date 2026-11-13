@@ -37,6 +37,7 @@ struct EditFeedScreen: View {
     @State private var isPinned = false
     @State private var showNotificationToggle = false
     @State private var isNotificationEnabled = false
+    @State private var hasUnsavedChanges = false
     @State private var verificationChallengeUrl: String?
     @State private var verificationExplanationUrl: String?
 
@@ -100,6 +101,10 @@ struct EditFeedScreen: View {
                 },
                 onDeleteFeed: {
                     vmStoreOwner.instance.deleteFeed()
+                },
+                hasUnsavedChanges: hasUnsavedChanges,
+                onClose: {
+                    dismiss()
                 }
             )
             .websiteVerificationExplanation(
@@ -218,6 +223,11 @@ struct EditFeedScreen: View {
             .task {
                 for await show in vmStoreOwner.instance.showNotificationToggleState {
                     self.showNotificationToggle = show as? Bool ?? false
+                }
+            }
+            .task {
+                for await state in vmStoreOwner.instance.hasUnsavedChangesState {
+                    self.hasUnsavedChanges = state as? Bool ?? false
                 }
             }
             .task {

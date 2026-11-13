@@ -21,8 +21,7 @@ appId: com.prof18.feedflow.debug
     direction: DOWN
     timeout: 10000
 - tapOn: "Enable notifications for new articles"
-- tapOn:
-    id: edit_feed_save
+- back
 - extendedWaitUntil:
     visible: "E2E Newest Unread Article: Motorola Razr deals"
     timeout: 10000

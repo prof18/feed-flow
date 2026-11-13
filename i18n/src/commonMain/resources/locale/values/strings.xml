@@ -287,6 +287,10 @@
     <string name="edit_feed_generic_error">Something went wrong while editing the feed. Please retry.</string>
     <string name="feed_fetch_refused_error">Couldn\'t reach this feed. The website might be blocking RSS readers. Please try again later.</string>
     <string name="open_feed_settings">Feed settings</string>
+    <string name="discard_changes_dialog_title">Discard changes?</string>
+    <string name="discard_changes_dialog_message">Changes to the name, link or category won\'t be saved.</string>
+    <string name="discard_changes_confirm_button">Discard</string>
+    <string name="keep_editing_button">Keep editing</string>
     <string name="feed_added_message_without_name">Feed added</string>
     <string name="sync_error_message">There was an error while syncing the feeds - error code: %s :(. Please retry.</string>
     <string name="greader_bad_token_sync_error_message">The server rejected the sync token. If your Google Reader-compatible service is behind a reverse proxy, make sure it forwards the Authorization header.</string>

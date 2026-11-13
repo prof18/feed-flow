@@ -1,12 +1,18 @@
 package com.prof18.feedflow.android.editfeed
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -21,10 +27,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.feed.ArticleOpenModeSelector
 import com.prof18.feedflow.android.feedverification.WebsiteVerificationExplanationDialog
+import com.prof18.feedflow.android.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.android.ui.feed.editfeed.EditFeedContent
 import com.prof18.feedflow.android.ui.preview.PreviewPhone
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
@@ -66,6 +74,10 @@ internal fun EditScreen(
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showCategorySheet by rememberSaveable { mutableStateOf(false) }
+    val hasUnsavedChanges by viewModel.hasUnsavedChangesState.collectAsStateWithLifecycle()
+    var showDiscardDialog by rememberSaveable { mutableStateOf(false) }
+
+    BackHandler(enabled = hasUnsavedChanges) { showDiscardDialog = true }
 
     LaunchedEffect(Unit) {
         viewModel.feedEditedState.collect { feedAddedState ->
@@ -132,13 +144,28 @@ internal fun EditScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navigateBack()
+                            if (hasUnsavedChanges) showDiscardDialog = true else navigateBack()
                         },
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null,
                         )
+                    }
+                },
+                actions = {
+                    TextButton(
+                        modifier = Modifier.testTag(FeedFormE2eIds.SAVE_BUTTON),
+                        enabled = hasUnsavedChanges && feedUrl.isNotBlank() && !showLoading,
+                        onClick = { viewModel.editFeed() },
+                    ) {
+                        if (showLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                        } else {
+                            Text(LocalFeedFlowStrings.current.actionSave)
+                        }
                     }
                 },
             )
@@ -189,9 +216,6 @@ internal fun EditScreen(
             onNotificationToggleChanged = { isNotificationEnabled ->
                 viewModel.updateIsNotificationEnabled(isNotificationEnabled)
             },
-            editFeed = {
-                viewModel.editFeed()
-            },
             onCategorySelectorClick = {
                 showCategorySheet = true
             },
@@ -200,6 +224,16 @@ internal fun EditScreen(
             onDismissDeleteDialog = { showDeleteDialog = false },
             onConfirmDelete = { viewModel.deleteFeed() },
             contentPadding = innerPadding,
+        )
+    }
+
+    if (showDiscardDialog) {
+        DiscardChangesDialog(
+            onKeepEditing = { showDiscardDialog = false },
+            onDiscard = {
+                showDiscardDialog = false
+                navigateBack()
+            },
         )
     }
 
@@ -291,7 +325,6 @@ private fun EditScreenPreview() {
                 onPinnedToggled = {},
                 showNotificationToggle = true,
                 onNotificationToggleChanged = {},
-                editFeed = { },
                 onCategorySelectorClick = {},
                 showDeleteDialog = true,
                 onShowDeleteDialog = {},
@@ -301,6 +334,28 @@ private fun EditScreenPreview() {
             )
         }
     }
+}
+
+@Composable
+private fun DiscardChangesDialog(
+    onKeepEditing: () -> Unit,
+    onDiscard: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onKeepEditing,
+        title = { Text(LocalFeedFlowStrings.current.discardChangesDialogTitle) },
+        text = { Text(LocalFeedFlowStrings.current.discardChangesDialogMessage) },
+        confirmButton = {
+            TextButton(onClick = onDiscard) {
+                Text(LocalFeedFlowStrings.current.discardChangesConfirmButton)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onKeepEditing) {
+                Text(LocalFeedFlowStrings.current.keepEditingButton)
+            }
+        },
+    )
 }
 
 private fun FeedEditedState.Error.toMessage(strings: FeedFlowStrings): String = when (this) {

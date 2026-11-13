@@ -40,3 +40,35 @@ appId: com.prof18.feedflow.debug
     timeout: 10000
 - assertNotVisible:
     id: article_row_e2e_article_duplicate_title
+
+# The Next feed button in the list footer does the same without the gesture.
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- tapOn:
+    id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- scrollUntilVisible:
+    element:
+      id: drawer_category_expand_e2e_category_technology
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: drawer_category_expand_e2e_category_technology
+- tapOn:
+    id: drawer_feed_source_e2e_feed_android_weekly
+- extendedWaitUntil:
+    visible:
+      id: next_feed_button
+    timeout: 10000
+- tapOn:
+    id: next_feed_button
+- extendedWaitUntil:
+    visible:
+      id: article_row_e2e_article_reader_success
+    timeout: 10000
+- assertNotVisible:
+    id: article_row_e2e_article_duplicate_title

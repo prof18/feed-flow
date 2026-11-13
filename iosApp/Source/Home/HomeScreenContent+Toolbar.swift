@@ -241,11 +241,20 @@ extension HomeContent {
         }
 
         Button {
-            requestMarkAllReadConfirmation()
+            onRefresh()
         } label: {
-            Label(feedFlowStrings.markAllReadButton, systemImage: "text.badge.checkmark")
+            Label(feedFlowStrings.refreshFeeds, systemImage: "arrow.clockwise")
         }
-        .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.markAllReadMenuItem)
+        .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.refreshMenuItem)
+
+        if !(currentFeedFilter is FeedFilter.Read) {
+            Button {
+                requestMarkAllReadConfirmation()
+            } label: {
+                Label(feedFlowStrings.markAllReadButton, systemImage: "text.badge.checkmark")
+            }
+            .accessibilityIdentifier(HomeToolbarAccessibilityIdentifiers.markAllReadMenuItem)
+        }
 
         Button {
             requestViewOptions()

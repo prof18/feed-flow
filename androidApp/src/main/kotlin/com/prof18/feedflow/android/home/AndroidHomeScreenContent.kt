@@ -377,27 +377,7 @@ fun AndroidHomeScreenContent(
                 onMarkAllReadClicked = feedListActions.markAllRead,
                 onClearOldArticlesClicked = feedListActions.onClearOldArticlesClicked,
                 onEditFeedClick = feedManagementActions.onEditFeedClick,
-                onClick = {
-                    scope.launch {
-                        scrollFeedToTop(
-                            isGridArrangement = isGridArrangement,
-                            listState = listState,
-                            gridState = gridState,
-                            reduceMotionEnabled = reduceMotionEnabled,
-                        )
-                    }
-                },
-                onDoubleClick = {
-                    scope.launch {
-                        scrollFeedToTop(
-                            isGridArrangement = isGridArrangement,
-                            listState = listState,
-                            gridState = gridState,
-                            reduceMotionEnabled = reduceMotionEnabled,
-                        )
-                        onRefresh()
-                    }
-                },
+                onRefreshClick = onRefresh,
                 onBackupClick = onBackupClick,
                 viewMenuState = viewMenuState,
                 onFeedOrderChange = onFeedOrderChange,

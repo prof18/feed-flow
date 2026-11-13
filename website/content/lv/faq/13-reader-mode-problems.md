@@ -9,6 +9,12 @@ or a cookie banner, or block automated tools.
 
 What you can do:
 
+- **Complete the website's check**: some sites show a security check (for
+  example Cloudflare) instead of the article. On Android and iOS the reader then
+  offers **Open website**: complete the check and the article opens in the
+  reader. If a site keeps asking, the check can't be completed, or you only ever
+  get a short summary, use the feed's own content or the browser for that feed,
+  as described below.
 - **Report it**: in the reader, open the menu and choose **Report broken
   article**. FeedFlow sends only the article link, the app version and the
   system version, which helps improve the reader.

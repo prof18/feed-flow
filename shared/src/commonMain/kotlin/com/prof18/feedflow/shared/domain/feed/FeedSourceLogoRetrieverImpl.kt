@@ -26,8 +26,10 @@ internal class FeedSourceLogoRetrieverImpl(
         availabilityMutex.withLock { availability.clear() }
     }
 
-    override suspend fun getFeedSourceLogoUrl(rssChannel: RssChannel): String? {
-        val baseDomain = extractBaseDomain(rssChannel.link)
+    override suspend fun getFeedSourceLogoUrl(rssChannel: RssChannel, feedUrl: String): String? {
+        // A YouTube playlist feed (how shorts are hidden) links only to itself, so the parsed
+        // channel has no link, and without a domain there is no favicon to look up.
+        val baseDomain = extractBaseDomain(rssChannel.link) ?: extractBaseDomain(feedUrl)
         val logoUrl = rssChannel.image?.url ?: resolveLogoUrlFromWebsite(baseDomain)
         return normalizeLogoUrl(baseDomain, logoUrl)
     }

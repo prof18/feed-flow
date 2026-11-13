@@ -120,7 +120,7 @@ internal class FeedRecoveryService(
                     ?: throw WebsiteVerificationFailure(VerificationFailure.InvalidContent),
                 category = request.category,
                 lastSyncTimestamp = now,
-                logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(channel),
+                logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(channel, feedUrl = request.subscriptionUrl),
                 websiteUrl = channel.link,
                 fetchFailed = false,
                 articleOpenMode = ArticleOpenMode.DEFAULT,
@@ -138,7 +138,8 @@ internal class FeedRecoveryService(
 
             is FeedRecoveryRequest.Refresh -> request.source.copy(
                 lastSyncTimestamp = now,
-                logoUrl = request.source.logoUrl ?: feedSourceLogoRetriever.getFeedSourceLogoUrl(channel),
+                logoUrl = request.source.logoUrl
+                    ?: feedSourceLogoRetriever.getFeedSourceLogoUrl(channel, feedUrl = request.source.url),
                 websiteUrl = request.source.websiteUrl ?: channel.link,
                 fetchFailed = false,
             )

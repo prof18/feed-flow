@@ -17,7 +17,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
-import kotlin.test.assertNull
+import kotlin.test.assertEquals
 
 /** Uses the real [FeedSourceLogoRetrieverImpl]: the URL normalisation is what is under test. */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -33,16 +33,16 @@ class FeedFetcherRepositoryLogoNormalizationTest : FeedFetcherRepositoryTestBase
         }
 
     @Test
-    fun `a logo that cannot be made absolute settles instead of flipping every refresh`() =
+    fun `a relative logo without a channel link resolves against the feed url and settles`() =
         runTest(testDispatcher) {
-            // <image>logo.png</image> and no channel link: nothing to resolve the path against.
+            // <image>logo.png</image> and no channel link: the feed URL is all there is to resolve against.
             insertSource(logoUrl = RELATIVE_LOGO)
 
             fetch()
-            assertNull(storedLogoUrl())
+            assertEquals(RESOLVED_LOGO, storedLogoUrl())
 
             fetch()
-            assertNull(storedLogoUrl())
+            assertEquals(RESOLVED_LOGO, storedLogoUrl())
         }
 
     private suspend fun TestScope.fetch() {
@@ -84,6 +84,7 @@ class FeedFetcherRepositoryLogoNormalizationTest : FeedFetcherRepositoryTestBase
         const val SOURCE_ID = "linkless-source"
         const val FEED_URL = "https://example.com/linkless/rss.xml"
         const val RELATIVE_LOGO = "logo.png"
+        const val RESOLVED_LOGO = "https://example.com/logo.png"
     }
 }
 

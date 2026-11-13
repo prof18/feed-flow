@@ -497,11 +497,11 @@ class FeedFetcherRepository internal constructor(
 
     /** The 304 path, where a well-behaved feed spends most refreshes and there is no channel. */
     private suspend fun refreshLogoUrlIfNeeded(feedSource: FeedSource) {
-        val currentLogoUrl = feedSource.logoUrl ?: return
-        if (feedSourceLogoRetriever.isStoredLogoStillAvailable(currentLogoUrl)) {
+        val currentLogoUrl = feedSource.logoUrl
+        if (currentLogoUrl != null && feedSourceLogoRetriever.isStoredLogoStillAvailable(currentLogoUrl)) {
             return
         }
-        val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(feedSource.websiteUrl)
+        val logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(feedSource.websiteUrl ?: feedSource.url)
         if (logoUrl != currentLogoUrl) {
             databaseHelper.updateFeedSourceLogoUrl(feedSourceId = feedSource.id, logoUrl = logoUrl)
         }
@@ -516,11 +516,11 @@ class FeedFetcherRepository internal constructor(
         if (currentLogoUrl != null && feedSourceLogoRetriever.isStoredLogoStillAvailable(currentLogoUrl)) {
             return
         }
-        var logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel)
+        var logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel, feedUrl = feedSource.url)
         if (currentLogoUrl != null && logoUrl == currentLogoUrl) {
             // The channel <image> wins over the website, so when that is the URL that rotted,
             // re-resolving hands back the same dead link and only the website can heal it.
-            logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel.link)
+            logoUrl = feedSourceLogoRetriever.getFeedSourceLogoUrl(rssChannel.link ?: feedSource.url)
         }
         if (logoUrl != currentLogoUrl) {
             databaseHelper.updateFeedSourceLogoUrl(feedSourceId = feedSource.id, logoUrl = logoUrl)

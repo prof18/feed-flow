@@ -600,4 +600,6 @@
     <string name="feed_suggestion_added_message">%s ajouté à %s</string>
     <string name="feed_suggestion_added_to">Ajouté à %s</string>
     <string name="feed_suggestion_undo">Annuler</string>
+    <string name="share_no_feed_link_found">Aucun lien de flux trouvé dans le contenu partagé.</string>
+    <string name="share_open_in_feedflow">Ouvrir dans FeedFlow</string>
 </resources>

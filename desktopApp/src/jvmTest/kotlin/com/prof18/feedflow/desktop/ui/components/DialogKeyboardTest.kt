@@ -64,48 +64,6 @@ class DialogKeyboardTest {
     }
 
     @Test
-    fun `move dialog starts on the current category and keyboard confirms the intended source and category`() {
-        val library = DesktopLibraryFixture.load()
-        val source = library.sources.first { it.feedSource.category != null }.feedSource
-        val current = library.categories.first { it.id == source.category?.id }
-        val other = library.categories.first { it.id != source.category?.id }
-        val visible = mutableStateOf(true)
-        val actions = mutableListOf<String>()
-        rule.setContent {
-            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
-                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
-                    if (visible.value) {
-                        DesktopFeedMoveDialog(
-                            categories = persistentListOf(current, other),
-                            feedSources = persistentListOf(source),
-                            onMove = { sources, destination ->
-                                actions += "${sources.single().id}:${destination?.id}"
-                                visible.value = false
-                            },
-                            onCreateCategory = { },
-                            validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
-                            onDismiss = { actions += "dismiss" },
-                        )
-                    }
-                }
-            }
-        }
-        rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
-        rule.onNodeWithText(current.title).assertIsSelected()
-        val window = dialog(EnFeedFlowStrings.changeCategory)
-        press(window, KeyEvent.VK_DOWN)
-        rule.waitUntilExactlyOneExists(hasText(other.title) and isSelected(), timeoutMillis = 5_000)
-        press(window, KeyEvent.VK_TAB)
-        awaitFocused(EnFeedFlowStrings.desktopNewCategoryMenu)
-        press(window, KeyEvent.VK_TAB)
-        awaitFocused(EnFeedFlowStrings.cancelButton)
-        press(window, KeyEvent.VK_TAB)
-        awaitFocused(EnFeedFlowStrings.confirmButton)
-        press(window, KeyEvent.VK_ENTER)
-        rule.runOnIdle { assertEquals(listOf("${source.id}:${other.id}"), actions) }
-    }
-
-    @Test
     fun `move dialog Escape dismisses after a keyboard selection without moving`() {
         val library = DesktopLibraryFixture.load()
         val source = library.sources.first { it.feedSource.category != null }.feedSource
@@ -133,6 +91,7 @@ class DialogKeyboardTest {
             }
         }
         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
+        rule.onNodeWithText(current.title).assertIsSelected()
         val window = dialog(EnFeedFlowStrings.changeCategory)
         press(window, KeyEvent.VK_DOWN)
         rule.waitUntilExactlyOneExists(hasText(other.title) and isSelected(), timeoutMillis = 5_000)

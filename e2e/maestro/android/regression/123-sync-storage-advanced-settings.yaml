@@ -19,8 +19,14 @@ appId: com.prof18.feedflow.debug
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_sync
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
-    id: settings_sync_storage
+    id: settings_sync
 - assertVisible:
     id: sync_storage_sync_period
 - assertVisible: "Never"
@@ -106,6 +112,15 @@ appId: com.prof18.feedflow.debug
       text: "Background sync only while charging"
     enabled: true
     checked: true
+- back
+- scrollUntilVisible:
+    element:
+      id: settings_storage
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
+- tapOn:
+    id: settings_storage
 - scrollUntilVisible:
     element:
       id: sync_storage_clear_downloaded

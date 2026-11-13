@@ -15,6 +15,7 @@ data object Settings : NavKey
 @Serializable
 data object SupportPaywall : NavKey
 
+// Kept so a back stack saved by an older version still deserializes after an upgrade
 @Serializable
 data object FeedsAndAccounts : NavKey
 
@@ -24,8 +25,15 @@ data object FeedListSettings : NavKey
 @Serializable
 data object ReadingBehavior : NavKey
 
+// Kept so a back stack saved by an older version still deserializes after an upgrade
 @Serializable
 data object SyncAndStorage : NavKey
+
+@Serializable
+data object SyncAndRefresh : NavKey
+
+@Serializable
+data object Storage : NavKey
 
 @Serializable
 data object WidgetSettings : NavKey

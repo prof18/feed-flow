@@ -11,8 +11,6 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: drawer_settings_button
 - tapOn:
-    id: settings_feeds_accounts
-- tapOn:
     text: "Add feed"
 - assertVisible:
     id: add_feed_url_input

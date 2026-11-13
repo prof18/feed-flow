@@ -2,6 +2,7 @@ package com.prof18.feedflow.android.ui.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,7 @@ fun SettingItem(
     icon: ImageVector? = null,
     isEnabled: Boolean = true,
     isDestructive: Boolean = false,
+    supportingText: String? = null,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -50,10 +52,19 @@ fun SettingItem(
                 tint = if (isDestructive) MaterialTheme.colorScheme.error else LocalContentColor.current,
             )
         }
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge,
-            color = if (isDestructive) MaterialTheme.colorScheme.error else Color.Unspecified,
-        )
+        Column {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (isDestructive) MaterialTheme.colorScheme.error else Color.Unspecified,
+            )
+            if (supportingText != null) {
+                Text(
+                    text = supportingText,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }

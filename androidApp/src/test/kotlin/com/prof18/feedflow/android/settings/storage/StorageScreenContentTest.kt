@@ -1,0 +1,43 @@
+package com.prof18.feedflow.android.settings.storage
+
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
+import com.prof18.feedflow.android.ui.utils.ProvideFeedFlowStrings
+import com.prof18.feedflow.android.ui.utils.rememberFeedFlowStrings
+import com.prof18.feedflow.core.model.AutoDeletePeriod
+import com.prof18.feedflow.i18n.EnFeedFlowStrings
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+
+@RunWith(RobolectricTestRunner::class)
+class StorageScreenContentTest {
+    @get:Rule
+    val compose = createComposeRule()
+
+    @Test
+    fun showsStorageRowsOnly() {
+        compose.setContent {
+            FeedFlowTheme {
+                ProvideFeedFlowStrings(rememberFeedFlowStrings()) {
+                    StorageScreenContent(
+                        autoDeletePeriod = AutoDeletePeriod.ONE_WEEK,
+                        navigateBack = {},
+                        onAutoDeletePeriodSelected = {},
+                        onClearDownloadedArticles = {},
+                    )
+                }
+            }
+        }
+
+        compose.onNodeWithTag("sync_storage_auto_delete").assertExists()
+        compose.onNodeWithTag("sync_storage_clear_downloaded").assertExists()
+        compose.onAllNodesWithTag("sync_storage_refresh_on_launch").assertCountEquals(0)
+        compose.onNodeWithText(EnFeedFlowStrings.settingsStorage).assertExists()
+    }
+}

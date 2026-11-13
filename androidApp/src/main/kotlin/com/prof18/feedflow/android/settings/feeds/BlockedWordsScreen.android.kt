@@ -1,4 +1,4 @@
-package com.prof18.feedflow.android.settings.feedsandaccounts.subpages
+package com.prof18.feedflow.android.settings.feeds
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

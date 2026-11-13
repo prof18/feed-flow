@@ -9,6 +9,12 @@ appId: com.prof18.feedflow.debug
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_feed_list
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
     id: settings_feed_list
 - tapOn: "Description lines"
@@ -45,6 +51,12 @@ appId: com.prof18.feedflow.debug
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_feed_list
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
     id: settings_feed_list
 - assertVisible: "No limit"

@@ -1,4 +1,4 @@
-package com.prof18.feedflow.android.settings.feedsandaccounts.subpages
+package com.prof18.feedflow.android.settings.feeds
 
 import android.os.Build
 import android.widget.Toast

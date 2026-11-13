@@ -10,8 +10,6 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: drawer_settings_button
 - tapOn:
-    id: settings_feeds_accounts
-- tapOn:
     text: "Add feed"
 - tapOn:
     id: edit_feed_category_selector

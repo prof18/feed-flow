@@ -1,4 +1,4 @@
-package com.prof18.feedflow.android.settings.syncstorage
+package com.prof18.feedflow.android.settings.sync
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -6,53 +6,46 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
-import coil3.imageLoader
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BackgroundSyncRestrictionsSection
+import com.prof18.feedflow.android.ui.preview.PreviewPhone
 import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
-import com.prof18.feedflow.android.ui.settings.ConfirmationSettingItem
 import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
+import com.prof18.feedflow.android.ui.settings.SettingItem
 import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
-import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.settings.SettingsSectionHeader
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
-import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-internal fun SyncAndStorageScreenContent(
+internal fun SyncAndRefreshScreenContent(
     syncPeriod: SyncPeriod,
     backgroundSyncRestrictions: BackgroundSyncRestrictions,
-    autoDeletePeriod: AutoDeletePeriod,
     refreshFeedsOnLaunch: Boolean,
     navigateBack: () -> Unit,
     onSyncPeriodSelected: (SyncPeriod) -> Unit,
-    onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     onSyncOnlyOnWifiToggle: (Boolean) -> Unit,
     onSyncOnlyWhenChargingToggle: (Boolean) -> Unit,
     onRefreshFeedsOnLaunchToggle: (Boolean) -> Unit,
-    onClearDownloadedArticles: () -> Unit,
+    navigateToAccounts: (() -> Unit)? = null,
 ) {
-    val context = LocalContext.current
-
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(LocalFeedFlowStrings.current.settingsSyncAndStorage) },
+                title = { Text(LocalFeedFlowStrings.current.settingsSyncAndRefresh) },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -71,6 +64,21 @@ internal fun SyncAndStorageScreenContent(
                 .padding(start = paddingValues.calculateLeftPadding(layoutDir))
                 .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
+            if (navigateToAccounts != null) {
+                item {
+                    SettingItem(
+                        modifier = Modifier.testTag(SettingsE2eIds.ACCOUNTS_ROW),
+                        title = LocalFeedFlowStrings.current.settingsAccounts,
+                        icon = Icons.Outlined.AccountCircle,
+                        onClick = navigateToAccounts,
+                    )
+                }
+            }
+
+            item {
+                SettingsSectionHeader(title = LocalFeedFlowStrings.current.settingsRefreshSectionTitle)
+            }
+
             item {
                 SettingSwitchItem(
                     modifier = Modifier.testTag(SettingsE2eIds.SYNC_REFRESH_ON_LAUNCH),
@@ -112,77 +120,26 @@ internal fun SyncAndStorageScreenContent(
             }
 
             item {
-                val strings = LocalFeedFlowStrings.current
-                CompactSettingDropdownRow(
-                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_AUTO_DELETE),
-                    title = strings.settingsAutoDelete,
-                    currentValue = autoDeletePeriod,
-                    options = persistentListOf(
-                        SettingDropdownOption(AutoDeletePeriod.DISABLED, strings.settingsAutoDeletePeriodDisabled),
-                        SettingDropdownOption(AutoDeletePeriod.ONE_DAY, strings.settingsAutoDeletePeriodOneDay),
-                        SettingDropdownOption(AutoDeletePeriod.ONE_WEEK, strings.settingsAutoDeletePeriodOneWeek),
-                        SettingDropdownOption(AutoDeletePeriod.TWO_WEEKS, strings.settingsAutoDeletePeriodTwoWeeks),
-                        SettingDropdownOption(AutoDeletePeriod.ONE_MONTH, strings.settingsAutoDeletePeriodOneMonth),
-                    ),
-                    onOptionSelected = onAutoDeletePeriodSelected,
-                )
-            }
-
-            item {
-                Text(
-                    text = LocalFeedFlowStrings.current.settingsDangerTitle,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
-                    modifier = Modifier.padding(Spacing.regular),
-                )
-            }
-
-            item {
-                ConfirmationSettingItem(
-                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_CLEAR_DOWNLOADED),
-                    title = LocalFeedFlowStrings.current.settingsClearDownloadedArticles,
-                    dialogTitle = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogTitle,
-                    dialogMessage = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogMessage,
-                    onConfirm = onClearDownloadedArticles,
-                )
-            }
-
-            item {
-                ConfirmationSettingItem(
-                    title = LocalFeedFlowStrings.current.settingsClearImageCache,
-                    dialogTitle = LocalFeedFlowStrings.current.settingsClearImageCacheDialogTitle,
-                    dialogMessage = LocalFeedFlowStrings.current.settingsClearImageCacheDialogMessage,
-                    onConfirm = {
-                        val imageLoader = context.applicationContext.imageLoader
-                        imageLoader.memoryCache?.clear()
-                        imageLoader.diskCache?.clear()
-                    },
-                )
-            }
-
-            item {
                 Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
             }
         }
     }
 }
 
-@Preview
+@PreviewPhone
 @Composable
-private fun SyncAndStorageScreenContentPreview() {
+private fun SyncAndRefreshScreenContentPreview() {
     FeedFlowTheme {
-        SyncAndStorageScreenContent(
-            navigateBack = {},
+        SyncAndRefreshScreenContent(
             syncPeriod = SyncPeriod.ONE_HOUR,
             backgroundSyncRestrictions = BackgroundSyncRestrictions(),
-            autoDeletePeriod = AutoDeletePeriod.ONE_WEEK,
             refreshFeedsOnLaunch = true,
+            navigateBack = {},
+            navigateToAccounts = {},
             onSyncPeriodSelected = {},
-            onAutoDeletePeriodSelected = {},
             onSyncOnlyOnWifiToggle = {},
             onSyncOnlyWhenChargingToggle = {},
             onRefreshFeedsOnLaunchToggle = {},
-            onClearDownloadedArticles = {},
         )
     }
 }

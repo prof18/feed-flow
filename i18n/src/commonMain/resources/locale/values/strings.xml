@@ -557,6 +557,17 @@
     <string name="article_report_failed">Couldn’t send the report. Please try again.</string>
     <string name="settings_reading_behavior">Reading behavior</string>
     <string name="settings_sync_and_storage">Sync &amp; storage</string>
+    <string name="settings_sync_and_refresh">Sync &amp; refresh</string>
+    <string name="settings_storage">Storage</string>
+    <string name="settings_refresh_section_title">Refresh</string>
+    <string name="settings_section_display_and_reading">Display &amp; reading</string>
+    <string name="settings_sync_and_refresh_subtitle">Accounts and when feeds refresh</string>
+    <string name="settings_storage_subtitle">Old articles, offline copies and images</string>
+    <string name="settings_notifications_subtitle">Alerts for new articles</string>
+    <string name="settings_appearance_subtitle">Theme, motion and language</string>
+    <string name="settings_feed_list_subtitle">Layout, text size and order of articles</string>
+    <string name="settings_reading_behavior_subtitle">How articles open and get marked as read</string>
+    <string name="settings_widget_subtitle">Content and style of your widgets</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_about_and_support">About &amp; support</string>
     <string name="settings_clear_downloaded_articles">Delete offline copies</string>

@@ -11,11 +11,12 @@ appId: com.prof18.feedflow.debug
     id: drawer_settings_button
 - scrollUntilVisible:
     element:
-      id: settings_sync_storage
+      id: settings_sync
     direction: DOWN
     timeout: 10000
+    centerElement: true
 - tapOn:
-    id: settings_sync_storage
+    id: settings_sync
 - assertVisible:
     id: sync_storage_refresh_on_launch
 - tapOn:
@@ -25,6 +26,15 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: sync_storage_sync_period
 - tapOn: "Every hour"
+- back
+- scrollUntilVisible:
+    element:
+      id: settings_storage
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
+- tapOn:
+    id: settings_storage
 - scrollUntilVisible:
     element:
       id: sync_storage_auto_delete

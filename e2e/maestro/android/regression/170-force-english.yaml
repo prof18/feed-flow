@@ -12,6 +12,12 @@ env:
 - tapOn:
     id: drawer_settings_button
 - assertVisible: ${DEVICE_SETTINGS_TITLE}
+- scrollUntilVisible:
+    element:
+      id: settings_appearance
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
     id: settings_appearance
 - assertVisible:
@@ -38,6 +44,12 @@ env:
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_appearance
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
     id: settings_appearance
 - assertVisible: "Appearance"

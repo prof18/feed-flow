@@ -9,6 +9,12 @@ appId: com.prof18.feedflow.debug
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_reading_behavior
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
     id: settings_reading_behavior
 - assertVisible: "In-app browser"
@@ -26,6 +32,12 @@ appId: com.prof18.feedflow.debug
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_reading_behavior
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
     id: settings_reading_behavior
 - assertVisible: "Chrome"

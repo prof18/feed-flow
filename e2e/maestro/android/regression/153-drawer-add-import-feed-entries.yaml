@@ -19,7 +19,7 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "Feed Suggestions"
 - assertVisible: "Import feed from OPML"
 
-# Add feed destination from the drawer entry (not Settings → Feeds & Accounts).
+# Add feed destination from the drawer entry (not the Add feed row in Settings).
 - tapOn: "Add feed"
 - assertVisible:
     id: add_feed_url_input

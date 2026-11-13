@@ -11,8 +11,12 @@ appId: com.prof18.feedflow.debug
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
-- tapOn:
-    id: settings_feeds_accounts
+- scrollUntilVisible:
+    element:
+      id: settings_blocked_words
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
     id: settings_blocked_words
 - tapOn:
@@ -23,8 +27,6 @@ appId: com.prof18.feedflow.debug
 - assertVisible:
     id: blocked_word_pixel
 - runFlow: ../../shared/android-hide-keyboard.yaml
-- tapOn:
-    id: settings_back_button
 - tapOn:
     id: settings_back_button
 - tapOn:
@@ -47,16 +49,18 @@ appId: com.prof18.feedflow.debug
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
-- tapOn:
-    id: settings_feeds_accounts
+- scrollUntilVisible:
+    element:
+      id: settings_blocked_words
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
     id: settings_blocked_words
 - tapOn:
     id: blocked_word_delete_pixel
 - assertNotVisible:
     id: blocked_word_pixel
-- tapOn:
-    id: settings_back_button
 - tapOn:
     id: settings_back_button
 - tapOn:

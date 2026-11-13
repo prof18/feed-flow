@@ -8,12 +8,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Feed
+import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.LocalLibrary
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Storage
+import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Widgets
 import androidx.compose.material3.Icon
@@ -28,8 +33,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.android.feedsourcelist.FeedSourceListE2eIds
 import com.prof18.feedflow.android.ui.preview.PreviewPhone
 import com.prof18.feedflow.android.ui.settings.SettingItem
+import com.prof18.feedflow.android.ui.settings.SettingsSectionHeader
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 
@@ -37,11 +44,16 @@ import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 internal fun SettingsScreenContent(
     appVersion: String,
     navigateBack: () -> Unit,
+    navigateToFeeds: () -> Unit,
+    navigateToAddFeed: () -> Unit,
+    navigateToImportExport: () -> Unit,
+    navigateToBlockedWords: () -> Unit,
+    navigateToSyncAndRefresh: () -> Unit,
+    navigateToNotifications: () -> Unit,
+    navigateToStorage: () -> Unit,
     navigateToAppearance: () -> Unit,
-    navigateToFeedsAndAccounts: () -> Unit,
     navigateToFeedListSettings: () -> Unit,
     navigateToReadingBehavior: () -> Unit,
-    navigateToSyncAndStorage: () -> Unit,
     navigateToWidgetSettings: () -> Unit,
     navigateToAboutAndSupport: () -> Unit,
     onSupportProjectClick: () -> Unit,
@@ -56,14 +68,93 @@ internal fun SettingsScreenContent(
         val layoutDir = LocalLayoutDirection.current
         LazyColumn(
             modifier = Modifier
+                .testTag(SettingsE2eIds.ROOT_LIST)
                 .padding(top = paddingValues.calculateTopPadding())
                 .padding(start = paddingValues.calculateLeftPadding(layoutDir))
                 .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
             item {
+                SettingsSectionHeader(title = LocalFeedFlowStrings.current.feedsTitle)
+            }
+
+            item {
+                SettingItem(
+                    modifier = Modifier.testTag(FeedSourceListE2eIds.SETTINGS_ROW),
+                    title = LocalFeedFlowStrings.current.feedsTitle,
+                    icon = Icons.AutoMirrored.Default.Feed,
+                    onClick = navigateToFeeds,
+                )
+            }
+
+            item {
+                SettingItem(
+                    title = LocalFeedFlowStrings.current.addFeed,
+                    icon = Icons.Outlined.AddCircleOutline,
+                    onClick = navigateToAddFeed,
+                )
+            }
+
+            item {
+                SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.IMPORT_EXPORT_ROW),
+                    title = LocalFeedFlowStrings.current.importExportLabel,
+                    icon = Icons.Outlined.SwapVert,
+                    onClick = navigateToImportExport,
+                )
+            }
+
+            item {
+                SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.BLOCKED_WORDS_ROW),
+                    title = LocalFeedFlowStrings.current.settingsBlockedWords,
+                    icon = Icons.Outlined.Report,
+                    onClick = navigateToBlockedWords,
+                )
+            }
+
+            item {
+                SettingsSectionHeader(title = LocalFeedFlowStrings.current.settingsSyncAndStorage)
+            }
+
+            item {
+                SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_ROW),
+                    title = LocalFeedFlowStrings.current.settingsSyncAndRefresh,
+                    supportingText = LocalFeedFlowStrings.current.settingsSyncAndRefreshSubtitle,
+                    icon = Icons.Outlined.Sync,
+                    onClick = navigateToSyncAndRefresh,
+                )
+            }
+
+            item {
+                SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.NOTIFICATIONS_ROW),
+                    title = LocalFeedFlowStrings.current.settingsNotificationsTitle,
+                    supportingText = LocalFeedFlowStrings.current.settingsNotificationsSubtitle,
+                    icon = Icons.Outlined.Notifications,
+                    onClick = navigateToNotifications,
+                )
+            }
+
+            item {
+                SettingItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.STORAGE_ROW),
+                    title = LocalFeedFlowStrings.current.settingsStorage,
+                    supportingText = LocalFeedFlowStrings.current.settingsStorageSubtitle,
+                    icon = Icons.Outlined.Storage,
+                    onClick = navigateToStorage,
+                )
+            }
+
+            item {
+                SettingsSectionHeader(title = LocalFeedFlowStrings.current.settingsSectionDisplayAndReading)
+            }
+
+            item {
                 SettingItem(
                     modifier = Modifier.testTag(SettingsE2eIds.APPEARANCE_ROW),
                     title = LocalFeedFlowStrings.current.settingsAppearance,
+                    supportingText = LocalFeedFlowStrings.current.settingsAppearanceSubtitle,
                     icon = Icons.Outlined.Palette,
                     onClick = navigateToAppearance,
                 )
@@ -71,19 +162,21 @@ internal fun SettingsScreenContent(
 
             item {
                 SettingItem(
-                    modifier = Modifier.testTag(SettingsE2eIds.FEEDS_AND_ACCOUNTS_ROW),
-                    title = LocalFeedFlowStrings.current.settingsFeedsAndAccounts,
-                    icon = Icons.Outlined.Sync,
-                    onClick = navigateToFeedsAndAccounts,
+                    modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_ROW),
+                    title = LocalFeedFlowStrings.current.settingsFeedListTitle,
+                    supportingText = LocalFeedFlowStrings.current.settingsFeedListSubtitle,
+                    icon = Icons.Outlined.Layers,
+                    onClick = navigateToFeedListSettings,
                 )
             }
 
             item {
                 SettingItem(
-                    modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_ROW),
-                    title = LocalFeedFlowStrings.current.settingsFeedListTitle,
-                    icon = Icons.Outlined.Layers,
-                    onClick = navigateToFeedListSettings,
+                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_ROW),
+                    title = LocalFeedFlowStrings.current.settingsReadingBehavior,
+                    supportingText = LocalFeedFlowStrings.current.settingsReadingBehaviorSubtitle,
+                    icon = Icons.Outlined.LocalLibrary,
+                    onClick = navigateToReadingBehavior,
                 )
             }
 
@@ -91,28 +184,11 @@ internal fun SettingsScreenContent(
                 item {
                     SettingItem(
                         title = LocalFeedFlowStrings.current.widgetConfigurationTitle,
+                        supportingText = LocalFeedFlowStrings.current.settingsWidgetSubtitle,
                         icon = Icons.Outlined.Widgets,
                         onClick = navigateToWidgetSettings,
                     )
                 }
-            }
-
-            item {
-                SettingItem(
-                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_ROW),
-                    title = LocalFeedFlowStrings.current.settingsReadingBehavior,
-                    icon = Icons.Outlined.LocalLibrary,
-                    onClick = navigateToReadingBehavior,
-                )
-            }
-
-            item {
-                SettingItem(
-                    modifier = Modifier.testTag(SettingsE2eIds.SYNC_AND_STORAGE_ROW),
-                    title = LocalFeedFlowStrings.current.settingsSyncAndStorage,
-                    icon = Icons.Outlined.Storage,
-                    onClick = navigateToSyncAndStorage,
-                )
             }
 
             if (showSupportProject) {
@@ -185,11 +261,16 @@ private fun SettingsScreenPreview() {
         SettingsScreenContent(
             appVersion = "1.0.0",
             navigateBack = {},
+            navigateToFeeds = {},
+            navigateToAddFeed = {},
+            navigateToImportExport = {},
+            navigateToBlockedWords = {},
+            navigateToSyncAndRefresh = {},
+            navigateToNotifications = {},
+            navigateToStorage = {},
             navigateToAppearance = {},
-            navigateToFeedsAndAccounts = {},
             navigateToFeedListSettings = {},
             navigateToReadingBehavior = {},
-            navigateToSyncAndStorage = {},
             navigateToWidgetSettings = {},
             navigateToAboutAndSupport = {},
             onSupportProjectClick = {},

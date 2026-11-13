@@ -1,4 +1,4 @@
-package com.prof18.feedflow.android.settings.syncstorage
+package com.prof18.feedflow.android.settings.sync
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -9,25 +9,23 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SyncAndStorageScreen(
+fun SyncAndRefreshScreen(
     navigateBack: () -> Unit,
+    navigateToAccounts: (() -> Unit)? = null,
 ) {
     val viewModel = koinViewModel<SyncAndStorageSettingsViewModel>()
     val feedDownloadWorkerEnqueuer = koinInject<FeedDownloadWorkerEnqueuer>()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    SyncAndStorageScreenContent(
+    SyncAndRefreshScreenContent(
         navigateBack = navigateBack,
+        navigateToAccounts = navigateToAccounts,
         syncPeriod = state.syncPeriod,
         backgroundSyncRestrictions = state.backgroundSyncRestrictions,
-        autoDeletePeriod = state.autoDeletePeriod,
         refreshFeedsOnLaunch = state.refreshFeedsOnLaunch,
         onSyncPeriodSelected = { period ->
             viewModel.updateSyncPeriod(period)
             feedDownloadWorkerEnqueuer.updateWorker(period)
-        },
-        onAutoDeletePeriodSelected = { period ->
-            viewModel.updateAutoDeletePeriod(period)
         },
         onSyncOnlyOnWifiToggle = { enabled ->
             viewModel.updateSyncOnlyOnWifi(enabled)
@@ -37,9 +35,6 @@ fun SyncAndStorageScreen(
         },
         onRefreshFeedsOnLaunchToggle = { enabled ->
             viewModel.updateRefreshFeedsOnLaunch(enabled)
-        },
-        onClearDownloadedArticles = {
-            viewModel.clearDownloadedArticleContent()
         },
     )
 }

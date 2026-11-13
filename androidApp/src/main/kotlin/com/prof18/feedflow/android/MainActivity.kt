@@ -75,12 +75,12 @@ import com.prof18.feedflow.android.settings.about.subpages.AboutScreen
 import com.prof18.feedflow.android.settings.about.subpages.LicensesScreen
 import com.prof18.feedflow.android.settings.appearance.AppearanceScreen
 import com.prof18.feedflow.android.settings.feedlist.FeedListSettingsScreen
-import com.prof18.feedflow.android.settings.feedsandaccounts.FeedsAndAccountsScreen
-import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.BlockedWordsScreen
-import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.ImportExportScreen
-import com.prof18.feedflow.android.settings.feedsandaccounts.subpages.NotificationsSettingsScreen
+import com.prof18.feedflow.android.settings.feeds.BlockedWordsScreen
+import com.prof18.feedflow.android.settings.feeds.ImportExportScreen
+import com.prof18.feedflow.android.settings.notifications.NotificationsSettingsScreen
 import com.prof18.feedflow.android.settings.readingbehavior.ReadingBehaviorScreen
-import com.prof18.feedflow.android.settings.syncstorage.SyncAndStorageScreen
+import com.prof18.feedflow.android.settings.storage.StorageScreen
+import com.prof18.feedflow.android.settings.sync.SyncAndRefreshScreen
 import com.prof18.feedflow.android.settings.widget.WidgetInstanceSettingsScreen
 import com.prof18.feedflow.android.settings.widget.WidgetSettingsScreen
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
@@ -393,10 +393,15 @@ class MainActivity : BaseThemeActivity() {
                 entry<Settings> {
                     SettingsScreen(
                         navigateBack = navigateBack,
-                        navigateToFeedsAndAccounts = { backStack.add(FeedsAndAccounts) },
+                        navigateToFeeds = { backStack.add(FeedList) },
+                        navigateToAddFeed = { backStack.add(AddFeed()) },
+                        navigateToImportExport = { backStack.add(ImportExport) },
+                        navigateToBlockedWords = { backStack.add(BlockedWords) },
+                        navigateToSyncAndRefresh = { backStack.add(SyncAndRefresh) },
+                        navigateToNotifications = { backStack.add(Notifications) },
+                        navigateToStorage = { backStack.add(Storage) },
                         navigateToFeedListSettings = { backStack.add(FeedListSettings) },
                         navigateToReadingBehavior = { backStack.add(ReadingBehavior) },
-                        navigateToSyncAndStorage = { backStack.add(SyncAndStorage) },
                         navigateToWidgetSettings = { backStack.add(WidgetSettings) },
                         navigateToAppearance = { backStack.add(Appearance) },
                         navigateToAboutAndSupport = { backStack.add(AboutAndSupport) },
@@ -411,15 +416,7 @@ class MainActivity : BaseThemeActivity() {
                 }
 
                 entry<FeedsAndAccounts> {
-                    FeedsAndAccountsScreen(
-                        navigateBack = navigateBack,
-                        onFeedListClick = { backStack.add(FeedList) },
-                        onAddFeedClick = { backStack.add(AddFeed()) },
-                        navigateToImportExport = { backStack.add(ImportExport) },
-                        navigateToAccounts = { backStack.add(Accounts) },
-                        navigateToNotifications = { backStack.add(Notifications) },
-                        navigateToBlockedWords = { backStack.add(BlockedWords) },
-                    )
+                    SideEffect(Unit) { backStack.removeAll { it == FeedsAndAccounts } }
                 }
 
                 entry<FeedListSettings> {
@@ -435,9 +432,21 @@ class MainActivity : BaseThemeActivity() {
                 }
 
                 entry<SyncAndStorage> {
-                    SyncAndStorageScreen(
+                    SyncAndRefreshScreen(
                         navigateBack = navigateBack,
+                        navigateToAccounts = { backStack.add(Accounts) },
                     )
+                }
+
+                entry<SyncAndRefresh> {
+                    SyncAndRefreshScreen(
+                        navigateBack = navigateBack,
+                        navigateToAccounts = { backStack.add(Accounts) },
+                    )
+                }
+
+                entry<Storage> {
+                    StorageScreen(navigateBack = navigateBack)
                 }
 
                 entry<Appearance> {
@@ -459,7 +468,7 @@ class MainActivity : BaseThemeActivity() {
                     WidgetInstanceSettingsScreen(
                         appWidgetId = key.appWidgetId,
                         navigateBack = navigateBack,
-                        navigateToSyncSettings = { backStack.add(SyncAndStorage) },
+                        navigateToSyncSettings = { backStack.add(SyncAndRefresh) },
                     )
                 }
 

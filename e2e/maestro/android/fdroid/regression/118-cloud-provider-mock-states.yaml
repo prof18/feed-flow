@@ -12,8 +12,14 @@ appId: com.prof18.feedflow.debug
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_sync
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
-    id: settings_feeds_accounts
+    id: settings_sync
 - tapOn:
     id: settings_accounts
 - assertNotVisible:

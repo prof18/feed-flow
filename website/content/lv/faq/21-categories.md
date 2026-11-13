@@ -10,8 +10,10 @@ weight: 210
 - To **edit a feed** on Android or iOS, go to **Settings → Feeds & accounts →
   Feeds** and tap the feed to open **Feed settings**. You can also find **Feed
   settings** by long pressing the feed in the sidebar (right click on desktop).
-  Use it to rename the feed or change its category, URL, link opening,
-  notifications and more.
+  Use it to rename the feed or change its category, feed link, link opening,
+  notifications and more. Switches and the link opening option apply as soon as
+  you change them; **Save** confirms a new name, feed link or category. **Hide
+  Shorts** changes the feed link, so it needs **Save** too.
 - **Pin** the feeds you read most to keep them at the top of the sidebar.
 - **Reorder** categories with the Reorder button in the sidebar.
 - On **desktop**, select several feeds to move or delete them together, or drag

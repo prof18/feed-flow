@@ -18,7 +18,7 @@
     <string name="export_started_message">Export wird erzeugt</string>
     <string name="drawer_title_categories">Kategorien</string>
     <string name="settings_title">Einstellungen</string>
-    <string name="feed_url">Feed-URL</string>
+    <string name="feed_url">Feed-Link</string>
     <string name="open_website_button">Webseite öffnen</string>
     <string name="author_label">Mit ❤️ entwickelt von</string>
     <string name="issue_content_title">Fehler mit FeedFlow</string>
@@ -34,7 +34,7 @@
     <string name="no_category_selected_header">Keine Kategorie</string>
     <string name="empty_feed_message">Hier gibt es nichts mehr zu lesen!</string>
     <string name="export_feeds_button">Feeds nach OPML exportieren</string>
-    <string name="new_category_hint">Neue Kategorie</string>
+    <string name="new_category_hint">Neuer Kategoriename</string>
     <string name="settings_button">Einstellungen</string>
     <string name="open_source_nav_bar">Open-Source-Lizenzen</string>
     <string name="mark_all_read_button">Alle als gelesen markieren</string>
@@ -75,7 +75,7 @@
     <string name="settings_title_feed">Feed</string>
     <string name="settings_accounts">Konten</string>
     <string name="settings_help_title">Hilfe</string>
-    <string name="backup_button">Sicherung</string>
+    <string name="backup_button">Jetzt sichern</string>
     <string name="dropbox_auth_code_hint">Autorisierungscode</string>
     <string name="dropbox_confirm_button">Bestätigen</string>
     <string name="dropbox_sync_success">Dein Dropbox-Konto ist erfolgreich verknüpft</string>
@@ -97,7 +97,7 @@
     <string name="feed_sync_in_progress">Die Synchronisierung läuft gerade. Nach Abschluss der Synchronisierung wird sich die App automatisch schließen.</string>
     <string name="last_upload">Letzter Upload: %s</string>
     <string name="last_download">Letzter Download: %s</string>
-    <string name="no_dropbox_sync_yet">Deine Daten sind noch nicht mit Dropbox synchronisiert. Drücke die Sicherungstaste, um die Synchronisierung zu starten</string>
+    <string name="no_dropbox_sync_yet">Noch nicht auf Dropbox gesichert. Backup jetzt wählen, um zu beginnen.</string>
     <string name="error_account_sync">Beim Synchronisieren der Daten mit deinem Konto ist leider ein Problem aufgetreten - Fehlercode: %s :(</string>
     <string name="import_export_description">Für eine bessere Interoperabilität mit anderen Feed-Readern unterstützt FeedFlow das Importieren und Exportieren deiner Abonnements als OPML-Datei.</string>
     <string name="read_articles_empty_screen_message">Hier ist noch nichts; Zeit, mit dem Lesen zu beginnen!</string>
@@ -245,7 +245,7 @@
     <string name="reader_mode_fallback_title">Artikel kann nicht analysiert werden</string>
     <string name="reader_mode_fallback_message">Der Inhalt dieser Seite kann nicht für den Lesemodus verwendet werden. Du kannst die Seite direkt in deinem Browser öffnen.</string>
     <string name="reader_mode_fallback_open_browser_button">Im Browser öffnen</string>
-    <string name="trigger_feed_sync">Änderungen hochladen</string>
+    <string name="trigger_feed_sync">Jetzt sichern</string>
     <string name="feed_add_in_progress_message">Feed wird importiert...</string>
     <string name="menu_mark_all_above_as_read">Alle oberhalb als gelesen markieren</string>
     <string name="menu_mark_all_below_as_read">Alle unterhalb als gelesen markieren</string>
@@ -495,7 +495,7 @@
     <string name="desktop_accounts_manage_button">Konto verwalten</string>
     <string name="desktop_accounts_back_to_services">Zurück zu Services</string>
     <string name="desktop_accounts_choose_service">Ein Service wählen, um die Verbindungsdetails anzuzeigen.</string>
-    <string name="desktop_accounts_backup_description">Sichert die Abonnements, gelesene Artikel und Lesezeichen.</string>
+    <string name="desktop_accounts_backup_description">Sichert die Feeds, gelesene Artikel und Lesezeichen.</string>
     <string name="desktop_accounts_reader_description">Synchronisiert Abonnements und Artikelstatus mit ihrem Reader-Konto.</string>
     <string name="desktop_accounts_dropbox_title">Dropbox</string>
     <string name="desktop_accounts_google_drive_title">Google Drive</string>
@@ -600,4 +600,13 @@
     <string name="feed_suggestion_added_to">Zu %s hinzugefügt</string>
     <string name="feed_suggestion_add">Hinzufügen</string>
     <string name="feed_suggestion_added">Hinzugefügt</string>
+    <string name="next_feed_button">Nächster: %s</string>
+    <string name="empty_category_message">Keine Feeds in dieser Kategorie</string>
+    <string name="empty_category_hint">Bisher noch keine Feeds. Ziehen sie eine Feed hierher.</string>
+    <string name="discard_changes_dialog_title">Änderungen verwerfen?</string>
+    <string name="discard_changes_dialog_message">Änderungen des Namens, Links oder der Kategorie werden nicht gespeichert.</string>
+    <string name="discard_changes_confirm_button">Verwerfen</string>
+    <string name="keep_editing_button">Bearbeitung fortsetzen</string>
+    <string name="share_no_feed_link_found">Im geteilten Inhalt wurde kein Feed-Link gefunden.</string>
+    <string name="share_open_in_feedflow">In FeedFlow öffnen</string>
 </resources>

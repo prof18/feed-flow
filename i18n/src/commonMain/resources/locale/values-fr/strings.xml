@@ -16,7 +16,7 @@
     <string name="export_started_message">Génération de l\'export</string>
     <string name="feeds_export_done_message">Export terminé</string>
     <string name="settings_title">Paramètres</string>
-    <string name="feed_url">URL du flux</string>
+    <string name="feed_url">Lien du flux</string>
     <string name="open_website_button">Ouvrir le site Web</string>
     <string name="author_label">Développé avec ❤️ par</string>
     <string name="loading_feed_message">Chargement des flux %s</string>
@@ -183,7 +183,7 @@
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_left_swipe_action">Balayage vers la gauche</string>
     <string name="settings_right_swipe_action">Balayage vers la droite</string>
-    <string name="settings_swipe_action_none">Désactivé</string>
+    <string name="settings_swipe_action_none">Aucune</string>
     <string name="new_articles_notification_title">Nouveaux articles disponibles</string>
     <string name="marking_all_read_dialog_title">Marquer tout comme lu...</string>
     <string name="date_format_title">Format de date</string>
@@ -199,7 +199,7 @@
     <string name="settings_feed_order_oldest_first">Plus anciens d\'abord</string>
     <string name="settings_feed_layout_card">Cartes</string>
     <string name="feed_layout_title">Mise en page</string>
-    <string name="settings_swipe_action_toggle_read">Changer l\'état de lecture</string>
+    <string name="settings_swipe_action_toggle_read">Marquer comme lu ou non lu</string>
     <string name="settings_swipe_action_toggle_bookmark">Ajouter/Retirer le favori</string>
     <string name="settings_theme_dark">Sombre</string>
     <string name="settings_theme">Thème</string>
@@ -602,4 +602,11 @@
     <string name="feed_suggestion_undo">Annuler</string>
     <string name="share_no_feed_link_found">Aucun lien de flux trouvé dans le contenu partagé.</string>
     <string name="share_open_in_feedflow">Ouvrir dans FeedFlow</string>
+    <string name="next_feed_button">Suivant : %s</string>
+    <string name="empty_category_message">Aucun flux dans cette catégorie</string>
+    <string name="empty_category_hint">Aucun flux pour l\'instant. Glissez un flux ici.</string>
+    <string name="discard_changes_dialog_title">Ignorer les modifications ?</string>
+    <string name="discard_changes_dialog_message">Les modifications apportées au nom, au lien ou à la catégorie ne seront pas enregistrées.</string>
+    <string name="discard_changes_confirm_button">Abandonner</string>
+    <string name="keep_editing_button">Continuer à modifier</string>
 </resources>

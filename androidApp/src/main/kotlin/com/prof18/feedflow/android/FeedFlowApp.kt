@@ -51,7 +51,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 
-class FeedFlowApp : Application(), SingletonImageLoader.Factory {
+open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
 
     private val audioPlayer by inject<AndroidAudioPlayer>()
     private val feedSyncRepo by inject<FeedSyncRepository>()

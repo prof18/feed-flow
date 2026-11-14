@@ -2,7 +2,6 @@ package com.prof18.feedflow.android.feedverification
 
 import android.os.Looper
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.prof18.feedflow.android.FeedFlowApp
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.ProvideFeedFlowStrings
 import com.prof18.feedflow.android.ui.utils.rememberFeedFlowStrings
@@ -28,7 +27,7 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [35], application = FeedFlowApp::class)
+@Config(sdk = [35], application = InternetGrantedFeedFlowApp::class)
 class FeedVerificationLazinessTest {
     @get:Rule
     val compose = createComposeRule()

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_url">订阅源 URL</string>
+    <string name="feed_url">订阅源链接</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
     <string name="no_feeds_add_one_message">没有订阅源，请添加</string>
     <string name="refresh_feeds">刷新订阅源</string>
@@ -177,7 +177,7 @@
     <string name="settings_right_swipe_action">向右滑动</string>
     <string name="settings_swipe_action_toggle_read">切换阅读状态</string>
     <string name="settings_swipe_action_toggle_bookmark">切换收藏状态</string>
-    <string name="settings_swipe_action_none">已禁用</string>
+    <string name="settings_swipe_action_none">无</string>
     <string name="settings_notification_check_period">通知检查频率</string>
     <string name="settings_notifications_enable_all_title">启用所有通知</string>
     <string name="notification_channel_description">订阅源中新文章的通知</string>

@@ -1,5 +1,5 @@
 ---
-title: "How do I organise my feeds?"
+title: "Kā es varu organizēt savas ziņu plūsmas?"
 weight: 210
 ---
 
@@ -14,9 +14,10 @@ weight: 210
   notifications and more. Switches and the link opening option apply as soon as
   you change them; **Save** confirms a new name, feed link or category. **Hide
   Shorts** changes the feed link, so it needs **Save** too.
-- **Pin** the feeds you read most to keep them at the top of the sidebar.
+- **Piespraudiet** ziņu plūsmas, kuras lasāt visbiežāk, lai tās vienmēr būtu
+  sānjoslas augšdaļā.
 - **Reorder** categories with the Reorder button in the sidebar.
 - On **desktop**, select several feeds to move or delete them together, or drag
   a feed onto a category.
 
-A feed can belong to one category at a time.
+Ziņu plūsma vienlaikus var būt tikai vienā kategorijā.

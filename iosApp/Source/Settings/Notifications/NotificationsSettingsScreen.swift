@@ -11,6 +11,8 @@ struct NotificationsSettingsScreen: View {
 
     @State private var notificationSettingState = NotificationSettingState(
         feedSources: [],
+        feedGroups: [],
+        searchQuery: "",
         isEnabledForAll: false,
         notificationMode: .feedSource
     )

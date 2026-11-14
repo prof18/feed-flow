@@ -55,6 +55,7 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncer
 import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.notification.ArticleNotificationRepository
+import com.prof18.feedflow.shared.domain.notification.NotificationRefreshEnabler
 import com.prof18.feedflow.shared.domain.parser.KleadArticleContentParser
 import com.prof18.feedflow.shared.domain.parser.readerContentFormat
 import com.prof18.feedflow.shared.domain.recovery.FeedAttempt
@@ -326,6 +327,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             recoveryService = get(),
             recoveryRepository = get(),
             coordinator = get(),
+            notificationRefreshEnabler = get(),
         )
     }
 
@@ -586,6 +588,7 @@ private fun getCoreModule(appConfig: AppConfig) = module {
             recoveryService = get(),
             recoveryRepository = get(),
             coordinator = get(),
+            notificationRefreshEnabler = get(),
             settingsRepository = get(),
         )
     }
@@ -773,11 +776,19 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         )
     }
 
+    factory {
+        NotificationRefreshEnabler(
+            settingsRepository = get(),
+            backgroundSyncScheduler = get(),
+        )
+    }
+
     viewModel {
         NotificationsViewModel(
             databaseHelper = get(),
             settingsRepository = get(),
             backgroundSyncScheduler = get(),
+            notificationRefreshEnabler = get(),
         )
     }
 

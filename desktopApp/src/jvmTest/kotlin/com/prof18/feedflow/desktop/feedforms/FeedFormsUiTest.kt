@@ -56,13 +56,10 @@ class FeedFormsUiTest {
                         showLoading = loading.value,
                         errorMessage = EnFeedFlowStrings.invalidRssUrlWithRetryHint,
                         categoriesState = CategoriesState(),
-                        showNotificationToggle = false,
-                        isNotificationEnabled = false,
                         canForceAdd = true,
                         onFeedUrlUpdated = {},
                         onAddFeed = {},
                         categoryActions = TestCategoryActions,
-                        onNotificationToggleChanged = {},
                         onForceAddFeed = { forced++ },
                     )
                 }
@@ -79,6 +76,60 @@ class FeedFormsUiTest {
     }
 
     @Test
+    fun `add and edit forms have no per-feed notification toggle`() {
+        var showEdit by mutableStateOf(false)
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    if (showEdit) {
+                        EditFeedForm(
+                            feedUrl = "https://example.test/feed.xml",
+                            feedName = "Example",
+                            showError = false,
+                            showLoading = false,
+                            errorMessage = "",
+                            canEditUrl = true,
+                            categoriesState = CategoriesState(),
+                            feedSourceSettings = com.prof18.feedflow.core.model.FeedSourceSettings(),
+                            onFeedUrlUpdated = {},
+                            onFeedNameUpdated = {},
+                            articleOpenModeSelector = { _, _ -> },
+                            onHiddenToggled = {},
+                            onHideImagesToggled = {},
+                            onKeepUnreadOnScrollToggled = {},
+                            isMarkReadWhenScrollingEnabled = true,
+                            onPinnedToggled = {},
+                            categoryActions = TestCategoryActions,
+                            editFeed = {},
+                            onShowDeleteDialog = {},
+                            showDeleteDialog = false,
+                            onDismissDeleteDialog = {},
+                            onConfirmDelete = {},
+                        )
+                    } else {
+                        AddFeedForm(
+                            feedUrl = "https://example.test/feed.xml",
+                            showError = false,
+                            showLoading = false,
+                            errorMessage = "",
+                            categoriesState = CategoriesState(),
+                            canForceAdd = false,
+                            onFeedUrlUpdated = {},
+                            onAddFeed = {},
+                            categoryActions = TestCategoryActions,
+                            onForceAddFeed = {},
+                        )
+                    }
+                }
+            }
+        }
+
+        rule.onNodeWithText(EnFeedFlowStrings.enableNotificationsForFeed).assertDoesNotExist()
+        rule.runOnIdle { showEdit = true }
+        rule.onNodeWithText(EnFeedFlowStrings.enableNotificationsForFeed).assertDoesNotExist()
+    }
+
+    @Test
     fun `parent echoed URL updates preserve typing and caret`() {
         var feedUrl by mutableStateOf("")
         rule.setContent {
@@ -90,13 +141,10 @@ class FeedFormsUiTest {
                         showLoading = false,
                         errorMessage = "",
                         categoriesState = CategoriesState(),
-                        showNotificationToggle = false,
-                        isNotificationEnabled = false,
                         canForceAdd = false,
                         onFeedUrlUpdated = { feedUrl = it },
                         onAddFeed = {},
                         categoryActions = TestCategoryActions,
-                        onNotificationToggleChanged = {},
                         onForceAddFeed = {},
                     )
                 }
@@ -137,8 +185,6 @@ class FeedFormsUiTest {
                         onKeepUnreadOnScrollToggled = {},
                         isMarkReadWhenScrollingEnabled = true,
                         onPinnedToggled = {},
-                        showNotificationToggle = false,
-                        onNotificationToggleChanged = {},
                         categoryActions = TestCategoryActions,
                         editFeed = {},
                         onShowDeleteDialog = {},
@@ -219,8 +265,6 @@ class FeedFormsUiTest {
                         onKeepUnreadOnScrollToggled = {},
                         isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
                         onPinnedToggled = {},
-                        showNotificationToggle = false,
-                        onNotificationToggleChanged = {},
                         categoryActions = TestCategoryActions,
                         editFeed = {},
                         onShowDeleteDialog = {},
@@ -258,8 +302,6 @@ class FeedFormsUiTest {
                         onKeepUnreadOnScrollToggled = {},
                         isMarkReadWhenScrollingEnabled = true,
                         onPinnedToggled = {},
-                        showNotificationToggle = false,
-                        onNotificationToggleChanged = {},
                         categoryActions = TestCategoryActions,
                         editFeed = {},
                         onShowDeleteDialog = {},
@@ -301,13 +343,10 @@ class FeedFormsUiTest {
                             showLoading = false,
                             errorMessage = "",
                             categoriesState = CategoriesState(),
-                            showNotificationToggle = false,
-                            isNotificationEnabled = false,
                             canForceAdd = false,
                             onFeedUrlUpdated = {},
                             onAddFeed = {},
                             categoryActions = TestCategoryActions,
-                            onNotificationToggleChanged = {},
                             onForceAddFeed = {},
                             onCancel = {},
                             feedbackState = feedback,

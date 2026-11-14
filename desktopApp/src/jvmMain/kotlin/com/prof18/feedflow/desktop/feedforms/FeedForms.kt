@@ -76,13 +76,10 @@ internal fun AddFeedForm(
     showLoading: Boolean,
     errorMessage: String,
     categoriesState: CategoriesState,
-    showNotificationToggle: Boolean,
-    isNotificationEnabled: Boolean,
     canForceAdd: Boolean,
     onFeedUrlUpdated: (String) -> Unit,
     onAddFeed: () -> Unit,
     categoryActions: FeedCategoryActions,
-    onNotificationToggleChanged: (Boolean) -> Unit,
     onForceAddFeed: () -> Unit,
     modifier: Modifier = Modifier,
     youTubeOptions: YouTubeOptionsState = YouTubeOptionsState(),
@@ -132,14 +129,6 @@ internal fun AddFeedForm(
                 FeedFormError(errorMessage.takeIf { showError })
                 SettingsSection {
                     FeedCategoryChoice(categoriesState, !submission.busy, categoryActions)
-                    if (showNotificationToggle) {
-                        SettingsSwitch(
-                            title = strings.enableNotificationsForFeed,
-                            checked = isNotificationEnabled,
-                            onCheckedChange = { if (!submission.busy) onNotificationToggleChanged(it) },
-                            enabled = !submission.busy,
-                        )
-                    }
                 }
                 HideShortsOption(youTubeOptions, enabled = !submission.busy, onToggle = onHideShortsToggleChanged)
                 statusMessage?.let { Text(it) }
@@ -209,8 +198,6 @@ internal fun EditFeedForm(
     onKeepUnreadOnScrollToggled: (Boolean) -> Unit,
     isMarkReadWhenScrollingEnabled: Boolean,
     onPinnedToggled: (Boolean) -> Unit,
-    showNotificationToggle: Boolean,
-    onNotificationToggleChanged: (Boolean) -> Unit,
     categoryActions: FeedCategoryActions,
     editFeed: () -> Unit,
     onShowDeleteDialog: () -> Unit,
@@ -313,14 +300,6 @@ internal fun EditFeedForm(
                     onCheckedChange = { if (!submission.busy) onPinnedToggled(it) },
                     enabled = !submission.busy,
                 )
-                if (showNotificationToggle) {
-                    SettingsSwitch(
-                        title = strings.enableNotificationsForFeed,
-                        checked = feedSourceSettings.isNotificationEnabled,
-                        onCheckedChange = { if (!submission.busy) onNotificationToggleChanged(it) },
-                        enabled = !submission.busy,
-                    )
-                }
             }
         },
         leadingAction = {

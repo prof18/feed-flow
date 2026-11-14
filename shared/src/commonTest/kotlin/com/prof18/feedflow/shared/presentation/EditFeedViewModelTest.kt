@@ -10,8 +10,11 @@ import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.core.model.YouTubeOptionsState
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
+import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.test.KoinTestBase
+import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.toParsedFeedSource
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -28,6 +31,7 @@ class EditFeedViewModelTest : KoinTestBase() {
     private val viewModel: EditFeedViewModel by inject()
     private val databaseHelper: DatabaseHelper by inject()
     private val networkSettings: NetworkSettings by inject()
+    private val settingsRepository: SettingsRepository by inject()
 
     @Test
     fun `loadFeedToEdit populates state and selects category`() = runTest {
@@ -417,6 +421,44 @@ class EditFeedViewModelTest : KoinTestBase() {
 
     private suspend fun insertFeedSource(feedSource: FeedSource) {
         databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
+    }
+
+    @Test
+    fun `switching notifications on at Never turns refresh on and announces it`() = runTest(testDispatcher) {
+        settingsRepository.setSyncPeriod(SyncPeriod.NEVER)
+        val feedSource = createFeedSource(id = "source-notify-on", title = "Notify")
+        insertFeedSource(feedSource)
+        viewModel.loadFeedToEdit(feedSource)
+        advanceUntilIdle()
+
+        viewModel.backgroundRefreshTurnedOn.test {
+            viewModel.updateIsNotificationEnabled(true)
+            advanceUntilIdle()
+
+            assertEquals(SyncPeriod.ONE_HOUR, awaitItem())
+            assertEquals(SyncPeriod.ONE_HOUR, settingsRepository.getSyncPeriod())
+        }
+    }
+
+    @Test
+    fun `switching notifications off keeps refresh off silently`() = runTest(testDispatcher) {
+        settingsRepository.setSyncPeriod(SyncPeriod.NEVER)
+        val feedSource = createFeedSource(
+            id = "source-notify-off",
+            title = "Notify",
+            isNotificationEnabled = true,
+        )
+        insertFeedSource(feedSource)
+        viewModel.loadFeedToEdit(feedSource)
+        advanceUntilIdle()
+
+        viewModel.backgroundRefreshTurnedOn.test {
+            viewModel.updateIsNotificationEnabled(false)
+            advanceUntilIdle()
+
+            expectNoEvents()
+            assertEquals(SyncPeriod.NEVER, settingsRepository.getSyncPeriod())
+        }
     }
 
     private fun createFeedSource(

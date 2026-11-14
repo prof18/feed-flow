@@ -4,18 +4,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.FeedSourceNotificationPreference
+import com.prof18.feedflow.core.model.NotificationFeedGroup
 import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.NotificationSettingState
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.domain.notification.NotificationRefreshEnabler
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,43 +29,64 @@ class NotificationsViewModel internal constructor(
     private val databaseHelper: DatabaseHelper,
     private val settingsRepository: SettingsRepository,
     private val backgroundSyncScheduler: BackgroundSyncScheduler,
+    private val notificationRefreshEnabler: NotificationRefreshEnabler,
 ) : ViewModel() {
 
     private val notificationSettingsMutableStateFlow = MutableStateFlow(
         NotificationSettingState(
-            feedSources = persistentListOf<FeedSourceNotificationPreference>().toImmutableList(),
+            feedSources = persistentListOf(),
+            feedGroups = persistentListOf(),
+            searchQuery = "",
             isEnabledForAll = false,
             notificationMode = NotificationMode.FEED_SOURCE,
         ),
     )
     val notificationSettingState = notificationSettingsMutableStateFlow.asStateFlow()
 
+    private val backgroundRefreshTurnedOnMutable = MutableSharedFlow<SyncPeriod>()
+    val backgroundRefreshTurnedOn: SharedFlow<SyncPeriod> = backgroundRefreshTurnedOnMutable.asSharedFlow()
+
     val syncPeriodFlow: StateFlow<SyncPeriod> = settingsRepository.syncPeriodFlow
     val backgroundSyncRestrictionsFlow: StateFlow<BackgroundSyncRestrictions> =
         settingsRepository.backgroundSyncRestrictionsFlow
 
+    private val searchQueryMutableState = MutableStateFlow("")
+
     init {
         viewModelScope.launch {
-            databaseHelper.getFeedSourcesFlow().collect { feedSources ->
-                notificationSettingsMutableStateFlow.update {
-                    NotificationSettingState(
-                        feedSources = feedSources.map { feedSource ->
-                            FeedSourceNotificationPreference(
-                                feedSourceId = feedSource.id,
-                                feedSourceTitle = feedSource.title,
-                                isEnabled = feedSource.isNotificationEnabled,
-                            )
-                        }.toPersistentList(),
-                        isEnabledForAll = if (feedSources.isEmpty()) {
-                            false
-                        } else {
-                            feedSources.all { it.isNotificationEnabled }
-                        },
-                        notificationMode = settingsRepository.getNotificationMode(),
-                    )
-                }
+            combine(
+                databaseHelper.getFeedSourcesFlow(),
+                searchQueryMutableState,
+            ) { feedSources, searchQuery ->
+                val preferences = feedSources
+                    .map { feedSource ->
+                        FeedSourceNotificationPreference(
+                            feedSourceId = feedSource.id,
+                            feedSourceTitle = feedSource.title,
+                            categoryTitle = feedSource.category?.title,
+                            isEnabled = feedSource.isNotificationEnabled,
+                        )
+                    }
+                    .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.feedSourceTitle })
+                NotificationSettingState(
+                    feedSources = preferences.toPersistentList(),
+                    feedGroups = preferences.toFeedGroups(searchQuery),
+                    searchQuery = searchQuery,
+                    isEnabledForAll = if (feedSources.isEmpty()) {
+                        false
+                    } else {
+                        feedSources.all { it.isNotificationEnabled }
+                    },
+                    notificationMode = settingsRepository.getNotificationMode(),
+                )
+            }.collect { newState ->
+                notificationSettingsMutableStateFlow.update { newState }
             }
         }
+    }
+
+    fun updateSearchQuery(query: String) {
+        searchQueryMutableState.value = query
     }
 
     fun updateAllNotificationStatus(status: Boolean) {
@@ -71,7 +98,7 @@ class NotificationsViewModel internal constructor(
                 )
             }
             if (status) {
-                forceUpdateSyncPeriod()
+                enableRefreshForNotifications()
             }
         }
     }
@@ -83,15 +110,20 @@ class NotificationsViewModel internal constructor(
                 enabled = status,
             )
             if (status) {
-                forceUpdateSyncPeriod()
+                enableRefreshForNotifications()
             }
         }
     }
 
-    private fun forceUpdateSyncPeriod() {
-        if (syncPeriodFlow.value == SyncPeriod.NEVER) {
-            settingsRepository.setSyncPeriod(SyncPeriod.ONE_HOUR)
-            backgroundSyncScheduler.updateSyncPeriod(SyncPeriod.ONE_HOUR)
+    fun turnOnBackgroundRefresh() {
+        viewModelScope.launch {
+            notificationRefreshEnabler.enableIfOff()
+        }
+    }
+
+    private suspend fun enableRefreshForNotifications() {
+        notificationRefreshEnabler.enableIfOff()?.let { period ->
+            backgroundRefreshTurnedOnMutable.emit(period)
         }
     }
 
@@ -126,4 +158,24 @@ class NotificationsViewModel internal constructor(
             }
         }
     }
+}
+
+private fun List<FeedSourceNotificationPreference>.toFeedGroups(
+    searchQuery: String,
+): PersistentList<NotificationFeedGroup> {
+    val query = searchQuery.trim()
+    return filter { query.isEmpty() || it.feedSourceTitle.contains(query, ignoreCase = true) }
+        .groupBy { it.categoryTitle }
+        .entries
+        .sortedWith(
+            compareBy<Map.Entry<String?, List<FeedSourceNotificationPreference>>> { it.key == null }
+                .thenBy(String.CASE_INSENSITIVE_ORDER) { it.key.orEmpty() },
+        )
+        .map { (categoryTitle, feedSources) ->
+            NotificationFeedGroup(
+                categoryTitle = categoryTitle,
+                feedSources = feedSources.toPersistentList(),
+            )
+        }
+        .toPersistentList()
 }

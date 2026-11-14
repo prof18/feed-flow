@@ -48,7 +48,6 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
     val settings by vm.feedSourceSettingsState.collectAsState()
     val youTubeOptions by vm.youTubeOptionsState.collectAsState()
     val categories by vm.categoriesState.collectAsState()
-    val showNotifications by vm.showNotificationToggleState.collectAsState()
     val markReadWhenScrolling by vm.markReadWhenScrollingEnabledState.collectAsState()
     val hasUnsavedChanges by vm.hasUnsavedChangesState.collectAsState()
     val strings = LocalFeedFlowStrings.current
@@ -118,8 +117,6 @@ private fun EditFeedScreenContent(feedSource: FeedSource, onCloseRequest: () -> 
         onKeepUnreadOnScrollToggled = vm::updateIsKeepUnreadOnScrollEnabled,
         isMarkReadWhenScrollingEnabled = markReadWhenScrolling,
         onPinnedToggled = vm::updateIsPinned,
-        showNotificationToggle = showNotifications,
-        onNotificationToggleChanged = vm::updateIsNotificationEnabled,
         categoryActions = FeedCategoryActions(
             onSelect = vm::onCategorySelected,
             onAdd = vm::addNewCategory,

@@ -131,8 +131,6 @@ fun AddFeedScreenContent(
         }
     }
     val categories by viewModel.categoriesState.collectAsState()
-    val showNotification by viewModel.showNotificationToggleState.collectAsState()
-    val notificationEnabled by viewModel.isNotificationEnabledState.collectAsState()
     val youTubeOptions by viewModel.youTubeOptionsState.collectAsState()
     AddFeedForm(
         feedUrl = feedUrl,
@@ -140,8 +138,6 @@ fun AddFeedScreenContent(
         showLoading = showLoading,
         errorMessage = errorMessage,
         categoriesState = categories,
-        showNotificationToggle = showNotification,
-        isNotificationEnabled = notificationEnabled,
         canForceAdd = canForceAdd,
         onFeedUrlUpdated = {
             feedUrl = it
@@ -154,7 +150,6 @@ fun AddFeedScreenContent(
             validate = viewModel::validateCategoryName,
         ),
         onCancel = onCancel,
-        onNotificationToggleChanged = viewModel::updateNotificationStatus,
         onForceAddFeed = viewModel::forceAddFeed,
         modifier = modifier,
         youTubeOptions = youTubeOptions,

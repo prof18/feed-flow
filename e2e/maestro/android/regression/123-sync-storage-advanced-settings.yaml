@@ -31,21 +31,21 @@ appId: com.prof18.feedflow.debug
     id: sync_storage_sync_period
 - assertVisible: "Never"
 - scrollUntilVisible:
-    element: "Background sync only on Wi-Fi"
+    element: "Refresh in the background only on Wi-Fi"
     direction: DOWN
     timeout: 10000
 - assertVisible:
     childOf:
       id: background_sync_wifi_only
     rightOf:
-      text: "Background sync only on Wi-Fi"
+      text: "Refresh in the background only on Wi-Fi"
     enabled: false
     checked: false
 - assertVisible:
     childOf:
       id: background_sync_charging_only
     rightOf:
-      text: "Background sync only while charging"
+      text: "Refresh in the background only while charging"
     enabled: false
     checked: false
 - tapOn:
@@ -55,28 +55,28 @@ appId: com.prof18.feedflow.debug
     childOf:
       id: background_sync_wifi_only
     rightOf:
-      text: "Background sync only on Wi-Fi"
+      text: "Refresh in the background only on Wi-Fi"
     enabled: true
 - assertVisible:
     childOf:
       id: background_sync_charging_only
     rightOf:
-      text: "Background sync only while charging"
+      text: "Refresh in the background only while charging"
     enabled: true
-- tapOn: "Background sync only on Wi-Fi"
+- tapOn: "Refresh in the background only on Wi-Fi"
 - assertVisible:
     childOf:
       id: background_sync_wifi_only
     rightOf:
-      text: "Background sync only on Wi-Fi"
+      text: "Refresh in the background only on Wi-Fi"
     checked: true
-- assertVisible: "Background sync only while charging"
-- tapOn: "Background sync only while charging"
+- assertVisible: "Refresh in the background only while charging"
+- tapOn: "Refresh in the background only while charging"
 - assertVisible:
     childOf:
       id: background_sync_charging_only
     rightOf:
-      text: "Background sync only while charging"
+      text: "Refresh in the background only while charging"
     checked: true
 - tapOn:
     id: sync_storage_sync_period
@@ -85,14 +85,14 @@ appId: com.prof18.feedflow.debug
     childOf:
       id: background_sync_wifi_only
     rightOf:
-      text: "Background sync only on Wi-Fi"
+      text: "Refresh in the background only on Wi-Fi"
     enabled: false
     checked: true
 - assertVisible:
     childOf:
       id: background_sync_charging_only
     rightOf:
-      text: "Background sync only while charging"
+      text: "Refresh in the background only while charging"
     enabled: false
     checked: true
 - tapOn:
@@ -102,14 +102,14 @@ appId: com.prof18.feedflow.debug
     childOf:
       id: background_sync_wifi_only
     rightOf:
-      text: "Background sync only on Wi-Fi"
+      text: "Refresh in the background only on Wi-Fi"
     enabled: true
     checked: true
 - assertVisible:
     childOf:
       id: background_sync_charging_only
     rightOf:
-      text: "Background sync only while charging"
+      text: "Refresh in the background only while charging"
     enabled: true
     checked: true
 - back

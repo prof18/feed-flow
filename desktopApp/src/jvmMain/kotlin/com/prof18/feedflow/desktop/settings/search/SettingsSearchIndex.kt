@@ -149,7 +149,7 @@ internal fun settingsSearchIndex(
         strings.settingsRefreshFeedsOnLaunch,
         strings.settingsDesktopRefreshWhileOpen,
     )
-    // The mobile apps call the same setting "Background sync"; keep that wording searchable on desktop.
+    // The mobile apps call the same setting "Background refresh"; keep that wording searchable on desktop.
     add(
         SettingsSearchEntry(
             DesktopSettingsCategory.SYNC,

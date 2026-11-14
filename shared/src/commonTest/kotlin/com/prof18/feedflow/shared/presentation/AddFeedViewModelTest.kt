@@ -9,10 +9,12 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SyncAccounts
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.feedsync.networkcore.NetworkSettings
+import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.HtmlRetriever
 import com.prof18.feedflow.shared.domain.feed.RssParserWrapper
 import com.prof18.feedflow.shared.domain.feedsync.AccountsRepository
 import com.prof18.feedflow.shared.domain.model.FeedAddedState
+import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
@@ -42,6 +44,7 @@ import kotlin.test.assertTrue
 class AddFeedViewModelTest : KoinTestBase() {
 
     private val databaseHelper: DatabaseHelper by inject()
+    private val settingsRepository: SettingsRepository by inject()
 
     @Test
     fun `Shorts option is available for every remote sync account`() = runTest(testDispatcher) {
@@ -379,6 +382,34 @@ class AddFeedViewModelTest : KoinTestBase() {
         advanceUntilIdle()
 
         assertTrue(viewModel.showNotificationToggleState.value)
+    }
+
+    @Test
+    fun `switching notifications on at Never turns refresh on and announces it`() = runTest(testDispatcher) {
+        settingsRepository.setSyncPeriod(SyncPeriod.NEVER)
+        val viewModel = getViewModel()
+
+        viewModel.backgroundRefreshTurnedOn.test {
+            viewModel.updateNotificationStatus(true)
+            advanceUntilIdle()
+
+            assertEquals(SyncPeriod.ONE_HOUR, awaitItem())
+            assertEquals(SyncPeriod.ONE_HOUR, settingsRepository.getSyncPeriod())
+        }
+    }
+
+    @Test
+    fun `switching notifications off keeps refresh off silently`() = runTest(testDispatcher) {
+        settingsRepository.setSyncPeriod(SyncPeriod.NEVER)
+        val viewModel = getViewModel()
+
+        viewModel.backgroundRefreshTurnedOn.test {
+            viewModel.updateNotificationStatus(false)
+            advanceUntilIdle()
+
+            expectNoEvents()
+            assertEquals(SyncPeriod.NEVER, settingsRepository.getSyncPeriod())
+        }
     }
 
     private fun getViewModel(): AddFeedViewModel = get()

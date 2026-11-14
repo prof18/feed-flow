@@ -23,17 +23,17 @@
             <termEntry weblate-flags="terminology">
                 <descrip>Feeds and categories the user keeps at the top of the sidebar. Avoid: Pinned Feed Sources, favorites.</descrip>
                 <langSet xml:lang="en"><tig><term>Pinned feeds</term></tig></langSet>
-                <langSet xml:lang="de"><tig><term/></tig></langSet>
+                <langSet xml:lang="de"><tig><term>Angepinnte Feeds</term></tig></langSet>
             </termEntry>
             <termEntry weblate-flags="terminology">
                 <descrip>Only for OPML import and export: the feed list as stored in an OPML file. Everywhere else say feeds.</descrip>
                 <langSet xml:lang="en"><tig><term>subscriptions</term></tig></langSet>
-                <langSet xml:lang="de"><tig><term/></tig></langSet>
+                <langSet xml:lang="de"><tig><term>Abonnements</term></tig></langSet>
             </termEntry>
             <termEntry weblate-flags="terminology">
                 <descrip>The title of a feed, shown on each article. Avoid: feed source.</descrip>
                 <langSet xml:lang="en"><tig><term>feed name</term></tig></langSet>
-                <langSet xml:lang="de"><tig><term/></tig></langSet>
+                <langSet xml:lang="de"><tig><term>Feed Name</term></tig></langSet>
             </termEntry>
             <termEntry weblate-flags="terminology">
                 <descrip>One entry of a feed: title, summary and link, which FeedFlow gets when it refreshes feeds. Avoid: item, post, entry, story.</descrip>

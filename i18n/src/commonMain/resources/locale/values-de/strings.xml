@@ -97,12 +97,12 @@
     <string name="feed_sync_in_progress">Die Synchronisierung läuft gerade. Nach Abschluss der Synchronisierung wird sich die App automatisch schließen.</string>
     <string name="last_upload">Letzter Upload: %s</string>
     <string name="last_download">Letzter Download: %s</string>
-    <string name="no_dropbox_sync_yet">Noch nicht auf Dropbox gesichert. Backup jetzt wählen, um zu beginnen.</string>
+    <string name="no_dropbox_sync_yet">Noch nicht auf Dropbox gesichert. \"Jetzt sichern\" wählen, um zu beginnen.</string>
     <string name="error_account_sync">Beim Synchronisieren der Daten mit deinem Konto ist leider ein Problem aufgetreten - Fehlercode: %s :(</string>
     <string name="import_export_description">Für eine bessere Interoperabilität mit anderen Feed-Readern unterstützt FeedFlow das Importieren und Exportieren deiner Abonnements als OPML-Datei.</string>
     <string name="read_articles_empty_screen_message">Hier ist noch nichts; Zeit, mit dem Lesen zu beginnen!</string>
     <string name="bookmarked_articles_empty_screen_message">Hier ist noch nichts eingetragen - ein guter Zeitpunkt, um Lesezeichen hinzuzufügen!</string>
-    <string name="no_icloud_sync_yet">Deine Daten sind noch nicht mit iCloud synchronisiert. Drücke die Sicherungstaste, um die Synchronisierung zu starten</string>
+    <string name="no_icloud_sync_yet">Noch nicht auf iCLoud gesichert. \"Jetzt sichern \"wählen, um zu beginnen.</string>
     <string name="account_refresh_progress">Aktualisierung läuft</string>
     <string name="edit_feed_source_name_button">Bearbeiten</string>
     <string name="clear_old_articles_button">1 Woche alte Artikel löschen</string>
@@ -252,7 +252,7 @@
     <string name="google_drive_sync_common_description">Verknüpfe dein Google Drive Konto, um deine Feed-Abonnements, Kategorien und gelesene und gespeicherte Artikel zwischen deinen Android-, iOS-, iPadOS- und Desktop-Geräten zu synchronisieren. Die Daten werden in einem App-spezifischen Ordner gespeichert; FeedFlow hat keinen Zugriff auf deine Dateien</string>
     <string name="google_drive_sync_error">Es gab einen Fehler bei der Verbindung mit Google Drive. Bitte erneut versuchen</string>
     <string name="google_drive_sync_success">Dein Google Drive Konto wurde erfolgreich verbunden</string>
-    <string name="no_google_drive_sync_yet">Die Daten sind noch nicht mit Google Drive synchronisiert. Drücke die Sicherungstaste, um die Synchronisierung zu starten</string>
+    <string name="no_google_drive_sync_yet">Noch nicht auf Google Drive gesichert. \"Jetzt sichern\" wählen, um zu beginnen.</string>
     <string name="google_drive_connect_button">Google Drive verbinden</string>
     <string name="google_drive_desktop_sync_description">Klicke auf die Taste unten zur Verbindung mit deinem Google Drive Konto. Zur Authentifizierung wird sich ein Browserfenster öffnen. Nach der erfolgten Anmeldung kannst du zu dieser App zurückkehren.</string>
     <string name="delete_feed_source_error">Der Feed konnte nicht gelöscht werden. Bitte erneut versuchen.</string>
@@ -577,7 +577,7 @@
     <string name="reader_font_system">System</string>
     <string name="reader_font_latin_script_only">Diese Schriftart unterstützt nur Sprachen mit lateinischer Schrift. Texte in anderen Schriftsystemen werden in der Systemschriftart angezeigt.</string>
     <string name="reader_mode_preview_title">Ein ruhiger Morgen mit einem guten Artikel</string>
-    <string name="reader_mode_preview_body">Diese Voransicht ändert sich mit den Anpassungen von Schriftart und -größe; so kann vor der Rückkehr zum Artikel eine gute Leseeinstellung gefunden werden.</string>
+    <string name="reader_mode_preview_body">Diese Voransicht ändert sich mit den Anpassungen von Schriftart und -größe; so kann vor der Rückkehr zum Artikel eine bequeme Leseeinstellung gefunden werden.</string>
     <string name="reader_mode_opened_externally_title">In ihrem Browser geöffnet</string>
     <string name="reader_mode_opened_externally_message">Diese Verknüpfung zeigt auf eine Datei, z.B. ein PDF, die FeedFlow nicht anzeigen kann; daher wurde sie in ihrem Browser geöffnet.</string>
     <string name="reader_mode_open_again_in_browser">Im Browser öffnen</string>

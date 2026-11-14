@@ -68,7 +68,7 @@
             <termEntry weblate-flags="terminology">
                 <descrip>Button that copies feeds, read status and bookmarks to a backup account (iCloud, Dropbox, Google Drive) right away. Verb: back up; noun: backup. Avoid: Upload changes.</descrip>
                 <langSet xml:lang="en"><tig><term>Back up now</term></tig></langSet>
-                <langSet xml:lang="de"><tig><term>Backup jetzt erstellen</term></tig></langSet>
+                <langSet xml:lang="de"><tig><term>Jetzt sichern</term></tig></langSet>
             </termEntry>
             <termEntry weblate-flags="terminology">
                 <descrip>A connected iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin or BazQux account. Avoid: service, provider.</descrip>

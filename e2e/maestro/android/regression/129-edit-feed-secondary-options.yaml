@@ -7,6 +7,41 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "E2E seed complete"
 - tapOn:
     id: e2e_open_app
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_notifications
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
+- tapOn:
+    id: settings_notifications
+- tapOn:
+    childOf:
+      id: notifications_enable_all
+    rightOf:
+      text: "Enable all notifications"
+    checked: false
+- tapOn:
+    childOf:
+      id: notifications_enable_all
+    rightOf:
+      text: "Enable all notifications"
+    checked: true
+- assertVisible:
+    childOf:
+      id: notifications_enable_all
+    rightOf:
+      text: "Enable all notifications"
+    checked: false
+- back
+- back
+- tapOn:
+    id: drawer_timeline
+    optional: true
 - longPressOn:
     id: article_row_e2e_article_newest_unread
 - tapOn: "Feed settings"

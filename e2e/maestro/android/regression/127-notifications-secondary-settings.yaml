@@ -30,7 +30,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: settings_notifications
 - assertVisible: "By feed"
-- tapOn: "Notification grouping"
+- tapOn: "Notification style"
 - tapOn: "Per article"
 - assertVisible: "Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest."
 - back
@@ -52,96 +52,34 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: settings_notifications
 - assertVisible: "Per article"
-- tapOn: "Notification grouping"
+- tapOn: "Notification style"
 - tapOn: "All combined"
 - assertNotVisible: "Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest."
-- tapOn: "Notification check frequency"
+- assertVisible:
+    id: notifications_background_refresh
+- assertVisible: "Every 30 minutes"
+- tapOn: "Background refresh"
 - tapOn: "Never"
-- assertVisible:
-    childOf:
-      id: background_sync_wifi_only
-    rightOf:
-      text: "Background sync only on Wi-Fi"
-    enabled: false
-- assertVisible:
-    childOf:
-      id: background_sync_charging_only
-    rightOf:
-      text: "Background sync only while charging"
-    enabled: false
+- assertVisible: "Off, so notifications can't arrive"
+- tapOn: "Background refresh"
+- tapOn: "Every 2 hours"
+- assertNotVisible: "Off, so notifications can't arrive"
+- assertVisible: "Every 2 hours"
+- tapOn: "Background refresh"
+- tapOn: "Never"
+- assertVisible: "Off, so notifications can't arrive"
 - tapOn:
     childOf:
       id: notifications_enable_all
     rightOf:
-      text: "Enable All Notifications"
+      text: "Enable all notifications"
     checked: false
 - assertVisible: "Every hour"
-- assertVisible:
-    childOf:
-      id: background_sync_wifi_only
-    rightOf:
-      text: "Background sync only on Wi-Fi"
-    enabled: true
-- assertVisible:
-    childOf:
-      id: background_sync_charging_only
-    rightOf:
-      text: "Background sync only while charging"
-    enabled: true
-- tapOn: "Notification check frequency"
-- tapOn: "Every 6 hours"
-- assertVisible: "Every 6 hours"
-- tapOn: "Background sync only on Wi-Fi"
-- assertVisible:
-    childOf:
-      id: background_sync_wifi_only
-    rightOf:
-      text: "Background sync only on Wi-Fi"
-    checked: true
-- tapOn: "Background sync only while charging"
-- assertVisible:
-    childOf:
-      id: background_sync_charging_only
-    rightOf:
-      text: "Background sync only while charging"
-    checked: true
-- tapOn: "Notification check frequency"
-- tapOn: "Never"
-- assertVisible:
-    childOf:
-      id: background_sync_wifi_only
-    rightOf:
-      text: "Background sync only on Wi-Fi"
-    enabled: false
-    checked: true
-- assertVisible:
-    childOf:
-      id: background_sync_charging_only
-    rightOf:
-      text: "Background sync only while charging"
-    enabled: false
-    checked: true
-- tapOn: "Notification check frequency"
-- tapOn: "Every 6 hours"
-- assertVisible:
-    childOf:
-      id: background_sync_wifi_only
-    rightOf:
-      text: "Background sync only on Wi-Fi"
-    enabled: true
-    checked: true
-- assertVisible:
-    childOf:
-      id: background_sync_charging_only
-    rightOf:
-      text: "Background sync only while charging"
-    enabled: true
-    checked: true
 - tapOn:
     childOf:
       id: notifications_enable_all
     rightOf:
-      text: "Enable All Notifications"
+      text: "Enable all notifications"
     checked: true
 - scrollUntilVisible:
     element: "Android Central RSS Feed"

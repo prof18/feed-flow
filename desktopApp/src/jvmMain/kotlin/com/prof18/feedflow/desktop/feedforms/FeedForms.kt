@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -167,7 +169,13 @@ internal fun AddFeedForm(
 private fun HideShortsOption(options: YouTubeOptionsState, enabled: Boolean, onToggle: (Boolean) -> Unit) {
     if (!options.showHideShortsToggle) return
     val strings = LocalFeedFlowStrings.current
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    // The option appears after the dialog has been laid out, so it can start below the visible area.
+    val bringIntoView = remember { BringIntoViewRequester() }
+    LaunchedEffect(bringIntoView) { bringIntoView.bringIntoView() }
+    Column(
+        modifier = Modifier.bringIntoViewRequester(bringIntoView),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
         CheckboxRow(
             text = strings.hideYoutubeShorts,
             checked = options.hideShorts,

@@ -21,7 +21,7 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: settings_notifications
 - tapOn:
-    text: "Request Permission"
+    text: "Allow notifications"
     optional: true
 - tapOn:
     text: "Allow"

@@ -22,7 +22,6 @@ import com.prof18.feedflow.desktop.e2e.harness.openSidebarMenu
 import com.prof18.feedflow.desktop.e2e.harness.replaceText
 import com.prof18.feedflow.desktop.e2e.harness.scrollInWindow
 import com.prof18.feedflow.desktop.e2e.harness.scrollToText
-import com.prof18.feedflow.desktop.e2e.harness.setSwitch
 import com.prof18.feedflow.desktop.e2e.harness.sidebarRow
 import com.prof18.feedflow.desktop.testing.FeedFormE2eIds
 import com.prof18.feedflow.desktop.testing.FeedSuggestionsE2eIds
@@ -160,8 +159,8 @@ class LibraryFlowsTest {
     /**
      * Feed settings from an article: not on desktop over attach (article context menus cannot be opened,
      * see Known limitations); the flow opens Feed settings from the sidebar feed menu instead.
-     * open mode and notification toggle: desktop feedforms/FeedForms.kt (articleOpenMode,
-     * enableNotificationsForFeed)
+     * open mode: desktop feedforms/FeedForms.kt (articleOpenMode). Desktop has no per-feed notification
+     * toggle, because desktop has no system notifications yet.
      */
     @Test
     fun `REG-129 edit feed secondary options`() {
@@ -171,9 +170,7 @@ class LibraryFlowsTest {
         flow.openFeedSettings(ANDROID_CENTRAL)
         val window = flow.strings.openFeedSettings
         flow.choose(window, flow.strings.articleOpenMode, flow.strings.readerContentSourceWeb)
-        if (flow.nodesIn(window).any { flow.strings.enableNotificationsForFeed in it.texts }) {
-            flow.setSwitch(window, flow.strings.enableNotificationsForFeed, on = true)
-        }
+        assertTrue(flow.nodesIn(window).none { flow.strings.enableNotificationsForFeed in it.texts })
         assertTrue(flow.editSaveButton(window).isDisabled)
         flow.clickIn(window, flow.strings.cancelButton)
         flow.awaitWindowGone(window)

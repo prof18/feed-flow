@@ -23,19 +23,19 @@ appId: com.prof18.feedflow.dev
 - assertVisible:
     text: "Notifications"
 - tapOn:
-    text: "Request Permission"
+    text: "Allow notifications"
     optional: true
 - tapOn:
     text: "Allow"
     optional: true
 - extendedWaitUntil:
     visible:
-      text: "Enable All Notifications"
+      text: "Enable all notifications"
     timeout: 10000
 - assertVisible:
     text: "By feed"
 - tapOn:
-    text: "Notification grouping"
+    text: "Notification style"
 - tapOn:
     text: "Per article"
 - assertVisible:
@@ -62,21 +62,35 @@ appId: com.prof18.feedflow.dev
 - assertVisible:
     text: "Per article"
 - tapOn:
-    text: "Notification grouping"
+    text: "Notification style"
 - tapOn:
     text: "By category"
 - assertNotVisible:
     text: "Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest."
 - assertVisible:
-    text: "Enable All Notifications"
-- assertVisible:
-    text: "Android Central RSS Feed"
-- assertVisible:
-    text: "Bloomberg Technology"
-- assertVisible:
-    text: "Ars Technica"
+    text: "Enable all notifications"
+- scrollUntilVisible:
+    element:
+      text: "Bloomberg Technology"
+    direction: DOWN
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      text: "Android Central RSS Feed"
+    direction: DOWN
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      text: "Ars Technica"
+    direction: DOWN
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      text: "Notification style"
+    direction: UP
+    timeout: 10000
 - tapOn:
-    text: "Notification grouping"
+    text: "Notification style"
 - tapOn:
     text: "By category"
 - assertVisible:

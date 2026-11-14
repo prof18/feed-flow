@@ -28,7 +28,7 @@ import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 internal fun SyncAndRefreshScreenContent(
@@ -94,16 +94,8 @@ internal fun SyncAndRefreshScreenContent(
                     modifier = Modifier.testTag(SettingsE2eIds.SYNC_PERIOD),
                     title = strings.settingsSyncPeriod,
                     currentValue = syncPeriod,
-                    options = persistentListOf(
-                        SettingDropdownOption(SyncPeriod.NEVER, strings.settingsSyncPeriodNever),
-                        SettingDropdownOption(SyncPeriod.FIFTEEN_MINUTES, strings.settingsSyncPeriodFifteenMinutes),
-                        SettingDropdownOption(SyncPeriod.THIRTY_MINUTES, strings.settingsSyncPeriodThirtyMinutes),
-                        SettingDropdownOption(SyncPeriod.ONE_HOUR, strings.settingsSyncPeriodOneHour),
-                        SettingDropdownOption(SyncPeriod.TWO_HOURS, strings.settingsSyncPeriodTwoHours),
-                        SettingDropdownOption(SyncPeriod.SIX_HOURS, strings.settingsSyncPeriodSixHours),
-                        SettingDropdownOption(SyncPeriod.TWELVE_HOURS, strings.settingsSyncPeriodTwelveHours),
-                        SettingDropdownOption(SyncPeriod.ONE_DAY, strings.settingsSyncPeriodOneDay),
-                    ),
+                    options = SyncPeriod.entries.map { SettingDropdownOption(it, it.label(strings)) }
+                        .toPersistentList(),
                     onOptionSelected = onSyncPeriodSelected,
                 )
             }

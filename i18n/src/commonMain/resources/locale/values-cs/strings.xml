@@ -170,12 +170,8 @@
     <string name="link_with_error_report_title">Následující zdroje nebyly přidány kvůli chybě</string>
     <string name="database_error">Při načítání zdrojů něco pokazilo. Zkuste to prosím znovu nebo aplikaci restartujte - error code: %s :(</string>
     <string name="settings_notification_no_feed">Vypadá to, že jste dosud nepřidali žádné zdroje. Přidejte nějaké, abyste začali odebírat upozornění!</string>
-    <string name="settings_notification_check_period">Frekvence kontroly upozornění</string>
     <string name="settings_notifications_enable_all_title">Povolit všechna upozornění</string>
     <string name="notification_channel_description">Oznámení o nových článcích ve vašich zdrojích</string>
-    <string name="settings_notifications_permission_status_title">Stav povolení</string>
-    <string name="settings_notifications_permission_status_granted">Schváleno</string>
-    <string name="settings_notifications_permission_status_denied">Zamítnuto</string>
     <string name="settings_notifications_permission_request_button">Žádost o povolení</string>
     <string name="new_articles_notification_title">Dostupné nové články</string>
     <string name="notification_channel_name">Nové články</string>

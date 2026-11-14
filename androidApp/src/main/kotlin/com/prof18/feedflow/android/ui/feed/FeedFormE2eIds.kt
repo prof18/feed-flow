@@ -19,6 +19,7 @@ object FeedFormE2eIds {
     const val CATEGORY_RENAME_INPUT = "edit_feed_category_rename_input"
     const val CATEGORY_RENAME_SAVE = "edit_feed_category_rename_save"
     const val SAVE_BUTTON = "edit_feed_save"
+    const val NOTIFICATIONS_TOGGLE = "feed_form_notifications_toggle"
 
     fun categoryChip(label: String): String =
         "edit_feed_category_${label.toE2eIdSuffix()}"

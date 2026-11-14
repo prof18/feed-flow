@@ -155,9 +155,6 @@
     <string name="settings_swipe_action_none">Deshabilitado</string>
     <string name="settings_notifications_enable_all_title">Permitir todas las notificaciones</string>
     <string name="notification_channel_description">Notificaciones de nuevos artículos en tus fuentes</string>
-    <string name="settings_notifications_permission_status_title">Estado del permiso</string>
-    <string name="settings_notifications_permission_status_granted">Concedido</string>
-    <string name="settings_notifications_permission_status_denied">Denegado</string>
     <string name="settings_notifications_permission_request_button">Solicitar permiso</string>
     <string name="new_articles_notification_title">Nuevos artículos disponibles</string>
     <string name="notification_channel_name">Nuevos artículos</string>
@@ -199,7 +196,6 @@
     <string name="wrong_credentials_error_message">Las credenciales no son correctas. Por favor, inténtalo de nuevo.</string>
     <string name="wrong_url_error_message">El enlace proporcionado no es correcto. Por favor, inténtalo de nuevo.</string>
     <string name="link_with_error_report_title">Los siguientes feeds no se han añadido por un error</string>
-    <string name="settings_notification_check_period">Frecuencia de comprobación de notificaciones</string>
     <string name="icloud_sync_description">Conecta tu cuenta iCloud para sincronizar las suscripciones a los feeds, categorías, artículos leídos y marcadores entre tus dispositivos iOS, iPadOS y macOS. Los datos se guardarán en una carpeta específica de la aplicación; FeedFlow no tendrá acceso a ninguno de tus archivos</string>
     <string name="open_feed_website_button">Abrir sitio web del feed</string>
     <string name="import_export_label">Importar y exportar</string>

@@ -124,12 +124,8 @@
     <string name="fresh_rss_account_connected">A FreshRSS-fiók sikeresen kapcsolódott</string>
     <string name="fresh_rss_last_sync">Utoljára szinkronizálva: %s</string>
     <string name="settings_notification_no_feed">Úgy tűnik, hogy még nem adott hozzá egyetlen hírforrást sem. Adjon hozzá néhányat, hogy értesítéseket kapjon!</string>
-    <string name="settings_notification_check_period">Értesítések ellenőrzésének időköze</string>
     <string name="settings_notifications_enable_all_title">Összes értesítés engedélyezése</string>
     <string name="notification_channel_description">Értesítések az új cikkekről a hírforrásokhoz</string>
-    <string name="settings_notifications_permission_status_title">Engedély állapota</string>
-    <string name="settings_notifications_permission_status_granted">Engedélyezve</string>
-    <string name="settings_notifications_permission_status_denied">Megtagadva</string>
     <string name="settings_notifications_permission_request_button">Engedély kérése</string>
     <string name="new_articles_notification_title">Új cikkek érhetőek el</string>
     <string name="settings_notifications_title">Értesítések</string>

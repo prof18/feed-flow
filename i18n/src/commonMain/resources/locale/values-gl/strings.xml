@@ -179,12 +179,8 @@
     <string name="settings_swipe_action_toggle_bookmark">Cambio no marcador</string>
     <string name="settings_swipe_action_none">Desactivado</string>
     <string name="settings_notification_no_feed">Semella que aínda non engadiches ningunha canle. Engade algunha para comezar a recibir notificacións!</string>
-    <string name="settings_notification_check_period">Frecuencia para comprobar notificacións</string>
     <string name="settings_notifications_enable_all_title">Activar Todas as notificacións</string>
     <string name="notification_channel_description">Notificacións para novos artigos nas túas canles</string>
-    <string name="settings_notifications_permission_status_title">Estado dos permisos</string>
-    <string name="settings_notifications_permission_status_granted">Concedido</string>
-    <string name="settings_notifications_permission_status_denied">Rexeitado</string>
     <string name="settings_notifications_permission_request_button">Solicitar permiso</string>
     <string name="new_articles_notification_title">Hai novos artigos</string>
     <string name="notification_channel_name">Novos artigos</string>

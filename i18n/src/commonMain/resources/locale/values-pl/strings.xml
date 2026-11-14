@@ -179,12 +179,8 @@
     <string name="settings_swipe_action_toggle_bookmark">Przełącz zakładkę</string>
     <string name="settings_swipe_action_none">Wyłączone</string>
     <string name="settings_notification_no_feed">Wygląda na to, że nie dodano jeszcze żadnych kanałów. Dodaj kilka, aby zacząć otrzymywać powiadomienia!</string>
-    <string name="settings_notification_check_period">Częstotliwość sprawdzania powiadomień</string>
     <string name="settings_notifications_enable_all_title">Włącz wszystkie powiadomienia</string>
     <string name="notification_channel_description">Powiadomienia o nowych artykułach w Twoich kanałach</string>
-    <string name="settings_notifications_permission_status_title">Status pozwoleń</string>
-    <string name="settings_notifications_permission_status_granted">Przyznane</string>
-    <string name="settings_notifications_permission_status_denied">Odmowa</string>
     <string name="settings_notifications_permission_request_button">Poproś o pozwolenie</string>
     <string name="new_articles_notification_title">Dostępne nowe artykuły</string>
     <string name="notification_channel_name">Nowe artykuły</string>

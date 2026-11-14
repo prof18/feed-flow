@@ -25,6 +25,8 @@ internal object SettingsE2eIds {
     const val SYNC_CHARGING_ONLY = "background_sync_charging_only"
     const val NOTIFICATIONS_ENABLE_ALL = "notifications_enable_all"
     const val NOTIFICATIONS_FEED_PREFIX = "notifications_feed_"
+    const val NOTIFICATIONS_BACKGROUND_REFRESH = "notifications_background_refresh"
+    const val NOTIFICATIONS_PERMISSION_ROW = "notifications_permission_row"
     const val SYNC_AUTO_DELETE = "sync_storage_auto_delete"
     const val SYNC_CLEAR_DOWNLOADED = "sync_storage_clear_downloaded"
     const val APPEARANCE_THEME = "appearance_theme"

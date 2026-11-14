@@ -295,14 +295,10 @@
     <string name="settings_swipe_action_open_in_browser">Abrir no navegador favorito</string>
     <string name="settings_swipe_action_none">Desabilitado</string>
     <string name="settings_notification_no_feed">Parece que você não adicionou nenhum feed. Adicione alguns para começar a recever notificações!</string>
-    <string name="settings_notification_check_period">Frequência de checagem de notificação</string>
     <string name="settings_notifications_enable_all_title">Habilitar Todas as Notificações</string>
     <string name="notification_channel_description">Notificações para novos artigos em seus feeds</string>
     <string name="settings_notifications_permission_description">FeedFlow necessita da sua permissão para mandar notificações quando novos artigos chegarem nos seus feeds.</string>
     <string name="settings_notifications_open_settings_button">Abrir Configurações</string>
-    <string name="settings_notifications_permission_status_title">Status da permissão</string>
-    <string name="settings_notifications_permission_status_granted">Concedido</string>
-    <string name="settings_notifications_permission_status_denied">Negado</string>
     <string name="settings_notifications_permission_request_button">Requisitar Permissão</string>
     <string name="new_articles_notification_title">Novos artigos disponíveis</string>
     <string name="new_articles_button">%s novos artigos</string>

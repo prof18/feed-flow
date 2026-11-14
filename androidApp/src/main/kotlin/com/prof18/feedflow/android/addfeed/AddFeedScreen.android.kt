@@ -5,6 +5,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -22,6 +24,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.feedverification.WebsiteVerificationExplanationDialog
+import com.prof18.feedflow.android.notifications.BackgroundRefreshTurnedOnSnackbar
+import com.prof18.feedflow.android.notifications.rememberNotificationPermission
 import com.prof18.feedflow.android.ui.feed.addfeed.AddFeedContent
 import com.prof18.feedflow.android.ui.preview.PreviewPhone
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
@@ -50,10 +54,13 @@ fun AddFeedScreen(
     val context = LocalContext.current
     val strings = LocalFeedFlowStrings.current
 
-    val showNotificationToggle by viewModel.showNotificationToggleState.collectAsStateWithLifecycle()
     val isNotificationEnabled by viewModel.isNotificationEnabledState.collectAsStateWithLifecycle()
+    val notificationPermission = rememberNotificationPermission()
     val youTubeOptions by viewModel.youTubeOptionsState.collectAsStateWithLifecycle()
     DisposableEffect(viewModel) { onDispose { viewModel.cancelRecovery() } }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    BackgroundRefreshTurnedOnSnackbar(viewModel.backgroundRefreshTurnedOn, snackbarHostState)
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -131,10 +138,11 @@ fun AddFeedScreen(
         onCategorySelectorClick = {
             showCategorySheet = true
         },
-        showNotificationToggle = showNotificationToggle,
         isNotificationEnabled = isNotificationEnabled,
+        notificationPermissionMissing = !notificationPermission.isGranted,
         onNotificationToggleChanged = { enabled ->
             viewModel.updateNotificationStatus(enabled)
+            notificationPermission.requestIfTurnedOn(enabled)
         },
         youTubeOptions = youTubeOptions,
         onHideShortsToggleChanged = viewModel::updateHideShortsStatus,
@@ -142,6 +150,7 @@ fun AddFeedScreen(
         onForceAddFeed = {
             viewModel.forceAddFeed()
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topAppBar = {
             TopAppBar(
                 title = {
@@ -226,7 +235,6 @@ private fun AddScreenContentPreview() {
             onFeedUrlUpdated = {},
             addFeed = { },
             onCategorySelectorClick = {},
-            showNotificationToggle = true,
             isNotificationEnabled = false,
             onNotificationToggleChanged = {},
             canForceAdd = false,

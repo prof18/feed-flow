@@ -174,11 +174,8 @@
     <string name="settings_sync_period_one_day">Tous les jours</string>
     <string name="file_menu">Fichier</string>
     <string name="settings_notification_no_feed">Il semble que vous n\'ayez pas encore ajouté de flux. Ajoutez-en pour commencer à recevoir des notifications !</string>
-    <string name="settings_notification_check_period">Fréquence de vérification des notifications</string>
     <string name="settings_notifications_enable_all_title">Activer toutes les notifications</string>
     <string name="notification_channel_description">Notifications pour les nouveaux articles dans vos flux</string>
-    <string name="settings_notifications_permission_status_granted">Accordée</string>
-    <string name="settings_notifications_permission_status_denied">Refusée</string>
     <string name="notification_channel_name">Nouveaux articles</string>
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_left_swipe_action">Balayage vers la gauche</string>
@@ -190,7 +187,6 @@
     <string name="date_format_normal">Jour/Mois</string>
     <string name="date_format_american">Mois/Jour</string>
     <string name="enable_notifications_for_feed">Activer les notifications pour les nouveaux articles</string>
-    <string name="settings_notifications_permission_status_title">Statut des permissions</string>
     <string name="settings_notifications_permission_request_button">Demander la permission</string>
     <string name="settings_notifications_warning_reliability">Les notifications sont activées sur votre appareil, mais leur réception dépend des activités autorisées en arrière-plan par le système et de l\'utilisation de l\'application, ce que FeedFlow ne peut pas contrôler.</string>
     <string name="settings_feed_layout_list">Liste</string>

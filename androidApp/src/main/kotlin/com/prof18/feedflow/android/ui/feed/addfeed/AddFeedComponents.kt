@@ -52,7 +52,7 @@ fun AddFeedContent(
     canForceAdd: Boolean,
     onForceAddFeed: () -> Unit,
     modifier: Modifier = Modifier,
-    showNotificationToggle: Boolean = false,
+    notificationPermissionMissing: Boolean = false,
     onNotificationToggleChanged: (Boolean) -> Unit = {},
     youTubeOptions: YouTubeOptionsState = YouTubeOptionsState(),
     onHideShortsToggleChanged: (Boolean) -> Unit = {},
@@ -104,25 +104,32 @@ fun AddFeedContent(
             }
 
             item {
-                if (showNotificationToggle) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = Spacing.small),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            modifier = Modifier.weight(1f).padding(end = Spacing.regular),
-                            text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                        Switch(
-                            checked = isNotificationEnabled,
-                            onCheckedChange = onNotificationToggleChanged,
-                        )
-                    }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = Spacing.small),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        modifier = Modifier.weight(1f).padding(end = Spacing.regular),
+                        text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Switch(
+                        modifier = Modifier.testTag(FeedFormE2eIds.NOTIFICATIONS_TOGGLE),
+                        checked = isNotificationEnabled,
+                        onCheckedChange = onNotificationToggleChanged,
+                    )
+                }
+                if (isNotificationEnabled && notificationPermissionMissing) {
+                    Text(
+                        modifier = Modifier.padding(bottom = Spacing.small),
+                        text = LocalFeedFlowStrings.current.feedNotificationsPermissionNeeded,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
 

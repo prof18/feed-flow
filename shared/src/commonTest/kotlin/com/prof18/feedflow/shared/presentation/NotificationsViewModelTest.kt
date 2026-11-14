@@ -147,39 +147,6 @@ class NotificationsViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `updateSyncPeriod updates repository`() = runTest {
-        viewModel.syncPeriodFlow.test {
-            assertEquals(SyncPeriod.NEVER, awaitItem())
-
-            viewModel.updateSyncPeriod(SyncPeriod.TWELVE_HOURS)
-
-            assertEquals(SyncPeriod.TWELVE_HOURS, awaitItem())
-        }
-    }
-
-    @Test
-    fun `updateSyncOnlyOnWifi updates repository`() = runTest {
-        viewModel.backgroundSyncRestrictionsFlow.test {
-            assertFalse(awaitItem().syncOnlyOnWifi)
-
-            viewModel.updateSyncOnlyOnWifi(true)
-
-            assertTrue(awaitItem().syncOnlyOnWifi)
-        }
-    }
-
-    @Test
-    fun `updateSyncOnlyWhenCharging updates repository`() = runTest {
-        viewModel.backgroundSyncRestrictionsFlow.test {
-            assertFalse(awaitItem().syncOnlyWhenCharging)
-
-            viewModel.updateSyncOnlyWhenCharging(true)
-
-            assertTrue(awaitItem().syncOnlyWhenCharging)
-        }
-    }
-
-    @Test
     fun `feed groups are sorted by category with uncategorized last`() = runTest(testDispatcher) {
         insertGroupedFeeds()
         advanceUntilIdle()
@@ -320,16 +287,27 @@ class NotificationsViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `turnOnBackgroundRefresh sets one hour without an announcement`() = runTest(testDispatcher) {
+    fun `updateSyncPeriod saves the chosen period without an announcement`() = runTest(testDispatcher) {
         settingsRepository.setSyncPeriod(SyncPeriod.NEVER)
 
         viewModel.backgroundRefreshTurnedOn.test {
-            viewModel.turnOnBackgroundRefresh()
+            viewModel.updateSyncPeriod(SyncPeriod.SIX_HOURS)
             advanceUntilIdle()
 
             expectNoEvents()
-            assertEquals(SyncPeriod.ONE_HOUR, viewModel.syncPeriodFlow.value)
+            assertEquals(SyncPeriod.SIX_HOURS, viewModel.syncPeriodFlow.value)
+            assertEquals(SyncPeriod.SIX_HOURS, settingsRepository.getSyncPeriod())
         }
+    }
+
+    @Test
+    fun `updateSyncPeriod can turn background refresh off`() = runTest(testDispatcher) {
+        settingsRepository.setSyncPeriod(SyncPeriod.ONE_HOUR)
+
+        viewModel.updateSyncPeriod(SyncPeriod.NEVER)
+        advanceUntilIdle()
+
+        assertEquals(SyncPeriod.NEVER, settingsRepository.getSyncPeriod())
     }
 
     private suspend fun insertSingleFeed() {

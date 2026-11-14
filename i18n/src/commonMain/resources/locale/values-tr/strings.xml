@@ -179,12 +179,8 @@
     <string name="settings_swipe_action_toggle_bookmark">Yer imlerine ekle/kaldır</string>
     <string name="settings_swipe_action_none">Devre dışı</string>
     <string name="settings_notification_no_feed">Henüz hiç akış eklememişsiniz gibi görünüyor. Bildirim almaya başlamak için birkaç tane ekleyin!</string>
-    <string name="settings_notification_check_period">Bildirim kontrol sıklığı</string>
     <string name="settings_notifications_enable_all_title">Tüm Bildirimleri Etkinleştir</string>
     <string name="notification_channel_description">Akışlarınızdaki yeni makaleler için bildirimler</string>
-    <string name="settings_notifications_permission_status_title">İzin Durumu</string>
-    <string name="settings_notifications_permission_status_granted">İzin verildi</string>
-    <string name="settings_notifications_permission_status_denied">Reddedildi</string>
     <string name="settings_notifications_permission_request_button">İzin İste</string>
     <string name="new_articles_notification_title">Yeni makaleler mevcut</string>
     <string name="notification_channel_name">Yeni Makaleler</string>

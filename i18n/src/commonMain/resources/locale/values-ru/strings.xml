@@ -170,11 +170,8 @@
     <string name="widget_configuration_confirm">Добавить виджет</string>
     <string name="widget_configuration_title">Конфигурация виджета</string>
     <string name="file_menu">Файл</string>
-    <string name="settings_notification_check_period">Частота проверки для уведомлений</string>
     <string name="settings_notifications_enable_all_title">Включить все уведомления</string>
     <string name="notification_channel_description">Уведомления о новых статьях в ваших лентах</string>
-    <string name="settings_notifications_permission_status_title">Статус разрешения</string>
-    <string name="settings_notifications_permission_status_granted">Разрешено</string>
     <string name="settings_notifications_permission_request_button">Запросить разрешение</string>
     <string name="new_articles_notification_title">Доступны новые статьи</string>
     <string name="notification_channel_name">Новые статьи</string>
@@ -185,7 +182,6 @@
     <string name="date_format_american">Месяц/День</string>
     <string name="settings_notifications_title">Уведомления</string>
     <string name="settings_notification_no_feed">Похоже, вы еще не добавили ни одной ленты. Добавьте их, чтобы начать получать уведомления!</string>
-    <string name="settings_notifications_permission_status_denied">Отклонено</string>
     <string name="enable_notifications_for_feed">Включить уведомления о новых статьях</string>
     <string name="settings_sync_period_fifteen_minutes">Каждые 15 минут</string>
     <string name="settings_sync_period_thirty_minutes">Каждые 30 минут</string>

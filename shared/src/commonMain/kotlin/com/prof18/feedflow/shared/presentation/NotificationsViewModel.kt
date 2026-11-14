@@ -2,7 +2,6 @@ package com.prof18.feedflow.shared.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.FeedSourceNotificationPreference
 import com.prof18.feedflow.core.model.NotificationFeedGroup
 import com.prof18.feedflow.core.model.NotificationMode
@@ -28,8 +27,8 @@ import kotlinx.coroutines.launch
 class NotificationsViewModel internal constructor(
     private val databaseHelper: DatabaseHelper,
     private val settingsRepository: SettingsRepository,
-    private val backgroundSyncScheduler: BackgroundSyncScheduler,
     private val notificationRefreshEnabler: NotificationRefreshEnabler,
+    private val backgroundSyncScheduler: BackgroundSyncScheduler,
 ) : ViewModel() {
 
     private val notificationSettingsMutableStateFlow = MutableStateFlow(
@@ -47,8 +46,6 @@ class NotificationsViewModel internal constructor(
     val backgroundRefreshTurnedOn: SharedFlow<SyncPeriod> = backgroundRefreshTurnedOnMutable.asSharedFlow()
 
     val syncPeriodFlow: StateFlow<SyncPeriod> = settingsRepository.syncPeriodFlow
-    val backgroundSyncRestrictionsFlow: StateFlow<BackgroundSyncRestrictions> =
-        settingsRepository.backgroundSyncRestrictionsFlow
 
     private val searchQueryMutableState = MutableStateFlow("")
 
@@ -115,18 +112,6 @@ class NotificationsViewModel internal constructor(
         }
     }
 
-    fun turnOnBackgroundRefresh() {
-        viewModelScope.launch {
-            notificationRefreshEnabler.enableIfOff()
-        }
-    }
-
-    private suspend fun enableRefreshForNotifications() {
-        notificationRefreshEnabler.enableIfOff()?.let { period ->
-            backgroundRefreshTurnedOnMutable.emit(period)
-        }
-    }
-
     fun updateSyncPeriod(period: SyncPeriod) {
         viewModelScope.launch {
             settingsRepository.setSyncPeriod(period)
@@ -134,17 +119,9 @@ class NotificationsViewModel internal constructor(
         }
     }
 
-    fun updateSyncOnlyOnWifi(enabled: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setBackgroundSyncOnlyOnWifi(enabled)
-            backgroundSyncScheduler.updateSyncPeriod(syncPeriodFlow.value)
-        }
-    }
-
-    fun updateSyncOnlyWhenCharging(enabled: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setBackgroundSyncOnlyWhenCharging(enabled)
-            backgroundSyncScheduler.updateSyncPeriod(syncPeriodFlow.value)
+    private suspend fun enableRefreshForNotifications() {
+        notificationRefreshEnabler.enableIfOff()?.let { period ->
+            backgroundRefreshTurnedOnMutable.emit(period)
         }
     }
 

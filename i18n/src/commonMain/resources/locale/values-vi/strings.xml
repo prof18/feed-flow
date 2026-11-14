@@ -179,12 +179,8 @@
     <string name="settings_sync_period_fifteen_minutes">Mỗi 15 phút</string>
     <string name="settings_swipe_action_toggle_bookmark">Thêm hoặc bỏ đánh dấu</string>
     <string name="settings_notification_no_feed">Có vẻ như bạn chưa thêm bất kỳ nguồn tin nào. Thêm ngay để bắt đầu nhận thông báo!</string>
-    <string name="settings_notification_check_period">Tần suất gửi thông báo</string>
     <string name="settings_notifications_enable_all_title">Bật tất cả thông báo</string>
     <string name="notification_channel_description">Thông báo bài viết mới trên bảng tin</string>
-    <string name="settings_notifications_permission_status_title">Trạng thái cấp quyền</string>
-    <string name="settings_notifications_permission_status_granted">Đã cho phép</string>
-    <string name="settings_notifications_permission_status_denied">Chưa cho phép</string>
     <string name="settings_notifications_permission_request_button">Cho phép</string>
     <string name="new_articles_notification_title">Có bài viết mới</string>
     <string name="notification_channel_name">Những bài viết mới</string>

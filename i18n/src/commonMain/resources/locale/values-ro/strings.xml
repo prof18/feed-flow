@@ -351,14 +351,10 @@
     <string name="settings_swipe_action_open_in_browser">Deschide în browserul preferat</string>
     <string name="settings_swipe_action_none">Niciuna</string>
     <string name="settings_notification_no_feed">Se pare că nu ai adăugat încă niciun flux. Adaugă câteva pentru a începe să primești notificări!</string>
-    <string name="settings_notification_check_period">Frecvența verificării notificărilor</string>
     <string name="settings_notifications_enable_all_title">Activează toate notificările</string>
     <string name="notification_channel_description">Notificări privind articolele noi din fluxurile tale</string>
     <string name="settings_notifications_permission_description">FeedFlow are nevoie de permisiunea ta pentru a trimite notificări atunci când apar articole noi în fluxurile tale.</string>
     <string name="settings_notifications_open_settings_button">Deschide Setări</string>
-    <string name="settings_notifications_permission_status_title">Starea permisiunii</string>
-    <string name="settings_notifications_permission_status_granted">Permisă</string>
-    <string name="settings_notifications_permission_status_denied">Respinsă</string>
     <string name="settings_notifications_permission_request_button">Solicită permisiunea</string>
     <string name="new_articles_notification_title">Sunt disponibile articole noi</string>
     <string name="new_articles_button">%s articole noi</string>

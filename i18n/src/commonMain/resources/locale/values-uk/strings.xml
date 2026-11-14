@@ -181,14 +181,10 @@
     <string name="settings_notification_no_feed">Схоже, ви ще не додали жодного каналу. Додайте кілька, щоб почати отримувати сповіщення!</string>
     <string name="settings_notifications_enable_all_title">Увімкнути всі сповіщення</string>
     <string name="notification_channel_description">Сповіщення про нові статті у ваших стрічках</string>
-    <string name="settings_notifications_permission_status_title">Статус дозволу</string>
-    <string name="settings_notifications_permission_status_granted">Надано</string>
-    <string name="settings_notifications_permission_status_denied">Відмовлено</string>
     <string name="settings_notifications_permission_request_button">Запит на дозвіл</string>
     <string name="new_articles_notification_title">Доступні нові статті</string>
     <string name="notification_channel_name">Нові статті</string>
     <string name="settings_notifications_title">Сповіщення</string>
-    <string name="settings_notification_check_period">Частота перевірки повідомлень</string>
     <string name="settings_notifications_warning_reliability">Повідомлення перевіряються на вашому пристрої, але їх доставка залежить від фонової активності, дозволеної системою, та використання додатка, на що FeedFlow не має впливу.</string>
     <string name="date_format_american">Місяць/День</string>
     <string name="marking_all_read_dialog_title">Позначення всіх як прочитаних...</string>

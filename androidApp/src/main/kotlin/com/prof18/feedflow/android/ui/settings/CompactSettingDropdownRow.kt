@@ -65,6 +65,7 @@ fun <T> CompactSettingDropdownRow(
         horizontal = Spacing.regular,
         vertical = Spacing.small,
     ),
+    supportingText: (@Composable () -> Unit)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val currentOption = options.firstOrNull { it.value == currentValue }
@@ -85,11 +86,13 @@ fun <T> CompactSettingDropdownRow(
             )
         }
 
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.weight(1f),
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            supportingText?.invoke()
+        }
 
         Box {
             Surface(

@@ -186,12 +186,8 @@
     <string name="settings_swipe_action_none">已停用</string>
     <string name="settings_swipe_action_toggle_bookmark">切換收藏與否</string>
     <string name="settings_notification_no_feed">您似乎尚未添加任何訂閱源。請添加一些以開始接收通知！</string>
-    <string name="settings_notification_check_period">通知檢查頻率</string>
     <string name="settings_notifications_enable_all_title">啟用所有通知</string>
     <string name="notification_channel_description">訂閱源中新文章的通知</string>
-    <string name="settings_notifications_permission_status_title">權限狀態</string>
-    <string name="settings_notifications_permission_status_granted">已授予</string>
-    <string name="settings_notifications_permission_status_denied">已拒絕</string>
     <string name="settings_notifications_permission_request_button">請求權限</string>
     <string name="new_articles_notification_title">有新文章</string>
     <string name="notification_channel_name">新文章</string>

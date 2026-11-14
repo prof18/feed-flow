@@ -787,8 +787,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         NotificationsViewModel(
             databaseHelper = get(),
             settingsRepository = get(),
-            backgroundSyncScheduler = get(),
             notificationRefreshEnabler = get(),
+            backgroundSyncScheduler = get(),
         )
     }
 

@@ -172,12 +172,8 @@
     <string name="settings_feed_layout_list">Lista</string>
     <string name="settings_feed_layout_card">Schede</string>
     <string name="feed_layout_title">Visualizzazione feed</string>
-    <string name="settings_notification_check_period">Frequenza di controllo notifiche</string>
     <string name="settings_notifications_enable_all_title">Abilita tutte le notifiche</string>
     <string name="notification_channel_description">Notifiche per i nuovi articoli nei tuoi feed</string>
-    <string name="settings_notifications_permission_status_title">Stato dei permessi</string>
-    <string name="settings_notifications_permission_status_granted">Consentito</string>
-    <string name="settings_notifications_permission_status_denied">Non consentito</string>
     <string name="settings_notifications_permission_request_button">Richiedi Permesso</string>
     <string name="notification_channel_name">Nuovi articoli</string>
     <string name="settings_notifications_warning_reliability">Le notifiche vengono verificate sul tuo dispositivo, ma la consegna dipende dall\'attività in background consentita dal sistema e dall\'uso dell\'app, fattori che FeedFlow non può controllare.</string>

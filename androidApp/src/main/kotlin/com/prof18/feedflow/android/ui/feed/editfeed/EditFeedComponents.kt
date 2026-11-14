@@ -66,7 +66,7 @@ fun EditFeedContent(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     onNotificationToggleChanged: (Boolean) -> Unit = {},
-    showNotificationToggle: Boolean = false,
+    notificationPermissionMissing: Boolean = false,
     youTubeOptions: YouTubeOptionsState = YouTubeOptionsState(),
     onHideShortsToggled: (Boolean) -> Unit = {},
     recoveryAction: @Composable () -> Unit = {},
@@ -284,23 +284,31 @@ fun EditFeedContent(
         }
 
         item {
-            if (showNotificationToggle) {
-                Row(
+            Row(
+                modifier = Modifier
+                    .padding(top = Spacing.regular),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
+                    modifier = Modifier.padding(top = Spacing.xsmall)
+                        .weight(1f),
+                )
+                Switch(
+                    checked = feedSourceSettings.isNotificationEnabled,
+                    onCheckedChange = onNotificationToggleChanged,
                     modifier = Modifier
-                        .padding(top = Spacing.regular),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = LocalFeedFlowStrings.current.enableNotificationsForFeed,
-                        modifier = Modifier.padding(top = Spacing.xsmall)
-                            .weight(1f),
-                    )
-                    Switch(
-                        checked = feedSourceSettings.isNotificationEnabled,
-                        onCheckedChange = onNotificationToggleChanged,
-                        modifier = Modifier.padding(start = Spacing.regular),
-                    )
-                }
+                        .testTag(FeedFormE2eIds.NOTIFICATIONS_TOGGLE)
+                        .padding(start = Spacing.regular),
+                )
+            }
+            if (feedSourceSettings.isNotificationEnabled && notificationPermissionMissing) {
+                Text(
+                    modifier = Modifier.padding(top = Spacing.xsmall),
+                    text = LocalFeedFlowStrings.current.feedNotificationsPermissionNeeded,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
 

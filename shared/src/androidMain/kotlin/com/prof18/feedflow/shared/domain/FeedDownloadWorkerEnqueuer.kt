@@ -67,18 +67,6 @@ class FeedDownloadWorkerEnqueuer internal constructor(
             -> enqueue(syncPeriod.minutes, restrictions)
         }
 
-    /**
-     * Manually trigger a one-time feed download for testing notifications
-     */
-    fun triggerManualSync() {
-        val workRequest = OneTimeWorkRequestBuilder<FeedDownloadWorker>()
-            .addTag(WORKER_TAG)
-            .setConstraints(buildConstraints(settingsRepository.getBackgroundSyncRestrictions()))
-            .build()
-
-        WorkManager.getInstance(context).enqueue(workRequest)
-    }
-
     suspend fun enqueueWidgetRefresh() {
         val request = OneTimeWorkRequestBuilder<FeedDownloadWorker>()
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())

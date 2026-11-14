@@ -11,6 +11,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -32,6 +34,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.feed.ArticleOpenModeSelector
 import com.prof18.feedflow.android.feedverification.WebsiteVerificationExplanationDialog
+import com.prof18.feedflow.android.notifications.BackgroundRefreshTurnedOnSnackbar
+import com.prof18.feedflow.android.notifications.rememberNotificationPermission
 import com.prof18.feedflow.android.ui.feed.FeedFormE2eIds
 import com.prof18.feedflow.android.ui.feed.editfeed.EditFeedContent
 import com.prof18.feedflow.android.ui.preview.PreviewPhone
@@ -66,10 +70,13 @@ internal fun EditScreen(
     val context = LocalContext.current
     val strings = LocalFeedFlowStrings.current
 
-    val showNotificationToggle by viewModel.showNotificationToggleState.collectAsStateWithLifecycle()
+    val notificationPermission = rememberNotificationPermission()
     val isMarkReadWhenScrollingEnabled by viewModel.markReadWhenScrollingEnabledState.collectAsStateWithLifecycle()
 
     val latestNavigateBack by rememberUpdatedState(navigateBack)
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    BackgroundRefreshTurnedOnSnackbar(viewModel.backgroundRefreshTurnedOn, snackbarHostState)
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -136,6 +143,7 @@ internal fun EditScreen(
 
     Scaffold(
         modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -210,11 +218,12 @@ internal fun EditScreen(
             onPinnedToggled = { pinned ->
                 viewModel.updateIsPinned(pinned)
             },
-            showNotificationToggle = showNotificationToggle,
+            notificationPermissionMissing = !notificationPermission.isGranted,
             youTubeOptions = youTubeOptions,
             onHideShortsToggled = viewModel::updateHideShortsStatus,
             onNotificationToggleChanged = { isNotificationEnabled ->
                 viewModel.updateIsNotificationEnabled(isNotificationEnabled)
+                notificationPermission.requestIfTurnedOn(isNotificationEnabled)
             },
             onCategorySelectorClick = {
                 showCategorySheet = true
@@ -323,7 +332,6 @@ private fun EditScreenPreview() {
                 onKeepUnreadOnScrollToggled = {},
                 isMarkReadWhenScrollingEnabled = true,
                 onPinnedToggled = {},
-                showNotificationToggle = true,
                 onNotificationToggleChanged = {},
                 onCategorySelectorClick = {},
                 showDeleteDialog = true,

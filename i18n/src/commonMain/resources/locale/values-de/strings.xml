@@ -179,12 +179,8 @@
     <string name="settings_sync_period_one_day">Jeden Tag</string>
     <string name="settings_sync_period_thirty_minutes">Alle 30 Minuten</string>
     <string name="settings_notification_no_feed">Anscheinend hast du noch keine Feeds hinzugefügt. Füge ein paar hinzu, um Benachrichtigungen zu erhalten!</string>
-    <string name="settings_notification_check_period">Häufigkeit der Nachrichtenprüfung</string>
     <string name="settings_notifications_enable_all_title">Alle Benachrichtigungen aktivieren</string>
     <string name="notification_channel_description">Benachrichtigungen für neue Artikel in deinen Feeds</string>
-    <string name="settings_notifications_permission_status_granted">Erteilt</string>
-    <string name="settings_notifications_permission_status_denied">Verweigert</string>
-    <string name="settings_notifications_permission_status_title">Status der Berechtigung</string>
     <string name="settings_notifications_permission_request_button">Berechtigung anfordern</string>
     <string name="new_articles_notification_title">Neue Artikel sind verfügbar</string>
     <string name="notification_channel_name">Neue Artikel</string>

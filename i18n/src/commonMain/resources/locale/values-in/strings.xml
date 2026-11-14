@@ -245,12 +245,8 @@
     <string name="settings_swipe_action_toggle_bookmark">Alihkan penanda</string>
     <string name="settings_swipe_action_none">Dinonaktifkan</string>
     <string name="settings_notification_no_feed">Sepertinya Anda belum menambahkan feed apa pun. Tambahkan beberapa untuk mulai menerima notifikasi!</string>
-    <string name="settings_notification_check_period">Frekuensi pemeriksaan notifikasi</string>
     <string name="settings_notifications_enable_all_title">Aktifkan Semua Notifikasi</string>
     <string name="notification_channel_description">Notifikasi untuk artikel baru di feed Anda</string>
-    <string name="settings_notifications_permission_status_title">Status Izin</string>
-    <string name="settings_notifications_permission_status_granted">Diizinkan</string>
-    <string name="settings_notifications_permission_status_denied">Ditolak</string>
     <string name="settings_notifications_permission_request_button">Minta Izin</string>
     <string name="new_articles_notification_title">Artikel baru tersedia</string>
     <string name="notification_channel_name">Artikel Baru</string>

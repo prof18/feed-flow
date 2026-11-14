@@ -323,6 +323,7 @@ fun buildFeedItemsForSource(source: FeedSource, count: Int): List<FeedItem>
 6. **Descriptive test names** - Use backtick syntax: `` `action produces expected result` ``
 7. **One assertion focus** - Each test should verify one logical behavior
 8. **Use generators for test data** - Leverage `FeedSourceGenerator.feedSourceArb.next()` with `.copy()` to customize
+9. **Keep desktop `jvmTest` off the native window manager** - CI runs `jvmTest` on Linux and Windows, where tests that depend on real OS window focus or activation, or on a native window's initial size, fail at random. Cover that behaviour in the desktop E2E suite (`e2e/desktop/README.md`) or by hand instead.
 
 ## Test Naming Conventions
 

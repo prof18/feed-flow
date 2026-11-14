@@ -158,7 +158,7 @@ This requires XcodeGen installed (`brew install xcodegen`, or `mint bootstrap` u
 
 - If using XcodeBuildMCP, use the installed XcodeBuildMCP skill before calling XcodeBuildMCP tools.
 - The xcodeproj must exist locally and match the checkout. Run `cd iosApp && ./.scripts/generate-project.sh` before building after a pull or branch switch: a project generated from an older checkout misses newly added Swift files and fails to compile.
-- Under Xcode 27.1, XcodeBuildMCP `snapshot_ui` and `axe` HID taps fail silently (SimulatorKit moved to `Contents/SharedFrameworks`). `axe describe-ui` still reads the UI tree; drive input through Maestro instead.
+- Under Xcode 27.1 and 27.2, XcodeBuildMCP `snapshot_ui` and `axe` HID taps fail silently (SimulatorKit moved to `Contents/SharedFrameworks`). `axe describe-ui` still reads the UI tree; drive input through Maestro instead.
 - XcodeBuildMCP has repo-local defaults in `.xcodebuildmcp/config.yaml`; prefer the current CLI shape:
 
 ```bash

@@ -21,7 +21,7 @@ struct AddFeedScreen: View {
     @State private var errorMessage = ""
     @State private var isAddingFeed = false
     @State private var feedURL = ""
-    @State private var showNotificationToggle = false
+    @State private var notificationPermissionDenied = false
     @State private var isNotificationEnabled = false
     @State private var youTubeOptionsState: YouTubeOptionsState?
     @State private var canForceAdd = false
@@ -42,7 +42,7 @@ struct AddFeedScreen: View {
                 showError: showError,
                 errorMessage: errorMessage,
                 isAddingFeed: $isAddingFeed,
-                showNotificationToggle: showNotificationToggle,
+                notificationPermissionDenied: notificationPermissionDenied,
                 youTubeOptionsState: youTubeOptionsState,
                 isNotificationEnabled: $isNotificationEnabled,
                 canForceAdd: canForceAdd,
@@ -55,6 +55,16 @@ struct AddFeedScreen: View {
                 },
                 onNotificationToggled: { enabled in
                     vmStoreOwner.instance.updateNotificationStatus(status: enabled)
+                    if enabled {
+                        Task {
+                            notificationPermissionDenied = await NotificationPermissionRequester.requestIfNeeded() == .denied
+                        }
+                    }
+                },
+                onOpenSettings: {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
                 },
                 onHideShortsToggled: { enabled in
                     vmStoreOwner.instance.updateHideShortsStatus(status: enabled)
@@ -188,8 +198,11 @@ struct AddFeedScreen: View {
             }
         }
         .task {
-            for await show in vmStoreOwner.instance.showNotificationToggleState {
-                self.showNotificationToggle = show as? Bool ?? false
+            notificationPermissionDenied = await NotificationPermissionRequester.currentStatus() == .denied
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            Task {
+                notificationPermissionDenied = await NotificationPermissionRequester.currentStatus() == .denied
             }
         }
         .task {

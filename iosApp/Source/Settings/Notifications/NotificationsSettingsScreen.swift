@@ -16,11 +16,13 @@ struct NotificationsSettingsScreen: View {
         isEnabledForAll: false,
         notificationMode: .feedSource
     )
-    @State private var permissionStatus: UNAuthorizationStatus = .notDetermined
+    @State private var permissionStatus: UNAuthorizationStatus?
+    @State private var backgroundRefreshStatus: UIBackgroundRefreshStatus = UIApplication.shared.backgroundRefreshStatus
 
     var body: some View {
         NotificationsSettingsScreenContent(
             permissionStatus: permissionStatus,
+            backgroundRefreshStatus: backgroundRefreshStatus,
             notificationSettingState: notificationSettingState,
             onRequestPermission: {
                 Task {
@@ -40,6 +42,9 @@ struct NotificationsSettingsScreen: View {
             },
             onNotificationModeChanged: { mode in
                 vmStoreOwner.instance.updateNotificationMode(mode: mode)
+            },
+            onSearchQueryChanged: { query in
+                vmStoreOwner.instance.updateSearchQuery(query: query)
             }
         )
         .navigationTitle(Text(feedFlowStrings.settingsNotificationsTitle))
@@ -52,6 +57,11 @@ struct NotificationsSettingsScreen: View {
                 await refreshPermissionStatus()
             }
         }
+        .onReceive(
+            NotificationCenter.default.publisher(for: UIApplication.backgroundRefreshStatusDidChangeNotification)
+        ) { _ in
+            backgroundRefreshStatus = UIApplication.shared.backgroundRefreshStatus
+        }
         .task {
             for await state in vmStoreOwner.instance.notificationSettingState {
                 self.notificationSettingState = state
@@ -60,18 +70,11 @@ struct NotificationsSettingsScreen: View {
     }
 
     private func refreshPermissionStatus() async {
-        let settings = await UNUserNotificationCenter.current().notificationSettings()
-        permissionStatus = settings.authorizationStatus
+        permissionStatus = await NotificationPermissionRequester.currentStatus()
+        backgroundRefreshStatus = UIApplication.shared.backgroundRefreshStatus
     }
 
     private func requestNotificationPermission() async {
-        do {
-            let granted = try await UNUserNotificationCenter.current().requestAuthorization(
-                options: [.alert, .badge, .sound]
-            )
-            permissionStatus = granted ? .authorized : .denied
-        } catch {
-            permissionStatus = .denied
-        }
+        permissionStatus = await NotificationPermissionRequester.requestIfNeeded()
     }
 }

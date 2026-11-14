@@ -30,7 +30,7 @@ struct EditFeedScreenContent: View {
     @Binding var isKeepUnreadOnScrollEnabled: Bool
     var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isPinned: Bool
-    var showNotificationToggle: Bool
+    let notificationPermissionDenied: Bool
     @Binding var isNotificationEnabled: Bool
 
     var categorySelectorObserver: CategorySelectorObserver
@@ -45,6 +45,7 @@ struct EditFeedScreenContent: View {
     let onKeepUnreadOnScrollToggled: (Bool) -> Void
     let onPinnedToggled: (Bool) -> Void
     let onNotificationToggled: (Bool) -> Void
+    let onOpenSettings: () -> Void
     let addFeed: () -> Void
     let updateCategoryName: (String, String) -> Void
     let onDeleteFeed: () -> Void
@@ -151,13 +152,21 @@ struct EditFeedScreenContent: View {
                     onPinnedToggled(isPinned)
                 }
 
-                if showNotificationToggle {
-                    Toggle(isOn: $isNotificationEnabled) {
-                        Text(feedFlowStrings.enableNotificationsForFeed)
+                Toggle(isOn: Binding(
+                    get: { isNotificationEnabled },
+                    set: {
+                        isNotificationEnabled = $0
+                        onNotificationToggled($0)
                     }
-                    .onChange(of: isNotificationEnabled) {
-                        onNotificationToggled(isNotificationEnabled)
-                    }
+                )) {
+                    Text(feedFlowStrings.enableNotificationsForFeed)
+                }
+
+                if isNotificationEnabled && notificationPermissionDenied {
+                    Text(feedFlowStrings.feedNotificationsPermissionNeeded)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Button(feedFlowStrings.settingsNotificationsOpenSettingsButton, action: onOpenSettings)
                 }
             }
 

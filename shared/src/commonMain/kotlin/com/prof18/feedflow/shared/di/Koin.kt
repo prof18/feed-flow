@@ -322,7 +322,6 @@ private fun getCoreModule(appConfig: AppConfig) = module {
         AddFeedViewModel(
             feedSourcesRepository = get(),
             categoryRepository = get(),
-            databaseHelper = get(),
             feedStateRepository = get(),
             recoveryService = get(),
             recoveryRepository = get(),

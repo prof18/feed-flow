@@ -1,46 +1,69 @@
 import FeedFlowKit
 import SwiftUI
+import UIKit
 import UserNotifications
 
 struct NotificationsSettingsScreenContent: View {
-    let permissionStatus: UNAuthorizationStatus
+    let permissionStatus: UNAuthorizationStatus?
+    let backgroundRefreshStatus: UIBackgroundRefreshStatus
     let notificationSettingState: NotificationSettingState
     let onRequestPermission: () -> Void
     let onOpenSettings: () -> Void
     let onEnableAllToggled: (Bool) -> Void
     let onFeedNotificationToggled: (String, Bool) -> Void
     let onNotificationModeChanged: (NotificationMode) -> Void
+    let onSearchQueryChanged: (String) -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
 
     var body: some View {
+        if notificationSettingState.feedSources.isEmpty {
+            form
+        } else {
+            form
+                .searchable(
+                    text: Binding(
+                        get: { notificationSettingState.searchQuery },
+                        set: { onSearchQueryChanged($0) }
+                    ),
+                    prompt: Text(feedFlowStrings.settingsNotificationsSearchPrompt)
+                )
+        }
+    }
+
+    private var form: some View {
         Form {
-            if permissionStatus != .authorized && permissionStatus != .provisional {
-                permissionSection
-            }
-            if permissionStatus == .authorized || permissionStatus == .provisional {
+            if let permissionStatus {
+                if permissionStatus != .authorized && permissionStatus != .provisional {
+                    permissionSection(status: permissionStatus)
+                }
+                if backgroundRefreshStatus != .available {
+                    backgroundAppRefreshSection
+                }
                 warningSection
                 notificationModeSection
                 feedsSection
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
             }
         }
         .scrollContentBackground(.hidden)
         .background(Color.secondaryBackgroundColor)
     }
 
-    @ViewBuilder private var permissionSection: some View {
+    private func permissionSection(status: UNAuthorizationStatus) -> some View {
         Section {
             Text(feedFlowStrings.settingsNotificationsPermissionDescription)
                 .foregroundStyle(.secondary)
-        }
+                .accessibilityIdentifier(NotificationsAccessibilityIdentifiers.permissionSection)
 
-        Section {
-            switch permissionStatus {
+            switch status {
             case .denied:
                 Button {
                     onOpenSettings()
                 } label: {
-                    Label(feedFlowStrings.settingsNotificationsOpenSettingsButton, systemImage: "bell.badge")
+                    Label(feedFlowStrings.settingsNotificationsOpenSettingsButton, systemImage: "gear")
                 }
 
             default:
@@ -49,6 +72,20 @@ struct NotificationsSettingsScreenContent: View {
                 } label: {
                     Label(feedFlowStrings.settingsNotificationsPermissionRequestButton, systemImage: "bell.badge")
                 }
+            }
+        }
+    }
+
+    private var backgroundAppRefreshSection: some View {
+        Section {
+            Text(feedFlowStrings.settingsNotificationsBackgroundAppRefreshOff)
+                .foregroundStyle(.secondary)
+                .accessibilityIdentifier(NotificationsAccessibilityIdentifiers.backgroundAppRefreshOff)
+
+            Button {
+                onOpenSettings()
+            } label: {
+                Label(feedFlowStrings.settingsNotificationsOpenSettingsButton, systemImage: "gear")
             }
         }
     }
@@ -101,16 +138,25 @@ struct NotificationsSettingsScreenContent: View {
                 Text(feedFlowStrings.settingsNotificationNoFeed)
                     .foregroundStyle(.secondary)
             }
-        } else {
+        } else if notificationSettingState.feedGroups.isEmpty && !notificationSettingState.searchQuery.isEmpty {
             Section {
-                ForEach(notificationSettingState.feedSources, id: \.feedSourceId) { feedSource in
-                    Toggle(isOn: Binding(
-                        get: { feedSource.isEnabled },
-                        set: { onFeedNotificationToggled(feedSource.feedSourceId, $0) }
-                    )) {
-                        Text(feedSource.feedSourceTitle)
+                Text(feedFlowStrings.searchNoData(notificationSettingState.searchQuery))
+                    .foregroundStyle(.secondary)
+            }
+        } else {
+            ForEach(notificationSettingState.feedGroups, id: \.categoryTitle) { group in
+                Section {
+                    ForEach(group.feedSources, id: \.feedSourceId) { feedSource in
+                        Toggle(isOn: Binding(
+                            get: { feedSource.isEnabled },
+                            set: { onFeedNotificationToggled(feedSource.feedSourceId, $0) }
+                        )) {
+                            Text(feedSource.feedSourceTitle)
+                        }
+                        .tint(.accentColor)
                     }
-                    .tint(.accentColor)
+                } header: {
+                    Text(group.categoryTitle ?? feedFlowStrings.noCategory)
                 }
             }
         }

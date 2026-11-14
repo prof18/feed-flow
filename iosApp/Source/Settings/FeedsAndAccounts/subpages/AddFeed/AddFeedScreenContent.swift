@@ -20,7 +20,7 @@ struct AddFeedScreenContent: View {
     let showError: Bool
     let errorMessage: String
     @Binding var isAddingFeed: Bool
-    var showNotificationToggle: Bool
+    let notificationPermissionDenied: Bool
     var youTubeOptionsState: YouTubeOptionsState?
     @Binding var isNotificationEnabled: Bool
     let canForceAdd: Bool
@@ -32,6 +32,7 @@ struct AddFeedScreenContent: View {
     let showCloseButton: Bool
     let updateFeedUrlTextFieldValue: (String) -> Void
     let onNotificationToggled: (Bool) -> Void
+    let onOpenSettings: () -> Void
     let onHideShortsToggled: (Bool) -> Void
     let addFeed: () -> Void
     let forceAddFeed: () -> Void
@@ -100,14 +101,22 @@ struct AddFeedScreenContent: View {
                 .accessibilityIdentifier(AddFeedAccessibilityIdentifiers.categorySelector)
             }
 
-            if showNotificationToggle {
-                Section {
-                    Toggle(isOn: $isNotificationEnabled) {
-                        Text(feedFlowStrings.enableNotificationsForFeed)
+            Section {
+                Toggle(isOn: Binding(
+                    get: { isNotificationEnabled },
+                    set: {
+                        isNotificationEnabled = $0
+                        onNotificationToggled($0)
                     }
-                    .onChange(of: isNotificationEnabled) {
-                        onNotificationToggled(isNotificationEnabled)
-                    }
+                )) {
+                    Text(feedFlowStrings.enableNotificationsForFeed)
+                }
+
+                if isNotificationEnabled && notificationPermissionDenied {
+                    Text(feedFlowStrings.feedNotificationsPermissionNeeded)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Button(feedFlowStrings.settingsNotificationsOpenSettingsButton, action: onOpenSettings)
                 }
             }
 

@@ -20,7 +20,6 @@ import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import com.prof18.feedflow.shared.test.generators.FeedSourceGenerator
 import com.prof18.feedflow.shared.test.generators.RssChannelGenerator
 import com.prof18.feedflow.shared.test.generators.RssItemGenerator
-import com.prof18.feedflow.shared.test.toParsedFeedSource
 import com.prof18.feedflow.shared.test.unexpectedRequestHttpClient
 import com.prof18.rssparser.model.RssChannel
 import io.ktor.client.HttpClient
@@ -370,18 +369,6 @@ class AddFeedViewModelTest : KoinTestBase() {
         val feedSources = databaseHelper.getFeedSources()
         assertEquals(1, feedSources.size)
         assertEquals("Tech", feedSources.first().category?.title)
-    }
-
-    @Test
-    fun `showNotificationToggleState reflects enabled notifications`() = runTest(testDispatcher) {
-        val feedSource = createFeedSource(id = "source-1", title = "Feed One")
-        databaseHelper.insertFeedSource(listOf(feedSource.toParsedFeedSource()))
-        databaseHelper.updateNotificationEnabledStatus(feedSource.id, true)
-
-        val viewModel = getViewModel()
-        advanceUntilIdle()
-
-        assertTrue(viewModel.showNotificationToggleState.value)
     }
 
     @Test

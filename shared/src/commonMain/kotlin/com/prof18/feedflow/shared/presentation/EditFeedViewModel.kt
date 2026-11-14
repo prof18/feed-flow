@@ -97,9 +97,6 @@ class EditFeedViewModel internal constructor(
     private val youTubeOptionsMutableState = MutableStateFlow(YouTubeOptionsState())
     val youTubeOptionsState = youTubeOptionsMutableState.asStateFlow()
 
-    private val showNotificationToggleMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val showNotificationToggleState = showNotificationToggleMutableState.asStateFlow()
-
     private val backgroundRefreshTurnedOnMutable = MutableSharedFlow<SyncPeriod>()
     val backgroundRefreshTurnedOn: SharedFlow<SyncPeriod> = backgroundRefreshTurnedOnMutable.asSharedFlow()
 
@@ -110,12 +107,6 @@ class EditFeedViewModel internal constructor(
     val verificationRequiredState = verificationRequiredMutableState.asStateFlow()
     private var pendingVerification: FeedRecoveryRequest.Edit? = null
     private var verificationTicket: RecoveryTicket? = null
-
-    init {
-        viewModelScope.launch {
-            showNotificationToggleMutableState.update { databaseHelper.areNotificationsEnabled() }
-        }
-    }
 
     fun canEditUrl(): Boolean =
         accountsRepository.getCurrentSyncAccount() != SyncAccounts.FRESH_RSS &&

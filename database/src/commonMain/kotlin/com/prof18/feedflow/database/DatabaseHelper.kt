@@ -1634,12 +1634,6 @@ class DatabaseHelper(
             dbRef.feedItemQueries.markFeedItemsNotified()
         }
 
-    suspend fun areNotificationsEnabled(): Boolean = withContext(backgroundDispatcher) {
-        dbRef.feedSourcePreferencesQueries
-            .areNotificationsEnabled()
-            .executeAsOne()
-    }
-
     /**
      * Pass [suspensionGuardReason] for transactions that scale with the number of feed items:
      * those run long enough to still be holding the SQLite lock when iOS suspends the app,

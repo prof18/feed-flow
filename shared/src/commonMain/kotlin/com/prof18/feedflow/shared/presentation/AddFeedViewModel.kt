@@ -7,7 +7,6 @@ import com.prof18.feedflow.core.model.CategoryName
 import com.prof18.feedflow.core.model.CategoryNameValidationResult
 import com.prof18.feedflow.core.model.YouTubeOptionsState
 import com.prof18.feedflow.core.utils.withSuspensionGuard
-import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedSourcesRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feed.YouTubeChannelUrl
@@ -35,7 +34,6 @@ import kotlinx.coroutines.launch
 class AddFeedViewModel internal constructor(
     private val categoryRepository: FeedCategoryRepository,
     private val feedSourcesRepository: FeedSourcesRepository,
-    private val databaseHelper: DatabaseHelper,
     private val feedStateRepository: FeedStateRepository,
     private val recoveryService: FeedRecoveryService,
     private val recoveryRepository: FeedRecoveryRepository,
@@ -54,9 +52,6 @@ class AddFeedViewModel internal constructor(
     val feedAddedState = feedAddedMutableState.asSharedFlow()
     val categoriesState = categoryRepository.categoriesState
 
-    private val showNotificationToggleMutableState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val showNotificationToggleState = showNotificationToggleMutableState.asStateFlow()
-
     private val isNotificationEnabledMutableStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isNotificationEnabledState = isNotificationEnabledMutableStateFlow.asStateFlow()
 
@@ -72,10 +67,6 @@ class AddFeedViewModel internal constructor(
     init {
         viewModelScope.launch {
             categoryRepository.initCategories()
-        }
-
-        viewModelScope.launch {
-            showNotificationToggleMutableState.update { databaseHelper.areNotificationsEnabled() }
         }
     }
 

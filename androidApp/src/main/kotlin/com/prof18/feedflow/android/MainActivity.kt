@@ -685,7 +685,7 @@ class MainActivity : BaseThemeActivity() {
                 browserManager.openWithInAppBrowser(feedUrlInfo.url, this@MainActivity)
             }
             else -> {
-                browserManager.openUrlWithFavoriteBrowser(feedUrlInfo.url, this@MainActivity)
+                browserManager.openArticleInBrowser(feedUrlInfo.url, this@MainActivity)
             }
         }
     }

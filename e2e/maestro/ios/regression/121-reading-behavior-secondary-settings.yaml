@@ -18,7 +18,8 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - tapOn:
     id: settings_reading_behavior
-- assertVisible: "Browser"
+- assertVisible: "Open articles in"
+- assertVisible: "Open other links in"
 - assertVisible: "Keep offline copies of articles you open"
 - assertVisible: "Make offline copies when feeds refresh"
 - assertVisible: "Mark as read when scrolling"

@@ -40,6 +40,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
                 isShowReadItemsEnabled = isShowReadItemsEnabled,
                 isHideReadItemsEnabled = isHideReadItemsEnabled,
                 articleOpenMode = articleOpenMode,
+                articleBrowserId = settingsRepository.getArticleBrowserId(),
             )
         }
     }
@@ -48,6 +49,20 @@ class ReadingBehaviorSettingsViewModel internal constructor(
         settingsRepository.setArticleOpenMode(value)
         stateMutableFlow.update {
             it.copy(articleOpenMode = value)
+        }
+    }
+
+    fun updateArticleBrowser(browserId: String) {
+        settingsRepository.selectArticleBrowser(browserId)
+        refreshArticleOpenState()
+    }
+
+    // A links browser change can rewrite the stored mode, see SettingsRepository.saveFavouriteBrowserId.
+    fun refreshArticleOpenState() {
+        val articleOpenMode = settingsRepository.getArticleOpenMode()
+        val articleBrowserId = settingsRepository.getArticleBrowserId()
+        stateMutableFlow.update {
+            it.copy(articleOpenMode = articleOpenMode, articleBrowserId = articleBrowserId)
         }
     }
 

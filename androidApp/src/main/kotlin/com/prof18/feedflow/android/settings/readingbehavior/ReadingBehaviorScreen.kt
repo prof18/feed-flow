@@ -31,9 +31,12 @@ internal fun ReadingBehaviorScreen(
                 browser
             }
         }.toImmutableList(),
+        resolvedArticleBrowserId = browserManager.resolveArticleBrowserId(state.articleBrowserId),
         onBrowserSelected = { browser ->
             browserManager.setFavouriteBrowser(browser)
+            viewModel.refreshArticleOpenState()
         },
+        onArticleBrowserSelected = viewModel::updateArticleBrowser,
         setArticleOpenMode = viewModel::updateArticleOpenMode,
         setSaveReaderModeContent = viewModel::updateSaveReaderModeContent,
         setPrefetchArticleContent = viewModel::updatePrefetchArticleContent,

@@ -58,7 +58,10 @@ class BrowserManagerTest {
 
         val browsers = createManager().browserListState.value
 
-        assertEquals(setOf(BrowserIds.IN_APP_BROWSER, BROWSER, OTHER_BROWSER), browsers.map { it.id }.toSet())
+        assertEquals(
+            setOf(BrowserIds.IN_APP_BROWSER, BrowserIds.SYSTEM_DEFAULT_BROWSER, BROWSER, OTHER_BROWSER),
+            browsers.map { it.id }.toSet(),
+        )
         assertEquals(BROWSER, browsers.single { it.isFavourite }.id)
     }
 
@@ -73,6 +76,64 @@ class BrowserManagerTest {
         val browsers = createManager().browserListState.value
 
         assertEquals(BrowserIds.IN_APP_BROWSER, browsers.single { it.isFavourite }.id)
+    }
+
+    @Test
+    fun `browser list starts with the in-app browser and the default browser`() {
+        val browsers = createManager().browserListState.value
+
+        assertEquals(
+            listOf(BrowserIds.IN_APP_BROWSER, BrowserIds.SYSTEM_DEFAULT_BROWSER, BROWSER),
+            browsers.map { it.id },
+        )
+    }
+
+    @Test
+    fun `a saved favourite that is not installed falls back to the in-app browser`() {
+        settings.saveFavouriteBrowserId(UNINSTALLED_BROWSER)
+
+        val browsers = createManager().browserListState.value
+
+        assertEquals(BrowserIds.IN_APP_BROWSER, browsers.single { it.isFavourite }.id)
+    }
+
+    @Test
+    fun `article browser is the stored one when installed and the links browser otherwise`() {
+        registerBrowser(OTHER_BROWSER)
+        settings.selectArticleBrowser(OTHER_BROWSER)
+        assertEquals(OTHER_BROWSER, createManager().articleBrowserId())
+
+        settings.selectArticleBrowser(UNINSTALLED_BROWSER)
+        assertEquals(BROWSER, createManager().articleBrowserId())
+    }
+
+    @Test
+    fun `article browser package is null for the in-app and the default browser`() {
+        settings.saveFavouriteBrowserId(BrowserIds.IN_APP_BROWSER)
+        assertNull(createManager().getArticleBrowserPackageName())
+
+        settings.selectArticleBrowser(BrowserIds.SYSTEM_DEFAULT_BROWSER)
+        assertNull(createManager().getArticleBrowserPackageName())
+
+        settings.selectArticleBrowser(BROWSER)
+        assertEquals(BROWSER, createManager().getArticleBrowserPackageName())
+    }
+
+    @Test
+    fun `opening an article in the default browser sends no package`() {
+        settings.selectArticleBrowser(BrowserIds.SYSTEM_DEFAULT_BROWSER)
+        val attempts = mutableListOf<Intent>()
+        val launchContext = object : ContextWrapper(application) {
+            override fun startActivity(intent: Intent) {
+                attempts.add(intent)
+            }
+        }
+
+        createManager().openArticleInBrowser(ARTICLE, launchContext, preferAppHandler = false)
+
+        val intent = attempts.single()
+        assertEquals(ARTICLE, intent.dataString)
+        assertNull(intent.`package`)
     }
 
     @Test
@@ -134,6 +195,7 @@ class BrowserManagerTest {
         const val INTERNAL_WEB_HANDLER = "test.internal"
         const val WEB_HANDLER_WITHOUT_DEFAULT_CATEGORY = "test.nocategorydefault"
         const val NATIVE_APP = "test.native"
+        const val UNINSTALLED_BROWSER = "test.uninstalled"
         const val ARTICLE = "https://example.com/article"
     }
 }

@@ -19,9 +19,16 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: settings_reading_behavior
 - assertVisible: "In-app browser"
-- tapOn: "Browser"
+- assertVisible: "Reader (website)"
+- tapOn: "Open other links in"
 - tapOn: "Default browser"
 - assertVisible: "Default browser"
+- tapOn:
+    id: reading_behavior_article_open_mode
+- tapOn:
+    id: article_open_mode_internal_browser
+- assertVisible: "In-app browser"
+- assertNotVisible: "Reader (website)"
 - tapOn:
     id: BackButton
 - tapOn:
@@ -42,3 +49,5 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: settings_reading_behavior
 - assertVisible: "Default browser"
+- assertVisible: "In-app browser"
+- assertNotVisible: "Reader (website)"

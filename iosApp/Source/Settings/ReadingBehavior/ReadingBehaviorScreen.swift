@@ -17,7 +17,8 @@ struct ReadingBehaviorScreen: View {
         isMarkReadWhenScrollingEnabled: false,
         isShowReadItemsEnabled: false,
         isHideReadItemsEnabled: false,
-        articleOpenMode: .fullArticle
+        articleOpenMode: .fullArticle,
+        articleBrowserId: nil
     )
 
     var body: some View {
@@ -29,6 +30,9 @@ struct ReadingBehaviorScreen: View {
                 get: { settingsState.articleOpenMode },
                 set: { vmStoreOwner.instance.updateArticleOpenMode(value: $0) }
             ),
+            onArticleBrowserSelected: { browserId in
+                vmStoreOwner.instance.updateArticleBrowser(browserId: browserId)
+            },
             isSaveReaderModeContentEnabled: Binding(
                 get: { settingsState.isSaveReaderModeContentEnabled },
                 set: { vmStoreOwner.instance.updateSaveReaderModeContent(value: $0) }
@@ -50,6 +54,10 @@ struct ReadingBehaviorScreen: View {
                 set: { vmStoreOwner.instance.updateHideReadItems(value: $0) }
             )
         )
+        // Saving a new links browser can rewrite the stored article mode.
+        .onChange(of: browserSelector.selectedBrowser) {
+            vmStoreOwner.instance.refreshArticleOpenState()
+        }
         .navigationTitle(Text(feedFlowStrings.settingsReadingBehavior))
         .navigationBarTitleDisplayMode(.inline)
         .task {

@@ -49,10 +49,12 @@ import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.widget.WidgetFontSizes
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.ReaderModeEligibility
 import com.prof18.feedflow.core.model.isReaderMode
 import com.prof18.feedflow.core.model.resolveWith
+import com.prof18.feedflow.core.utils.BrowserIds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -222,7 +224,10 @@ private fun createFeedItemClickAction(
         return createDeepLinkAction(feedItem, context)
     }
     val openMode = feedItem.feedSource.articleOpenMode.resolveWith(browserManager.getArticleOpenMode())
-    return if (openMode.isReaderMode() && feedItem.canOpenWebReaderMode()) {
+    // The in-app browser can only be launched from the app, so those cases deep-link too.
+    val opensInApp = openMode == ArticleOpenMode.INTERNAL_BROWSER ||
+        browserManager.articleBrowserId() == BrowserIds.IN_APP_BROWSER
+    return if ((openMode.isReaderMode() && feedItem.canOpenWebReaderMode()) || opensInApp) {
         createDeepLinkAction(feedItem, context)
     } else {
         createBrowserAction(feedItem, browserManager)
@@ -231,7 +236,7 @@ private fun createFeedItemClickAction(
 
 private fun createBrowserAction(feedItem: FeedItem, browserManager: BrowserManager): Action {
     val intent = Intent(Intent.ACTION_VIEW, feedItem.url.toUri()).apply {
-        browserManager.getBrowserPackageNameWithoutInApp()?.let { packageName ->
+        browserManager.getArticleBrowserPackageName()?.let { packageName ->
             setPackage(packageName)
         }
         flags = Intent.FLAG_ACTIVITY_NEW_TASK

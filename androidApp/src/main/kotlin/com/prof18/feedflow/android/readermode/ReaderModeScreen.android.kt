@@ -235,7 +235,7 @@ internal fun ReaderModeScreen(
                         fontSize = fontSize,
                         openInBrowser = { url ->
                             if (isValidUrl(url)) {
-                                browserManager.openUrlWithFavoriteBrowser(url, context, preferAppHandler = false)
+                                browserManager.openArticleInBrowser(url, context, preferAppHandler = false)
                             }
                         },
                         onShareClick = { url, title ->
@@ -308,6 +308,7 @@ internal fun ReaderModeScreen(
                             toolbarHeightPx = toolbarHeightPx,
                             contentPadding = contentPadding,
                             navigator = navigator,
+                            // Only retries a download, so it reuses the browser openDownload used.
                             openInBrowser = { url ->
                                 browserManager.openUrlWithFavoriteBrowser(url, context, preferAppHandler = false)
                             },

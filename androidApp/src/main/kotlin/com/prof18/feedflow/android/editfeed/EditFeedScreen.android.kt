@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prof18.feedflow.android.BrowserManager
 import com.prof18.feedflow.android.categoryselection.EditCategorySheet
 import com.prof18.feedflow.android.feed.ArticleOpenModeSelector
 import com.prof18.feedflow.android.feedverification.WebsiteVerificationExplanationDialog
@@ -43,11 +44,13 @@ import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedSourceSettings
+import com.prof18.feedflow.core.utils.BrowserIds
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.shared.domain.model.FeedEditedState
 import com.prof18.feedflow.shared.presentation.EditFeedViewModel
 import com.prof18.feedflow.shared.presentation.preview.categoriesExpandedState
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @Composable
 internal fun EditScreen(
@@ -69,6 +72,8 @@ internal fun EditScreen(
 
     val context = LocalContext.current
     val strings = LocalFeedFlowStrings.current
+
+    val articleBrowserName = articleBrowserName(strings)
 
     val notificationPermission = rememberNotificationPermission()
     val isMarkReadWhenScrollingEnabled by viewModel.markReadWhenScrollingEnabledState.collectAsStateWithLifecycle()
@@ -202,6 +207,7 @@ internal fun EditScreen(
                     onModeSelected = { articleOpenMode ->
                         viewModel.updateArticleOpenMode(articleOpenMode)
                     },
+                    articleBrowserName = articleBrowserName,
                     allowDefault = true,
                 )
             },
@@ -324,6 +330,7 @@ private fun EditScreenPreview() {
                         modifier = selectorModifier,
                         currentMode = ArticleOpenMode.DEFAULT,
                         onModeSelected = {},
+                        articleBrowserName = "Chrome",
                         allowDefault = true,
                     )
                 },
@@ -341,6 +348,19 @@ private fun EditScreenPreview() {
                 contentPadding = innerPadding,
             )
         }
+    }
+}
+
+// The per-feed "Browser" option opens the browser chosen in the global setting.
+@Composable
+private fun articleBrowserName(strings: FeedFlowStrings): String {
+    val browserManager = koinInject<BrowserManager>()
+    val browserListState by browserManager.browserListState.collectAsStateWithLifecycle()
+    val articleBrowserId = browserManager.articleBrowserId()
+    return if (articleBrowserId == BrowserIds.IN_APP_BROWSER) {
+        strings.inAppBrowser
+    } else {
+        browserListState.firstOrNull { it.id == articleBrowserId }?.name ?: strings.defaultBrowser
     }
 }
 

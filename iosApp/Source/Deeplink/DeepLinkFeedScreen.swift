@@ -61,10 +61,10 @@ struct DeepLinkFeedScreen: View {
                     case .internalBrowser:
                         openInAppBrowser(urlString: urlInfo.url)
                     default:
-                        if browserSelector.openInAppBrowser() {
+                        if browserSelector.opensArticleInApp(for: .preferredBrowser) {
                             openInAppBrowser(urlString: urlInfo.url)
                         } else {
-                            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
+                            openURL(browserSelector.getUrlForArticleBrowser(stringUrl: urlInfo.url))
                             self.dismiss()
                         }
                     }
@@ -91,7 +91,7 @@ struct DeepLinkFeedScreen: View {
             appState.openInAppBrowser(url: url)
             dismiss()
         } else {
-            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlString))
+            openURL(browserSelector.getUrlForArticleBrowser(stringUrl: urlString))
             dismiss()
         }
     }

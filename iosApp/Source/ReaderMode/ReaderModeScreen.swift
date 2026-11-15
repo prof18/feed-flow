@@ -387,14 +387,14 @@ struct ReaderModeScreen: View {
 
 private extension ReaderModeScreen {
     private func openInBrowser(url: URL) {
-        if browserSelector.openInAppBrowser() {
+        if browserSelector.opensArticleInApp(for: .preferredBrowser) {
             if let browserClick = onInAppBrowserClick {
                 browserClick(url)
             } else {
                 appState.openInAppBrowser(url: url)
             }
         } else {
-            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: url.absoluteString))
+            openURL(browserSelector.getUrlForArticleBrowser(stringUrl: url.absoluteString))
         }
     }
 
@@ -558,7 +558,7 @@ private extension ReaderModeScreen {
                         appState.emitGenericError()
                         return
                     }
-                    if openMode == .internalBrowser || browserSelector.openInAppBrowser(),
+                    if browserSelector.opensArticleInApp(for: openMode),
                        browserSelector.isValidForInAppBrowser(url) {
                         if let onInAppBrowserClick {
                             onInAppBrowserClick(url)
@@ -566,7 +566,7 @@ private extension ReaderModeScreen {
                             appState.openInAppBrowser(url: url)
                         }
                     } else {
-                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: info.url))
+                        openURL(browserSelector.getUrlForArticleBrowser(stringUrl: info.url))
                     }
                 }
             } catch is CancellationError {

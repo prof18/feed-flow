@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
-import com.prof18.feedflow.android.feed.ArticleOpenModeSelector
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BrowserSelector
 import com.prof18.feedflow.android.ui.settings.ConfirmationDialogConfig
@@ -27,15 +26,17 @@ import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.Browser
 import com.prof18.feedflow.core.model.ReadingBehaviorState
+import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun ReadingBehaviorScreenContent(
     navigateBack: () -> Unit,
     state: ReadingBehaviorState,
     browsers: ImmutableList<Browser>,
+    resolvedArticleBrowserId: String,
     onBrowserSelected: (Browser) -> Unit,
+    onArticleBrowserSelected: (String) -> Unit,
     setArticleOpenMode: (ArticleOpenMode) -> Unit,
     setSaveReaderModeContent: (Boolean) -> Unit,
     setPrefetchArticleContent: (Boolean) -> Unit,
@@ -69,19 +70,22 @@ internal fun ReadingBehaviorScreenContent(
                 .padding(end = paddingValues.calculateRightPadding(layoutDir)),
         ) {
             item {
-                BrowserSelector(
+                ArticleDestinationSelector(
+                    modifier = Modifier
+                        .padding(horizontal = Spacing.regular)
+                        .testTag(SettingsE2eIds.READING_BEHAVIOR_ARTICLE_OPEN_MODE),
+                    articleOpenMode = state.articleOpenMode,
+                    resolvedArticleBrowserId = resolvedArticleBrowserId,
                     browsers = browsers,
-                    onBrowserSelected = onBrowserSelected,
+                    onReaderModeSelected = setArticleOpenMode,
+                    onBrowserSelected = onArticleBrowserSelected,
                 )
             }
 
             item {
-                ArticleOpenModeSelector(
-                    modifier = Modifier
-                        .padding(horizontal = Spacing.regular)
-                        .testTag(SettingsE2eIds.READING_BEHAVIOR_ARTICLE_OPEN_MODE),
-                    currentMode = state.articleOpenMode,
-                    onModeSelected = setArticleOpenMode,
+                BrowserSelector(
+                    browsers = browsers,
+                    onBrowserSelected = onBrowserSelected,
                 )
             }
 
@@ -157,8 +161,10 @@ private fun ReadingBehaviorScreenContentPreview() {
                 isShowReadItemsEnabled = true,
                 isHideReadItemsEnabled = false,
             ),
-            browsers = persistentListOf(),
+            browsers = browsersForPreview,
+            resolvedArticleBrowserId = browsersForPreview.first().id,
             onBrowserSelected = {},
+            onArticleBrowserSelected = {},
             setArticleOpenMode = {},
             setSaveReaderModeContent = {},
             setPrefetchArticleContent = {},

@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.utils.BrowserIds
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
@@ -48,6 +49,40 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
 
             viewModel.updateArticleOpenMode(ArticleOpenMode.FEED_CONTENT)
             assertEquals(ArticleOpenMode.FEED_CONTENT, awaitItem().articleOpenMode)
+        }
+    }
+
+    @Test
+    fun `updateArticleBrowser with a browser opens articles in that browser`() = runTest {
+        viewModel.state.test {
+            awaitItem()
+
+            viewModel.updateArticleBrowser("com.duckduckgo.mobile.android")
+            val state = awaitItem()
+            assertEquals(ArticleOpenMode.PREFERRED_BROWSER, state.articleOpenMode)
+            assertEquals("com.duckduckgo.mobile.android", state.articleBrowserId)
+        }
+    }
+
+    @Test
+    fun `updateArticleBrowser with the in-app browser opens articles in the in-app browser`() = runTest {
+        viewModel.state.test {
+            awaitItem()
+
+            viewModel.updateArticleBrowser(BrowserIds.IN_APP_BROWSER)
+            assertEquals(ArticleOpenMode.INTERNAL_BROWSER, awaitItem().articleOpenMode)
+        }
+    }
+
+    @Test
+    fun `refreshArticleOpenState picks up a mode changed by a links browser change`() = runTest {
+        viewModel.updateArticleOpenMode(ArticleOpenMode.PREFERRED_BROWSER)
+        viewModel.state.test {
+            assertEquals(ArticleOpenMode.PREFERRED_BROWSER, awaitItem().articleOpenMode)
+
+            settingsRepository.saveFavouriteBrowserId("org.mozilla.firefox")
+            viewModel.refreshArticleOpenState()
+            assertEquals(ArticleOpenMode.INTERNAL_BROWSER, awaitItem().articleOpenMode)
         }
     }
 

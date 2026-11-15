@@ -21,6 +21,8 @@ struct EditFeedScreen: View {
     var feedSource: FeedSource
 
     @State private var categorySelectorObserver = CategorySelectorObserver()
+    // Owned here: environment values are not re-injected into every navigation destination.
+    @State private var browserSelector = BrowserSelector()
 
     @State private var showError = false
     @State private var errorMessage = ""
@@ -51,6 +53,9 @@ struct EditFeedScreen: View {
                 errorMessage: errorMessage,
                 isAddingFeed: $isAddingFeed,
                 articleOpenMode: $articleOpenMode,
+                articleBrowserName: browserSelector.articleBrowserId() == BrowserIds.shared.IN_APP_BROWSER
+                    ? feedFlowStrings.inAppBrowser
+                    : browserSelector.articleBrowserName(),
                 isHidden: $isHidden,
                 isHideImagesEnabled: $isHideImagesEnabled,
                 showHideShortsToggle: showHideShortsToggle,

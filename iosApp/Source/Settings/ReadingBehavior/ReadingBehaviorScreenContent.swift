@@ -4,6 +4,7 @@ import SwiftUI
 struct ReadingBehaviorScreenContent: View {
     @Bindable var browserSelector: BrowserSelector
     @Binding var articleOpenMode: ArticleOpenMode
+    let onArticleBrowserSelected: (String) -> Void
     @Binding var isSaveReaderModeContentEnabled: Bool
     @Binding var isPrefetchArticleContentEnabled: Bool
     @Binding var isMarkReadWhenScrollingEnabled: Bool
@@ -15,23 +16,19 @@ struct ReadingBehaviorScreenContent: View {
     var body: some View {
         Form {
             Section {
-                Picker(
-                    selection: $browserSelector.selectedBrowser,
-                    content: {
-                        ForEach(browserSelector.browsers, id: \.self) { browser in
-                            Text(browser.name).tag(browser as Browser?)
-                        }
-                    },
-                    label: {
-                        Text(feedFlowStrings.browserSelectionButton)
-                    }
-                )
-
                 NavigationLink {
-                    ArticleOpenModeSelectionScreen(articleOpenMode: $articleOpenMode)
+                    ArticleOpenModeSelectionScreen(
+                        articleOpenMode: $articleOpenMode,
+                        browsers: browserSelector.browsers,
+                        selectedArticleBrowserId: selectedArticleBrowserId,
+                        onBrowserSelected: onArticleBrowserSelected
+                    )
                 } label: {
                     HStack {
-                        Text(feedFlowStrings.articleOpenMode)
+                        titleWithSubtitle(
+                            title: feedFlowStrings.articleOpenMode,
+                            subtitle: feedFlowStrings.articleOpenModeSubtitle
+                        )
 
                         Spacer()
 
@@ -40,6 +37,23 @@ struct ReadingBehaviorScreenContent: View {
                     }
                 }
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.articleOpenModePicker)
+
+                NavigationLink {
+                    LinksBrowserSelectionScreen(browserSelector: browserSelector)
+                } label: {
+                    HStack {
+                        titleWithSubtitle(
+                            title: feedFlowStrings.linksBrowserTitle,
+                            subtitle: feedFlowStrings.linksBrowserSubtitle
+                        )
+
+                        Spacer()
+
+                        Text(browserSelector.selectedBrowser?.name ?? feedFlowStrings.inAppBrowser)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.linksBrowserPicker)
 
                 Toggle(isOn: $isSaveReaderModeContentEnabled) {
                     Text(feedFlowStrings.settingsSaveReaderModeContent)
@@ -83,6 +97,17 @@ struct ReadingBehaviorScreenContent: View {
         .background(Color.secondaryBackgroundColor)
     }
 
+    private var selectedArticleBrowserId: String? {
+        switch articleOpenMode {
+        case .internalBrowser:
+            BrowserIds.shared.IN_APP_BROWSER
+        case .preferredBrowser:
+            browserSelector.articleBrowserId()
+        default:
+            nil
+        }
+    }
+
     private var articleOpenModePreview: String {
         switch articleOpenMode {
         case .fullArticle:
@@ -90,9 +115,20 @@ struct ReadingBehaviorScreenContent: View {
         case .feedContent:
             feedFlowStrings.articleOpenModeFeedShort
         case .internalBrowser:
-            feedFlowStrings.linkOpeningPreferenceInternalBrowser
+            feedFlowStrings.inAppBrowser
         default:
-            feedFlowStrings.linkOpeningPreferencePreferredBrowser
+            browserSelector.articleBrowserId() == BrowserIds.shared.IN_APP_BROWSER
+                ? feedFlowStrings.inAppBrowser
+                : browserSelector.articleBrowserName()
+        }
+    }
+
+    private func titleWithSubtitle(title: String, subtitle: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+            Text(subtitle)
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
     }
 }

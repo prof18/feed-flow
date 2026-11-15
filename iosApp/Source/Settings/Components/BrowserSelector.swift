@@ -64,35 +64,17 @@ class BrowserSelector {
     init() {
         let favouriteBrowser = settingsRepository.getFavouriteBrowserId()
 
-        var isInAppBrowserFavourite = false
-        if favouriteBrowser == nil {
-            isInAppBrowserFavourite = true
-        } else {
-            isInAppBrowserFavourite = favouriteBrowser == BrowserIds.shared.IN_APP_BROWSER
-        }
-
-        let inAppBrowser = Browser(
-            id: BrowserIds.shared.IN_APP_BROWSER,
-            name: feedFlowStrings.inAppBrowser,
-            isFavourite: isInAppBrowserFavourite
-        )
-        browsers.append(inAppBrowser)
-        if isInAppBrowserFavourite {
-            selectedBrowser = inAppBrowser
-        }
+        var available = [
+            Browser(
+                id: BrowserIds.shared.IN_APP_BROWSER,
+                name: feedFlowStrings.inAppBrowser,
+                isFavourite: false
+            )
+        ]
 
         for browser in supportedBrowsers {
             if browser.id == BrowserURLBuilder.BrowserId.defaultBrowser {
-                let updatedBrowser = Browser(
-                    id: browser.id,
-                    name: browser.name,
-                    isFavourite: browser.id == favouriteBrowser
-                )
-
-                browsers.append(updatedBrowser)
-                if updatedBrowser.isFavourite {
-                    selectedBrowser = updatedBrowser
-                }
+                available.append(browser)
                 continue
             }
 
@@ -100,23 +82,19 @@ class BrowserSelector {
                 browserId: browser.id,
                 stringUrl: "https://www.example.com"
             ), UIApplication.shared.canOpenURL(url) {
-                let updatedBrowser = Browser(
-                    id: browser.id,
-                    name: browser.name,
-                    isFavourite: browser.id == favouriteBrowser
-                )
-
-                browsers.append(updatedBrowser)
-                if updatedBrowser.isFavourite {
-                    selectedBrowser = updatedBrowser
-                }
+                available.append(browser)
             }
         }
 
-        if selectedBrowser == nil {
-            selectedBrowser = browsers.first { $0.id == BrowserURLBuilder.BrowserId.defaultBrowser }
-                ?? browsers.first
+        // The picker shows the browser links actually open in, even for an uninstalled favourite.
+        let resolvedId = BrowserResolver.shared.linksBrowserId(
+            favouriteId: favouriteBrowser,
+            availableIds: available.map(\.id)
+        )
+        browsers = available.map { browser in
+            Browser(id: browser.id, name: browser.name, isFavourite: browser.id == resolvedId)
         }
+        selectedBrowser = browsers.first { $0.id == resolvedId }
     }
 
     func openInAppBrowser() -> Bool {
@@ -143,11 +121,51 @@ class BrowserSelector {
             ?? URL(fileURLWithPath: "")
     }
 
+    /// The browser that opens articles; it falls back to the links browser when unset or uninstalled.
+    func articleBrowserId() -> String {
+        return BrowserResolver.shared.articleBrowserId(
+            articleBrowserId: settingsRepository.getArticleBrowserId(),
+            favouriteId: settingsRepository.getFavouriteBrowserId(),
+            availableIds: installedBrowserIds()
+        )
+    }
+
+    func opensArticleInApp(for mode: ArticleOpenMode) -> Bool {
+        return mode == .internalBrowser || articleBrowserId() == BrowserIds.shared.IN_APP_BROWSER
+    }
+
+    func getUrlForArticleBrowser(stringUrl: String) -> URL {
+        return BrowserURLBuilder.url(browserId: articleBrowserId(), stringUrl: stringUrl)
+            ?? URL(string: stringUrl)
+            ?? URL(fileURLWithPath: "")
+    }
+
+    func articleBrowserName() -> String {
+        let resolvedId = articleBrowserId()
+        return browsers.first { $0.id == resolvedId }?.name ?? feedFlowStrings.defaultBrowser
+    }
+
     func isValidForInAppBrowser(_ url: URL) -> Bool {
         return url.scheme == "http" || url.scheme == "https"
     }
 
+    /// Rechecked on every lookup: a browser can be uninstalled while the app keeps running.
+    private func installedBrowserIds() -> [String] {
+        browsers.map(\.id).filter { id in
+            if id == BrowserIds.shared.IN_APP_BROWSER || id == BrowserURLBuilder.BrowserId.defaultBrowser {
+                return true
+            }
+            guard let url = BrowserURLBuilder.url(browserId: id, stringUrl: "https://www.example.com") else {
+                return false
+            }
+            return UIApplication.shared.canOpenURL(url)
+        }
+    }
+
     private func currentSelectedBrowserId() -> String {
-        settingsRepository.getFavouriteBrowserId() ?? selectedBrowser?.id ?? BrowserIds.shared.IN_APP_BROWSER
+        BrowserResolver.shared.linksBrowserId(
+            favouriteId: settingsRepository.getFavouriteBrowserId(),
+            availableIds: installedBrowserIds()
+        )
     }
 }

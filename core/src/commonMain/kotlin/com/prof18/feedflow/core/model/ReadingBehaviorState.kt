@@ -10,4 +10,5 @@ data class ReadingBehaviorState(
     val isShowReadItemsEnabled: Boolean = false,
     val isHideReadItemsEnabled: Boolean = false,
     val articleOpenMode: ArticleOpenMode = ArticleOpenMode.FULL_ARTICLE,
+    val articleBrowserId: String? = null,
 )

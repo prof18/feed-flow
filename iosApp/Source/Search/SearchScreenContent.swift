@@ -211,13 +211,14 @@ struct SearchScreenContent: View {
             if browserSelector.isValidForInAppBrowser(url) {
                 appState.openInAppBrowser(url: url)
             } else {
-                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                openURL(browserSelector.getUrlForArticleBrowser(stringUrl: feedItem.url))
             }
         default:
-            if browserSelector.openInAppBrowser(), browserSelector.isValidForInAppBrowser(url) {
+            if browserSelector.opensArticleInApp(for: .preferredBrowser),
+               browserSelector.isValidForInAppBrowser(url) {
                 appState.openInAppBrowser(url: url)
             } else {
-                openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+                openURL(browserSelector.getUrlForArticleBrowser(stringUrl: feedItem.url))
             }
         }
         onReadStatusClick(FeedItemId(id: feedItem.id), true)

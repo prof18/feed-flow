@@ -18,10 +18,17 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: settings_reading_behavior
 - assertVisible: "In-app browser"
-- tapOn: "Browser"
+- assertVisible: "Reader (website)"
+- tapOn: "Open other links in"
 - assertNotVisible: "Calculator"
+- tapOn: "Default browser"
+- assertVisible: "Default browser"
+- tapOn:
+    id: reading_behavior_article_open_mode
+- assertVisible: "In-app browser"
 - tapOn: "Chrome"
 - assertVisible: "Chrome"
+- assertNotVisible: "Reader (website)"
 - back
 - back
 - tapOn:
@@ -41,3 +48,5 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: settings_reading_behavior
 - assertVisible: "Chrome"
+- assertVisible: "Default browser"
+- assertNotVisible: "Reader (website)"

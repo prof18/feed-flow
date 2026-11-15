@@ -327,11 +327,11 @@ private extension ContentView {
                         appState.emitGenericError()
                         return
                     }
-                    if openMode == .internalBrowser || browserSelector.openInAppBrowser(),
+                    if browserSelector.opensArticleInApp(for: openMode),
                        browserSelector.isValidForInAppBrowser(url) {
                         appState.openInAppBrowser(url: url)
                     } else {
-                        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: info.url))
+                        openURL(browserSelector.getUrlForArticleBrowser(stringUrl: info.url))
                     }
                 }
             } catch is CancellationError {

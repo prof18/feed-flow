@@ -121,6 +121,15 @@ class E2eSeedRunnerTest : KoinTestBase() {
     }
 
     @Test
+    fun `seeding clears the stored article browser`() = runTest {
+        settingsRepository.selectArticleBrowser("org.mozilla.firefox")
+
+        seedRunner.resetAndSeed(E2eSeedProfile.CONTENT_RICH)
+
+        assertNull(settingsRepository.getArticleBrowserId())
+    }
+
+    @Test
     fun `reader-mode profile stores reader content in the format this platform caches`() = runTest {
         seedRunner.resetAndSeed(E2eSeedProfile.READER_MODE)
 

@@ -163,7 +163,7 @@ private fun openSearchResult(
     when {
         openMode.isReaderMode() -> navigateToReaderMode(urlInfo)
         openMode == ArticleOpenMode.INTERNAL_BROWSER -> browserManager.openWithInAppBrowser(urlInfo.url, context)
-        else -> browserManager.openUrlWithFavoriteBrowser(urlInfo.url, context)
+        else -> browserManager.openArticleInBrowser(urlInfo.url, context)
     }
 }
 

@@ -58,7 +58,6 @@ import com.prof18.feedflow.android.ui.utils.LocalReduceMotion
 import com.prof18.feedflow.android.ui.utils.PreviewColumn
 import com.prof18.feedflow.android.ui.utils.PreviewHelper
 import com.prof18.feedflow.android.ui.utils.revealItemConditionally
-import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedFontSizes
 import com.prof18.feedflow.core.model.FeedItem
@@ -746,7 +745,7 @@ private fun FeedItem.toSwipeActionUrlInfo(): FeedItemUrlInfo =
         url = url,
         title = title,
         isBookmarked = isBookmarked,
-        articleOpenMode = ArticleOpenMode.PREFERRED_BROWSER,
+        articleOpenMode = feedSource.articleOpenMode,
         commentsUrl = commentsUrl,
         imageUrl = imageUrl,
     )

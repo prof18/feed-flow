@@ -12,6 +12,7 @@ import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.core.model.appDefaultArticleOpenMode
 import com.prof18.feedflow.core.model.resolveWith
+import com.prof18.feedflow.core.utils.BrowserIds
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
@@ -98,11 +99,40 @@ class SettingsRepository(
     fun getFavouriteBrowserId(): String? =
         settings.getStringOrNull(SettingsFields.FAVOURITE_BROWSER_ID.name)
 
-    fun saveFavouriteBrowserId(browserId: String) =
-        settings.set(SettingsFields.FAVOURITE_BROWSER_ID.name, browserId)
+    fun saveFavouriteBrowserId(browserId: String) {
+        keepArticleBrowserBeforeFavouriteChange()
+        settings[SettingsFields.FAVOURITE_BROWSER_ID.name] = browserId
+    }
 
     fun clearFavouriteBrowserId() =
         settings.remove(SettingsFields.FAVOURITE_BROWSER_ID.name)
+
+    fun getArticleBrowserId(): String? =
+        settings.getStringOrNull(SettingsFields.ARTICLE_BROWSER_ID.name)
+
+    fun clearArticleBrowserId() =
+        settings.remove(SettingsFields.ARTICLE_BROWSER_ID.name)
+
+    fun selectArticleBrowser(browserId: String) {
+        if (browserId == BrowserIds.IN_APP_BROWSER) {
+            setArticleOpenMode(ArticleOpenMode.INTERNAL_BROWSER)
+        } else {
+            settings[SettingsFields.ARTICLE_BROWSER_ID.name] = browserId
+            setArticleOpenMode(ArticleOpenMode.PREFERRED_BROWSER)
+        }
+    }
+
+    // Before ARTICLE_BROWSER_ID existed, PREFERRED_BROWSER opened the favourite browser.
+    private fun keepArticleBrowserBeforeFavouriteChange() {
+        if (getArticleBrowserId() != null) return
+        if (getArticleOpenMode() != ArticleOpenMode.PREFERRED_BROWSER) return
+        val oldFavourite = getFavouriteBrowserId()
+        if (oldFavourite == null || oldFavourite == BrowserIds.IN_APP_BROWSER) {
+            setArticleOpenMode(ArticleOpenMode.INTERNAL_BROWSER)
+        } else {
+            settings[SettingsFields.ARTICLE_BROWSER_ID.name] = oldFavourite
+        }
+    }
 
     internal fun getMarkFeedAsReadWhenScrolling(): Boolean =
         settings.getBoolean(SettingsFields.MARK_FEED_AS_READ_WHEN_SCROLLING.name, true)
@@ -408,4 +438,5 @@ private enum class SettingsFields {
     REFRESH_FEEDS_ON_LAUNCH,
     NOTIFICATION_MODE,
     UNCATEGORIZED_CATEGORY_POSITION,
+    ARTICLE_BROWSER_ID,
 }

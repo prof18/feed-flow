@@ -23,6 +23,7 @@ struct EditFeedScreenContent: View {
     let errorMessage: String
     @Binding var isAddingFeed: Bool
     @Binding var articleOpenMode: ArticleOpenMode
+    let articleBrowserName: String
     @Binding var isHidden: Bool
     @Binding var isHideImagesEnabled: Bool
     let showHideShortsToggle: Bool
@@ -323,8 +324,13 @@ struct EditFeedScreenContent: View {
         Section(feedFlowStrings.articleOpenModeSectionBrowser) {
             Text(feedFlowStrings.linkOpeningPreferenceInternalBrowser)
                 .tag(ArticleOpenMode.internalBrowser)
-            Text(feedFlowStrings.linkOpeningPreferencePreferredBrowser)
-                .tag(ArticleOpenMode.preferredBrowser)
+            VStack(alignment: .leading) {
+                Text(feedFlowStrings.articleOpenModeNamedBrowser(articleBrowserName))
+                Text(feedFlowStrings.articleOpenModeNamedBrowserSubtitle)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .tag(ArticleOpenMode.preferredBrowser)
         }
     }
 

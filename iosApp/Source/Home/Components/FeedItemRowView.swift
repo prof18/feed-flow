@@ -63,14 +63,15 @@ struct FeedItemRowView: View {
           if browserSelector.isValidForInAppBrowser(url) {
             self.appState.openInAppBrowser(url: url)
           } else {
-            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+            openURL(browserSelector.getUrlForArticleBrowser(stringUrl: feedItem.url))
           }
         default:
           onItemClick(urlInfo)
-          if browserSelector.openInAppBrowser(), browserSelector.isValidForInAppBrowser(url) {
+          if browserSelector.opensArticleInApp(for: .preferredBrowser),
+             browserSelector.isValidForInAppBrowser(url) {
             self.appState.openInAppBrowser(url: url)
           } else {
-            openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
+            openURL(browserSelector.getUrlForArticleBrowser(stringUrl: feedItem.url))
           }
         }
       },
@@ -189,11 +190,11 @@ struct FeedItemRowView: View {
     if urlInfo.url.isEmpty || browserSelector.isReaderModeEligible(link: urlInfo.url) {
       onReaderModeClick(urlInfo)
     } else if let url = URL(string: urlInfo.url),
-              browserSelector.openInAppBrowser(),
+              browserSelector.opensArticleInApp(for: .preferredBrowser),
               browserSelector.isValidForInAppBrowser(url) {
       appState.openInAppBrowser(url: url)
     } else {
-      openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: urlInfo.url))
+      openURL(browserSelector.getUrlForArticleBrowser(stringUrl: urlInfo.url))
     }
   }
 
@@ -202,25 +203,14 @@ struct FeedItemRowView: View {
       return
     }
 
-    switch feedItem.feedSource.articleOpenMode {
-    case .internalBrowser:
-      if browserSelector.isValidForInAppBrowser(url) {
-        self.appState.openInAppBrowser(url: url)
-      } else {
-        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-      }
-    case .preferredBrowser:
-      openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-    default:
-      if browserSelector.openInAppBrowser() {
-        if browserSelector.isValidForInAppBrowser(url) {
-          self.appState.openInAppBrowser(url: url)
-        } else {
-          openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-        }
-      } else {
-        openURL(browserSelector.getUrlForDefaultBrowser(stringUrl: feedItem.url))
-      }
+    let mode = BrowserResolver.shared.browserActionMode(
+      feedMode: feedItem.feedSource.articleOpenMode,
+      globalMode: browserSelector.articleOpenMode()
+    )
+    if browserSelector.opensArticleInApp(for: mode), browserSelector.isValidForInAppBrowser(url) {
+      self.appState.openInAppBrowser(url: url)
+    } else {
+      openURL(browserSelector.getUrlForArticleBrowser(stringUrl: feedItem.url))
     }
 
     markAsReadIfNeeded()

@@ -26,17 +26,18 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun ArticleOpenModeSelector(
     currentMode: ArticleOpenMode,
     onModeSelected: (ArticleOpenMode) -> Unit,
+    articleBrowserName: String,
     modifier: Modifier = Modifier,
     allowDefault: Boolean = false,
 ) {
     val strings = LocalFeedFlowStrings.current
-    val options = remember(strings, allowDefault) {
+    val options = remember(strings, allowDefault, articleBrowserName) {
         val modes = if (allowDefault) ArticleOpenMode.entries else globalArticleOpenModes
         modes
             .map { mode ->
                 SettingDropdownOption(
                     value = mode,
-                    label = mode.toLabel(strings),
+                    label = mode.toLabel(strings, articleBrowserName),
                     e2eId = ArticleOpenModeE2eIds.option(mode),
                     subtitle = mode.toSubtitle(strings),
                     shortLabel = mode.toShortLabel(strings),
@@ -56,18 +57,19 @@ internal fun ArticleOpenModeSelector(
     )
 }
 
-private fun ArticleOpenMode.toLabel(strings: FeedFlowStrings): String = when (this) {
+private fun ArticleOpenMode.toLabel(strings: FeedFlowStrings, articleBrowserName: String): String = when (this) {
     DEFAULT -> strings.linkOpeningPreferenceDefault
     FULL_ARTICLE -> strings.readerContentSourceWeb
     FEED_CONTENT -> strings.readerContentSourceFeed
     INTERNAL_BROWSER -> strings.linkOpeningPreferenceInternalBrowser
-    PREFERRED_BROWSER -> strings.linkOpeningPreferencePreferredBrowser
+    PREFERRED_BROWSER -> strings.articleOpenModeNamedBrowser(articleBrowserName)
 }
 
-/** Only the reader modes need one: the browser labels already say where the article opens. */
+/** The reader modes and the named browser, which comes from the global setting, need one. */
 private fun ArticleOpenMode.toSubtitle(strings: FeedFlowStrings): String? = when (this) {
     FULL_ARTICLE -> strings.readerContentSourceWebSubtitle
     FEED_CONTENT -> strings.readerContentSourceFeedSubtitle
+    PREFERRED_BROWSER -> strings.articleOpenModeNamedBrowserSubtitle
     else -> null
 }
 

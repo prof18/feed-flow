@@ -48,6 +48,12 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
 tasks.withType<KspAATask>().configureEach {
     if (name != "kspCommonMainKotlinMetadata") {
         dependsOn("kspCommonMainKotlinMetadata")
+    } else {
+        // Lyricist reads the XML through a processor argument, which Gradle does not track: without
+        // this input, an added or removed string can restore stale generated code from the build cache.
+        inputs.dir("src/commonMain/resources/locale")
+            .withPropertyName("lyricistStrings")
+            .withPathSensitivity(PathSensitivity.RELATIVE)
     }
 }
 

@@ -14,6 +14,7 @@ import com.prof18.feedflow.android.ui.utils.feedFlowStringsFor
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.Browser
 import com.prof18.feedflow.core.utils.BrowserIds
+import com.prof18.feedflow.core.utils.BrowserResolver
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import kotlinx.collections.immutable.ImmutableList
@@ -74,42 +75,66 @@ class BrowserManager(
                 flags,
             )
         }
-        val selectedBrowserId = favouriteBrowserId
-            ?.takeIf { id -> resolvedInfos.any { it.activityInfo.packageName == id } }
-            ?: BrowserIds.IN_APP_BROWSER
-
-        val browserList = listOf(
-            Browser(
-                id = BrowserIds.IN_APP_BROWSER,
-                name = getCurrentStrings().inAppBrowser,
-                isFavourite = selectedBrowserId == BrowserIds.IN_APP_BROWSER,
-            ),
+        val strings = getCurrentStrings()
+        val browsers = listOf(
+            BrowserIds.IN_APP_BROWSER to strings.inAppBrowser,
+            BrowserIds.SYSTEM_DEFAULT_BROWSER to strings.defaultBrowser,
         ) + resolvedInfos.map { info ->
-            val id = info.activityInfo.packageName
+            info.activityInfo.packageName to info.activityInfo.loadLabel(context.packageManager).toString()
+        }
+        val selectedBrowserId = BrowserResolver.linksBrowserId(favouriteBrowserId, browsers.map { it.first })
+
+        val browserList = browsers.map { (id, name) ->
             Browser(
                 id = id,
-                name = info.activityInfo.loadLabel(context.packageManager).toString(),
+                name = name,
                 isFavourite = selectedBrowserId == id,
             )
         }
         browserListMutableState.update { browserList.toImmutableList() }
     }
 
-    private fun getBrowserPackageName(): String? {
-        return browserListMutableState.value.firstOrNull { it.isFavourite }?.id
-    }
+    private fun linksBrowserId(): String =
+        browserListMutableState.value.firstOrNull { it.isFavourite }?.id ?: BrowserIds.IN_APP_BROWSER
 
-    fun getBrowserPackageNameWithoutInApp(): String? {
-        return browserListMutableState.value.firstOrNull { it.isFavourite && it.id != BrowserIds.IN_APP_BROWSER }?.id
-    }
+    fun resolveArticleBrowserId(storedArticleBrowserId: String?): String =
+        BrowserResolver.articleBrowserId(
+            articleBrowserId = storedArticleBrowserId,
+            favouriteId = settingsRepository.getFavouriteBrowserId(),
+            availableIds = browserListMutableState.value.map { it.id },
+        )
+
+    fun articleBrowserId(): String =
+        resolveArticleBrowserId(settingsRepository.getArticleBrowserId())
+
+    fun getArticleBrowserPackageName(): String? =
+        articleBrowserId().takeIf {
+            it != BrowserIds.IN_APP_BROWSER && it != BrowserIds.SYSTEM_DEFAULT_BROWSER
+        }
 
     fun openUrlWithFavoriteBrowser(
         url: String,
         context: Context,
         preferAppHandler: Boolean = true,
     ) {
+        openWithBrowserId(linksBrowserId(), url, context, preferAppHandler)
+    }
+
+    fun openArticleInBrowser(
+        url: String,
+        context: Context,
+        preferAppHandler: Boolean = true,
+    ) {
+        openWithBrowserId(articleBrowserId(), url, context, preferAppHandler)
+    }
+
+    private fun openWithBrowserId(
+        browserId: String,
+        url: String,
+        context: Context,
+        preferAppHandler: Boolean,
+    ) {
         try {
-            val browserId = getBrowserPackageName()
             if (browserId == BrowserIds.IN_APP_BROWSER) {
                 openWithInAppBrowser(url, context)
                 return
@@ -117,7 +142,7 @@ class BrowserManager(
 
             val appHandlerOpened = preferAppHandler && tryOpenWithAppHandler(url, context)
             if (!appHandlerOpened) {
-                val intent = getFavouriteBrowserIntent(url)
+                val intent = getBrowserIntent(browserId, url)
                 context.startActivity(intent)
             }
         } catch (e: ActivityNotFoundException) {
@@ -205,11 +230,11 @@ class BrowserManager(
         }
     }
 
-    private fun getFavouriteBrowserIntent(url: String): Intent {
+    private fun getBrowserIntent(browserId: String, url: String): Intent {
         return Intent(Intent.ACTION_VIEW).apply {
             data = url.toUri()
-            getBrowserPackageName()?.let { packageName ->
-                setPackage(packageName)
+            if (browserId != BrowserIds.SYSTEM_DEFAULT_BROWSER) {
+                setPackage(browserId)
             }
         }
     }

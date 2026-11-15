@@ -329,6 +329,11 @@
     <string name="link_opening_preference_preferred_browser">Favourite browser</string>
     <string name="link_opening_preference_system_browser">Default browser</string>
     <string name="article_open_mode">Open articles in</string>
+    <string name="article_open_mode_subtitle">What happens when you tap an article</string>
+    <string name="links_browser_title">Open other links in</string>
+    <string name="links_browser_subtitle">Comments, links inside articles and feed websites</string>
+    <string name="article_open_mode_named_browser">Browser: %s</string>
+    <string name="article_open_mode_named_browser_subtitle">Uses the browser chosen in Settings → Reading behavior</string>
     <string name="article_open_mode_section_reader">Reader mode</string>
     <string name="article_open_mode_section_browser">Browser</string>
     <string name="article_open_mode_full_article_short">Reader (website)</string>
@@ -446,7 +451,7 @@
     <string name="settings_right_swipe_action">Swipe right</string>
     <string name="settings_swipe_action_toggle_read">Mark as read or unread</string>
     <string name="settings_swipe_action_toggle_bookmark">Add or remove bookmark</string>
-    <string name="settings_swipe_action_open_in_browser">Open in preferred browser</string>
+    <string name="settings_swipe_action_open_in_browser">Open in browser</string>
     <string name="settings_swipe_action_none">None</string>
     <string name="settings_notification_no_feed">Looks like you haven\'t added any feeds yet. Add some to start receiving notifications!</string>
     <string name="settings_notifications_enable_all_title">Enable all notifications</string>

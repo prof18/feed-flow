@@ -591,6 +591,7 @@ private fun FallbackWebView(
                     latestOnDownloadRequested(downloadUrl)
                 }
             },
+            onDispose = { webView -> webView.releaseReaderWebView() },
         )
 
         if (showPageLoader) {
@@ -805,6 +806,7 @@ private fun ReaderMode(
                     scrollEventCount++
                 }
             },
+            onDispose = { webView -> webView.releaseReaderWebView() },
         )
 
         if (scrollRange > scrollExtent) {

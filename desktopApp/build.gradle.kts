@@ -145,6 +145,8 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.turbine)
+                implementation(libs.sqlite.jdbc)
+                implementation(libs.sqldelight.sqlite.driver)
                 implementation(compose.desktop.uiTestJUnit4)
                 implementation(compose.desktop.currentOs) {
                     exclude(group = "org.jetbrains.compose.material", module = "material")

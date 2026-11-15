@@ -31,12 +31,14 @@ import com.prof18.feedflow.core.utils.AppEnvironment
 import com.prof18.feedflow.core.utils.DesktopOS
 import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
+import com.prof18.feedflow.database.DesktopDatabaseFailure
 import com.prof18.feedflow.desktop.di.DI
 import com.prof18.feedflow.desktop.main.applyMainWindowMinimumSize
 import com.prof18.feedflow.desktop.main.restoredMainWindowSize
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.startup.AlreadyRunningWindow
+import com.prof18.feedflow.desktop.startup.DatabaseFailureUncaughtHandler
 import com.prof18.feedflow.desktop.startup.DatabaseStartupErrorWindow
 import com.prof18.feedflow.desktop.startup.DesktopStartupCoordinator
 import com.prof18.feedflow.desktop.startup.InstanceActivation
@@ -68,6 +70,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
@@ -83,6 +86,7 @@ private const val SEED_FAILED_EXIT_CODE = 86
 private const val SEED_FAILED_MARKER = "FEEDFLOW_E2E_SEED_FAILED"
 
 fun main(args: Array<String>) {
+    installDatabaseFailureHandler()
     var appConfig: DesktopConfig? = null
     try {
         runDesktopApp(args, onConfigReady = { appConfig = it })
@@ -167,6 +171,7 @@ private fun runDesktopApp(args: Array<String>, onConfigReady: (DesktopConfig) ->
             )
         }
         val startupState by startupCoordinator.state.collectAsState()
+        val runtimeFailure by runtimeDatabaseFailure.collectAsState()
 
         @Suppress("MagicNumber")
         LaunchedEffect(Unit) {
@@ -197,16 +202,17 @@ private fun runDesktopApp(args: Array<String>, onConfigReady: (DesktopConfig) ->
             )
         }
 
-        (startupState as? StartupState.DatabaseFailed)?.let { failed ->
+        databaseFailureToShow(startupState, runtimeFailure)?.let { failure ->
             DatabaseStartupErrorWindow(
-                failure = failed.failure,
+                failure = failure,
                 dataFolder = File(AppDataPathBuilder.getAppDataPath(appConfig.appEnvironment)),
+                // The database is unusable, so skip the backup the main window runs on close.
                 onQuit = ::exitApplication,
                 activationRequests = activationRequests,
             )
         }
 
-        if (startupState == StartupState.Ready) {
+        if (startupState == StartupState.Ready && runtimeFailure == null) {
             val desktopWindowSettingsRepository = remember { DI.koin.get<DesktopWindowSettingsRepository>() }
             val settingsRepository = remember { DI.koin.get<SettingsRepository>() }
             val windowState = windowState(desktopWindowSettingsRepository)
@@ -280,6 +286,25 @@ private fun reportStartupCrash(error: Throwable, appConfig: DesktopConfig?) {
 }
 
 private const val SENTRY_FLUSH_TIMEOUT_MILLIS = 2_000L
+
+// Set when the database stops working after startup; the first failure wins.
+private val runtimeDatabaseFailure = MutableStateFlow<DesktopDatabaseFailure?>(null)
+
+private fun databaseFailureToShow(
+    startupState: StartupState,
+    runtimeFailure: DesktopDatabaseFailure?,
+): DesktopDatabaseFailure? = (startupState as? StartupState.DatabaseFailed)?.failure ?: runtimeFailure
+
+// Runs before Sentry starts, so Sentry wraps it and still sees every crash first.
+private fun installDatabaseFailureHandler() {
+    Thread.setDefaultUncaughtExceptionHandler(
+        DatabaseFailureUncaughtHandler(
+            next = Thread.getDefaultUncaughtExceptionHandler(),
+            report = { error -> runCatching { reportDesktopDatabaseFailure("uncaught", error) } },
+            onFatalFailure = { failure -> runtimeDatabaseFailure.compareAndSet(null, failure) },
+        ),
+    )
+}
 
 // Held for the whole process lifetime so the OS keeps the lock until FeedFlow exits.
 private val singleInstanceLock = SingleInstanceLock()

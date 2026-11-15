@@ -20,8 +20,6 @@ struct SidebarDrawer: View {
 
     @Environment(\.openURL)
     var openURL
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass
 
     @Binding var selectedSidebarItem: SidebarSelection?
 
@@ -44,6 +42,9 @@ struct SidebarDrawer: View {
     @State private var categoryToDeleteAllFeeds: String?
 
     let navDrawerState: NavDrawerState
+    // The sidebar column reports a compact size class even when the split view shows it next to the detail,
+    // so the caller passes the split view's own layout.
+    let isCompactPhone: Bool
     let onFeedFilterSelected: (FeedFilter) -> Void
     let onMarkAllReadClick: () -> Void
     let onDeleteOldFeedClick: () -> Void
@@ -64,10 +65,6 @@ struct SidebarDrawer: View {
     let onReorderCategories: ([DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper]) -> Void
     let onReorderFeedSources: ([FeedSource]) -> Void
 
-    var isCompactPhone: Bool {
-        horizontalSizeClass == .compact
-    }
-
     @ViewBuilder private var styledList: some View {
         if isCompactPhone {
             sidebarList
@@ -80,7 +77,7 @@ struct SidebarDrawer: View {
     }
 
     private var sidebarList: some View {
-        List(selection: isCompactPhone ? nil : $selectedSidebarItem) {
+        List {
             Section(feedFlowStrings.drawerTitleLibrary) {
                 TimelineSection(
                     timeline: navDrawerState.timeline,

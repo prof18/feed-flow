@@ -75,6 +75,7 @@ struct RegularView: View {
             SidebarDrawer(
                 selectedSidebarItem: $selectedSidebarItem,
                 navDrawerState: navDrawerState,
+                isCompactPhone: horizontalSizeClass == .compact,
                 onFeedFilterSelected: { feedFilter in
                     indexHolder.clear()
                     scrollUpTrigger.toggle()

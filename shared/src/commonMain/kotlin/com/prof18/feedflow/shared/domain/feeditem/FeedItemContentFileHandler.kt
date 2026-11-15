@@ -8,7 +8,9 @@ interface FeedItemContentFileHandler {
     suspend fun loadFeedItemContent(feedItemId: String): String?
     suspend fun isContentAvailable(feedItemId: String): Boolean
     suspend fun deleteFeedItemContent(feedItemId: String)
-    suspend fun clearAllContent()
+
+    /** True when no article file is left; a folder that does not exist counts as cleared. */
+    suspend fun clearAllContent(): Boolean
 
     /** Writes [content] next to the article file without replacing it; null when the write failed. */
     suspend fun stageContent(feedItemId: String, content: String): StagedReaderContent?

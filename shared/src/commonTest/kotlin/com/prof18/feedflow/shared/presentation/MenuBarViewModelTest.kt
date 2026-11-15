@@ -15,6 +15,7 @@ import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.test.ContentPrefetchRepositoryFake
+import com.prof18.feedflow.shared.test.FeedItemContentFileHandlerTestImpl
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -186,6 +187,26 @@ class MenuBarViewModelTest : KoinTestBase() {
         viewModel.clearDownloadedArticleContent()
 
         assertFalse(feedItemContentFileHandler.isContentAvailable("1"))
+    }
+
+    @Test
+    fun `clearDownloadedArticleContent emits true when content is deleted`() = runTest {
+        viewModel.downloadedArticlesCleared.test {
+            viewModel.clearDownloadedArticleContent()
+
+            assertTrue(awaitItem())
+        }
+    }
+
+    @Test
+    fun `clearDownloadedArticleContent emits false when deletion fails`() = runTest {
+        (feedItemContentFileHandler as FeedItemContentFileHandlerTestImpl).failClear = true
+
+        viewModel.downloadedArticlesCleared.test {
+            viewModel.clearDownloadedArticleContent()
+
+            assertFalse(awaitItem())
+        }
     }
 
     private suspend fun populateDatabase() {

@@ -168,10 +168,13 @@ internal class FeedItemContentFileHandlerIos(
         }
     }
 
-    override suspend fun clearAllContent() {
+    override suspend fun clearAllContent(): Boolean {
         counters.withLock { cacheGeneration++ }
-        withContext(dispatcherProvider.io) {
-            getArticlesFolderPath()?.let { path ->
+        return withContext(dispatcherProvider.io) {
+            val path = getArticlesFolderPath()
+            if (path == null || !fileManager.fileExistsAtPath(path)) {
+                true
+            } else {
                 fileManager.removeItemAtPath(
                     path = path,
                     error = null,

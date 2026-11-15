@@ -231,7 +231,6 @@
     <string name="time_format_title">Định dạng giờ</string>
     <string name="time_format_hours_24">24 giờ</string>
     <string name="time_format_hours_12">12 giờ</string>
-    <string name="settings_danger_title">Nguy hiểm</string>
     <string name="settings_clear_downloaded_articles">Xóa những bản sao offline</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Xóa những bản sao offline?</string>
     <string name="settings_clear_downloaded_articles_dialog_message">Thao tác này sẽ xóa toàn bộ bản sao offline của các bài viết đầy đủ. Không thể hoàn tác.</string>

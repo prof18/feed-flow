@@ -231,7 +231,6 @@
     <string name="time_format_title">Ajavorming</string>
     <string name="time_format_hours_24">24 tundi</string>
     <string name="time_format_hours_12">12 tundi</string>
-    <string name="settings_danger_title">Ettevaatust</string>
     <string name="settings_clear_downloaded_articles">Kustuta allalaaditud artiklid</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Kas kustutame allalaaditud artiklid?</string>
     <string name="settings_clear_downloaded_articles_dialog_message">Järgnevaga kustutatakse kõik vallasrežiimis lugemiseks mõeldud allalaaditud artiklid. Seda tegevust ei saa tagasi võtta.</string>

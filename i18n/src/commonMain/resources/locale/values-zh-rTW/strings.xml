@@ -231,7 +231,6 @@
     <string name="clear_old_articles_dialog_message">是否確定要刪除舊文章？</string>
     <string name="confirm_button">確認</string>
     <string name="cancel_button">取消</string>
-    <string name="settings_danger_title">危險</string>
     <string name="settings_clear_downloaded_articles">清除已下載的文章</string>
     <string name="settings_clear_downloaded_articles_dialog_title">要清除已下載的文章嗎？</string>
     <string name="settings_clear_downloaded_articles_dialog_message">這會刪除所有用於離線閱讀的已下載文章內容。此操作無法復原。</string>

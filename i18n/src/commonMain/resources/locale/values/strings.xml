@@ -550,7 +550,7 @@
     <string name="confirm_button">Confirm</string>
     <string name="cancel_button">Cancel</string>
     <string name="reset_button">Reset</string>
-    <string name="settings_danger_title">Danger</string>
+    <string name="settings_clear_data_title">Clear data</string>
     <string name="article_report_action">Report broken article</string>
     <string name="article_report_disclosure">Send this article’s link, app version and OS version to the developer? No article content or account details will be sent.</string>
     <string name="article_report_send">Send</string>
@@ -578,6 +578,10 @@
     <string name="settings_clear_image_cache">Clear image cache</string>
     <string name="settings_clear_image_cache_dialog_title">Clear image cache?</string>
     <string name="settings_clear_image_cache_dialog_message">This will delete all cached images. The images will be downloaded again when you browse through your articles.</string>
+    <string name="settings_offline_copies_deleted">Offline copies deleted</string>
+    <string name="settings_offline_copies_delete_failed">Couldn\'t delete offline copies</string>
+    <string name="settings_image_cache_cleared">Image cache cleared</string>
+    <string name="settings_image_cache_clear_failed">Couldn\'t clear the image cache</string>
     <string name="reader_mode_fallback_title">Unable to parse article</string>
     <string name="reader_mode_fallback_message">The content of this page could not be extracted for reader mode. You can open the page directly in your browser.</string>
     <string name="reader_mode_fallback_open_browser_button">Open in browser</string>

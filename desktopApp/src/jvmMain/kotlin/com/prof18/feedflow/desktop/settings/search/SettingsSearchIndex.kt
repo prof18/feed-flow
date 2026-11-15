@@ -171,7 +171,7 @@ internal fun settingsSearchIndex(
     rows(
         DesktopSettingsCategory.STORAGE,
         storage,
-        strings.settingsDangerTitle,
+        strings.settingsClearDataTitle,
         strings.clearOldArticlesButton,
         strings.settingsClearDownloadedArticles,
         strings.settingsClearImageCache,

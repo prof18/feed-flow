@@ -231,7 +231,6 @@
     <string name="time_format_title">Formato da hora</string>
     <string name="time_format_hours_24">24 horas</string>
     <string name="time_format_hours_12">12 horas</string>
-    <string name="settings_danger_title">Perigo</string>
     <string name="settings_clear_downloaded_articles">Limpar artigos descargados</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Limpar os artigos descargados?</string>
     <string name="settings_clear_downloaded_articles_dialog_message">Isto vai eliminar todo o contido dos artigos descargados para lectura sen conexión. A acción non ten volta.</string>

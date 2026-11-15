@@ -81,6 +81,14 @@ class FeedItemContentFileHandlerIosTest {
     }
 
     @Test
+    fun `clearing all content reports success`() = runTest {
+        handler.saveFeedItemContentToFile("item-1", "Saved")
+
+        assertTrue(handler.clearAllContent())
+        assertFalse(handler.isContentAvailable("item-1"))
+    }
+
+    @Test
     fun `plain saves still work`() = runTest {
         handler.saveFeedItemContentToFile("item-1", "Saved")
 

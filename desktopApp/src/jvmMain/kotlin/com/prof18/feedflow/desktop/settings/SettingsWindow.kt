@@ -218,6 +218,7 @@ internal fun SettingsWindow(
                     autoDeletePeriod = settingsState.autoDeletePeriod,
                     onAutoDeletePeriodSelected = menuBarViewModel::updateAutoDeletePeriod,
                     onClearDownloadedArticles = menuBarViewModel::clearDownloadedArticleContent,
+                    downloadedArticlesCleared = menuBarViewModel.downloadedArticlesCleared,
                     onClearOldArticles = onClearOldArticles,
                     canClearOldArticles = canClearOldArticles,
                 )

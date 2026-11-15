@@ -299,7 +299,6 @@
     <string name="settings_theme_oled">Чёрный</string>
     <string name="feed_suggestions_title">Рекомендуемые ленты</string>
     <string name="reset_button">Сброс</string>
-    <string name="settings_danger_title">Опасно</string>
     <string name="settings_reading_behavior">Поведение чтения</string>
     <string name="settings_sync_and_storage">Синхронизация и хранилище</string>
     <string name="settings_about_and_support">О программе и поддержка</string>

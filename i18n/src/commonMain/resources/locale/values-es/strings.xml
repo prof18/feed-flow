@@ -245,7 +245,6 @@
     <string name="settings_hide_read_items">Ocultar artículos automáticamente al marcar como leídos</string>
     <string name="settings_about_and_support">Información &amp; Soporte</string>
     <string name="settings_refresh_feeds_on_launch">Refrescar feeds al iniciar la aplicación</string>
-    <string name="settings_danger_title">Peligro</string>
     <string name="settings_clear_downloaded_articles">Borrar artículos descargados</string>
     <string name="settings_clear_downloaded_articles_dialog_title">¿Borrar artículos descargados?</string>
     <string name="settings_clear_downloaded_articles_dialog_message">Esto borrará todo el contenido de los artículos descargados para lectura sin conexión. Esta acción no se puede deshacer.</string>

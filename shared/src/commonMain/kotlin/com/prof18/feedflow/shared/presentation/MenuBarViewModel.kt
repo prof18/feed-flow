@@ -14,8 +14,11 @@ import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.model.MenuBarSettingsState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
@@ -32,6 +35,9 @@ class MenuBarViewModel internal constructor(
 
     private val stateMutableFlow = MutableStateFlow(MenuBarSettingsState())
     val state: StateFlow<MenuBarSettingsState> = stateMutableFlow.asStateFlow()
+
+    private val downloadedArticlesClearedMutable = MutableSharedFlow<Boolean>()
+    val downloadedArticlesCleared: SharedFlow<Boolean> = downloadedArticlesClearedMutable.asSharedFlow()
 
     init {
         loadSettings()
@@ -219,7 +225,8 @@ class MenuBarViewModel internal constructor(
 
     fun clearDownloadedArticleContent() {
         viewModelScope.launch {
-            feedItemContentFileHandler.clearAllContent()
+            val cleared = feedItemContentFileHandler.clearAllContent()
+            downloadedArticlesClearedMutable.emit(cleared)
         }
     }
 }

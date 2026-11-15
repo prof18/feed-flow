@@ -8,22 +8,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
-import coil3.imageLoader
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.ui.preview.PreviewPhone
 import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.android.ui.settings.ConfirmationSettingItem
 import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
-import com.prof18.feedflow.android.ui.style.Spacing
+import com.prof18.feedflow.android.ui.settings.SettingsSectionHeader
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.AutoDeletePeriod
@@ -35,10 +32,11 @@ internal fun StorageScreenContent(
     navigateBack: () -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
     onClearDownloadedArticles: () -> Unit,
+    onClearImageCache: () -> Unit,
+    snackbarHost: @Composable () -> Unit = {},
 ) {
-    val context = LocalContext.current
-
     Scaffold(
+        snackbarHost = snackbarHost,
         topBar = {
             TopAppBar(
                 title = { Text(LocalFeedFlowStrings.current.settingsStorage) },
@@ -78,12 +76,7 @@ internal fun StorageScreenContent(
             }
 
             item {
-                Text(
-                    text = LocalFeedFlowStrings.current.settingsDangerTitle,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
-                    modifier = Modifier.padding(Spacing.regular),
-                )
+                SettingsSectionHeader(title = LocalFeedFlowStrings.current.settingsClearDataTitle)
             }
 
             item {
@@ -101,11 +94,8 @@ internal fun StorageScreenContent(
                     title = LocalFeedFlowStrings.current.settingsClearImageCache,
                     dialogTitle = LocalFeedFlowStrings.current.settingsClearImageCacheDialogTitle,
                     dialogMessage = LocalFeedFlowStrings.current.settingsClearImageCacheDialogMessage,
-                    onConfirm = {
-                        val imageLoader = context.applicationContext.imageLoader
-                        imageLoader.memoryCache?.clear()
-                        imageLoader.diskCache?.clear()
-                    },
+                    onConfirm = onClearImageCache,
+                    isDestructive = false,
                 )
             }
 
@@ -125,6 +115,7 @@ private fun StorageScreenContentPreview() {
             navigateBack = {},
             onAutoDeletePeriodSelected = {},
             onClearDownloadedArticles = {},
+            onClearImageCache = {},
         )
     }
 }

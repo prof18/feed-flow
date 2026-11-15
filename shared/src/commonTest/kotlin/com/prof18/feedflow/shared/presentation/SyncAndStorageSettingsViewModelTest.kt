@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.test.FeedItemContentFileHandlerTestImpl
 import com.prof18.feedflow.shared.test.KoinTestBase
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -101,5 +102,25 @@ class SyncAndStorageSettingsViewModelTest : KoinTestBase() {
         viewModel.clearDownloadedArticleContent()
 
         assertFalse(feedItemContentFileHandler.isContentAvailable(feedItemId))
+    }
+
+    @Test
+    fun `clearDownloadedArticleContent emits true when content is deleted`() = runTest {
+        viewModel.downloadedArticlesCleared.test {
+            viewModel.clearDownloadedArticleContent()
+
+            assertTrue(awaitItem())
+        }
+    }
+
+    @Test
+    fun `clearDownloadedArticleContent emits false when deletion fails`() = runTest {
+        (feedItemContentFileHandler as FeedItemContentFileHandlerTestImpl).failClear = true
+
+        viewModel.downloadedArticlesCleared.test {
+            viewModel.clearDownloadedArticleContent()
+
+            assertFalse(awaitItem())
+        }
     }
 }

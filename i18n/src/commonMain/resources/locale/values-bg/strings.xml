@@ -231,7 +231,6 @@
     <string name="time_format_title">Формат на времето</string>
     <string name="time_format_hours_24">24 часа</string>
     <string name="time_format_hours_12">12 часа</string>
-    <string name="settings_danger_title">Опасност</string>
     <string name="settings_clear_downloaded_articles">Изтриване на офлайн копия</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Да се изтрият ли офлайн копията?</string>
     <string name="settings_clear_downloaded_articles_dialog_message">Това ще изтрие всички офлайн копия на пълните статии. Това действие не може да бъде отменено.</string>

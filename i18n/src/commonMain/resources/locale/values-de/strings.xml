@@ -231,7 +231,6 @@
     <string name="time_format_title">Zeitformat</string>
     <string name="time_format_hours_24">24 Stunden</string>
     <string name="time_format_hours_12">12 Stunden</string>
-    <string name="settings_danger_title">Achtung: Vorsicht anwenden</string>
     <string name="settings_clear_downloaded_articles">Behaltene Artikel löschen</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Behaltene Artikel löschen?</string>
     <string name="settings_clear_downloaded_articles_dialog_message">Der gesamte, behaltene Inhalt vollständiger Artikel wird gelöscht. Das kann nicht rückgängig gemacht werden.</string>

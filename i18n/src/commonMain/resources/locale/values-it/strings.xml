@@ -294,7 +294,6 @@
     <string name="confirm_button">Conferma</string>
     <string name="cancel_button">Annulla</string>
     <string name="reset_button">Ripristina</string>
-    <string name="settings_danger_title">Pericolo</string>
     <string name="settings_reading_behavior">Comportamento di lettura</string>
     <string name="settings_sync_and_storage">Sincronizzazione &amp; Archiviazione</string>
     <string name="settings_about_and_support">Informazioni &amp; Supporto</string>

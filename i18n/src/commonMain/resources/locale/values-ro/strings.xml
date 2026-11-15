@@ -425,7 +425,6 @@
     <string name="confirm_button">Confirmă</string>
     <string name="cancel_button">Anulare</string>
     <string name="reset_button">Resetează</string>
-    <string name="settings_danger_title">Pericol</string>
     <string name="settings_reading_behavior">Mod de a citi</string>
     <string name="settings_sync_and_storage">Sincronizare și stocare</string>
     <string name="settings_appearance">Aspect</string>

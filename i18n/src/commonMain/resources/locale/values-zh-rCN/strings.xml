@@ -231,7 +231,6 @@
     <string name="time_format_title">时间格式</string>
     <string name="time_format_hours_24">24 小时制</string>
     <string name="time_format_hours_12">12 小时制</string>
-    <string name="settings_danger_title">危险</string>
     <string name="settings_clear_downloaded_articles">删除离线副本</string>
     <string name="settings_clear_downloaded_articles_dialog_title">删除离线副本？</string>
     <string name="settings_clear_downloaded_articles_dialog_message">这将删除所有文章的全部离线副本。此操作无法撤销。</string>

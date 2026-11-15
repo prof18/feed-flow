@@ -34,6 +34,7 @@ fun ConfirmationSettingItem(
         icon = icon,
         onClick = { showDialog = true },
         modifier = modifier,
+        isDestructive = isDestructive,
     )
 
     if (showDialog) {

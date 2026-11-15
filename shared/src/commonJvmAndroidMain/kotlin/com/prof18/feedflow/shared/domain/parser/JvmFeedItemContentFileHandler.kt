@@ -142,15 +142,19 @@ internal class JvmFeedItemContentFileHandler(
         }
     }
 
-    override suspend fun clearAllContent() {
+    override suspend fun clearAllContent(): Boolean {
         synchronized(counters) { cacheGeneration++ }
-        withContext(dispatcherProvider.io) {
+        return withContext(dispatcherProvider.io) {
             try {
                 val dir = getArticlesDirectory()
-                val deletedCount = dir.listFiles()?.count { it.delete() } ?: 0
+                val files = dir.listFiles() ?: return@withContext false
+                val deletedCount = files.count { it.delete() }
                 logger.d { "Cleared all cached content ($deletedCount files)" }
+                // A file another clear already removed counts as cleared
+                files.none { it.exists() }
             } catch (e: Exception) {
                 logger.e(e) { "Failed to clear all content" }
+                false
             }
         }
     }

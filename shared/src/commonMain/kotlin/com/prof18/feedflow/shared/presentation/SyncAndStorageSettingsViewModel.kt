@@ -9,8 +9,11 @@ import com.prof18.feedflow.shared.domain.BackgroundSyncScheduler
 import com.prof18.feedflow.shared.domain.feeditem.FeedItemContentFileHandler
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
 import com.prof18.feedflow.shared.presentation.model.SyncAndStorageState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
@@ -24,6 +27,9 @@ class SyncAndStorageSettingsViewModel internal constructor(
 
     private val stateMutableFlow = MutableStateFlow(SyncAndStorageState())
     val state: StateFlow<SyncAndStorageState> = stateMutableFlow.asStateFlow()
+
+    private val downloadedArticlesClearedMutable = MutableSharedFlow<Boolean>()
+    val downloadedArticlesCleared: SharedFlow<Boolean> = downloadedArticlesClearedMutable.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -113,7 +119,8 @@ class SyncAndStorageSettingsViewModel internal constructor(
 
     fun clearDownloadedArticleContent() {
         viewModelScope.launch {
-            feedItemContentFileHandler.clearAllContent()
+            val cleared = feedItemContentFileHandler.clearAllContent()
+            downloadedArticlesClearedMutable.emit(cleared)
         }
     }
 }

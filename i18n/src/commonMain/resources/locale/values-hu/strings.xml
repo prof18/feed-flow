@@ -528,7 +528,6 @@
     <string name="mark_all_bookmarks_read_dialog_message">Biztosan olvasottnak jelölöd az összes könyvjelzőhöz adott cikket?</string>
     <string name="remove_bookmark_dialog_message">Biztosan eltávolítod a Könyjelzők közül a cikket?</string>
     <string name="reset_button">Újraindítás</string>
-    <string name="settings_danger_title">Veszély</string>
     <string name="article_report_action">Hibás cikk jelentése</string>
     <string name="article_report_disclosure">A fejlesztőnek küldöd a cikk hivatkozását, az aplikáció és a rendszer verziószámát? Nem továbbítódnak a cikk és a fiókod adatai.</string>
     <string name="article_report_send">Elküld</string>

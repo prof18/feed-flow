@@ -364,7 +364,6 @@
     <string name="confirm_button">Confirmar</string>
     <string name="cancel_button">Cancelar</string>
     <string name="reset_button">Reiniciar</string>
-    <string name="settings_danger_title">Perigo</string>
     <string name="settings_reading_behavior">Comportamento de Leitura</string>
     <string name="settings_sync_and_storage">Sync &amp; Armazenamento</string>
     <string name="settings_appearance">Aparência</string>

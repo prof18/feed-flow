@@ -166,7 +166,6 @@
     <string name="settings_swipe_action_toggle_bookmark">Pievienot/aizvākt no saglabātiem rakstiem</string>
     <string name="bookmarked_articles_empty_screen_message">Pagaidām šeit nav nekā, laiks kaut ko pievienot saglabātiem rakstiem!</string>
     <string name="about_menu_faq">BUJ (Biežāk uzdotie jautājumi)</string>
-    <string name="settings_danger_title">Bīstami</string>
     <string name="widget_latest_items">Visjaunākie raksti</string>
     <string name="no_feeds_found_message">Nav atrasta neviena ziņu plūsma. Lūdzu, pievienojiet jaunu ziņu plūsmu!</string>
     <string name="clear_old_articles_dialog_message">Vai tiešām vēlaties izdzēst vecos rakstus?</string>

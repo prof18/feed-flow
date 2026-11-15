@@ -8,6 +8,7 @@ class FeedItemContentFileHandlerTestImpl : FeedItemContentFileHandler {
     val savedIds = mutableListOf<String>()
     val stagedIds = mutableListOf<String>()
     var failPromotion = false
+    var failClear = false
 
     override suspend fun saveFeedItemContentToFile(feedItemId: String, content: String) {
         savedIds += feedItemId
@@ -26,8 +27,10 @@ class FeedItemContentFileHandlerTestImpl : FeedItemContentFileHandler {
         contentMap.remove(feedItemId)
     }
 
-    override suspend fun clearAllContent() {
+    override suspend fun clearAllContent(): Boolean {
+        if (failClear) return false
         contentMap.clear()
+        return true
     }
 
     override suspend fun stageContent(feedItemId: String, content: String): StagedReaderContent {

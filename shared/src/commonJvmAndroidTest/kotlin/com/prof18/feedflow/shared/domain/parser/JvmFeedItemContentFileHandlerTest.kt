@@ -54,9 +54,18 @@ class JvmFeedItemContentFileHandlerTest {
         handler.saveFeedItemContentToFile("item-1", "One")
         handler.saveFeedItemContentToFile("item-2", "Two")
 
-        handler.clearAllContent()
+        assertTrue(handler.clearAllContent())
 
         assertTrue(articlesDirectory.listFiles().orEmpty().isEmpty())
+    }
+
+    @Test
+    fun `clearing all content reports an entry it could not delete`() = runTest {
+        handler.saveFeedItemContentToFile("item-1", "One")
+        val stuck = File(articlesDirectory, "stuck").apply { mkdirs() }
+        File(stuck, "inner.html").writeText("Inner")
+
+        assertFalse(handler.clearAllContent())
     }
 
     @Test

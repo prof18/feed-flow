@@ -144,6 +144,7 @@ class SettingsFlowsTest {
     /**
      * refresh while open: desktop settings/SyncRefreshSection.kt; delete offline copies: desktop
      * settings/StoragePane.kt
+     * clear confirmations: desktop settings/StoragePane.kt (settingsOfflineCopiesDeleted, settingsImageCacheCleared)
      *
      * Skipped: the Android-only background sync Wi-Fi and charging restrictions.
      */
@@ -162,6 +163,14 @@ class SettingsFlowsTest {
             flow.strings.settingsClearDownloadedArticlesDialogTitle,
         )
         flow.cancelDialog(flow.strings.settingsClearDownloadedArticlesDialogTitle)
+
+        flow.clickSettingsButton(flow.strings.settingsClearDownloadedArticles)
+        flow.confirmDialog(flow.strings.settingsClearDownloadedArticlesDialogTitle)
+        flow.awaitTextIn(flow.strings.settingsTitle, flow.strings.settingsOfflineCopiesDeleted)
+
+        flow.clickSettingsButton(flow.strings.settingsClearImageCache)
+        flow.confirmDialog(flow.strings.settingsClearImageCacheDialogTitle)
+        flow.awaitTextIn(flow.strings.settingsTitle, flow.strings.settingsImageCacheCleared)
     }
 
     /**
@@ -357,6 +366,12 @@ class SettingsFlowsTest {
     private fun Flow.cancelDialog(title: String) {
         awaitWindow(title)
         clickIn(title, strings.cancelButton)
+        awaitWindowGone(title)
+    }
+
+    private fun Flow.confirmDialog(title: String) {
+        awaitWindow(title)
+        clickIn(title, strings.confirmButton)
         awaitWindowGone(title)
     }
 

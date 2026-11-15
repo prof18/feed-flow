@@ -450,7 +450,6 @@
     <string name="articles_export_filter_bookmarked">Yer imlerine eklenen makaleler</string>
     <string name="widget_text_color_title">Ana metin rengi</string>
     <string name="search_button_content_description">Ara</string>
-    <string name="settings_danger_title">Tehlikeli Bölge</string>
     <string name="desktop_accounts_back_to_services">Hizmetlere dön</string>
     <string name="desktop_search_result_context">\"%s\" için sonuçlar</string>
     <string name="delete_feed_button">Akışı sil</string>

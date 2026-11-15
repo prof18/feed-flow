@@ -675,6 +675,7 @@ internal fun ConfirmationSetting(
     onConfirm: () -> Unit,
     enabled: Boolean = true,
     supportingText: String? = null,
+    destructive: Boolean = true,
 ) {
     var visible by remember { mutableStateOf(false) }
     val latestOnConfirm by rememberUpdatedState(onConfirm)
@@ -684,7 +685,7 @@ internal fun ConfirmationSetting(
         supportingText = supportingText,
         onClick = { if (latestEnabled) visible = true },
         enabled = enabled,
-        destructive = true,
+        destructive = destructive,
     )
     if (visible) {
         com.prof18.feedflow.desktop.ui.components.ConfirmationDialog(

@@ -329,9 +329,9 @@
     <string name="link_opening_preference_preferred_browser">Favourite browser</string>
     <string name="link_opening_preference_system_browser">Default browser</string>
     <string name="article_open_mode">Open articles in</string>
-    <string name="article_open_mode_subtitle">What happens when you tap an article</string>
+    <string name="article_open_mode_subtitle">Articles you tap in your feeds, search and widgets</string>
     <string name="links_browser_title">Open other links in</string>
-    <string name="links_browser_subtitle">Comments, links inside articles and feed websites</string>
+    <string name="links_browser_subtitle">Comments, in-article links and feed websites</string>
     <string name="article_open_mode_named_browser">Browser: %s</string>
     <string name="article_open_mode_named_browser_subtitle">Uses the browser chosen in Settings → Reading behavior</string>
     <string name="article_open_mode_section_reader">Reader mode</string>

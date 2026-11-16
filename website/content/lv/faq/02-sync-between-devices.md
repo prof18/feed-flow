@@ -4,7 +4,7 @@ weight: 20
 featured: true
 ---
 
-Go to **Settings → Feeds & accounts → Accounts** and connect the same account on
+Go to **Settings → Sync & refresh → Accounts** and connect the same account on
 every device. FeedFlow supports two kinds of accounts:
 
 - **Dublēšanas pakalpojumus**: iCloud, Dropbox un Google disku. Jūsu RSS

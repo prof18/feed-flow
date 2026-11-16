@@ -20,7 +20,7 @@ Sincronizează ceea ce se potrivește configurației tale
 - Progresul tău de citire te însoțește pretutindeni.
 
 Rămâi Organizat
-- Importă și exportă fluxuri în format OPML.
+- Importă și exportă fluxurile cu OPML.
 - Blochează cuvinte pentru a amuți subiecte zgomotoase.
 - Categoriile, marcajele și funcția de căutare îți permit să ai totul la
   îndemână.

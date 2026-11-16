@@ -31,7 +31,7 @@ Intel Macs, so only Apple silicon is supported.</li><li><strong>Android APK on G
 track the F-Droid release.</li></ul><p>The <code>.deb</code> package targets Debian 13 and distributions based on it. On older
 distributions, use the Flatpak or the AppImage.</p><p>Version numbers can differ between platforms: each platform gets its fixes as
 soon as they&rsquo;re ready, without waiting for the others.</p></div></details><details class=faq-item role=listitem><summary>Kā sinhronizēt FeedFlow starp dažādām ierīcēm?
-<svg class="faq-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><div class=faq-answer><p>Go to <strong>Settings → Feeds & accounts → Accounts</strong> and connect the same account on
+<svg class="faq-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><div class=faq-answer><p>Go to <strong>Settings → Sync & refresh → Accounts</strong> and connect the same account on
 every device. FeedFlow supports two kinds of accounts:</p><ul><li><strong>Dublēšanas pakalpojumus</strong>: iCloud, Dropbox un Google disku. Jūsu RSS
 plūsmas, kategorijas, rakstu lasīšanas statusi un saglabātie raksti tiek
 saglabāti datnē jūsu mākoņkrātuvē, un pārējās jūsu ierīces izgūst šos datus no
@@ -57,17 +57,17 @@ at the end of the list or in the menu.</p></div></details><details class=faq-ite
 checks:</p><ul><li><strong>When you refresh</strong>: pull down the list or use <strong>Refresh feeds</strong>. Only the
 feeds in the current view are checked, so refreshing a category or a single
 feed is faster.</li><li><strong>When the app starts</strong>, if <strong>Refresh feeds on app start</strong> is on (Settings →
-Sync & storage). This only happens when the app is launched from scratch, not
+Sync & refresh). This only happens when the app is launched from scratch, not
 when you switch back to it while it&rsquo;s still running.</li><li><strong>In the background</strong>, depending on the platform (see below).</li></ul><p>Automatic checks skip a feed that was checked recently, to avoid flooding
 websites with requests. The wait is at least an hour, and it can grow up to a
 day for feeds that rarely change. A manual refresh always checks again. If one
-feed fails, the others are still updated.</p><p><strong>Android</strong>: choose how often in <strong>Background sync</strong> (Settings → Sync &
-storage), from every 15 minutes to once a day, and optionally only on Wi-Fi or
+feed fails, the others are still updated.</p><p><strong>Android</strong>: choose how often in <strong>Background refresh</strong> (Settings → Sync &
+refresh), from every 15 minutes to once a day, and optionally only on Wi-Fi or
 only while charging. Android can still delay the check when the battery is low
 or battery optimisation is on for FeedFlow.</p><p><strong>iPhone and iPad</strong>: iOS doesn&rsquo;t let apps run on a schedule, so there is no
-Background sync setting. When you leave FeedFlow, it asks iOS to wake it up
-again in about two hours. iOS decides if and when that happens: usually while
-the device is charging and connected to Wi-Fi, and more often for apps you open
+Background refresh setting. When you leave FeedFlow, it asks iOS to wake it up
+again in about an hour. iOS decides if and when that happens: usually while the
+device is charging and connected to Wi-Fi, and more often for apps you open
 regularly. It can take many hours, or not happen at all if you haven&rsquo;t opened
 FeedFlow for a while, if Low Power Mode is on, or if <strong>Background App Refresh</strong>
 is turned off for FeedFlow in the iOS Settings. Open FeedFlow to get the latest

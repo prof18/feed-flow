@@ -73,7 +73,7 @@ packages:
     exactVersion: 13.2.3
   SwiftDraw:
     url: https://github.com/swhitty/SwiftDraw
-    exactVersion: 0.29.0
+    exactVersion: 0.30.0
   Collections:
     url: https://github.com/apple/swift-collections
     exactVersion: 1.7.6

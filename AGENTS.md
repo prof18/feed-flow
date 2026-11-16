@@ -26,12 +26,11 @@ All the business logic is shared via Kotlin Multiplatform.
 All Gradle commands in this section should be run with `--quiet --console=plain`.
 
 - `./gradlew --quiet --console=plain detekt allTests` -> Run all checks including tests and linting for Shared code, Android and Desktop
-- `.scripts/ci.sh` -> Run the local equivalent of `.github/workflows/code-checks.yaml` (translation refresh, SwiftLint, Gradle checks, Android/Desktop/iOS builds)
+- `.scripts/ci.sh` -> Run the local equivalent of `.github/workflows/code-checks.yaml` (SwiftLint, Gradle checks, Android/Desktop/iOS builds)
 - `./gradlew --quiet --console=plain detekt` -> Run static analysis with Detekt for Shared code, Android and Desktop
 - `.scripts/ios-format.sh` -> Format iOS code through swiftformat and swiftlint
 - `.scripts/ios-tests.sh` -> Run the Swift unit tests in the `iOSTests` scheme on an iPhone simulator (everything except `CloudSyncTests`, which `allTests` runs)
 - `./gradlew --quiet --console=plain test` -> Run all tests for Shared code, Android and Desktop
-- `.scripts/refresh-translations.sh` -> Regenerate i18n translation code after adding new translations
 - `./gradlew --quiet --console=plain :androidApp:assembleGooglePlayDebug` -> Build the Android debug APK (then deploy/run with the `android` CLI, see "Running & validating the Android app")
 - `./gradlew --quiet --console=plain :androidApp:compileGooglePlayDebugKotlin` -> Quick compile check for Android (no APK assembly)
 - `.scripts/run-android.sh` -> Install and launch Android Google Play debug (wraps `:androidApp:installGooglePlayDebug`)
@@ -187,14 +186,13 @@ After editing code, build the platform you changed (only that one, to save time)
 ## Handing off
 
 Before handing off you must:
-1. Run `.scripts/refresh-translations.sh` before the Gradle checks if you changed translation resources
-2. Run `./gradlew --quiet --console=plain detekt allTests` to ensure Kotlin/shared/Android/Desktop checks pass - don't run it if you modified only swift files
-3. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
-4. If you changed iOS code, run `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 18 Pro' build -quiet` before handoff; rerun without `-quiet` only if you need the full diagnostics
-5. If you changed iOS code, run `.scripts/ios-tests.sh`
-6. If you changed user-visible behaviour, check whether a website FAQ answer needs updating or a new entry is warranted (see "Website FAQ")
-7. If you added or changed a user-visible feature, add or update its Maestro flows and, when the feature exists on desktop, its desktop E2E flow (see "Maestro E2E tests" and "Desktop E2E tests"), and run the flows you touched
-8. Fix any issues found during the above steps
+1. Run `./gradlew --quiet --console=plain detekt allTests` to ensure Kotlin/shared/Android/Desktop checks pass - don't run it if you modified only swift files
+2. Run `.scripts/ios-format.sh` to format iOS code - only run if you made changes on the iOS app
+3. If you changed iOS code, run `xcodebuild -project iosApp/FeedFlow.xcodeproj -scheme FeedFlow -destination 'platform=iOS Simulator,name=iPhone 18 Pro' build -quiet` before handoff; rerun without `-quiet` only if you need the full diagnostics
+4. If you changed iOS code, run `.scripts/ios-tests.sh`
+5. If you changed user-visible behaviour, check whether a website FAQ answer needs updating or a new entry is warranted (see "Website FAQ")
+6. If you added or changed a user-visible feature, add or update its Maestro flows and, when the feature exists on desktop, its desktop E2E flow (see "Maestro E2E tests" and "Desktop E2E tests"), and run the flows you touched
+7. Fix any issues found during the above steps
 
 ### Initial Setup (for building from scratch)
 ```bash
@@ -324,7 +322,7 @@ When creating commits:
 - Translations come from Weblate (project `feedflow`). Weblate tracks `main` through its GitHub App and delivers translations as one pull request it keeps updated and auto-merges with rebase; there is no `localization` branch. Every component is linked to `app-strings`, which owns the repository settings.
 - Each website FAQ entry is its own Weblate component, created by the Component discovery add-on on `app-strings` from `website/content/en/faq/NN-*.md`. Renaming an English FAQ file replaces its component. A language only gets a published FAQ if it is listed in `website/config.toml`.
 - String resources are located in `i18n/src/commonMain/resources/locale/values-[language]/`
-- Run .scripts/refresh-translations.sh after adding a new translation, to re-generate the kotlin code
+- Gradle regenerates the Lyricist string code whenever a file under `locale/` changes (`i18n/build.gradle.kts` declares the folder as a KSP input), so no manual refresh step is needed
 - Enabling a new app language takes more than the `values-[language]/` folder. Register it in the `feedFlowStrings` map in `i18n/src/commonMain/kotlin/com/prof18/feedflow/i18n/Locales.kt`, `CFBundleLocalizations` in `iosApp/Info.plist`, `knownRegions` in `iosApp/project.yml`, the macOS localizations in `desktopApp/build.gradle.kts` (`macExtraPlistKeys`), the Windows package languages in `.github/msix-resources-template.xml`, and `FeedFlowStringsLookupTest`. The MSIX list is the one most easily forgotten.
 - Store screenshots for **all** platforms (Android phone/tablet, iPhone, iPad, macOS, Windows) are rendered from repo code by `tools/screenshots/` (`node render.mjs --all`, then `node verify.mjs`), not Figma. Use the repo-local `render-store-screenshots` skill when translations change; it enforces the spacing/padding floors.
 - Use the repo-local `translation-release-audit` skill for weekly or release checks of app translations, store copy, generated Play listing files, live store metadata, and screenshot copy/assets. Do not upload store metadata/screenshots unless the user explicitly asks.
@@ -351,7 +349,6 @@ When creating commits:
 - Pipeline: every job starts in parallel. `checks` (macos-26) runs swiftlint, `allTests` without the JVM/Android suites (Kotlin/Native, cloud sync, Swift `CloudSyncTests`), `.scripts/ios-tests.sh` and the macOS desktop tests; `jvm-checks` (Linux) runs detekt and the Android host/unit tests; `tests-desktop` runs `jvmTest` on Linux and Windows; `build-android-app`, `build-desktop-app` and `build-ios-app` build the apps. PR runs cancel when a newer push arrives. macOS runners are the scarce, slow resource (7 GB RAM, few concurrent slots), so keep work that does not need macOS off the `checks` job. The iOS build job and the iOS release job run on GitHub's `xcode-27` runner (a preview image) and select Xcode 27.1 with `maxim-lobanov/setup-xcode`: the iPhone Duo layout uses iOS 27.1 SDK APIs, so Xcode 27.0 cannot build the app.
 - iOS CI build forces arm64 simulator architecture: `xcodebuild -project iosApp/FeedFlow.xcodeproj -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions`
 - The `checks` job runs `.scripts/ios-tests.sh` after `allTests`. The Swift `CloudSyncTests` run inside `allTests` instead, because they read snapshots the Kotlin cloud-sync tests write first; the other Swift test targets need nothing from Gradle beyond the FeedFlowKit framework, so they are not bound to it. Both runs share `build/ios-test-derived-data` and the same xcodebuild settings so the Swift packages compile once; keep the settings in `SwiftCloudSyncTest` and `ios-tests.sh` identical. CI boots the simulator (`.scripts/ios-test-simulator.sh`) at the start of the job so it is ready by the time the tests run. Add a new Swift test target to the `iOSTests` scheme in `iosApp/project.yml`, or CI won't run it.
-- CI runs `.scripts/refresh-translations.sh` before checks; do this locally before pushing if translations changed
 - Debugging CI failures: `gh run list --limit=10`, then `gh run view <run-id> --log`
 - Red CI recovery loop: `gh run rerun <run-id>` (or `gh run rerun <run-id> --failed`), then fix and push until green
 

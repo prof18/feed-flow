@@ -299,4 +299,3 @@ Before creating an item, search every note under `/Users/mg/Workspace/Notes/proj
 - Do not generate screenshots unless the user asks.
 - Do not upload store metadata or screenshots unless the user asks.
 - Microsoft Store reads only: `auth doctor`, `locales list`, `listing show`, `submission status`, `rollout status`, `app info`. Never `listing push`, `publish`, `submission commit/delete-draft`, or any `rollout` mutation during an audit.
-- If translation resources changed, remind the user that `.scripts/refresh-translations.sh` should be run before Gradle checks.

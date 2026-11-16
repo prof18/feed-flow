@@ -52,9 +52,6 @@ run_checks_job() {
   step "Checks job: helper script tests"
   run_cmd python3 -m unittest discover -s .scripts/tests -p 'test_*.py'
 
-  step "Checks job: refresh translations"
-  run_cmd bash .scripts/refresh-translations.sh
-
   step "Checks job: run SwiftLint"
   require_command swiftlint
   run_shell 'cd iosApp && swiftlint'

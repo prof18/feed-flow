@@ -47,7 +47,6 @@ description: Investigate and fix FeedFlow crashes from Sentry triage notes. Use 
    - Build only the affected platform first for fast feedback.
    - For desktop changes, run `./gradlew --quiet --console=plain :desktopApp:compileKotlinJvm`.
    - For shared/Kotlin/Android/Desktop changes, run `./gradlew --quiet --console=plain detekt allTests` before handoff.
-   - If translation resources changed, run `.scripts/refresh-translations.sh` before Gradle checks.
    - If iOS code changed, follow the repo iOS build/format instructions.
    - If a UI was affected and the user wants to test, launch the app and leave the run session alive; otherwise stop long-running app sessions before final handoff.
 

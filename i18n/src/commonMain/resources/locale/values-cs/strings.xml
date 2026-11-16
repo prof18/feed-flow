@@ -411,7 +411,6 @@
     <string name="hide_youtube_shorts_description">Pouze běžná videa z tohoto kanálu budou zahrnuty. Jsou vyloučeny Shorts a živé streamy.</string>
     <string name="hide_youtube_shorts_fallback">Shorts nemohly být ukryty pro tento kanál, takže byl místo toho přidán celý zdroj.</string>
     <string name="hide_youtube_shorts_edit_fallback">Shorts nemohly být skryty pro tento kanál. Vaše další změny byly uloženy.</string>
-    <string name="settings_filters">Filtry</string>
     <string name="database_save_error">Nelze uložit vaše změny. Zkuste znovu za chvíli - kód chyby: %s</string>
     <string name="database_recovered_from_corruption">Vaše místní údaje byly poškozeny, takže FeedFlow začal s čerstvou databází. Kopie starých dat byla uložena ve složce FeedFlow.</string>
     <string name="database_startup_locked">FeedFlow nemůže otevřít své údaje, protože je jiný program používá. Zavřete další FeedFlow okna, poté otevřete FeedFlow znovu.</string>

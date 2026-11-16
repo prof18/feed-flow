@@ -333,7 +333,7 @@
     <string name="links_browser_title">Open other links in</string>
     <string name="links_browser_subtitle">Comments, in-article links and feed websites</string>
     <string name="article_open_mode_named_browser">Browser: %s</string>
-    <string name="article_open_mode_named_browser_subtitle">Uses the browser chosen in Settings → Reading behavior</string>
+    <string name="article_open_mode_named_browser_subtitle">Uses the browser chosen in Settings</string>
     <string name="article_open_mode_section_reader">Reader mode</string>
     <string name="article_open_mode_section_browser">Browser</string>
     <string name="article_open_mode_full_article_short">Reader (website)</string>

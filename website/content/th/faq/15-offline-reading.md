@@ -10,4 +10,4 @@ Yes, in **Settings → Reading behavior**:
 - **Keep offline copies of articles you open** keeps every article you open.
 
 Images are cached while you browse. You can delete offline copies and clear
-cached images in **Settings → Sync & storage**.
+cached images in **Settings → Storage**.

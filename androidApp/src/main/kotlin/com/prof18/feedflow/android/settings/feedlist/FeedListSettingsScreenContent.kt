@@ -1,7 +1,10 @@
 package com.prof18.feedflow.android.settings.feedlist
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,10 +12,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -25,6 +31,7 @@ import com.prof18.feedflow.android.ui.settings.FeedItemPreview
 import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.android.ui.settings.SettingRowDefaults
 import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
+import com.prof18.feedflow.android.ui.settings.SettingsSectionHeader
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
@@ -106,25 +113,10 @@ internal fun FeedListSettingsScreenContent(
 
             LazyColumn {
                 item {
-                    Text(
-                        text = LocalFeedFlowStrings.current.settingsFeedListScaleTitle,
-                        modifier = Modifier.padding(Spacing.regular),
-                        style = SettingRowDefaults.titleStyle,
-                    )
+                    SettingsSectionHeader(title = strings.settingsFeedListSectionLayout)
                 }
 
                 item {
-                    SliderWithPlusMinus(
-                        modifier = Modifier.padding(horizontal = Spacing.regular),
-                        value = fontSizes.scaleFactor.toFloat(),
-                        onValueChange = { updateFontScale(it.roundToInt()) },
-                        valueRange = FONT_SCALE_RANGE,
-                        steps = wholeValueSteps(FONT_SCALE_RANGE),
-                    )
-                }
-
-                item {
-                    Spacer(modifier = Modifier.padding(top = Spacing.regular))
                     CompactSettingDropdownRow(
                         modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_LAYOUT),
                         title = strings.feedLayoutTitle,
@@ -149,51 +141,31 @@ internal fun FeedListSettingsScreenContent(
                 }
 
                 item {
-                    SettingSwitchItem(
-                        title = strings.settingsHideDescription,
-                        isChecked = state.isHideDescriptionEnabled,
-                        onCheckedChange = setHideDescription,
+                    TextScaleHeader(
+                        scaleFactor = fontSizes.scaleFactor,
+                        onReset = { updateFontScale(0) },
                     )
                 }
 
                 item {
-                    SettingSwitchItem(
-                        modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_HIDE_IMAGES),
-                        title = strings.settingsHideImages,
-                        isChecked = state.isHideImagesEnabled,
-                        onCheckedChange = setHideImages,
+                    SliderWithPlusMinus(
+                        modifier = Modifier.padding(horizontal = Spacing.regular),
+                        value = fontSizes.scaleFactor.toFloat(),
+                        onValueChange = { updateFontScale(it.roundToInt()) },
+                        valueRange = FONT_SCALE_RANGE,
+                        steps = wholeValueSteps(FONT_SCALE_RANGE),
                     )
                 }
 
                 item {
-                    SettingSwitchItem(
-                        title = strings.settingsHideDate,
-                        isChecked = state.isHideDateEnabled,
-                        onCheckedChange = setHideDate,
-                    )
+                    SettingsSectionHeader(title = strings.settingsFeedListSectionShowInList)
                 }
 
                 item {
                     SettingSwitchItem(
-                        title = strings.settingsHideUnreadDot,
-                        isChecked = state.isHideUnreadDotEnabled,
-                        onCheckedChange = setHideUnreadDot,
-                    )
-                }
-
-                item {
-                    SettingSwitchItem(
-                        title = strings.settingsHideFeedSource,
-                        isChecked = state.isHideFeedSourceEnabled,
-                        onCheckedChange = setHideFeedSource,
-                    )
-                }
-
-                item {
-                    SettingSwitchItem(
-                        title = strings.settingsHideDuplicatedTitleFromDesc,
-                        isChecked = state.isRemoveTitleFromDescriptionEnabled,
-                        onCheckedChange = setRemoveTitleFromDescription,
+                        title = strings.settingsShowDescription,
+                        isChecked = !state.isHideDescriptionEnabled,
+                        onCheckedChange = { setHideDescription(!it) },
                     )
                 }
 
@@ -216,7 +188,61 @@ internal fun FeedListSettingsScreenContent(
                             ),
                         ),
                         onOptionSelected = onDescriptionLineLimitSelected,
+                        enabled = !state.isHideDescriptionEnabled,
+                        supportingText = requiresParentText(
+                            isParentOff = state.isHideDescriptionEnabled,
+                            text = strings.settingsRequiresDescription,
+                        ),
                     )
+                }
+
+                item {
+                    SettingSwitchItem(
+                        title = strings.settingsHideDuplicatedTitleFromDesc,
+                        isChecked = state.isRemoveTitleFromDescriptionEnabled,
+                        onCheckedChange = setRemoveTitleFromDescription,
+                        enabled = !state.isHideDescriptionEnabled,
+                        supportingText = strings.settingsRequiresDescription.takeIf {
+                            state.isHideDescriptionEnabled
+                        },
+                    )
+                }
+
+                item {
+                    SettingSwitchItem(
+                        modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_HIDE_IMAGES),
+                        title = strings.settingsShowImages,
+                        isChecked = !state.isHideImagesEnabled,
+                        onCheckedChange = { setHideImages(!it) },
+                    )
+                }
+
+                item {
+                    SettingSwitchItem(
+                        title = strings.settingsShowDate,
+                        isChecked = !state.isHideDateEnabled,
+                        onCheckedChange = { setHideDate(!it) },
+                    )
+                }
+
+                item {
+                    SettingSwitchItem(
+                        title = strings.settingsShowUnreadDot,
+                        isChecked = !state.isHideUnreadDotEnabled,
+                        onCheckedChange = { setHideUnreadDot(!it) },
+                    )
+                }
+
+                item {
+                    SettingSwitchItem(
+                        title = strings.settingsShowFeedSource,
+                        isChecked = !state.isHideFeedSourceEnabled,
+                        onCheckedChange = { setHideFeedSource(!it) },
+                    )
+                }
+
+                item {
+                    SettingsSectionHeader(title = strings.settingsFeedListSectionDateTime)
                 }
 
                 item {
@@ -230,6 +256,11 @@ internal fun FeedListSettingsScreenContent(
                             SettingDropdownOption(DateFormat.ISO, strings.dateFormatIso),
                         ),
                         onOptionSelected = onDateFormatSelected,
+                        enabled = !state.isHideDateEnabled,
+                        supportingText = requiresParentText(
+                            isParentOff = state.isHideDateEnabled,
+                            text = strings.settingsRequiresDate,
+                        ),
                     )
                 }
 
@@ -242,7 +273,16 @@ internal fun FeedListSettingsScreenContent(
                             SettingDropdownOption(TimeFormat.HOURS_12, strings.timeFormatHours12),
                         ),
                         onOptionSelected = onTimeFormatSelected,
+                        enabled = !state.isHideDateEnabled,
+                        supportingText = requiresParentText(
+                            isParentOff = state.isHideDateEnabled,
+                            text = strings.settingsRequiresDate,
+                        ),
                     )
+                }
+
+                item {
+                    SettingsSectionHeader(title = strings.settingsFeedListSectionOrder)
                 }
 
                 item {
@@ -262,6 +302,10 @@ internal fun FeedListSettingsScreenContent(
                         ),
                         onOptionSelected = onFeedOrderSelected,
                     )
+                }
+
+                item {
+                    SettingsSectionHeader(title = strings.settingsFeedListSectionGestures)
                 }
 
                 item {
@@ -298,6 +342,55 @@ internal fun FeedListSettingsScreenContent(
             }
         }
     }
+}
+
+@Composable
+private fun TextScaleHeader(
+    scaleFactor: Int,
+    onReset: () -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Spacing.regular, vertical = Spacing.small),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Spacing.small),
+    ) {
+        Text(
+            text = strings.settingsFeedListScaleTitle,
+            modifier = Modifier.weight(1f),
+            style = SettingRowDefaults.titleStyle,
+        )
+        Text(
+            text = scaleLabel(scaleFactor, strings.settingsFeedListScaleDefault),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        if (scaleFactor != 0) {
+            TextButton(
+                modifier = Modifier.testTag(SettingsE2eIds.FEED_LIST_SCALE_RESET),
+                onClick = onReset,
+            ) {
+                Text(strings.resetButton)
+            }
+        }
+    }
+}
+
+private fun scaleLabel(scaleFactor: Int, defaultLabel: String): String = when {
+    scaleFactor == 0 -> defaultLabel
+    scaleFactor > 0 -> "+$scaleFactor"
+    else -> scaleFactor.toString()
+}
+
+private fun requiresParentText(
+    isParentOff: Boolean,
+    text: String,
+): (@Composable () -> Unit)? = if (isParentOff) {
+    { Text(text) }
+} else {
+    null
 }
 
 private fun swipeActionOptions(

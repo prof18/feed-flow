@@ -18,15 +18,19 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BrowserSelector
+import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
+import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
 import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.Browser
+import com.prof18.feedflow.core.model.ReadArticlesVisibility
 import com.prof18.feedflow.core.model.ReadingBehaviorState
 import com.prof18.feedflow.shared.presentation.preview.browsersForPreview
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun ReadingBehaviorScreenContent(
@@ -38,8 +42,7 @@ internal fun ReadingBehaviorScreenContent(
     onArticleBrowserSelected: (String) -> Unit,
     setArticleOpenMode: (ArticleOpenMode) -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
-    setShowReadItem: (Boolean) -> Unit,
-    setHideReadItems: (Boolean) -> Unit,
+    setReadArticlesVisibility: (ReadArticlesVisibility) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -95,26 +98,10 @@ internal fun ReadingBehaviorScreenContent(
             }
 
             item {
-                SettingSwitchItem(
-                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_SHOW_READ),
-                    title = LocalFeedFlowStrings.current.settingsToggleShowReadArticles,
-                    isChecked = state.isShowReadItemsEnabled,
-                    onCheckedChange = setShowReadItem,
-                )
-            }
-
-            item {
-                SettingSwitchItem(
-                    modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_HIDE_READ),
-                    title = LocalFeedFlowStrings.current.settingsHideReadItems,
-                    isChecked = state.isHideReadItemsEnabled,
-                    onCheckedChange = setHideReadItems,
-                    enabled = !state.isMarkReadWhenScrollingEnabled,
-                    supportingText = if (state.isMarkReadWhenScrollingEnabled) {
-                        LocalFeedFlowStrings.current.settingsHideReadItemsDisabledWhileScrolling
-                    } else {
-                        null
-                    },
+                ReadArticlesVisibilityRow(
+                    readArticlesVisibility = state.readArticlesVisibility,
+                    isMarkReadWhenScrollingEnabled = state.isMarkReadWhenScrollingEnabled,
+                    onReadArticlesVisibilitySelected = setReadArticlesVisibility,
                 )
             }
 
@@ -123,6 +110,43 @@ internal fun ReadingBehaviorScreenContent(
             }
         }
     }
+}
+
+@Composable
+private fun ReadArticlesVisibilityRow(
+    readArticlesVisibility: ReadArticlesVisibility,
+    isMarkReadWhenScrollingEnabled: Boolean,
+    onReadArticlesVisibilitySelected: (ReadArticlesVisibility) -> Unit,
+) {
+    val strings = LocalFeedFlowStrings.current
+    CompactSettingDropdownRow(
+        modifier = Modifier.testTag(SettingsE2eIds.READING_BEHAVIOR_READ_ARTICLES),
+        title = strings.settingsReadArticlesTitle,
+        currentValue = readArticlesVisibility,
+        options = persistentListOf(
+            SettingDropdownOption(ReadArticlesVisibility.KEEP_IN_LIST, strings.settingsReadArticlesKeep),
+            SettingDropdownOption(
+                ReadArticlesVisibility.HIDE_ON_REFRESH,
+                strings.settingsReadArticlesHideOnRefresh,
+            ),
+            SettingDropdownOption(
+                value = ReadArticlesVisibility.HIDE_RIGHT_AWAY,
+                label = strings.settingsReadArticlesHideRightAway,
+                e2eId = SettingsE2eIds.READING_BEHAVIOR_READ_ARTICLES_HIDE_RIGHT_AWAY,
+                enabled = !isMarkReadWhenScrollingEnabled,
+            ),
+        ),
+        onOptionSelected = onReadArticlesVisibilitySelected,
+        supportingText = {
+            Text(
+                if (isMarkReadWhenScrollingEnabled) {
+                    strings.settingsReadArticlesRightAwayDisabled
+                } else {
+                    strings.settingsReadArticlesFooter
+                },
+            )
+        },
+    )
 }
 
 @Preview
@@ -135,8 +159,7 @@ private fun ReadingBehaviorScreenContentPreview() {
                 isSaveReaderModeContentEnabled = false,
                 isPrefetchArticleContentEnabled = false,
                 isMarkReadWhenScrollingEnabled = true,
-                isShowReadItemsEnabled = true,
-                isHideReadItemsEnabled = false,
+                readArticlesVisibility = ReadArticlesVisibility.KEEP_IN_LIST,
             ),
             browsers = browsersForPreview,
             resolvedArticleBrowserId = browsersForPreview.first().id,
@@ -144,8 +167,7 @@ private fun ReadingBehaviorScreenContentPreview() {
             onArticleBrowserSelected = {},
             setArticleOpenMode = {},
             setMarkReadWhenScrolling = {},
-            setShowReadItem = {},
-            setHideReadItems = {},
+            setReadArticlesVisibility = {},
         )
     }
 }

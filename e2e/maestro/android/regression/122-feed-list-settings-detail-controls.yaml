@@ -18,17 +18,34 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: settings_feed_list
 - assertVisible: "Text scale"
-- assertVisible: "Hide article date"
-- tapOn: "Hide article date"
-- assertVisible: "Hide unread indicator"
-- tapOn: "Hide unread indicator"
-- assertVisible: "Hide feed name"
-- tapOn: "Hide feed name"
+- assertVisible: "Default"
+- scrollUntilVisible:
+    element: "Description"
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
+- tapOn: "Description"
+- assertVisible: "Turn on Description to change this."
+- tapOn: "Description"
+- assertNotVisible: "Turn on Description to change this."
 - assertVisible: "Hide title from article description"
 - tapOn: "Hide title from article description"
 - tapOn: "Description lines"
 - tapOn: "No limit"
 - assertVisible: "No limit"
+- scrollUntilVisible:
+    element: "Unread indicator"
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
+- tapOn: "Unread indicator"
+- assertVisible: "Feed name"
+- tapOn: "Feed name"
+- assertVisible: "Date"
+- tapOn: "Date"
+- assertVisible: "Turn on Date to change this."
+- tapOn: "Date"
+- assertNotVisible: "Turn on Date to change this."
 - scrollUntilVisible:
     element: "Date format"
     direction: DOWN

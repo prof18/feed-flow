@@ -29,8 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,6 +57,7 @@ data class SettingDropdownOption<T>(
     val subtitle: String? = null,
     val shortLabel: String? = null,
     val sectionHeader: String? = null,
+    val enabled: Boolean = true,
 )
 
 @Composable
@@ -69,15 +73,17 @@ fun <T> CompactSettingDropdownRow(
         vertical = SettingRowDefaults.verticalPadding,
     ),
     supportingText: (@Composable () -> Unit)? = null,
+    enabled: Boolean = true,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val currentOption = options.firstOrNull { it.value == currentValue }
     val currentLabel = currentOption?.let { it.shortLabel ?: it.label }.orEmpty()
+    val disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { expanded = true }
+            .clickable(enabled = enabled) { expanded = true }
             .padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
@@ -96,6 +102,7 @@ fun <T> CompactSettingDropdownRow(
             Text(
                 text = title,
                 style = SettingRowDefaults.titleStyle,
+                color = if (enabled) Color.Unspecified else disabledContentColor,
             )
             if (supportingText != null) {
                 CompositionLocalProvider(
@@ -113,7 +120,7 @@ fun <T> CompactSettingDropdownRow(
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 modifier = Modifier
                     .clip(RoundedDropdownShape)
-                    .clickable { expanded = true },
+                    .clickable(enabled = enabled) { expanded = true },
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = Spacing.regular, vertical = 10.dp),
@@ -124,12 +131,14 @@ fun <T> CompactSettingDropdownRow(
                         text = currentLabel,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
+                        color = if (enabled) Color.Unspecified else disabledContentColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
                     Icon(
                         imageVector = Icons.Filled.ArrowDropDown,
                         contentDescription = null,
+                        tint = if (enabled) LocalContentColor.current else disabledContentColor,
                     )
                 }
             }
@@ -151,42 +160,10 @@ fun <T> CompactSettingDropdownRow(
                             isFirst = index == 0,
                         )
                     }
-                    DropdownMenuItem(
-                        modifier = option.e2eId?.let { Modifier.testTag(it) } ?: Modifier,
-                        text = {
-                            Column {
-                                Text(
-                                    text = option.label,
-                                    color = if (isSelected) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurface
-                                    },
-                                    fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
-                                )
-                                if (option.subtitle != null) {
-                                    Text(
-                                        text = option.subtitle,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                            }
-                        },
-                        leadingIcon = {
-                            Box(
-                                modifier = Modifier.size(20.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                if (isSelected) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Check,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary,
-                                    )
-                                }
-                            }
-                        },
+                    DropdownOptionItem(
+                        option = option,
+                        isSelected = isSelected,
+                        disabledContentColor = disabledContentColor,
                         onClick = {
                             onOptionSelected(option.value)
                             expanded = false
@@ -196,6 +173,55 @@ fun <T> CompactSettingDropdownRow(
             }
         }
     }
+}
+
+@Composable
+private fun <T> DropdownOptionItem(
+    option: SettingDropdownOption<T>,
+    isSelected: Boolean,
+    disabledContentColor: Color,
+    onClick: () -> Unit,
+) {
+    val tagModifier = option.e2eId?.let { Modifier.testTag(it) } ?: Modifier
+    DropdownMenuItem(
+        modifier = tagModifier.semantics { selected = isSelected },
+        enabled = option.enabled,
+        text = {
+            Column {
+                Text(
+                    text = option.label,
+                    color = when {
+                        !option.enabled -> disabledContentColor
+                        isSelected -> MaterialTheme.colorScheme.primary
+                        else -> MaterialTheme.colorScheme.onSurface
+                    },
+                    fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
+                )
+                if (option.subtitle != null) {
+                    Text(
+                        text = option.subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        },
+        leadingIcon = {
+            Box(
+                modifier = Modifier.size(20.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (isSelected) {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+        },
+        onClick = onClick,
+    )
 }
 
 @Composable

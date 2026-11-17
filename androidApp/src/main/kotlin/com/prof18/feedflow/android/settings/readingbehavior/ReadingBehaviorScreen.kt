@@ -39,7 +39,6 @@ internal fun ReadingBehaviorScreen(
         onArticleBrowserSelected = viewModel::updateArticleBrowser,
         setArticleOpenMode = viewModel::updateArticleOpenMode,
         setMarkReadWhenScrolling = viewModel::updateMarkReadWhenScrolling,
-        setShowReadItem = viewModel::updateShowReadItemsOnTimeline,
-        setHideReadItems = viewModel::updateHideReadItems,
+        setReadArticlesVisibility = viewModel::updateReadArticlesVisibility,
     )
 }

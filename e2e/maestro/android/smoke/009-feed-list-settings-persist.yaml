@@ -26,6 +26,13 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: feed_list_settings_hide_images
 - scrollUntilVisible:
+    element: "Date format"
+    direction: DOWN
+    timeout: 10000
+- tapOn: "Date format"
+- tapOn: "Day\\.Month"
+- assertVisible: "Day\\.Month"
+- scrollUntilVisible:
     element:
       id: feed_list_settings_order
     direction: DOWN
@@ -33,14 +40,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     id: feed_list_settings_order
 - tapOn:
-    text: "Oldest First"
-- scrollUntilVisible:
-    element: "Date format"
-    direction: DOWN
-    timeout: 10000
-- tapOn: "Date format"
-- tapOn: "Day\\.Month"
-- assertVisible: "Day\\.Month"
+    text: "Oldest first"
 - tapOn:
     id: settings_back_button
 - tapOn:

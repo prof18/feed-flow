@@ -11,9 +11,9 @@ appId: com.prof18.feedflow.debug
 - assertVisible: "Sort & filter"
 - assertVisible: "Delete week-old articles"
 - tapOn: "Sort & filter"
-- assertVisible: "Sort by Date"
+- assertVisible: "Sort by date"
 - assertVisible: "Show read articles in lists"
-- tapOn: "Oldest First"
+- tapOn: "Oldest first"
 - tapOn: "Show read articles in lists"
 - back
 - tapOn:

@@ -21,7 +21,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     text: "Sort & filter"
 - tapOn:
-    text: "Newest First"
+    text: "Newest first"
 - back
 - scrollUntilVisible:
     element:

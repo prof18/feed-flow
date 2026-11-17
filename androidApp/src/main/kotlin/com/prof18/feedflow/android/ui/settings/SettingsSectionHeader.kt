@@ -17,7 +17,7 @@ fun SettingsSectionHeader(
 ) {
     Text(
         text = title,
-        style = MaterialTheme.typography.labelLarge,
+        style = SettingRowDefaults.sectionHeaderStyle,
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier
             .fillMaxWidth()

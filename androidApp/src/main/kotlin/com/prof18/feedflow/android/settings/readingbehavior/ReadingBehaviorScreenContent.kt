@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.settings.components.BrowserSelector
-import com.prof18.feedflow.android.ui.settings.ConfirmationDialogConfig
 import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
@@ -38,8 +37,6 @@ internal fun ReadingBehaviorScreenContent(
     onBrowserSelected: (Browser) -> Unit,
     onArticleBrowserSelected: (String) -> Unit,
     setArticleOpenMode: (ArticleOpenMode) -> Unit,
-    setSaveReaderModeContent: (Boolean) -> Unit,
-    setPrefetchArticleContent: (Boolean) -> Unit,
     setMarkReadWhenScrolling: (Boolean) -> Unit,
     setShowReadItem: (Boolean) -> Unit,
     setHideReadItems: (Boolean) -> Unit,
@@ -86,26 +83,6 @@ internal fun ReadingBehaviorScreenContent(
                 BrowserSelector(
                     browsers = browsers,
                     onBrowserSelected = onBrowserSelected,
-                )
-            }
-
-            item {
-                SettingSwitchItem(
-                    title = LocalFeedFlowStrings.current.settingsSaveReaderModeContent,
-                    isChecked = state.isSaveReaderModeContentEnabled,
-                    onCheckedChange = setSaveReaderModeContent,
-                )
-            }
-
-            item {
-                SettingSwitchItem(
-                    title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
-                    isChecked = state.isPrefetchArticleContentEnabled,
-                    onCheckedChange = setPrefetchArticleContent,
-                    confirmationDialog = ConfirmationDialogConfig(
-                        title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
-                        message = LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning,
-                    ),
                 )
             }
 
@@ -166,8 +143,6 @@ private fun ReadingBehaviorScreenContentPreview() {
             onBrowserSelected = {},
             onArticleBrowserSelected = {},
             setArticleOpenMode = {},
-            setSaveReaderModeContent = {},
-            setPrefetchArticleContent = {},
             setMarkReadWhenScrolling = {},
             setShowReadItem = {},
             setHideReadItems = {},

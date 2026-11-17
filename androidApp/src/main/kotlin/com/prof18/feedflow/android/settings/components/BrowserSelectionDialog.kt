@@ -1,6 +1,5 @@
 package com.prof18.feedflow.android.settings.components
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -39,11 +38,7 @@ internal fun BrowserSelector(
             browsers.firstOrNull { it.id == browserId }?.let(onBrowserSelected)
         },
         supportingText = {
-            Text(
-                text = strings.linksBrowserSubtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Text(text = strings.linksBrowserSubtitle)
         },
     )
 }

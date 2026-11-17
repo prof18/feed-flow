@@ -111,40 +111,40 @@ struct EditFeedScreenContent: View {
                 .onChange(of: isHideImagesEnabled) {
                     onHideImagesToggled(isHideImagesEnabled)
                 }
+            }
 
-                if showHideShortsToggle {
+            if showHideShortsToggle {
+                Section {
                     Toggle(isOn: $isHideShortsEnabled) {
-                        VStack(alignment: .leading) {
-                            Text(feedFlowStrings.hideYoutubeShorts)
-                            Text(feedFlowStrings.hideYoutubeShortsDescription)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                        Text(feedFlowStrings.hideYoutubeShorts)
                     }
                     .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.hideShortsToggle)
                     .onChange(of: isHideShortsEnabled) {
                         onHideShortsToggled(isHideShortsEnabled)
                     }
+                } footer: {
+                    Text(feedFlowStrings.hideYoutubeShortsDescription)
                 }
+            }
 
+            Section {
                 Toggle(isOn: $isKeepUnreadOnScrollEnabled) {
-                    VStack(alignment: .leading) {
-                        Text(feedFlowStrings.keepUnreadWhenScrollingForFeed)
-                        Text(
-                            isMarkReadWhenScrollingEnabled
-                                ? feedFlowStrings.keepUnreadWhenScrollingForFeedDescription
-                                : feedFlowStrings.keepUnreadWhenScrollingForFeedDisabled
-                        )
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    }
+                    Text(feedFlowStrings.keepUnreadWhenScrollingForFeed)
                 }
                 .disabled(!isMarkReadWhenScrollingEnabled)
                 .accessibilityIdentifier(EditFeedAccessibilityIdentifiers.keepUnreadOnScrollToggle)
                 .onChange(of: isKeepUnreadOnScrollEnabled) {
                     onKeepUnreadOnScrollToggled(isKeepUnreadOnScrollEnabled)
                 }
+            } footer: {
+                Text(
+                    isMarkReadWhenScrollingEnabled
+                        ? feedFlowStrings.keepUnreadWhenScrollingForFeedDescription
+                        : feedFlowStrings.keepUnreadWhenScrollingForFeedDisabled
+                )
+            }
 
+            Section {
                 Toggle(isOn: $isPinned) {
                     Text(feedFlowStrings.pinFeedSourceDescription)
                 }

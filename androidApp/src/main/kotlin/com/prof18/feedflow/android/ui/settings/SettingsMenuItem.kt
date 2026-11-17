@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.ui.style.Spacing
 
 @Composable
@@ -42,7 +44,8 @@ fun SettingItem(
                 },
             )
             .fillMaxWidth()
-            .padding(Spacing.regular),
+            .heightIn(min = 56.dp)
+            .padding(horizontal = Spacing.regular, vertical = SettingRowDefaults.verticalPadding),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
         if (icon != null) {
@@ -52,17 +55,17 @@ fun SettingItem(
                 tint = if (isDestructive) MaterialTheme.colorScheme.error else LocalContentColor.current,
             )
         }
-        Column {
+        Column(verticalArrangement = Arrangement.spacedBy(SettingRowDefaults.titleDescriptionSpacing)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
+                style = SettingRowDefaults.titleStyle,
                 color = if (isDestructive) MaterialTheme.colorScheme.error else Color.Unspecified,
             )
             if (supportingText != null) {
                 Text(
                     text = supportingText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = SettingRowDefaults.descriptionStyle,
+                    color = SettingRowDefaults.descriptionColor,
                 )
             }
         }

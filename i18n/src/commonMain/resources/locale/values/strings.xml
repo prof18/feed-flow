@@ -159,9 +159,11 @@
     <string name="about_menu_faq">FAQ</string>
     <string name="rename_feed_source_name_button">Rename</string>
     <string name="in_app_browser">In-app browser</string>
-    <string name="settings_save_reader_mode_content">Keep offline copies of articles you open</string>
-    <string name="settings_prefetch_article_content">Make offline copies when feeds refresh</string>
+    <string name="settings_save_reader_mode_content">Keep articles you open offline</string>
+    <string name="settings_prefetch_article_content">Make offline copies on refresh</string>
     <string name="settings_prefetch_article_content_warning">Enabling this option makes refreshing feeds slower and uses more data, because FeedFlow gets the full article from each website during every refresh. If you have a large number of articles, this may also affect performance. Turn this on only if you need to read full articles offline.</string>
+    <string name="settings_save_reader_mode_content_description">Articles you open in reader mode stay available offline.</string>
+    <string name="settings_prefetch_article_content_description">Gets the full article from each website when feeds refresh. Uses more data.</string>
     <string name="settings_reduce_motion">Reduce motion and animations</string>
     <string name="settings_force_english">Force English</string>
     <string name="settings_force_english_description">Use English for the app interface instead of the device language.</string>
@@ -348,6 +350,7 @@
     <string name="delete_category_close_button">Close</string>
     <string name="close_button_content_description">Close</string>
     <string name="settings_auto_delete">Auto-delete old articles</string>
+    <string name="settings_auto_delete_description">Deletes read and unread articles. Bookmarked articles are kept.</string>
     <string name="settings_auto_delete_period_disabled">Disabled</string>
     <string name="settings_auto_delete_period_one_day">One day old</string>
     <string name="settings_auto_delete_period_one_week">One week old</string>
@@ -580,6 +583,8 @@
     <string name="settings_clear_downloaded_articles">Delete offline copies</string>
     <string name="settings_clear_downloaded_articles_dialog_title">Delete offline copies?</string>
     <string name="settings_clear_downloaded_articles_dialog_message">This will delete all offline copies of full articles. This action cannot be undone.</string>
+    <string name="settings_offline_copies_section_title">Offline copies</string>
+    <string name="settings_clear_downloaded_articles_description">Removes every offline copy, including those of bookmarked articles.</string>
     <string name="settings_clear_image_cache">Clear image cache</string>
     <string name="settings_clear_image_cache_dialog_title">Clear image cache?</string>
     <string name="settings_clear_image_cache_dialog_message">This will delete all cached images. The images will be downloaded again when you browse through your articles.</string>

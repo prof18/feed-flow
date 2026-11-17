@@ -61,6 +61,7 @@ internal fun StoragePane(
                     AutoDeletePeriod.ONE_MONTH to strings.settingsAutoDeletePeriodOneMonth,
                 ),
                 onSelected = onAutoDeletePeriodSelected,
+                supportingText = strings.settingsAutoDeleteDescription,
             )
         }
         SettingsSection(title = strings.settingsClearDataTitle) {
@@ -73,6 +74,7 @@ internal fun StoragePane(
             )
             ConfirmationSetting(
                 title = strings.settingsClearDownloadedArticles,
+                supportingText = strings.settingsClearDownloadedArticlesDescription,
                 dialogTitle = strings.settingsClearDownloadedArticlesDialogTitle,
                 dialogMessage = strings.settingsClearDownloadedArticlesDialogMessage,
                 onConfirm = onClearDownloadedArticles,

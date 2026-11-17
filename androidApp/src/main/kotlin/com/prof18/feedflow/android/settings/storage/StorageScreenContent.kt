@@ -18,8 +18,10 @@ import androidx.compose.ui.platform.testTag
 import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.ui.preview.PreviewPhone
 import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
+import com.prof18.feedflow.android.ui.settings.ConfirmationDialogConfig
 import com.prof18.feedflow.android.ui.settings.ConfirmationSettingItem
 import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
+import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.android.ui.settings.SettingsSectionHeader
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
@@ -31,6 +33,10 @@ internal fun StorageScreenContent(
     autoDeletePeriod: AutoDeletePeriod,
     navigateBack: () -> Unit,
     onAutoDeletePeriodSelected: (AutoDeletePeriod) -> Unit,
+    isSaveReaderModeContentEnabled: Boolean,
+    isPrefetchArticleContentEnabled: Boolean,
+    onSaveReaderModeContentChange: (Boolean) -> Unit,
+    onPrefetchArticleContentChange: (Boolean) -> Unit,
     onClearDownloadedArticles: () -> Unit,
     onClearImageCache: () -> Unit,
     snackbarHost: @Composable () -> Unit = {},
@@ -72,21 +78,53 @@ internal fun StorageScreenContent(
                         SettingDropdownOption(AutoDeletePeriod.ONE_MONTH, strings.settingsAutoDeletePeriodOneMonth),
                     ),
                     onOptionSelected = onAutoDeletePeriodSelected,
+                    supportingText = {
+                        Text(text = strings.settingsAutoDeleteDescription)
+                    },
                 )
             }
 
             item {
-                SettingsSectionHeader(title = LocalFeedFlowStrings.current.settingsClearDataTitle)
+                SettingsSectionHeader(title = LocalFeedFlowStrings.current.settingsOfflineCopiesSectionTitle)
+            }
+
+            item {
+                SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.STORAGE_SAVE_CONTENT),
+                    title = LocalFeedFlowStrings.current.settingsSaveReaderModeContent,
+                    supportingText = LocalFeedFlowStrings.current.settingsSaveReaderModeContentDescription,
+                    isChecked = isSaveReaderModeContentEnabled,
+                    onCheckedChange = onSaveReaderModeContentChange,
+                )
+            }
+
+            item {
+                SettingSwitchItem(
+                    modifier = Modifier.testTag(SettingsE2eIds.STORAGE_PREFETCH_CONTENT),
+                    title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
+                    supportingText = LocalFeedFlowStrings.current.settingsPrefetchArticleContentDescription,
+                    isChecked = isPrefetchArticleContentEnabled,
+                    onCheckedChange = onPrefetchArticleContentChange,
+                    confirmationDialog = ConfirmationDialogConfig(
+                        title = LocalFeedFlowStrings.current.settingsPrefetchArticleContent,
+                        message = LocalFeedFlowStrings.current.settingsPrefetchArticleContentWarning,
+                    ),
+                )
             }
 
             item {
                 ConfirmationSettingItem(
                     modifier = Modifier.testTag(SettingsE2eIds.SYNC_CLEAR_DOWNLOADED),
                     title = LocalFeedFlowStrings.current.settingsClearDownloadedArticles,
+                    supportingText = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDescription,
                     dialogTitle = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogTitle,
                     dialogMessage = LocalFeedFlowStrings.current.settingsClearDownloadedArticlesDialogMessage,
                     onConfirm = onClearDownloadedArticles,
                 )
+            }
+
+            item {
+                SettingsSectionHeader(title = LocalFeedFlowStrings.current.settingsClearDataTitle)
             }
 
             item {
@@ -114,6 +152,10 @@ private fun StorageScreenContentPreview() {
             autoDeletePeriod = AutoDeletePeriod.ONE_WEEK,
             navigateBack = {},
             onAutoDeletePeriodSelected = {},
+            isSaveReaderModeContentEnabled = true,
+            isPrefetchArticleContentEnabled = false,
+            onSaveReaderModeContentChange = {},
+            onPrefetchArticleContentChange = {},
             onClearDownloadedArticles = {},
             onClearImageCache = {},
         )

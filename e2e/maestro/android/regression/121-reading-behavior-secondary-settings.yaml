@@ -19,11 +19,6 @@ appId: com.prof18.feedflow.debug
     id: settings_reading_behavior
 - assertVisible: "Open articles in"
 - assertVisible: "Open other links in"
-- assertVisible: "Keep offline copies of articles you open"
-- assertVisible: "Make offline copies when feeds refresh"
 - assertVisible: "Mark as read when scrolling"
-- tapOn: "Keep offline copies of articles you open"
+- assertNotVisible: "Keep articles you open offline"
 - tapOn: "Mark as read when scrolling"
-- tapOn: "Make offline copies when feeds refresh"
-- assertVisible: "Enabling this option makes refreshing feeds slower and uses more data.*"
-- tapOn: "Confirm"

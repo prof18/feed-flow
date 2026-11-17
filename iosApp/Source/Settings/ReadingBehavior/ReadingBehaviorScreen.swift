@@ -33,14 +33,6 @@ struct ReadingBehaviorScreen: View {
             onArticleBrowserSelected: { browserId in
                 vmStoreOwner.instance.updateArticleBrowser(browserId: browserId)
             },
-            isSaveReaderModeContentEnabled: Binding(
-                get: { settingsState.isSaveReaderModeContentEnabled },
-                set: { vmStoreOwner.instance.updateSaveReaderModeContent(value: $0) }
-            ),
-            isPrefetchArticleContentEnabled: Binding(
-                get: { settingsState.isPrefetchArticleContentEnabled },
-                set: { vmStoreOwner.instance.updatePrefetchArticleContent(value: $0) }
-            ),
             isMarkReadWhenScrollingEnabled: Binding(
                 get: { settingsState.isMarkReadWhenScrollingEnabled },
                 set: { vmStoreOwner.instance.updateMarkReadWhenScrolling(value: $0) }

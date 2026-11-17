@@ -61,11 +61,13 @@ internal fun ReadingPane(
             )
             SettingsSwitch(
                 title = strings.settingsSaveReaderModeContent,
+                supportingText = strings.settingsSaveReaderModeContentDescription,
                 checked = isSaveReaderModeContentEnabled,
                 onCheckedChange = onSaveReaderModeContentToggled,
             )
             SettingsSwitch(
                 title = strings.settingsPrefetchArticleContent,
+                supportingText = strings.settingsPrefetchArticleContentDescription,
                 checked = isPrefetchArticleContentEnabled,
                 onCheckedChange = { enabled ->
                     if (enabled) showPrefetchConfirmation = true else onPrefetchToggled(false)

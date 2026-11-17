@@ -2,13 +2,13 @@ package com.prof18.feedflow.android.settings.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import com.prof18.feedflow.android.settings.SettingsE2eIds
+import com.prof18.feedflow.android.ui.settings.SettingRowDefaults
 import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
@@ -29,8 +29,13 @@ fun BackgroundSyncRestrictionsSection(
         if (showHeader) {
             Text(
                 text = strings.settingsBackgroundSyncRestrictionsTitle,
-                modifier = Modifier.padding(horizontal = Spacing.regular, vertical = Spacing.small),
-                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(
+                    start = Spacing.regular,
+                    end = Spacing.regular,
+                    top = SettingRowDefaults.verticalPadding,
+                    bottom = SettingRowDefaults.titleDescriptionSpacing,
+                ),
+                style = SettingRowDefaults.titleStyle,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -38,8 +43,8 @@ fun BackgroundSyncRestrictionsSection(
             Text(
                 text = strings.settingsBackgroundSyncRestrictionsDescription,
                 modifier = Modifier.padding(horizontal = Spacing.regular),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = SettingRowDefaults.descriptionStyle,
+                color = SettingRowDefaults.descriptionColor,
             )
         }
 

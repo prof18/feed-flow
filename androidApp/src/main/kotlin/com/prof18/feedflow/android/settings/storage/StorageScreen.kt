@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.imageLoader
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.presentation.ReadingBehaviorSettingsViewModel
 import com.prof18.feedflow.shared.presentation.SyncAndStorageSettingsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,6 +26,8 @@ internal fun StorageScreen(
 ) {
     val viewModel = koinViewModel<SyncAndStorageSettingsViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val readingViewModel = koinViewModel<ReadingBehaviorSettingsViewModel>()
+    val readingState by readingViewModel.state.collectAsStateWithLifecycle()
     val strings = LocalFeedFlowStrings.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -48,6 +51,10 @@ internal fun StorageScreen(
         onAutoDeletePeriodSelected = { period ->
             viewModel.updateAutoDeletePeriod(period)
         },
+        isSaveReaderModeContentEnabled = readingState.isSaveReaderModeContentEnabled,
+        isPrefetchArticleContentEnabled = readingState.isPrefetchArticleContentEnabled,
+        onSaveReaderModeContentChange = readingViewModel::updateSaveReaderModeContent,
+        onPrefetchArticleContentChange = readingViewModel::updatePrefetchArticleContent,
         onClearDownloadedArticles = {
             viewModel.clearDownloadedArticleContent()
         },

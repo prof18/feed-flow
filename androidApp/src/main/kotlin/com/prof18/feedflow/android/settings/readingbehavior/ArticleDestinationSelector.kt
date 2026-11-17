@@ -1,15 +1,14 @@
 package com.prof18.feedflow.android.settings.readingbehavior
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.feed.ArticleOpenModeE2eIds
 import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
+import com.prof18.feedflow.android.ui.settings.SettingRowDefaults
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.Browser
@@ -80,14 +79,10 @@ internal fun ArticleDestinationSelector(
                 is ArticleDestination.Browser -> onBrowserSelected(destination.id)
             }
         },
-        contentPadding = PaddingValues(0.dp),
+        contentPadding = PaddingValues(vertical = SettingRowDefaults.verticalPadding),
         modifier = modifier,
         supportingText = {
-            Text(
-                text = strings.articleOpenModeSubtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Text(text = strings.articleOpenModeSubtitle)
         },
     )
 }

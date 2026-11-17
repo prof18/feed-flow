@@ -35,7 +35,6 @@ internal fun BackgroundRefreshRow(
             {
                 Text(
                     text = strings.settingsNotificationsRefreshOff,
-                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                 )
             }

@@ -3,6 +3,8 @@ import SwiftUI
 
 struct StorageScreenContent: View {
     @Binding var autoDeletePeriod: AutoDeletePeriod
+    @Binding var isSaveReaderModeContentEnabled: Bool
+    @Binding var isPrefetchArticleContentEnabled: Bool
     let onClearDownloadedArticles: () -> Void
 
     private let feedFlowStrings = Deps.shared.getStrings()
@@ -10,22 +12,46 @@ struct StorageScreenContent: View {
     var body: some View {
         Form {
             Section {
-                Picker(selection: $autoDeletePeriod) {
-                    Text(feedFlowStrings.settingsAutoDeletePeriodDisabled)
-                        .tag(AutoDeletePeriod.disabled)
-                    Text(feedFlowStrings.settingsAutoDeletePeriodOneDay)
-                        .tag(AutoDeletePeriod.oneDay)
-                    Text(feedFlowStrings.settingsAutoDeletePeriodOneWeek)
-                        .tag(AutoDeletePeriod.oneWeek)
-                    Text(feedFlowStrings.settingsAutoDeletePeriodTwoWeeks)
-                        .tag(AutoDeletePeriod.twoWeeks)
-                    Text(feedFlowStrings.settingsAutoDeletePeriodOneMonth)
-                        .tag(AutoDeletePeriod.oneMonth)
+                NavigationLink {
+                    AutoDeletePeriodSelectionScreen(autoDeletePeriod: $autoDeletePeriod)
                 } label: {
-                    Text(feedFlowStrings.settingsAutoDelete)
+                    LabeledContent(
+                        feedFlowStrings.settingsAutoDelete,
+                        value: AutoDeletePeriodSelectionScreen.label(for: autoDeletePeriod, strings: feedFlowStrings)
+                    )
                 }
                 .accessibilityIdentifier(StorageAccessibilityIdentifiers.autoDelete)
+            } footer: {
+                Text(feedFlowStrings.settingsAutoDeleteDescription)
+            }
 
+            Section {
+                SettingToggleItem(
+                    isOn: $isSaveReaderModeContentEnabled,
+                    title: feedFlowStrings.settingsSaveReaderModeContent
+                )
+                .accessibilityIdentifier(StorageAccessibilityIdentifiers.saveContentToggle)
+            } header: {
+                Text(feedFlowStrings.settingsOfflineCopiesSectionTitle)
+            } footer: {
+                Text(feedFlowStrings.settingsSaveReaderModeContentDescription)
+            }
+
+            Section {
+                SettingToggleItem(
+                    isOn: $isPrefetchArticleContentEnabled,
+                    title: feedFlowStrings.settingsPrefetchArticleContent,
+                    confirmationDialog: ConfirmationDialogConfig(
+                        title: feedFlowStrings.settingsPrefetchArticleContent,
+                        message: feedFlowStrings.settingsPrefetchArticleContentWarning
+                    )
+                )
+                .accessibilityIdentifier(StorageAccessibilityIdentifiers.prefetchContentToggle)
+            } footer: {
+                Text(feedFlowStrings.settingsPrefetchArticleContentDescription)
+            }
+
+            Section {
                 ConfirmationButton(
                     title: feedFlowStrings.settingsClearDownloadedArticles,
                     dialogTitle: feedFlowStrings.settingsClearDownloadedArticlesDialogTitle,
@@ -33,6 +59,8 @@ struct StorageScreenContent: View {
                     onConfirm: onClearDownloadedArticles
                 )
                 .accessibilityIdentifier(StorageAccessibilityIdentifiers.clearDownloaded)
+            } footer: {
+                Text(feedFlowStrings.settingsClearDownloadedArticlesDescription)
             }
         }
         .scrollContentBackground(.hidden)

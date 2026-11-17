@@ -20,6 +20,7 @@ appId: com.prof18.feedflow.dev
     id: settings_storage
 - tapOn:
     id: sync_storage_auto_delete
+- assertVisible: "One month old"
 - tapOn: "One week old"
 - tapOn:
     id: BackButton
@@ -40,4 +41,4 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - tapOn:
     id: settings_storage
-- assertVisible: "One week old"
+- assertVisible: "Auto-delete old articles, One week old"

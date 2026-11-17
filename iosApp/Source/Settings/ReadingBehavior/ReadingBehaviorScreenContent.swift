@@ -5,8 +5,6 @@ struct ReadingBehaviorScreenContent: View {
     @Bindable var browserSelector: BrowserSelector
     @Binding var articleOpenMode: ArticleOpenMode
     let onArticleBrowserSelected: (String) -> Void
-    @Binding var isSaveReaderModeContentEnabled: Bool
-    @Binding var isPrefetchArticleContentEnabled: Bool
     @Binding var isMarkReadWhenScrollingEnabled: Bool
     @Binding var isShowReadItemEnabled: Bool
     @Binding var isHideReadItemsEnabled: Bool
@@ -24,52 +22,28 @@ struct ReadingBehaviorScreenContent: View {
                         onBrowserSelected: onArticleBrowserSelected
                     )
                 } label: {
-                    HStack {
-                        titleWithSubtitle(
-                            title: feedFlowStrings.articleOpenMode,
-                            subtitle: feedFlowStrings.articleOpenModeSubtitle
-                        )
-
-                        Spacer()
-
-                        Text(articleOpenModePreview)
-                            .foregroundStyle(.secondary)
-                    }
+                    LabeledContent(feedFlowStrings.articleOpenMode, value: articleOpenModePreview)
                 }
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.articleOpenModePicker)
+            } footer: {
+                Text(feedFlowStrings.articleOpenModeSubtitle)
+            }
 
+            Section {
                 NavigationLink {
                     LinksBrowserSelectionScreen(browserSelector: browserSelector)
                 } label: {
-                    HStack {
-                        titleWithSubtitle(
-                            title: feedFlowStrings.linksBrowserTitle,
-                            subtitle: feedFlowStrings.linksBrowserSubtitle
-                        )
-
-                        Spacer()
-
-                        Text(browserSelector.selectedBrowser?.name ?? feedFlowStrings.inAppBrowser)
-                            .foregroundStyle(.secondary)
-                    }
+                    LabeledContent(
+                        feedFlowStrings.linksBrowserTitle,
+                        value: browserSelector.selectedBrowser?.name ?? feedFlowStrings.inAppBrowser
+                    )
                 }
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.linksBrowserPicker)
+            } footer: {
+                Text(feedFlowStrings.linksBrowserSubtitle)
+            }
 
-                Toggle(isOn: $isSaveReaderModeContentEnabled) {
-                    Text(feedFlowStrings.settingsSaveReaderModeContent)
-                }
-                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.saveContentToggle)
-
-                SettingToggleItem(
-                    isOn: $isPrefetchArticleContentEnabled,
-                    title: feedFlowStrings.settingsPrefetchArticleContent,
-                    confirmationDialog: ConfirmationDialogConfig(
-                        title: feedFlowStrings.settingsPrefetchArticleContent,
-                        message: feedFlowStrings.settingsPrefetchArticleContentWarning
-                    )
-                )
-                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.prefetchContentToggle)
-
+            Section {
                 Toggle(isOn: $isMarkReadWhenScrollingEnabled) {
                     Text(feedFlowStrings.toggleMarkReadWhenScrolling)
                 }
@@ -85,11 +59,9 @@ struct ReadingBehaviorScreenContent: View {
                 }
                 .disabled(isMarkReadWhenScrollingEnabled)
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.hideReadToggle)
-
+            } footer: {
                 if isMarkReadWhenScrollingEnabled {
                     Text(feedFlowStrings.settingsHideReadItemsDisabledWhileScrolling)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
                 }
             }
         }
@@ -120,15 +92,6 @@ struct ReadingBehaviorScreenContent: View {
             browserSelector.articleBrowserId() == BrowserIds.shared.IN_APP_BROWSER
                 ? feedFlowStrings.inAppBrowser
                 : browserSelector.articleBrowserName()
-        }
-    }
-
-    private func titleWithSubtitle(title: String, subtitle: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title)
-            Text(subtitle)
-                .font(.caption)
-                .foregroundStyle(.secondary)
         }
     }
 }

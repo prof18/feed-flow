@@ -18,17 +18,17 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - tapOn:
     id: settings_reading_behavior
-- assertVisible: "In-app browser"
-- assertVisible: "Reader (website)"
+- assertVisible: "Open other links in, In-app browser"
+- assertVisible: "Open articles in, Reader \\(website\\)"
 - tapOn: "Open other links in"
 - tapOn: "Default browser"
-- assertVisible: "Default browser"
+- assertVisible: ".*Default browser"
 - tapOn:
     id: reading_behavior_article_open_mode
 - tapOn:
     id: article_open_mode_internal_browser
-- assertVisible: "In-app browser"
-- assertNotVisible: "Reader (website)"
+- assertVisible: ".*In-app browser"
+- assertNotVisible: ".*Reader \\(website\\)"
 - tapOn:
     id: BackButton
 - tapOn:
@@ -48,6 +48,6 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - tapOn:
     id: settings_reading_behavior
-- assertVisible: "Default browser"
-- assertVisible: "In-app browser"
-- assertNotVisible: "Reader (website)"
+- assertVisible: "Open other links in, Default browser"
+- assertVisible: "Open articles in, In-app browser"
+- assertNotVisible: ".*Reader \\(website\\)"

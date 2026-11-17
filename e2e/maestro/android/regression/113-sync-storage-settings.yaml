@@ -45,6 +45,18 @@ appId: com.prof18.feedflow.debug
 - tapOn: "One week old"
 - scrollUntilVisible:
     element:
+      id: storage_save_content
+    direction: DOWN
+    timeout: 10000
+- assertVisible: "Offline copies"
+- tapOn:
+    id: storage_save_content
+- tapOn:
+    id: storage_prefetch_content
+- assertVisible: "Enabling this option makes refreshing feeds slower and uses more data.*"
+- tapOn: "Confirm"
+- scrollUntilVisible:
+    element:
       id: sync_storage_clear_downloaded
     direction: DOWN
     timeout: 10000

@@ -38,8 +38,6 @@ internal fun ReadingBehaviorScreen(
         },
         onArticleBrowserSelected = viewModel::updateArticleBrowser,
         setArticleOpenMode = viewModel::updateArticleOpenMode,
-        setSaveReaderModeContent = viewModel::updateSaveReaderModeContent,
-        setPrefetchArticleContent = viewModel::updatePrefetchArticleContent,
         setMarkReadWhenScrolling = viewModel::updateMarkReadWhenScrolling,
         setShowReadItem = viewModel::updateShowReadItemsOnTimeline,
         setHideReadItems = viewModel::updateHideReadItems,

@@ -29,6 +29,8 @@ internal object SettingsE2eIds {
     const val NOTIFICATIONS_PERMISSION_ROW = "notifications_permission_row"
     const val SYNC_AUTO_DELETE = "sync_storage_auto_delete"
     const val SYNC_CLEAR_DOWNLOADED = "sync_storage_clear_downloaded"
+    const val STORAGE_SAVE_CONTENT = "storage_save_content"
+    const val STORAGE_PREFETCH_CONTENT = "storage_prefetch_content"
     const val APPEARANCE_THEME = "appearance_theme"
     const val APPEARANCE_HIDE_UNREAD_COUNT = "appearance_hide_unread_count"
     const val APPEARANCE_REDUCE_MOTION = "appearance_reduce_motion"

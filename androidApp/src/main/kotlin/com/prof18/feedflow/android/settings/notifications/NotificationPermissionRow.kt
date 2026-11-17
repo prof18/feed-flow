@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.prof18.feedflow.android.ui.preview.PreviewPhone
+import com.prof18.feedflow.android.ui.settings.SettingRowDefaults
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
@@ -27,18 +28,21 @@ internal fun NotificationPermissionRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = Spacing.regular, vertical = Spacing.small),
+            .padding(horizontal = Spacing.regular, vertical = SettingRowDefaults.verticalPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(SettingRowDefaults.titleDescriptionSpacing),
+        ) {
             Text(
                 text = strings.settingsNotificationsPermissionTitle,
-                style = MaterialTheme.typography.bodyLarge,
+                style = SettingRowDefaults.titleStyle,
             )
             Text(
                 text = strings.settingsNotificationsPermissionOff,
-                style = MaterialTheme.typography.bodySmall,
+                style = SettingRowDefaults.descriptionStyle,
                 color = MaterialTheme.colorScheme.error,
             )
         }

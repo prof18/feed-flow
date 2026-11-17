@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CloudDownload
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.prof18.feedflow.android.ui.components.ConfirmationDialog
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
@@ -55,7 +57,8 @@ fun SettingSwitchItem(
                 }
             }
             .fillMaxWidth()
-            .padding(vertical = Spacing.xsmall)
+            .heightIn(min = 56.dp)
+            .padding(vertical = SettingRowDefaults.verticalPadding)
             .padding(horizontal = Spacing.regular),
         horizontalArrangement = Arrangement.spacedBy(Spacing.regular),
     ) {
@@ -71,10 +74,13 @@ fun SettingSwitchItem(
             )
         }
 
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(SettingRowDefaults.titleDescriptionSpacing),
+        ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
+                style = SettingRowDefaults.titleStyle,
                 color = if (enabled) {
                     MaterialTheme.colorScheme.onSurface
                 } else {
@@ -84,11 +90,11 @@ fun SettingSwitchItem(
             if (supportingText != null) {
                 Text(
                     text = supportingText,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = SettingRowDefaults.descriptionStyle,
                     color = if (enabled) {
-                        MaterialTheme.colorScheme.onSurfaceVariant
+                        SettingRowDefaults.descriptionColor
                     } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                     },
                 )
             }

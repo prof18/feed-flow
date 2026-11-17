@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -24,6 +23,7 @@ import com.prof18.feedflow.android.ui.readermode.wholeValueSteps
 import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.android.ui.settings.FeedItemPreview
 import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
+import com.prof18.feedflow.android.ui.settings.SettingRowDefaults
 import com.prof18.feedflow.android.ui.settings.SettingSwitchItem
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
@@ -109,7 +109,7 @@ internal fun FeedListSettingsScreenContent(
                     Text(
                         text = LocalFeedFlowStrings.current.settingsFeedListScaleTitle,
                         modifier = Modifier.padding(Spacing.regular),
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = SettingRowDefaults.titleStyle,
                     )
                 }
 

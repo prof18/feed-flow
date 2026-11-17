@@ -15,10 +15,13 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,7 +66,7 @@ fun <T> CompactSettingDropdownRow(
     icon: ImageVector? = null,
     contentPadding: PaddingValues = PaddingValues(
         horizontal = Spacing.regular,
-        vertical = Spacing.small,
+        vertical = SettingRowDefaults.verticalPadding,
     ),
     supportingText: (@Composable () -> Unit)? = null,
 ) {
@@ -86,12 +89,22 @@ fun <T> CompactSettingDropdownRow(
             )
         }
 
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(SettingRowDefaults.titleDescriptionSpacing),
+        ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
+                style = SettingRowDefaults.titleStyle,
             )
-            supportingText?.invoke()
+            if (supportingText != null) {
+                CompositionLocalProvider(
+                    LocalTextStyle provides SettingRowDefaults.descriptionStyle,
+                    LocalContentColor provides SettingRowDefaults.descriptionColor,
+                ) {
+                    supportingText()
+                }
+            }
         }
 
         Box {

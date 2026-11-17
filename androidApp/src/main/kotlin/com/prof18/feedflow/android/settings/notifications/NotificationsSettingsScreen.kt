@@ -35,6 +35,7 @@ import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.android.ui.settings.NotificationToggleRow
 import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
+import com.prof18.feedflow.android.ui.settings.SettingRowDefaults
 import com.prof18.feedflow.android.ui.settings.SettingsSectionHeader
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
@@ -168,8 +169,8 @@ internal fun NotificationSettingsScreenContent(
                         Text(
                             text = strings.settingsNotificationModeArticleDesc,
                             modifier = Modifier.padding(horizontal = Spacing.regular),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = SettingRowDefaults.descriptionStyle,
+                            color = SettingRowDefaults.descriptionColor,
                         )
                     }
 

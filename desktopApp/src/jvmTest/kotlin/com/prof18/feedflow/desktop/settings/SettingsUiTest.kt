@@ -8,6 +8,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.performClick
+import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
@@ -80,10 +81,35 @@ class SettingsUiTest {
         }
 
         rule.onNode(hasText(EnFeedFlowStrings.settingsClearDataTitle)).assertExists()
+        rule.onNode(hasText(EnFeedFlowStrings.settingsAutoDeleteDescription)).assertExists()
+        rule.onNode(hasText(EnFeedFlowStrings.settingsClearDownloadedArticlesDescription)).assertExists()
         rule.runOnIdle { events.tryEmit(true) }
 
         rule.waitUntil(timeoutMillis = 5_000) {
             rule.onAllNodes(hasText(EnFeedFlowStrings.settingsOfflineCopiesDeleted)).fetchSemanticsNodes().isNotEmpty()
         }
+    }
+
+    @Test
+    fun `reading pane explains offline copy toggles`() {
+        rule.setContent {
+            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+                    ReadingPane(
+                        articleOpenMode = ArticleOpenMode.FULL_ARTICLE,
+                        isSaveReaderModeContentEnabled = false,
+                        isPrefetchArticleContentEnabled = false,
+                        isMarkReadWhenScrollingEnabled = false,
+                        onArticleOpenModeSelected = {},
+                        onSaveReaderModeContentToggled = {},
+                        onPrefetchToggled = {},
+                        onMarkReadWhenScrollingToggled = {},
+                    )
+                }
+            }
+        }
+
+        rule.onNode(hasText(EnFeedFlowStrings.settingsSaveReaderModeContentDescription)).assertExists()
+        rule.onNode(hasText(EnFeedFlowStrings.settingsPrefetchArticleContentDescription)).assertExists()
     }
 }

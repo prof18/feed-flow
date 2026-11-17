@@ -11,4 +11,17 @@ import SwiftUI
 extension Color {
     static let colorOnBackground = Color("ColorOnBackground")
     static let secondaryBackgroundColor = Color(uiColor: .systemGroupedBackground)
+
+    // The phone drawer shares the feed list's background, so moving between them doesn't change the surface.
+    static let sidebarBackground = Color(uiColor: .systemBackground)
+    static let sidebarSelection = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? .secondarySystemBackground
+            : UIColor(red: 0.906, green: 0.906, blue: 0.914, alpha: 1)
+    })
+    static let sidebarSelectionBorder = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? .tertiarySystemBackground
+            : UIColor(red: 0.859, green: 0.859, blue: 0.871, alpha: 1)
+    })
 }

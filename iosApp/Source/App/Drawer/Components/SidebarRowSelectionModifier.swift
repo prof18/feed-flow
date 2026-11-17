@@ -16,7 +16,9 @@ struct SidebarRowSelectionModifier: ViewModifier {
 
     @ViewBuilder private var rowBackground: some View {
         if isSelected {
-            Capsule().fill(Color(uiColor: .systemGray4))
+            Capsule()
+                .fill(Color.sidebarSelection)
+                .overlay(Capsule().strokeBorder(Color.sidebarSelectionBorder, lineWidth: 1))
         }
     }
 }

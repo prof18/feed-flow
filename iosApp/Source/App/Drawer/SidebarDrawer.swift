@@ -70,7 +70,7 @@ struct SidebarDrawer: View {
             sidebarList
                 .listStyle(.sidebar)
                 .scrollContentBackground(.hidden)
-                .background(Color(.systemGroupedBackground))
+                .background(Color.sidebarBackground)
         } else {
             sidebarList.listStyle(.sidebar)
         }

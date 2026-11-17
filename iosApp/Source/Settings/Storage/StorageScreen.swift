@@ -23,6 +23,7 @@ struct StorageScreen: View {
         isMarkReadWhenScrollingEnabled: false,
         isShowReadItemsEnabled: false,
         isHideReadItemsEnabled: false,
+        readArticlesVisibility: .hideOnRefresh,
         articleOpenMode: .fullArticle,
         articleBrowserId: nil
     )

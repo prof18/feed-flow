@@ -32,6 +32,7 @@ import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.SwipeActionType
 import com.prof18.feedflow.core.model.SwipeDirection
 import com.prof18.feedflow.core.model.TimeFormat
+import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ArticleRow
 import com.prof18.feedflow.desktop.ui.components.articleCardContainerColor
@@ -298,7 +299,7 @@ private fun FeedItemPreview(
         title = strings.settingsFontScaleTitleExample,
         subtitle = strings.settingsFontScaleSubtitleExample.takeIf { showDescription },
         content = null,
-        imageUrl = PREVIEW_IMAGE_URL.takeIf { showImage },
+        imageUrl = Res.getUri("files/feed_list_preview.jpg").takeIf { showImage },
         feedSource = FeedSource(
             id = "settings-preview-source",
             url = "https://www.example.com",
@@ -351,7 +352,6 @@ private fun FeedItemPreview(
     }
 }
 
-private const val PREVIEW_IMAGE_URL = "https://picsum.photos/seed/feedflow/800/450"
 private const val FONT_SCALE_MIN = -4
 private val FONT_SCALE_BUTTON_WIDTH = 40.dp
 private const val FONT_SCALE_MAX = 16

@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.BackgroundSyncRestrictions
 import com.prof18.feedflow.core.model.NotificationMode
+import com.prof18.feedflow.core.model.ReadArticlesVisibility
 import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderFontSettings
 import com.prof18.feedflow.core.model.ReaderModeDefaults
@@ -154,7 +155,21 @@ class SettingsRepository(
         settings.getBoolean(SettingsFields.HIDE_READ_ITEMS.name, false)
 
     internal fun getEffectiveHideReadItems(): Boolean =
-        getHideReadItems() && !getMarkFeedAsReadWhenScrolling()
+        getHideReadItems() && !getMarkFeedAsReadWhenScrolling() && !getShowReadArticlesTimeline()
+
+    internal fun getReadArticlesVisibility(): ReadArticlesVisibility = when {
+        getShowReadArticlesTimeline() -> ReadArticlesVisibility.KEEP_IN_LIST
+        getEffectiveHideReadItems() -> ReadArticlesVisibility.HIDE_RIGHT_AWAY
+        else -> ReadArticlesVisibility.HIDE_ON_REFRESH
+    }
+
+    // Keep in list leaves the saved hide mode alone, so turning show-read off restores it.
+    internal fun setReadArticlesVisibility(value: ReadArticlesVisibility) {
+        setShowReadArticlesTimeline(value == ReadArticlesVisibility.KEEP_IN_LIST)
+        if (value != ReadArticlesVisibility.KEEP_IN_LIST) {
+            setHideReadItems(value == ReadArticlesVisibility.HIDE_RIGHT_AWAY)
+        }
+    }
 
     internal fun setHideReadItems(value: Boolean) {
         settings.set(SettingsFields.HIDE_READ_ITEMS.name, value)

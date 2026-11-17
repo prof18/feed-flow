@@ -3,12 +3,14 @@ package com.prof18.feedflow.shared.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.ReadArticlesVisibility
 import com.prof18.feedflow.core.model.ReadingBehaviorState
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -22,6 +24,23 @@ class ReadingBehaviorSettingsViewModel internal constructor(
 
     init {
         loadSettings()
+        viewModelScope.launch {
+            combine(
+                settingsRepository.showReadArticlesTimelineFlow,
+                settingsRepository.hideReadItemsFlow,
+                settingsRepository.markFeedAsReadWhenScrollingFlow,
+            ) { showRead, hideRead, _ ->
+                Triple(showRead, hideRead, settingsRepository.getReadArticlesVisibility())
+            }.collect { (showRead, hideRead, visibility) ->
+                stateMutableFlow.update {
+                    it.copy(
+                        isShowReadItemsEnabled = showRead,
+                        isHideReadItemsEnabled = hideRead,
+                        readArticlesVisibility = visibility,
+                    )
+                }
+            }
+        }
     }
 
     private fun loadSettings() {
@@ -39,6 +58,7 @@ class ReadingBehaviorSettingsViewModel internal constructor(
                 isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
                 isShowReadItemsEnabled = isShowReadItemsEnabled,
                 isHideReadItemsEnabled = isHideReadItemsEnabled,
+                readArticlesVisibility = settingsRepository.getReadArticlesVisibility(),
                 articleOpenMode = articleOpenMode,
                 articleBrowserId = settingsRepository.getArticleBrowserId(),
             )
@@ -113,6 +133,18 @@ class ReadingBehaviorSettingsViewModel internal constructor(
             viewModelScope.launch {
                 feedStateRepository.getFeeds()
             }
+        }
+    }
+
+    fun updateReadArticlesVisibility(value: ReadArticlesVisibility) {
+        val blocked = value == ReadArticlesVisibility.HIDE_RIGHT_AWAY &&
+            settingsRepository.getMarkFeedAsReadWhenScrolling()
+        if (blocked || value == settingsRepository.getReadArticlesVisibility()) return
+        settingsRepository.setReadArticlesVisibility(value)
+        when (value) {
+            ReadArticlesVisibility.KEEP_IN_LIST -> viewModelScope.launch { feedStateRepository.getFeeds() }
+            ReadArticlesVisibility.HIDE_RIGHT_AWAY -> feedStateRepository.reapplyAutoHideToCurrentList()
+            ReadArticlesVisibility.HIDE_ON_REFRESH -> Unit
         }
     }
 }

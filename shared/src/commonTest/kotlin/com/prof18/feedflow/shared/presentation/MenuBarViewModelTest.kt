@@ -6,6 +6,7 @@ import com.prof18.feedflow.core.model.AutoDeletePeriod
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.FeedOrder
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.ReadArticlesVisibility
 import com.prof18.feedflow.core.model.ThemeMode
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -207,6 +208,46 @@ class MenuBarViewModelTest : KoinTestBase() {
 
             assertFalse(awaitItem())
         }
+    }
+
+    @Test
+    fun `updateReadArticlesVisibility ignores hide right away while scroll marking is on`() = runTest {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+
+        viewModel.updateReadArticlesVisibility(ReadArticlesVisibility.HIDE_RIGHT_AWAY)
+        advanceUntilIdle()
+
+        assertFalse(settingsRepository.getHideReadItems())
+        assertEquals(ReadArticlesVisibility.HIDE_ON_REFRESH, viewModel.state.value.readArticlesVisibility)
+    }
+
+    @Test
+    fun `updateReadArticlesVisibility to keep in list updates state and triggers getFeeds`() = runTest {
+        populateDatabase()
+
+        feedStateRepository.feedState.test {
+            assertEquals(emptyList(), awaitItem())
+            viewModel.updateReadArticlesVisibility(ReadArticlesVisibility.KEEP_IN_LIST)
+            awaitItem()
+            assertEquals(ReadArticlesVisibility.KEEP_IN_LIST, viewModel.state.value.readArticlesVisibility)
+        }
+    }
+
+    @Test
+    fun `updateReadArticlesVisibility to hide right away removes read articles from the current list`() = runTest {
+        populateDatabase()
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
+        feedStateRepository.getFeeds()
+        val itemId = FeedItemId(feedStateRepository.feedState.value.single().id)
+        databaseHelper.updateReadStatus(itemId, isRead = true)
+        feedStateRepository.markAsRead(hashSetOf(itemId))
+        assertEquals(1, feedStateRepository.feedState.value.size)
+
+        viewModel.updateReadArticlesVisibility(ReadArticlesVisibility.HIDE_RIGHT_AWAY)
+        advanceUntilIdle()
+
+        assertTrue(feedStateRepository.feedState.value.isEmpty())
+        assertEquals(ReadArticlesVisibility.HIDE_RIGHT_AWAY, viewModel.state.value.readArticlesVisibility)
     }
 
     private suspend fun populateDatabase() {

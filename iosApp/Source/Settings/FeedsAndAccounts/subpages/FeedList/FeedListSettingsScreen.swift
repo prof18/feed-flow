@@ -120,7 +120,9 @@ struct FeedListSettingsScreen: View {
     }
 
     private var previewImageUrl: String? {
-        settingsState.isHideImagesEnabled ? nil : "https://lipsum.app/200x200"
+        settingsState.isHideImagesEnabled
+            ? nil
+            : Bundle.main.url(forResource: "feed_list_preview", withExtension: "jpg")?.absoluteString
     }
 
     private var previewArticleDescription: String? {

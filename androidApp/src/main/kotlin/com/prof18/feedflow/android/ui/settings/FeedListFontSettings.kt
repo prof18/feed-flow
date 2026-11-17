@@ -9,7 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.android.R
 import com.prof18.feedflow.android.ui.home.components.list.FeedItemContainer
 import com.prof18.feedflow.android.ui.home.components.list.FeedItemView
 import com.prof18.feedflow.android.ui.style.Spacing
@@ -39,6 +41,7 @@ fun FeedItemPreview(
     modifier: Modifier = Modifier,
     feedItemDisplaySettings: FeedItemDisplaySettings = FeedItemDisplaySettings(),
 ) {
+    val context = LocalContext.current
     val isCompactImageCardPreview = feedLayout == FeedLayout.BIG_IMAGE || feedLayout == FeedLayout.GRID
     Box(
         modifier = modifier
@@ -71,7 +74,11 @@ fun FeedItemPreview(
                         LocalFeedFlowStrings.current.settingsFontScaleSubtitleExample
                     },
                     content = null,
-                    imageUrl = if (isHideImagesEnabled) null else "https://lipsum.app/200x200",
+                    imageUrl = if (isHideImagesEnabled) {
+                        null
+                    } else {
+                        "android.resource://${context.packageName}/${R.drawable.feed_list_preview}"
+                    },
                     feedSource = FeedSource(
                         id = "1",
                         url = "https://www.example.it",

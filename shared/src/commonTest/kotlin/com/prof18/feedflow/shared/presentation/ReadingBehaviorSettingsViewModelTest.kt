@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.FeedItemId
 import com.prof18.feedflow.core.model.ParsedFeedSource
+import com.prof18.feedflow.core.model.ReadArticlesVisibility
 import com.prof18.feedflow.core.utils.BrowserIds
 import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.data.SettingsRepository
@@ -170,7 +171,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `disabling auto hide brings back read articles hidden from the current list`() = runTest {
+    fun `disabling auto hide keeps read articles that show read kept in the current list`() = runTest {
         populateDatabase()
         settingsRepository.setShowReadArticlesTimeline(true)
         settingsRepository.setMarkFeedAsReadWhenScrolling(false)
@@ -179,7 +180,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
         val itemId = FeedItemId(feedStateRepository.feedState.value.single().id)
         databaseHelper.updateReadStatus(itemId, isRead = true)
         feedStateRepository.markAsRead(hashSetOf(itemId))
-        assertTrue(feedStateRepository.feedState.value.isEmpty())
+        assertEquals(listOf(itemId.id), feedStateRepository.feedState.value.map { it.id })
 
         viewModel.updateHideReadItems(false)
         advanceUntilIdle()
@@ -188,7 +189,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
     }
 
     @Test
-    fun `enabling scroll marking brings back read articles auto hidden from the current list`() = runTest {
+    fun `enabling scroll marking keeps read articles that show read kept in the current list`() = runTest {
         populateDatabase()
         settingsRepository.setShowReadArticlesTimeline(true)
         settingsRepository.setMarkFeedAsReadWhenScrolling(false)
@@ -197,7 +198,7 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
         val itemId = FeedItemId(feedStateRepository.feedState.value.single().id)
         databaseHelper.updateReadStatus(itemId, isRead = true)
         feedStateRepository.markAsRead(hashSetOf(itemId))
-        assertTrue(feedStateRepository.feedState.value.isEmpty())
+        assertEquals(listOf(itemId.id), feedStateRepository.feedState.value.map { it.id })
 
         viewModel.updateMarkReadWhenScrolling(true)
         advanceUntilIdle()
@@ -215,6 +216,73 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
             viewModel.updateShowReadItemsOnTimeline(true)
             awaitItem()
         }
+    }
+
+    @Test
+    fun `readArticlesVisibility follows a later settings change`() = runTest {
+        viewModel.state.test {
+            assertEquals(ReadArticlesVisibility.HIDE_ON_REFRESH, awaitItem().readArticlesVisibility)
+
+            settingsRepository.setShowReadArticlesTimeline(true)
+            val updated = awaitItem()
+            assertEquals(ReadArticlesVisibility.KEEP_IN_LIST, updated.readArticlesVisibility)
+            assertTrue(updated.isShowReadItemsEnabled)
+        }
+    }
+
+    @Test
+    fun `updateReadArticlesVisibility ignores hide right away while scroll marking is on`() = runTest {
+        settingsRepository.setMarkFeedAsReadWhenScrolling(true)
+
+        viewModel.updateReadArticlesVisibility(ReadArticlesVisibility.HIDE_RIGHT_AWAY)
+        advanceUntilIdle()
+
+        assertFalse(settingsRepository.getHideReadItems())
+        assertEquals(ReadArticlesVisibility.HIDE_ON_REFRESH, viewModel.state.value.readArticlesVisibility)
+    }
+
+    @Test
+    fun `updateReadArticlesVisibility to keep in list triggers getFeeds`() = runTest {
+        populateDatabase()
+
+        feedStateRepository.feedState.test {
+            awaitItem()
+            viewModel.updateReadArticlesVisibility(ReadArticlesVisibility.KEEP_IN_LIST)
+            awaitItem()
+        }
+    }
+
+    @Test
+    fun `updateReadArticlesVisibility to hide right away removes read articles from the current list`() = runTest {
+        populateDatabase()
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
+        feedStateRepository.getFeeds()
+        val itemId = FeedItemId(feedStateRepository.feedState.value.single().id)
+        databaseHelper.updateReadStatus(itemId, isRead = true)
+        feedStateRepository.markAsRead(hashSetOf(itemId))
+        assertEquals(1, feedStateRepository.feedState.value.size)
+
+        viewModel.updateReadArticlesVisibility(ReadArticlesVisibility.HIDE_RIGHT_AWAY)
+        advanceUntilIdle()
+
+        assertTrue(feedStateRepository.feedState.value.isEmpty())
+    }
+
+    @Test
+    fun `updateReadArticlesVisibility to hide on refresh keeps the current list`() = runTest {
+        populateDatabase()
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
+        settingsRepository.setShowReadArticlesTimeline(true)
+        feedStateRepository.getFeeds()
+        val itemId = FeedItemId(feedStateRepository.feedState.value.single().id)
+        databaseHelper.updateReadStatus(itemId, isRead = true)
+        feedStateRepository.markAsRead(hashSetOf(itemId))
+
+        viewModel.updateReadArticlesVisibility(ReadArticlesVisibility.HIDE_ON_REFRESH)
+        advanceUntilIdle()
+
+        assertFalse(settingsRepository.getShowReadArticlesTimeline())
+        assertEquals(listOf(itemId.id), feedStateRepository.feedState.value.map { it.id })
     }
 
     private suspend fun populateDatabase() {

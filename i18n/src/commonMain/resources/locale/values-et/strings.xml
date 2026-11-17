@@ -144,7 +144,6 @@
     <string name="delete_category_close_button">Sulge</string>
     <string name="settings_auto_delete">Kustuta vanad artiklid automaatselt</string>
     <string name="delete_category_confirmation_message">Kas sa oled kindel, et soovid selle kategooria kustutada? Siin leiduvad uudisvood tõstetakse kategooriasse „Kategoriseerimata“.</string>
-    <string name="settings_hide_description">Peida artikli kirjeldus</string>
     <string name="settings_hide_images">Peida artikli pilt</string>
     <string name="hide_feed_from_timeline_description">Peida selle uudisvoo artiklid ajajoonelt</string>
     <string name="menu_add_to_pinned">Tõsta esile</string>
@@ -226,7 +225,6 @@
     <string name="previous_article">Näita eelmist artiklit</string>
     <string name="next_article">Näita järgmist artiklit</string>
     <string name="about_menu_faq">KKK</string>
-    <string name="settings_hide_date">Peida artikli kuupäev</string>
     <string name="settings_auto_delete_period_one_day">Ühe päeva möödumisel</string>
     <string name="time_format_title">Ajavorming</string>
     <string name="time_format_hours_24">24 tundi</string>
@@ -322,7 +320,6 @@
     <string name="settings_notification_mode_grouped">Kõik kombineerituna</string>
     <string name="settings_theme_oled">Süsimust kujundus</string>
     <string name="open_feed_website_button">Ava uudisvoo veebisait</string>
-    <string name="settings_hide_read_items">Peida loetuks märkimisel artiklid automaatselt</string>
     <string name="exit_menu">Välju</string>
     <string name="delete_category">Kustuta kategooria</string>
     <string name="settings_sync_period">Sünkroonimine taustal</string>
@@ -342,9 +339,7 @@
     <string name="drawer_title_library">Sinu kogu</string>
     <string name="settings_desktop_multi_pane_layout">Kasuta mitmepaanilist avalehe paigutust</string>
     <string name="select_article_to_read">Vali loetav artikkel</string>
-    <string name="settings_hide_unread_dot">Peida „Lugemata“ märgistus</string>
     <string name="settings_hide_unread_count">Peida lugemata artiklite arv</string>
-    <string name="settings_hide_feed_source">Peida uudisvoo allikas</string>
     <string name="settings_description_max_lines">Kirjelduse ridu</string>
     <string name="settings_description_lines_three">3 rida</string>
     <string name="settings_description_lines_five">5 rida</string>
@@ -414,7 +409,6 @@
     <string name="server_account_replace_local_message">Ühendamisel asendatakse kohalikus seadmed salvestatud uudisvood serveris leiduvatega. Ühenduse katkestamine neid hiljem ei taasta. Kui vajad varukoopiat, siis ekspordi kohalikud uudisvood esmalt OPML-faili.</string>
     <string name="server_account_replace_and_connect_button">Asenda ja ühenda</string>
     <string name="feed_already_exists_message">%s on juba sinu uudisvoogude hulgas.</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Kui „Kerimisel märgi loetuks“ on lülitatud sisse, siis automaatne peitmine lülitatakse välja ja artiklid on kerimisel paigal. Automaatseks peitmiseks lülita see võimalus välja.</string>
     <string name="feed_fetch_refused_error">Uudisvoog pole kättesaadav. Võib-olla veebisait blokeerib uudisvoogude lugejaid. Palun proovi hiljem uuesti.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Kas oled kindel, et soovid kõik järjehoidjaga märgitud artiklid märkida loetuks?</string>
     <string name="remove_bookmark_dialog_message">Kas oled kindel, et soovid sellelt artiklilt eemaldada järjehoidja?</string>

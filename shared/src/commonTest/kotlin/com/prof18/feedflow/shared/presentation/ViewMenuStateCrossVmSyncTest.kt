@@ -1,6 +1,7 @@
 package com.prof18.feedflow.shared.presentation
 
 import com.prof18.feedflow.core.model.FeedOrder
+import com.prof18.feedflow.core.model.ReadArticlesVisibility
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.TestDispatcherProvider.testDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -42,11 +43,11 @@ class ViewMenuStateCrossVmSyncTest : KoinTestBase() {
         }
 
     @Test
-    fun `updateShowReadItemsOnTimeline via ReadingBehaviorSettingsViewModel syncs to other VMs`() =
+    fun `updateReadArticlesVisibility via ReadingBehaviorSettingsViewModel syncs to other VMs`() =
         runTest(testDispatcher) {
             advanceUntilIdle()
 
-            readingBehaviorViewModel.updateShowReadItemsOnTimeline(true)
+            readingBehaviorViewModel.updateReadArticlesVisibility(ReadArticlesVisibility.KEEP_IN_LIST)
             advanceUntilIdle()
 
             assertTrue(homeViewModel.viewMenuState.value.showReadArticlesTimeline)

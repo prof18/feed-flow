@@ -144,7 +144,6 @@
     <string name="settings_auto_delete_period_two_weeks">Zwei Wochen alt</string>
     <string name="settings_auto_delete_period_one_month">Ein Monat alt</string>
     <string name="feed_url_help_text">Jede Feed-Adresse, Webseite oder Link zu einem Youtube-Kanal hinzufügen. Der Feed wird, wenn möglich, automatisch erkannt</string>
-    <string name="settings_hide_description">Artikelbeschreibung ausblenden</string>
     <string name="settings_hide_images">Artikelbild ausblenden</string>
     <string name="menu_remove_from_pinned">Nicht anpinnen</string>
     <string name="menu_add_to_pinned">Anpinnen</string>
@@ -226,7 +225,6 @@
     <string name="settings_prefetch_article_content">Beim Auffrischen den Artikelinhalt offline behalten</string>
     <string name="settings_prefetch_article_content_warning">Die Aktivierung dieser Option verlangsamt das Auffrischen und verbraucht mehr Daten, weil FeedFlow den vollständigen Artikelinhalt bei jedem Updaten einliest. Bei einer großen Artikelanzahl kann auch die Leistung betroffen sein. Nutze diese Funktion nur, wenn du vollständige Artikel offline lesen willst.</string>
     <string name="about_menu_faq">FAQ</string>
-    <string name="settings_hide_date">Artikeldatum ausblenden</string>
     <string name="settings_auto_delete_period_one_day">Einen Tag alt</string>
     <string name="time_format_title">Zeitformat</string>
     <string name="time_format_hours_24">24 Stunden</string>
@@ -322,7 +320,6 @@
     <string name="settings_notification_mode_grouped">Alles zusammengefasst</string>
     <string name="settings_theme_oled">Schwarz</string>
     <string name="open_feed_website_button">Webseite öffnen</string>
-    <string name="settings_hide_read_items">Artikel automatisch ausblenden, wenn sie als gelesen markiert werden</string>
     <string name="exit_menu">Beenden</string>
     <string name="delete_all_feeds_confirmation_message">Möchtest du wirklich alle Feeds in dieser Kategorie löschen? Das kann nicht mehr rückgängig gemacht werden.</string>
     <string name="browser_launch_error">Der Link kann nicht geöffnet werden. Bitte prüfe deine Browser-Einstellungen.</string>
@@ -332,8 +329,6 @@
     <string name="drawer_title_library">Bibliothek</string>
     <string name="settings_desktop_multi_pane_layout">Startlayout als Mehrfach-Fenster</string>
     <string name="select_article_to_read">Einen Artikel zum Lesen wählen</string>
-    <string name="settings_hide_unread_dot">Anzeige für Ungelesen ausblenden</string>
-    <string name="settings_hide_feed_source">Name des Feeds ausblenden</string>
     <string name="settings_description_max_lines">Zeilen für Beschreibung</string>
     <string name="settings_description_lines_three">3 Zeilen</string>
     <string name="settings_description_lines_five">5 Zeilen</string>
@@ -414,7 +409,6 @@
     <string name="support_purchase_thank_you_title">Du bist fantastisch! 🎉</string>
     <string name="support_purchase_thank_you_message">Der Tip hilft, FeedFlow weiter wachsen zu lassen.💙 Danke für die Unterstützung der laufenden Weiterentwicklung, durchdachten Verbesserungen und Fehlerbehebungen.🙏</string>
     <string name="feed_already_exists_message">%s ist schon in ihren Feeds.</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Automatisches Ausblenden ist inaktiv, wenn \"Beim Scrollen als gelesen markieren\" aktiv ist, daher bleiben Artikel beim Scrollen an ihrem Platz. Schalten sie es aus, um automatisches Ausblenden zu nutzen.</string>
     <string name="settings_force_english">Englisch erzwingen</string>
     <string name="settings_force_english_description">Englisch anstelle der Gerätesprache für die App-Schnittstelle erzwingen.</string>
     <string name="feed_fetch_refused_error">Feed konnte nicht erreicht werden. Vielleicht blockiert die Webseite RSS-Reader. Bitte versuchen sie es später erneut.</string>

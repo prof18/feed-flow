@@ -109,7 +109,6 @@
     <string name="menu_copy_link">Copiar enlace</string>
     <string name="menu_copy_link_comments">Copiar enlace de comentarios</string>
     <string name="settings_crash_reporting">Enviar informe anónimo de errores</string>
-    <string name="settings_hide_description">Ocultar descripción del artículo</string>
     <string name="settings_hide_images">Ocultar imagen del artículo</string>
     <string name="edit_feed_source_name_button">Editar</string>
     <string name="edit_feed">Editar feed</string>
@@ -220,9 +219,6 @@
     <string name="settings_theme_dark">Oscuro</string>
     <string name="settings_theme_oled">Negro</string>
     <string name="settings_desktop_multi_pane_layout">Usar disposición multipanel</string>
-    <string name="settings_hide_date">Ocultar fecha del artículo</string>
-    <string name="settings_hide_unread_dot">Ocultar indicador de no leído</string>
-    <string name="settings_hide_feed_source">Ocultar fuente del feed</string>
     <string name="settings_description_max_lines">Líneas de descripción</string>
     <string name="settings_description_lines_three">3 líneas</string>
     <string name="settings_description_lines_five">5 líneas</string>
@@ -242,7 +238,6 @@
     <string name="delete_all_feeds_confirmation_title">¿Eliminar todos los feeds en la categoría?</string>
     <string name="delete_all_feeds_confirmation_message">¿Seguro que quieres eliminar todos los feeds en esta categoría? Esta acción no se puede deshacer.</string>
     <string name="confirm_button">Confirmar</string>
-    <string name="settings_hide_read_items">Ocultar artículos automáticamente al marcar como leídos</string>
     <string name="settings_about_and_support">Información &amp; Soporte</string>
     <string name="settings_refresh_feeds_on_launch">Refrescar feeds al iniciar la aplicación</string>
     <string name="settings_clear_downloaded_articles">Borrar artículos descargados</string>

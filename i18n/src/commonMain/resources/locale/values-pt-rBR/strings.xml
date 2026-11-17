@@ -108,7 +108,6 @@
     <string name="articles_export_filter_unread">Artigos não lidos</string>
     <string name="articles_export_filter_bookmarked">Artigos favoritados</string>
     <string name="select_article_to_read">Selecione um artigo para ler</string>
-    <string name="settings_hide_read_items">Esconder automaticamente artigos ao marcá-los como lidos</string>
     <string name="menu_mark_all_above_as_read">Marcar todos acima como lidos</string>
     <string name="menu_mark_all_below_as_read">Marcar todos abaixo como lidos</string>
     <string name="menu_share">Compartilhar</string>
@@ -150,10 +149,7 @@
     <string name="no_dropbox_sync_yet">Dados ainda não sincronizados com Dropbox. Clique no botão backup para acionar a sincronização</string>
     <string name="error_account_sync">Desculpe, algo de errado aconteceu ao sincronizar os dados na sua conta - código de erro: %s :(</string>
     <string name="settings_hide_images">Esconder imagem do artigo</string>
-    <string name="settings_hide_date">Esconder data do artigo</string>
-    <string name="settings_hide_unread_dot">Esconder indicador de não lido</string>
     <string name="settings_hide_unread_count">Esconder contador de não lidos</string>
-    <string name="settings_hide_feed_source">Esconder fonte do feed</string>
     <string name="settings_description_max_lines">Descrição</string>
     <string name="settings_description_lines_three">3 linhas</string>
     <string name="settings_description_lines_five">5 linhas</string>

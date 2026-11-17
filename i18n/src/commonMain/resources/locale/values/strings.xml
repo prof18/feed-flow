@@ -118,8 +118,6 @@
     <string name="select_article_to_read">Select an article to read</string>
     <string name="desktop_expand_reader">Expand reader</string>
     <string name="desktop_restore_reader_layout">Restore article list</string>
-    <string name="settings_hide_read_items">Auto-hide articles when marked as read</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Auto-hide is disabled when “Mark as read when scrolling” is on, so articles stay in place as you scroll. Turn it off to use auto-hide.</string>
     <string name="settings_read_articles_title">Read articles</string>
     <string name="settings_read_articles_keep">Keep in list</string>
     <string name="settings_read_articles_hide_on_refresh">Hide on next refresh</string>
@@ -256,12 +254,8 @@
     <string name="icloud_sync_success">Your iCloud account is successfully connected</string>
     <string name="no_icloud_sync_yet">Not backed up to iCloud yet. Select Back up now to start.</string>
     <string name="settings_hide_duplicated_title_from_desc">Hide title from article description</string>
-    <string name="settings_hide_description">Hide article description</string>
     <string name="settings_hide_images">Hide article image</string>
-    <string name="settings_hide_date">Hide article date</string>
-    <string name="settings_hide_unread_dot">Hide unread indicator</string>
     <string name="settings_hide_unread_count">Hide unread counts</string>
-    <string name="settings_hide_feed_source">Hide feed name</string>
     <string name="settings_show_description">Description</string>
     <string name="settings_show_images">Image</string>
     <string name="settings_show_date">Date</string>

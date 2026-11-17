@@ -144,7 +144,6 @@
     <string name="settings_auto_delete_period_two_weeks">Anterior a 2 semanas</string>
     <string name="delete_category_confirmation_message">Tes certeza de querer eliminar esta categoría? As canles nesta categoría pasarán a Sen Categoría.</string>
     <string name="settings_auto_delete_period_disabled">Desactivado</string>
-    <string name="settings_hide_description">Ocultar descrición do artigo</string>
     <string name="settings_hide_images">Ocultar imaxe do artigo</string>
     <string name="drawer_title_pinned_feeds">Canles fixadas</string>
     <string name="menu_add_to_pinned">Fixar</string>
@@ -226,7 +225,6 @@
     <string name="previous_article">Artigo anterior</string>
     <string name="next_article">Artigo seguinte</string>
     <string name="about_menu_faq">PMF</string>
-    <string name="settings_hide_date">Ocultar data do artigo</string>
     <string name="settings_auto_delete_period_one_day">Un día de antigüidade</string>
     <string name="time_format_title">Formato da hora</string>
     <string name="time_format_hours_24">24 horas</string>
@@ -268,7 +266,6 @@
     <string name="articles_export_filter_bookmarked">Artigos dos marcadores</string>
     <string name="settings_desktop_multi_pane_layout">Usar pantalla de inicio con varios paneis</string>
     <string name="select_article_to_read">Selecciona un artigo para ler</string>
-    <string name="settings_hide_read_items">Ocultar automaticamente os artigos unha vez lidos</string>
     <string name="menu_mark_all_above_as_read">Marcar todo o de arriba como lido</string>
     <string name="menu_mark_all_below_as_read">Marca todo o inferior como lido</string>
     <string name="settings_reduce_motion">Reducir o movemento e animacións</string>
@@ -281,8 +278,6 @@
     <string name="no_google_drive_sync_yet">Aínda non se sincronizaron os datos con Google Drive. Preme no botón de copia de apoio para realizar a sincronización</string>
     <string name="google_drive_connect_button">Conectar con Google Drive</string>
     <string name="google_drive_desktop_sync_description">Preme no botón inferior para acceder á túa conta Google Drive. Vaise abrir unha xanela do navegador para a autenticación. Unha vez completada podes volver a esta app.</string>
-    <string name="settings_hide_unread_dot">Ocultar indicador dos non lidos</string>
-    <string name="settings_hide_feed_source">Ocultar fonte da canle</string>
     <string name="settings_description_max_lines">Liñas da descrición</string>
     <string name="settings_description_lines_three">3 liñas</string>
     <string name="settings_description_lines_five">5 liñas</string>
@@ -407,7 +402,6 @@
     <string name="reader_mode_no_content_title">Sen contido dispoñible</string>
     <string name="reader_mode_no_content_message">Este artigo non ten ningún contido, e non hai unha ligazón para abrila na web.</string>
     <string name="feed_already_exists_message">%s xa é unha das túas canles.</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">A auto-ocultación está desactivada se «Marcar como lido ao desprazarse» está activa, polo que os artigos permanecen no sitio ao desprazarte. Desactívaa para usar auto-ocultar.</string>
     <string name="settings_force_english">Fozar o inglés</string>
     <string name="settings_force_english_description">Usar o idioma inglés para a interface da app e non o idioma do dispositivo.</string>
     <string name="server_account_subscriptions_warning">Esta conta utiliza as subscricións gardadas no seu servidor.</string>

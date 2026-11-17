@@ -7,8 +7,6 @@ data class ReadingBehaviorState(
     val isSaveReaderModeContentEnabled: Boolean = false,
     val isPrefetchArticleContentEnabled: Boolean = false,
     val isMarkReadWhenScrollingEnabled: Boolean = true,
-    val isShowReadItemsEnabled: Boolean = false,
-    val isHideReadItemsEnabled: Boolean = false,
     val readArticlesVisibility: ReadArticlesVisibility = ReadArticlesVisibility.HIDE_ON_REFRESH,
     val articleOpenMode: ArticleOpenMode = ArticleOpenMode.FULL_ARTICLE,
     val articleBrowserId: String? = null,

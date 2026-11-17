@@ -110,7 +110,6 @@
     <string name="icloud_sync_success">Twoje konto iCloud zostało pomyślnie połączone</string>
     <string name="no_icloud_sync_yet">Dane nie zostały jeszcze zsynchronizowane z iCloud. Kliknij przycisk kopii zapasowej, aby uruchomić synchronizację</string>
     <string name="settings_hide_duplicated_title_from_desc">Ukryj tytuł w opisie artykułu</string>
-    <string name="settings_hide_description">Ukryj opis artykułu</string>
     <string name="settings_hide_images">Ukryj obraz artykułu</string>
     <string name="reader_mode_font_size">Wielkość czcionki</string>
     <string name="edit_feed_source_name_button">Edytuj</string>
@@ -232,7 +231,6 @@
     <string name="articles_export_filter_bookmarked">Artykuły dodane do zakładek</string>
     <string name="settings_desktop_multi_pane_layout">Użyj układu strony głównej z wieloma panelami</string>
     <string name="select_article_to_read">Wybierz artykuł do przeczytania</string>
-    <string name="settings_hide_read_items">Automatycznie ukrywaj artykuły po oznaczeniu ich jako przeczytane</string>
     <string name="menu_mark_all_above_as_read">Oznacz wszystkie powyższe wiadomości jako przeczytane</string>
     <string name="menu_mark_all_below_as_read">Oznacz wszystkie poniższe wiadomości jako przeczytane</string>
     <string name="about_menu_faq">Najczęściej zadawane pytania</string>
@@ -249,10 +247,7 @@
     <string name="no_google_drive_sync_yet">Dane nie zostały jeszcze zsynchronizowane z Dyskiem Google. Kliknij przycisk tworzenia kopii zapasowej, aby uruchomić synchronizację</string>
     <string name="google_drive_connect_button">Połącz z Dyskiem Google</string>
     <string name="google_drive_desktop_sync_description">Kliknij poniższy przycisk, aby połączyć swoje konto Google Drive. Otworzy się okno przeglądarki służące do uwierzytelnienia. Po zakończeniu logowania możesz wrócić do tej aplikacji.</string>
-    <string name="settings_hide_date">Ukryj datę artykułu</string>
-    <string name="settings_hide_unread_dot">Ukryj wskaźnik nieprzeczytanych wiadomości</string>
     <string name="settings_hide_unread_count">Ukryj liczbę nieprzeczytanych wiadomości</string>
-    <string name="settings_hide_feed_source">Ukryj źródło kanału</string>
     <string name="settings_description_max_lines">Wiersze opisu</string>
     <string name="settings_description_lines_three">3 wiersze</string>
     <string name="settings_description_lines_five">5 wierszy</string>
@@ -414,5 +409,4 @@
     <string name="support_purchase_thank_you_message">Twoja darowizna pomaga w dalszym rozwoju FeedFlow 💙 Dziękujemy za wsparcie ciągłego rozwoju, przemyślanych ulepszeń i naprawy błędów. 🙏</string>
     <string name="reader_mode_no_content_title">Brak dostępnych treści</string>
     <string name="reader_mode_no_content_message">Ten artykuł nie zawiera żadnej treści i nie ma linku umożliwiającego jego otwarcie w sieci.</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Funkcja automatycznego ukrywania jest wyłączona, gdy włączona jest opcja „Oznaczaj jako przeczytane podczas przewijania”, dzięki czemu artykuły pozostają na swoim miejscu podczas przewijania. Wyłącz tę opcję, aby korzystać z automatycznego ukrywania.</string>
 </resources>

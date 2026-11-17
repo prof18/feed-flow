@@ -52,7 +52,6 @@
     <string name="last_download">Pēdējoreiz lejupielādēts: %s</string>
     <string name="add_account_button">Pievienot kontu</string>
     <string name="settings_hide_duplicated_title_from_desc">Slēpt virsrakstu raksta aprakstā</string>
-    <string name="settings_hide_description">Slēpt raksta aprakstu</string>
     <string name="settings_hide_images">Slēpt raksta attēlu</string>
     <string name="reader_mode_font_size">Fonta izmērs</string>
     <string name="edit_feed">Rediģēt ziņu plūsmu</string>
@@ -229,7 +228,6 @@
     <string name="articles_import_done_message">Raksti ievietoti</string>
     <string name="settings_sync_period">Atsvaidzināt ziņu plūsmas fonā</string>
     <string name="settings_auto_delete_period_one_day">vecāki par vienu dienu</string>
-    <string name="settings_hide_date">Slēpt raksta datumu</string>
     <string name="reader_mode_archive_button">Atvērt archive.is vietnē</string>
     <string name="reader_mode_browser_button_content_description">Atvērt pārlūkā</string>
     <string name="delete_category">Dzēst kategoriju</string>
@@ -300,8 +298,6 @@
     <string name="desktop_search_back_button">Atpakaļ</string>
     <string name="add_feed_anyway_button">Pievienot tik un tā</string>
     <string name="reader_mode_title_font_size">Virsraksta izmērs</string>
-    <string name="settings_hide_read_items">Automātiski paslēpt rakstus, kad tie atzīmēti kā lasīti</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Automātiskā rakstu paslēpšana nedarbojas, ja ir iespējots iestatījums \"Atzīmēt rakstu kā lasītu, to ritinot\". Tāpēc raksti ritinot paliek savās vietās. Atspējojiet šo iestatījumu, lai izmantotu automātisko paslēpšanu.</string>
     <string name="article_bookmarked_content_description">Jau saglabātajos rakstos</string>
     <string name="article_unread_bookmarked_state">Nelasīts, saglabātajos rakstos</string>
     <string name="widget_content_bookmarks_description">Jūsu saglabāto rakstu kolekcija</string>

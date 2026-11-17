@@ -100,7 +100,6 @@
     <string name="add_account_button">Fiók hozzáadása</string>
     <string name="no_icloud_sync_yet">Az adatok még nincsenek szinkronizálva az iClouddal. Kattintson/koppintson a biztonsági mentés gombra a szinkronizálás elindításához</string>
     <string name="settings_hide_duplicated_title_from_desc">Cím elrejtése a cikkek leírásában</string>
-    <string name="settings_hide_description">Cikk leírásának elrejtése</string>
     <string name="edit_feed_source_name_button">Szerkesztés</string>
     <string name="edit_feed">Hírforrás szerkesztése</string>
     <string name="wrong_credentials_error_message">A hitelesítési adatok hibásak. Próbálja újra.</string>
@@ -274,8 +273,6 @@
     <string name="select_article_to_read">Válassz egy cikket</string>
     <string name="desktop_expand_reader">Olvasó átméretezése teljes képernyőre</string>
     <string name="desktop_restore_reader_layout">Cikklista visszaállítása</string>
-    <string name="settings_hide_read_items">Olvasottnak jelölt cikkek elrejtése</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Elrejtés kikapcsolva, ha \"Olvasottnak jelöl görgetéskor\" van bejelölve, így a cikkek megmaradnak. Kapcsold ki, ha szeretnéd az automatikus elrejtés funkciót.</string>
     <string name="menu_mark_all_above_as_read">Olvasottnak jelöli a fentieket</string>
     <string name="menu_mark_all_below_as_read">Olvasottnak jelöli az alábbiakat</string>
     <string name="mark_all_above_as_read_confirmation_title">Olvasottnak jelölöd a fentieket?</string>
@@ -354,10 +351,7 @@
     <string name="no_google_drive_sync_yet">Az adatok még nincsenek szinkronizálva a Google Drive-val. Kattintson a biztonsági mentés gombra az adatszinkronizásláshoz</string>
     <string name="google_drive_connect_button">Google Drive csatlakozás</string>
     <string name="google_drive_desktop_sync_description">Kattints az alábbi gombra Google Drive csatlakoztatásához. Megnyílik egy böngészőablak a hitelesítéshez. Miután befejezted a bejelentkezést, visszatérhetsz ehhez az alkalmazáshoz.</string>
-    <string name="settings_hide_date">Rejtsd el a cikk dátumát</string>
-    <string name="settings_hide_unread_dot">Rejtsd el az olvasatlan cimkét</string>
     <string name="settings_hide_unread_count">Rejtsd el az olvasatlan cikkek számlálását</string>
-    <string name="settings_hide_feed_source">Rejtsd el a hírfolyam forrását</string>
     <string name="settings_description_max_lines">Megjegyzések</string>
     <string name="settings_description_lines_three">3 sor</string>
     <string name="settings_description_lines_five">5 sor</string>

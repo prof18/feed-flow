@@ -149,7 +149,6 @@
     <string name="settings_auto_delete_period_one_week">Старше одной недели</string>
     <string name="settings_auto_delete_period_two_weeks">Старше двух недель</string>
     <string name="settings_auto_delete_period_one_month">Старше одного месяца</string>
-    <string name="settings_hide_description">Скрыть описание статьи</string>
     <string name="settings_hide_images">Скрыть картинку статьи</string>
     <string name="category_name">Название категории</string>
     <string name="settings_crash_reporting">Отправлять анонимные отчеты об ошибках</string>
@@ -255,7 +254,6 @@
     <string name="no_google_drive_sync_yet">Данные ещё не синхронизированы с Google Drive. Нажмите кнопку резервного копирования для запуска синхронизации</string>
     <string name="google_drive_connect_button">Подключить Google Drive</string>
     <string name="google_drive_desktop_sync_description">Нажмите ниже, чтобы подключить Google Drive. Браузер откроется для входа. После авторизации вернитесь сюда.</string>
-    <string name="settings_hide_date">Скрыть дату статьи</string>
     <string name="miniflux_account_connected">Ваш аккаунт Miniflux успешно подключен</string>
     <string name="no_miniflux_sync_yet">Данные ещё не синхронизированы</string>
     <string name="miniflux_last_sync">Последняя синхронизация: %s</string>
@@ -322,7 +320,6 @@
     <string name="feed_suggestions_description">Просматривайте и добавляйте ленты в свою коллекцию</string>
     <string name="delete_feed_source_error">Не удалось удалить ленту. Пожалуйста, попробуйте ещё раз.</string>
     <string name="open_feed_website_button">Открыть сайт ленты</string>
-    <string name="settings_hide_read_items">Автоскрывать прочитанные статьи</string>
     <string name="exit_menu">Выход</string>
     <string name="browser_launch_error">Не удаётся открыть ссылку. Проверьте настройки браузера.</string>
     <string name="choose_another_file_button">Выбрать другой файл</string>
@@ -331,8 +328,6 @@
     <string name="drawer_title_library">Библиотека</string>
     <string name="settings_desktop_multi_pane_layout">Использовать многооконный макет главного экрана</string>
     <string name="select_article_to_read">Выберите статью для чтения</string>
-    <string name="settings_hide_unread_dot">Скрыть индикатор непрочитанных</string>
-    <string name="settings_hide_feed_source">Скрыть источник ленты</string>
     <string name="settings_description_max_lines">Строки описания</string>
     <string name="settings_description_lines_three">3 строки</string>
     <string name="settings_description_lines_five">5 строк</string>

@@ -53,15 +53,11 @@ class MenuBarViewModel internal constructor(
                 settingsRepository.showReadArticlesTimelineFlow,
                 settingsRepository.hideReadItemsFlow,
                 settingsRepository.markFeedAsReadWhenScrollingFlow,
-            ) { showRead, hideRead, _ ->
-                Triple(showRead, hideRead, settingsRepository.getReadArticlesVisibility())
-            }.collect { (showRead, hideRead, visibility) ->
+            ) { showRead, _, _ ->
+                showRead to settingsRepository.getReadArticlesVisibility()
+            }.collect { (showRead, visibility) ->
                 stateMutableFlow.update {
-                    it.copy(
-                        isShowReadItemsEnabled = showRead,
-                        isHideReadItemsEnabled = hideRead,
-                        readArticlesVisibility = visibility,
-                    )
+                    it.copy(isShowReadItemsEnabled = showRead, readArticlesVisibility = visibility)
                 }
             }
         }
@@ -71,7 +67,6 @@ class MenuBarViewModel internal constructor(
         val themeMode = settingsRepository.getThemeMode()
         val isMarkReadWhenScrollingEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
         val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
-        val isHideReadItemsEnabled = settingsRepository.getHideReadItems()
         val articleOpenMode = settingsRepository.getArticleOpenMode()
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
@@ -88,7 +83,6 @@ class MenuBarViewModel internal constructor(
                 themeMode = themeMode,
                 isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
                 isShowReadItemsEnabled = isShowReadItemsEnabled,
-                isHideReadItemsEnabled = isHideReadItemsEnabled,
                 readArticlesVisibility = settingsRepository.getReadArticlesVisibility(),
                 articleOpenMode = articleOpenMode,
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
@@ -130,15 +124,6 @@ class MenuBarViewModel internal constructor(
                 it.copy(isShowReadItemsEnabled = value)
             }
             feedStateRepository.getFeeds()
-        }
-    }
-
-    fun updateHideReadItems(value: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setHideReadItems(value)
-            stateMutableFlow.update {
-                it.copy(isHideReadItemsEnabled = value)
-            }
         }
     }
 

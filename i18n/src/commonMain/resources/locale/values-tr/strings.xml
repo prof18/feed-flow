@@ -110,7 +110,6 @@
     <string name="icloud_sync_success">iCloud hesabınız başarıyla bağlandı</string>
     <string name="no_icloud_sync_yet">Veriler henüz iCloud ile eşitlenmedi. Bir eşitleme başlatmak için yedekle düğmesine tıklayın</string>
     <string name="settings_hide_duplicated_title_from_desc">Başlığı makale açıklamasından gizle</string>
-    <string name="settings_hide_description">Makale açıklamasını gizle</string>
     <string name="settings_hide_images">Makale resmini gizle</string>
     <string name="reader_mode_font_size">Yazı Tipi Boyutu</string>
     <string name="edit_feed_source_name_button">Düzenle</string>
@@ -254,7 +253,6 @@
     <string name="link_opening_preference_default_short">Uygulama ayarı</string>
     <string name="article_report_sent">Rapor gönderildi. Teşekkürler!</string>
     <string name="google_drive_sync_success">Google Drive hesabınız başarıyla bağlandı</string>
-    <string name="settings_hide_date">Makale tarihini gizle</string>
     <string name="widget_list_item_description">Widget %s · %s</string>
     <string name="article_bookmarked_content_description">Yer imlerine eklendi</string>
     <string name="widget_text_color_light">Açık</string>
@@ -264,7 +262,6 @@
     <string name="delete_feed_confirmation_title">Akış silinsin mi?</string>
     <string name="audio_return_to_episode">Bölüme dön</string>
     <string name="article_report_send">Gönder</string>
-    <string name="settings_hide_feed_source">Akış kaynağını gizle</string>
     <string name="widget_appearance_title">Görünüm</string>
     <string name="desktop_accounts_overview_description">Bağlantı seçeneklerini görmek için bir hizmet seçin. Bir hizmeti seçmek onu hemen bağlamaz.</string>
     <string name="menu_article">Makale</string>
@@ -439,7 +436,6 @@
     <string name="widget_show_header_title">Başlık metnini göster</string>
     <string name="clear_old_articles_dialog_message">Eski makaleleri silmek istediğinizden emin misiniz?</string>
     <string name="widget_content_feed_source">Akış kaynağı</string>
-    <string name="settings_hide_read_items">Okundu olarak işaretlenen makaleleri otomatik gizle</string>
     <string name="desktop_accounts_single_provider_explanation">FeedFlow aynı anda yalnızca bir eşitleme hesabını destekler. Farklı bir hizmet bağlamak için mevcut hesabınızın bağlantısını kesin.</string>
     <string name="notification_category_body">\"%s\" kategorisinde yeni makaleleriniz var</string>
     <string name="settings_notifications_open_settings_button">Ayarları Aç</string>
@@ -465,7 +461,6 @@
     <string name="desktop_dropbox_code_required">Dropbox\'tan alınan yetkilendirme kodunu girin.</string>
     <string name="widget_content_timeline_description">Tüm akışlardaki okunmamış makaleler</string>
     <string name="bazqux_login_free_trial_expired">Giriş başarısız: ücretsiz deneme süreniz dolmuş</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">“Kaydırırken okundu olarak işaretle” açıkken otomatik gizleme devre dışıdır, böylece kaydırdıkça makaleler yerinde kalır. Otomatik gizlemeyi kullanmak için bu özelliği kapatın.</string>
     <string name="desktop_expand_all_feeds">Tümünü genişlet</string>
     <string name="add_word_placeholder">Kelime ekle</string>
     <string name="google_drive_desktop_sync_description">Google Drive hesabınızı bağlamak için aşağıdaki düğmeye tıklayın. Kimlik doğrulaması için bir tarayıcı penceresi açılacaktır. Giriş işlemini tamamladıktan sonra bu uygulamaya dönebilirsiniz.</string>
@@ -489,7 +484,6 @@
     <string name="menu_mark_all_below_as_read">Aşağıdakilerin tümünü okundu olarak işaretle</string>
     <string name="desktop_expand_feed_category">\"%s\" kategorisini genişlet</string>
     <string name="drawer_title_library">Kütüphane</string>
-    <string name="settings_hide_unread_dot">Okunmamış işaretini gizle</string>
     <string name="desktop_settings_preview_title">Önizleme</string>
     <string name="widget_enable_sync">Eşitlemeyi etkinleştir</string>
     <string name="hide_youtube_shorts_fallback">Bu kanal için Shorts videoları gizlenemedi, bu nedenle akışın tamamı eklendi.</string>

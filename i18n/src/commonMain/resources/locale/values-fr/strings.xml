@@ -112,7 +112,6 @@
     <string name="add_account_button">Ajouter le compte</string>
     <string name="settings_hide_duplicated_title_from_desc">Masquer le titre de la description de l’article</string>
     <string name="no_icloud_sync_yet">Pas encore sauvegardé dans iCloud. Sélectionnez « Sauvegarder maintenant » pour démarrer.</string>
-    <string name="settings_hide_description">Masquer la description de l\'article</string>
     <string name="settings_hide_images">Masquer l\'image de l\'article</string>
     <string name="feed_name">Nom du flux</string>
     <string name="feed_edited_message">Flux %s mis à jour</string>
@@ -229,7 +228,6 @@
     <string name="no_feedbin_sync_yet">Les données ne sont pas encore synchronisées</string>
     <string name="exit_menu">Quitter</string>
     <string name="menu_view">Afficher</string>
-    <string name="settings_hide_feed_source">Masquer le nom du flux</string>
     <string name="settings_clear_downloaded_articles">Supprimer les copies hors ligne</string>
     <string name="settings_about_and_support">A propos &amp; support</string>
     <string name="search_button_content_description">Rechercher</string>
@@ -245,7 +243,6 @@
     <string name="articles_export_filter_unread">Articles non lus</string>
     <string name="articles_export_filter_bookmarked">Articles favoris</string>
     <string name="select_article_to_read">Sélectionner un article à lire</string>
-    <string name="settings_hide_read_items">Cacher automatiquement les articles marqués comme lus</string>
     <string name="menu_mark_all_above_as_read">Marquer les articles précédents comme lus</string>
     <string name="menu_mark_all_below_as_read">Marquer les articles suivants comme lus</string>
     <string name="about_menu_faq">FAQ</string>
@@ -261,8 +258,6 @@
     <string name="no_google_drive_sync_yet">Pas encore sauvegardé sur Google Drive. Sélectionnez « Sauvegarder maintenant » pour commencer.</string>
     <string name="google_drive_connect_button">Connecter son compte Google Drive</string>
     <string name="google_drive_desktop_sync_description">Cliquez sur le bouton ci-dessous pour connecter votre compte Google Drive. Une fenêtre de navigateur s’ouvrira pour l’authentification. Une fois la connexion terminée, vous pourrez revenir à cette application.</string>
-    <string name="settings_hide_date">Masquer la date de l\'article</string>
-    <string name="settings_hide_unread_dot">Masquer l\'indicateur « non lu »</string>
     <string name="settings_description_max_lines">Nombre de lignes maximal pour la description</string>
     <string name="settings_description_lines_three">Description sur 3 lignes</string>
     <string name="settings_description_lines_five">Description sur 5 lignes</string>
@@ -414,7 +409,6 @@
     <string name="support_paywall_title">Soutenez le développement de FeedFlow 💙</string>
     <string name="support_purchase_thank_you_title">Vous êtes formidable ! 🎉</string>
     <string name="support_purchase_thank_you_message">Votre don aide FeedFlow à grandir 💙 Merci de soutenir le développement continu, les améliorations apportées et la correction des bugs. 🙏</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Le masquage automatique est désactivé lorsque « Marquer comme lu lors du défilement » est activé, ainsi les articles restent en place lors du défilement. Le désactiver pour utiliser le masquage automatique.</string>
     <string name="settings_force_english">Forcer l\'anglais</string>
     <string name="settings_force_english_description">Utiliser l\'anglais comme langue d\'interface au lieu de la langue du système.</string>
     <string name="feed_fetch_refused_error">Impossible d\'atteindre ce flux. Le site bloque peut être les lecteurs RSS. Veuillez réessayer plus tard.</string>

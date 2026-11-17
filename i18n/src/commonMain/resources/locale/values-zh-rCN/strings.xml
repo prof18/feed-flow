@@ -134,7 +134,6 @@
     <string name="settings_feed_list_scale_title">文本缩放</string>
     <string name="settings_font_scale_title_example">文章标题</string>
     <string name="settings_font_scale_feed_source_example">订阅源名称</string>
-    <string name="settings_hide_description">隐藏文章描述</string>
     <string name="no_fresh_rss_sync_yet">数据尚未同步</string>
     <string name="fresh_rss_last_sync">上次同步：%s</string>
     <string name="fresh_rss_password_hint">FreshRSS API 密码（设置 &gt; 账号）</string>
@@ -226,7 +225,6 @@
     <string name="previous_article">上一篇文章</string>
     <string name="next_article">下一篇文章</string>
     <string name="about_menu_faq">常见问题</string>
-    <string name="settings_hide_date">隐藏文章日期</string>
     <string name="settings_auto_delete_period_one_day">一天前</string>
     <string name="time_format_title">时间格式</string>
     <string name="time_format_hours_24">24 小时制</string>
@@ -322,7 +320,6 @@
     <string name="notification_category_body">您在 %s 中有新文章</string>
     <string name="settings_theme_oled">黑色</string>
     <string name="open_feed_website_button">打开网站</string>
-    <string name="settings_hide_read_items">标记为已读时自动隐藏文章</string>
     <string name="exit_menu">退出</string>
     <string name="browser_launch_error">无法打开链接。请检查浏览器设置。</string>
     <string name="choose_another_file_button">选择另一个文件</string>
@@ -331,8 +328,6 @@
     <string name="drawer_title_library">库</string>
     <string name="settings_desktop_multi_pane_layout">使用多窗格首页布局</string>
     <string name="select_article_to_read">选择要阅读的文章</string>
-    <string name="settings_hide_unread_dot">隐藏未读指示器</string>
-    <string name="settings_hide_feed_source">隐藏订阅源名称</string>
     <string name="settings_description_max_lines">描述行</string>
     <string name="settings_description_lines_three">3 行</string>
     <string name="settings_description_lines_five">5 行</string>
@@ -414,7 +409,6 @@
     <string name="server_account_replace_and_connect_button">替换并连接</string>
     <string name="server_account_replace_local_message">连接会将当前存储在此设备上的订阅源替换为来自服务器的订阅源。稍后断开连接不会恢复本地订阅源。如果要保留副本，请先将其导出为 OPML 格式。</string>
     <string name="feed_already_exists_message">%s 已在您的订阅源中。</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">开启 “滚动时标记为已读” 选项禁用自动隐藏，因此文章在你滚动时保持在原位。关闭使用自动隐藏。</string>
     <string name="feed_fetch_refused_error">无法访问此订阅源。该网站可能正在屏蔽 RSS 阅读器。请稍后重试。</string>
     <string name="mark_all_bookmarks_read_dialog_message">确定要将所有已加书签的文章标记为已读吗？</string>
     <string name="remove_bookmark_dialog_message">确定要将此文章从书签中移除吗？</string>

@@ -110,7 +110,6 @@
     <string name="icloud_sync_success">iCloudアカウントは正常に接続されました。</string>
     <string name="no_icloud_sync_yet">データはまたiCloudと同期されていません。バックアップボタンを押して同期を開始できます。</string>
     <string name="settings_hide_duplicated_title_from_desc">記事の説明からタイトルを隠す</string>
-    <string name="settings_hide_description">記事の説明を非表示</string>
     <string name="settings_hide_images">記事の画像を隠す</string>
     <string name="reader_mode_font_size">フォントの大きさ</string>
     <string name="edit_feed_source_name_button">編集</string>
@@ -171,7 +170,6 @@
     <string name="widget_configuration_confirm">ウィジェットを追加</string>
     <string name="open_feed_settings">フィードの設定を開く</string>
     <string name="about_menu_faq">よくある質問</string>
-    <string name="settings_hide_date">記事の日付を隠す</string>
     <string name="settings_auto_delete_period_one_day">1日前</string>
     <string name="settings_sync_period_one_day">毎日</string>
     <string name="file_menu">ファイル</string>

@@ -17,8 +17,9 @@ row"), so it survives the set changing.
 When mark-as-read-on-scroll is enabled, newly read articles stay in the current
 in-memory list so its rows do not shift during scrolling, even if auto-hide is
 saved as enabled. A fresh timeline query still applies the normal unread filter
-when showing read articles is off. Auto-hide becomes effective again when
-mark-as-read-on-scroll is disabled.
+when showing read articles is off. Auto-hide ("Hide right away") becomes
+effective again when mark-as-read-on-scroll is disabled and showing read
+articles is off; showing read articles always keeps them in the list.
 
 ## The cursor is a pair
 

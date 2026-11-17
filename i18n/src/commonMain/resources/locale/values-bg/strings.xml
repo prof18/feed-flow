@@ -145,7 +145,6 @@
     <string name="feed_url_help_text">Добавете всяка директна емисия, уебсайт или връзка към YouTube канала. Емисията ще бъде открита автоматично, когато е възможно</string>
     <string name="settings_auto_delete">Автоматично изтриване на стари статии</string>
     <string name="settings_hide_images">Скриване на изображението на статията</string>
-    <string name="settings_hide_description">Скриване на описанието на статията</string>
     <string name="hide_feed_from_timeline_description">Скрийте статиите на тези емисии от времевата линия</string>
     <string name="pin_feed_source_description">Закачете тази емисия</string>
     <string name="menu_add_to_pinned">Закачане</string>
@@ -226,7 +225,6 @@
     <string name="previous_article">Предишна статия</string>
     <string name="next_article">Следваща статия</string>
     <string name="about_menu_faq">ЧЗВ</string>
-    <string name="settings_hide_date">Скриване на датата на статията</string>
     <string name="settings_auto_delete_period_one_day">На един ден</string>
     <string name="time_format_title">Формат на времето</string>
     <string name="time_format_hours_24">24 часа</string>
@@ -322,7 +320,6 @@
     <string name="settings_notification_mode_grouped">Всички взети заедно</string>
     <string name="settings_theme_oled">Черна</string>
     <string name="open_feed_website_button">Отваряне на уебсайта</string>
-    <string name="settings_hide_read_items">Автоматично скриване на статии, когато са маркирани като прочетени</string>
     <string name="exit_menu">Изход</string>
     <string name="widget_configuration_description">Актуализациите на джаджите следват настройките за синхронизация на фона от Синхронизация и Съхранение.</string>
     <string name="browser_launch_error">Връзката не може да бъде отворена. Моля, проверете настройките на браузъра си.</string>
@@ -332,8 +329,6 @@
     <string name="drawer_title_library">Библиотека</string>
     <string name="settings_desktop_multi_pane_layout">Използвайте начален екран с няколко панела</string>
     <string name="select_article_to_read">Изберете статия за четене</string>
-    <string name="settings_hide_unread_dot">Скриване на индикатора за непрочетени</string>
-    <string name="settings_hide_feed_source">Скриване на името на емисията</string>
     <string name="settings_description_max_lines">Описателни редове</string>
     <string name="settings_description_lines_three">3 реда</string>
     <string name="settings_description_lines_five">5 реда</string>
@@ -414,7 +409,6 @@
     <string name="server_account_replace_local_message">Свързването замества емисиите, които в момента се съхраняват на това устройство, с емисиите от сървъра. По-късно прекъсване на връзката няма да възстанови локалните емисии. Първо ги изнесете в OPML, ако искате да запазите копие.</string>
     <string name="server_account_replace_and_connect_button">Сменете и свържете</string>
     <string name="feed_already_exists_message">%s вече е във вашите емисии.</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Автоматичното скриване е деактивирано, когато е включено „Маркирай като прочетено при превъртане“, така че статиите остават на мястото си, докато превъртате. Изключете го, за да използвате автоматично скриване.</string>
     <string name="feed_fetch_refused_error">Не можах да достигна тази емисия. Възможно е уебсайтът да блокира RSS четците. Моля, опитайте отново по-късно.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Сигурни ли сте, че искате да маркирате всички статии с отметки като прочетени?</string>
     <string name="remove_bookmark_dialog_message">Сигурни ли сте, че искате да премахнете тази статия от отметките?</string>

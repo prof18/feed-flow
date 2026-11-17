@@ -90,7 +90,6 @@
     <string name="icloud_sync_success">Váš účet iCloud je úspěšně připojen</string>
     <string name="no_icloud_sync_yet">Údaje nejsou synchronizovány s iCloud. Klepnutím na tlačítko zálohovat nyní spustíte synchronizaci.</string>
     <string name="settings_hide_duplicated_title_from_desc">Skrýt název z popisu článku</string>
-    <string name="settings_hide_description">Skrýt popis článku</string>
     <string name="settings_hide_images">Skrýt obrázek článku</string>
     <string name="reader_mode_font_size">Velikost písma čtečky</string>
     <string name="edit_feed_source_name_button">Editovat</string>
@@ -222,7 +221,6 @@
     <string name="settings_save_reader_mode_content">Uchovejte offline kopie článků, které otevřete</string>
     <string name="settings_prefetch_article_content">Vytvořte offline kopie při obnovování zdrojů</string>
     <string name="settings_prefetch_article_content_warning">Povolení této možnosti zpomalí obnovování a zvýší využití dat, protože celý obsah článku z každé webové stránky bude stažen během aktualizace zdrojů. Pokud máte velké množství článků, může to také ovlivnit výkon. Zapněte to pouze v případě, že potřebujete číst články bez připojení.</string>
-    <string name="settings_hide_date">Skrýt datum článku</string>
     <string name="settings_auto_delete_period_one_day">Automatické mazání den starých článků</string>
     <string name="time_format_title">Formát času</string>
     <string name="time_format_hours_24">24 hodin</string>
@@ -322,7 +320,6 @@
     <string name="settings_notification_mode_category">Podle kategorie</string>
     <string name="settings_notification_mode_grouped">Vše dohromady</string>
     <string name="open_feed_website_button">Otevřít webovou stránku</string>
-    <string name="settings_hide_read_items">Automaticky skrývat články označené jako přečtené</string>
     <string name="exit_menu">Ukončit</string>
     <string name="browser_launch_error">Nelze otevřít odkaz. Zkontrolujte nastavení prohlížeče.</string>
     <string name="choose_another_file_button">Vyberte jiný soubor</string>
@@ -331,8 +328,6 @@
     <string name="drawer_title_library">Knihovna</string>
     <string name="settings_desktop_multi_pane_layout">Použít rozložení ve vícero blocích</string>
     <string name="select_article_to_read">Vyberte článek pro čtení</string>
-    <string name="settings_hide_unread_dot">Skrýt indikátor nepřečtených</string>
-    <string name="settings_hide_feed_source">Skrýt název zdroje</string>
     <string name="settings_description_max_lines">Popis řádků</string>
     <string name="settings_description_lines_three">3 řádky</string>
     <string name="settings_description_lines_five">5 řádků</string>
@@ -427,7 +422,6 @@
     <string name="desktop_pane_width">%s šířka v pixelech</string>
     <string name="desktop_expand_reader">Rozbalit čtečku</string>
     <string name="desktop_restore_reader_layout">Obnovit seznam článku</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Automatické skrývání je vypnuto, když \"Označ jako přečtené při posouvání\" ja zapnuto, takže články zůstanou na místě, když je posouváte. Vypněte to pomocí automatického skrytí.</string>
     <string name="audio_episode_badge_content_description">Audio epizoda</string>
     <string name="audio_episode_label">Audio</string>
     <string name="menu_open_audio">Otevřete audio</string>

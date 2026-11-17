@@ -97,8 +97,6 @@
     <string name="settings_toggle_show_read_articles">Afișează articolele citite în liste</string>
     <string name="settings_desktop_multi_pane_layout">Utilizează un aspect al paginii de start cu mai multe panouri</string>
     <string name="select_article_to_read">Alege un articol pe care dorești să-l citești</string>
-    <string name="settings_hide_read_items">Ascunde automat articolele atunci când sunt marcate citite</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Funcția de ascundere automată este dezactivată atunci când opțiunea „Marchează ca citit la derulare” este activată, astfel încât articolele rămân pe loc pe măsură ce derulezi. Dezactivează această opțiune pentru a utiliza funcția de ascundere automată.</string>
     <string name="menu_add_to_bookmark">Adaugă la marcaje</string>
     <string name="menu_remove_from_bookmark">Elimină din marcaje</string>
     <string name="drawer_title_bookmarks">Marcaje</string>
@@ -188,12 +186,8 @@
     <string name="icloud_sync_success">Contul tău iCloud a fost conectat cu succes</string>
     <string name="no_icloud_sync_yet">Nu există încă o copie de rezervă în iCloud. Selectează „Creează o copie de rezervă acum” pentru a începe.</string>
     <string name="settings_hide_duplicated_title_from_desc">Ascunde titlul din descrierea articolului</string>
-    <string name="settings_hide_description">Ascunde descrierea articolului</string>
     <string name="settings_hide_images">Ascunde imaginea articolului</string>
-    <string name="settings_hide_date">Ascunde data articolului</string>
-    <string name="settings_hide_unread_dot">Ascunde indicatorul de articol necitit</string>
     <string name="settings_hide_unread_count">Ascunde numărul de articole necitite</string>
-    <string name="settings_hide_feed_source">Ascunde numele fluxului</string>
     <string name="settings_description_max_lines">Rânduri descriere</string>
     <string name="settings_description_lines_three">3 rânduri</string>
     <string name="settings_description_lines_five">5 rânduri</string>

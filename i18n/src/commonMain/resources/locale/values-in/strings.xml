@@ -170,9 +170,7 @@
     <string name="no_google_drive_sync_yet">Belum dicadangkan ke Google Drive. Pilih Cadangkan sekarang untuk memulai.</string>
     <string name="google_drive_connect_button">Hubungkan Google Drive</string>
     <string name="google_drive_desktop_sync_description">Klik tombol di bawah untuk menghubungkan akun Google Drive Anda. Jendela browser akan terbuka untuk autentikasi. Setelah Anda menyelesaikan masuk, Anda dapat kembali ke aplikasi ini.</string>
-    <string name="settings_hide_description">Sembunyikan deskripsi artikel</string>
     <string name="settings_hide_images">Sembunyikan gambar artikel</string>
-    <string name="settings_hide_date">Sembunyikan tanggal artikel</string>
     <string name="open_feed_settings">Pengaturan feed</string>
     <string name="delete_feed_source_error">Tidak dapat menghapus feed. Silakan coba lagi.</string>
     <string name="fresh_rss_password_hint">Kata sandi API FreshRSS (Pengaturan &gt; Profil)</string>
@@ -329,9 +327,6 @@
     <string name="drawer_title_library">Pustaka</string>
     <string name="settings_desktop_multi_pane_layout">Gunakan tata letak beranda multi-panel</string>
     <string name="select_article_to_read">Pilih artikel untuk dibaca</string>
-    <string name="settings_hide_read_items">Sembunyikan otomatis artikel saat ditandai sudah dibaca</string>
-    <string name="settings_hide_unread_dot">Sembunyikan indikator belum dibaca</string>
-    <string name="settings_hide_feed_source">Sembunyikan nama umpan</string>
     <string name="settings_description_max_lines">Baris deskripsi</string>
     <string name="settings_description_lines_three">3 baris</string>
     <string name="settings_description_lines_five">5 baris</string>
@@ -434,7 +429,6 @@
     <string name="desktop_pane_width">Lebar %s piksel</string>
     <string name="desktop_expand_reader">Perluas pembaca</string>
     <string name="desktop_restore_reader_layout">Pulihkan daftar artikel</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Sembunyikan otomatis dinonaktifkan saat “Tandai sudah dibaca saat menggulir” aktif, agar artikel tetap di tempatnya saat Anda menggulir. Nonaktifkan pengaturan tersebut untuk menggunakan sembunyikan otomatis.</string>
     <string name="audio_episode_badge_content_description">Episode audio</string>
     <string name="audio_episode_label">Audio</string>
     <string name="menu_open_audio">Buka audio</string>

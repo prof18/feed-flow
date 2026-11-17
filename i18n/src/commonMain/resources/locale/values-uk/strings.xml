@@ -144,7 +144,6 @@
     <string name="feed_url_help_text">Додайте будь-який прямий канал, веб-сайт або посилання на канал YouTube. Канал буде виявлено автоматично, коли це можливо</string>
     <string name="delete_category_confirmation_message">Ви впевнені, що бажаєте видалити цю категорію? Стрічки в цій категорії буде переміщено до розділу «Без категорії».</string>
     <string name="settings_auto_delete_period_two_weeks">Два тижні</string>
-    <string name="settings_hide_description">Сховати опис статті</string>
     <string name="settings_hide_images">Приховати зображення статті</string>
     <string name="drawer_title_pinned_feeds">Закріплені джерела каналів</string>
     <string name="pin_feed_source_description">Закріпити цей канал</string>
@@ -226,7 +225,6 @@
     <string name="previous_article">Попередня стаття</string>
     <string name="next_article">Наступна стаття</string>
     <string name="about_menu_faq">FAQ</string>
-    <string name="settings_hide_date">Приховати дату статті</string>
     <string name="settings_auto_delete_period_one_day">Один день</string>
     <string name="time_format_title">Формат часу</string>
     <string name="time_format_hours_24">24 години</string>
@@ -322,7 +320,6 @@
     <string name="settings_notification_mode_grouped">Усе разом</string>
     <string name="settings_theme_oled">Чорний</string>
     <string name="open_feed_website_button">Відкрити веб-сайт</string>
-    <string name="settings_hide_read_items">Автоматично приховувати статті, позначені як прочитані</string>
     <string name="exit_menu">Вихід</string>
     <string name="browser_launch_error">Не вдається відкрити посилання. Перевірте налаштування браузера.</string>
     <string name="choose_another_file_button">Виберіть інший файл</string>
@@ -331,7 +328,6 @@
     <string name="drawer_title_library">Бібліотека</string>
     <string name="settings_desktop_multi_pane_layout">Використовувати багатопанельний макет головної сторінки</string>
     <string name="select_article_to_read">Виберіть статтю для читання</string>
-    <string name="settings_hide_unread_dot">Приховати індикатор непрочитаних повідомлень</string>
     <string name="settings_description_max_lines">Рядки опису</string>
     <string name="settings_description_lines_three">3 рядки</string>
     <string name="settings_description_lines_five">5 рядків</string>
@@ -362,7 +358,6 @@
     <string name="delete_all_feeds_confirmation_title">Видалити всі канали в цій категорії?</string>
     <string name="delete_all_feeds_confirmation_message">Ви впевнені, що хочете видалити всі канали в цій категорії? Цю дію неможливо скасувати.</string>
     <string name="about_the_app">FeedFlow — це мінімалістичний RSS-рідер із чіткою хронологічною стрічкою новин — без алгоритмів і зайвого навантаження. Відкривайте статті у своєму улюбленому браузері або читайте їх без відволікань у режимі читання. Завантажуйте та зберігайте в кеші повні статті для читання в автономному режимі де завгодно.\nСинхронізуйте свої канали, статус читання та закладки на Android, iOS, macOS, Windows та Linux за допомогою iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin або BazQux. Сортуйте канали за категоріями, блокуйте небажані ключові слова та імпортуйте або експортуйте все за допомогою OPML.</string>
-    <string name="settings_hide_feed_source">Приховати джерело стрічки</string>
     <string name="widget_configuration_description">Оновлення віджетів відповідають налаштуванням фонової синхронізації з розділу «Синхронізація та сховище».</string>
     <string name="settings_appearance">Зовнішній вигляд</string>
     <string name="close_button_content_description">Закрити</string>
@@ -414,7 +409,6 @@
     <string name="reorder_drag_handle">Змінити порядок</string>
     <string name="reorder_mode_enter">Змінити порядок</string>
     <string name="feed_already_exists_message">%s вже є у ваших стрічках.</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">Автоприховування вимкнено, доки активна опція «Позначати як прочитане під час гортання», тому статті залишаються на місці під час прокручування. Вимкніть її, щоб використовувати автоприховування.</string>
     <string name="settings_force_english">Примусово англійська</string>
     <string name="settings_force_english_description">Використовувати англійську мову для інтерфейсу замість мови системи.</string>
     <string name="feed_fetch_refused_error">Не вдалося отримати доступ до цієї стрічки. Можливо, вебсайт блокує читачів RSS. Будь ласка, спробуйте пізніше.</string>

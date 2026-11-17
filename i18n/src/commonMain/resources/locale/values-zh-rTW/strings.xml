@@ -114,9 +114,7 @@
     <string name="icloud_sync_success">已成功連接您的iCloud帳號</string>
     <string name="no_icloud_sync_yet">資料尚未與iCloud同步，請點擊備份按鈕觸發同步</string>
     <string name="settings_hide_duplicated_title_from_desc">隱藏文章描述中的標題</string>
-    <string name="settings_hide_description">隱藏文章描述</string>
     <string name="settings_hide_images">隱藏文章圖片</string>
-    <string name="settings_hide_date">隱藏文章日期</string>
     <string name="reader_mode_font_size">字型大小</string>
     <string name="edit_feed_source_name_button">編輯</string>
     <string name="edit_feed">編輯消息來源</string>
@@ -302,7 +300,6 @@
     <string name="drawer_title_library">資料庫</string>
     <string name="settings_desktop_multi_pane_layout">使用多面板的首頁版型</string>
     <string name="select_article_to_read">選擇要閱讀的文章</string>
-    <string name="settings_hide_read_items">將標為已讀的文章自動隱藏</string>
     <string name="menu_mark_all_above_as_read">將以上的全部標為已讀</string>
     <string name="menu_mark_all_below_as_read">將以下的全部標為已讀</string>
     <string name="mark_all_above_as_read_confirmation_title">要將以上全標為已讀嗎？</string>
@@ -315,9 +312,7 @@
     <string name="no_google_drive_sync_yet">資料尚未與 Google 雲端硬碟同步，請點擊備份按鈕來啟動同步</string>
     <string name="google_drive_connect_button">連接 Google 雲端硬碟</string>
     <string name="google_drive_desktop_sync_description">點擊以下按鈕以連結 Google 雲端硬碟帳號。會開啟一個身分驗證用瀏覽器視窗，登入完成後即可返回本 App 中。</string>
-    <string name="settings_hide_unread_dot">隱藏未讀標示</string>
     <string name="settings_hide_unread_count">隱藏未讀數字</string>
-    <string name="settings_hide_feed_source">隱藏 feed 來源</string>
     <string name="settings_description_max_lines">說明行數</string>
     <string name="settings_description_lines_three">3 行</string>
     <string name="settings_description_lines_five">5 行</string>

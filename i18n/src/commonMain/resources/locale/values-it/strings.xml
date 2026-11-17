@@ -148,7 +148,6 @@
     <string name="settings_auto_delete_period_one_month">Di un mese</string>
     <string name="feed_url_help_text">Aggiungi qualsiasi link diretto a feed, siti web o canali YouTube. Il feed verrà rilevato automaticamente quando possibile</string>
     <string name="settings_hide_images">Nascondi immagine articolo</string>
-    <string name="settings_hide_description">Nascondi descrizione articolo</string>
     <string name="fresh_rss_password_hint">L\'API password di FreshRSS (Impostazioni &gt; Profilo)</string>
     <string name="fresh_rss_url_hint">L\'indirizzo dell\'API di FreshRSS, ad esempio %s</string>
     <string name="settings_crash_reporting">Invia segnalazioni di crash anonime</string>
@@ -228,7 +227,6 @@
     <string name="search_filter_all">Tutto</string>
     <string name="search_filter_read">Letti</string>
     <string name="search_filter_bookmarks">Preferiti</string>
-    <string name="settings_hide_date">Nascondi data articolo</string>
     <string name="open_feed_settings">Impostazioni feed</string>
     <string name="delete_feed_source_error">Impossibile eliminare il feed. Per favore riprova.</string>
     <string name="miniflux_account_connected">Il tuo account Miniflux è stato collegato con successo</string>
@@ -328,14 +326,11 @@
     <string name="choose_another_file_button">Scegli un altro file</string>
     <string name="invalid_opml_import_title">Impossibile importare questo file</string>
     <string name="about_the_app">FeedFlow è un lettore RSS minimalista per una timeline pulita e cronologica, senza algoritmi, senza distrazioni. Apri gli articoli nel tuo browser preferito o leggili senza interruzioni con la modalità lettura. Conserva gli articoli completi per leggerli offline ovunque.\nSincronizza i tuoi feed, lo stato di lettura e i segnalibri su Android, iOS, macOS, Windows e Linux utilizzando iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin o BazQux. Organizza i feed in categorie, blocca le parole chiave rumorose e importa o esporta tutto tramite file OPML.</string>
-    <string name="settings_hide_unread_dot">Nascondi indicatore non letto</string>
     <string name="invalid_rss_url_with_retry_hint">Impossibile convalidare questo feed. Potrebbe non essere un feed RSS valido o il server è momentaneamente irraggiungibile.</string>
     <string name="invalid_opml_import_description">Questo non sembra un file OPML valido. Prova a esportare i tuoi feed in formato OPML dalla tua app RSS e a importarli di nuovo.</string>
     <string name="settings_desktop_multi_pane_layout">Usa il layout home multipannello</string>
     <string name="select_article_to_read">Seleziona un articolo da leggere</string>
-    <string name="settings_hide_read_items">Nascondi automaticamente gli articoli se contrassegnati come letti</string>
     <string name="settings_hide_unread_count">Nascondi numero non letti</string>
-    <string name="settings_hide_feed_source">Nascondi nome del feed</string>
     <string name="settings_description_max_lines">Righe di descrizione</string>
     <string name="settings_description_lines_three">3 righe</string>
     <string name="settings_description_lines_five">5 righe</string>
@@ -414,7 +409,6 @@
     <string name="server_account_replace_local_message">La connessione sostituisce i feed attualmente memorizzati su questo dispositivo con i feed del server. Una successiva disconnessione non ripristinerà i feed locali. Esportali prima in OPML se desideri conservarne una copia.</string>
     <string name="server_account_replace_and_connect_button">Sostituisci e connetti</string>
     <string name="feed_already_exists_message">%s è già presente nei tuoi feed.</string>
-    <string name="settings_hide_read_items_disabled_while_scrolling">L’auto-nascondimento non è disponibile con «Segna come letto durante lo scorrimento» attivo. Disattiva l’opzione per utilizzare l’auto-nascondimento.</string>
     <string name="feed_fetch_refused_error">Impossibile raggiungere questo feed. Il sito potrebbe bloccare i lettori RSS. Riprova più tardi.</string>
     <string name="mark_all_bookmarks_read_dialog_message">Sei sicuro di voler contrassegnare come letti tutti gli articoli salvati nei segnalibri?</string>
     <string name="remove_bookmark_dialog_message">Sei sicuro di voler rimuovere questo articolo dai segnalibri?</string>

@@ -50,7 +50,7 @@ class MenuBarViewModelTest : KoinTestBase() {
         assertEquals(ThemeMode.SYSTEM, state.themeMode)
         assertTrue(state.isMarkReadWhenScrollingEnabled)
         assertFalse(state.isShowReadItemsEnabled)
-        assertFalse(state.isHideReadItemsEnabled)
+        assertEquals(ReadArticlesVisibility.HIDE_ON_REFRESH, state.readArticlesVisibility)
         assertEquals(ArticleOpenMode.FULL_ARTICLE, state.articleOpenMode)
         assertFalse(state.isSaveReaderModeContentEnabled)
         assertFalse(state.isPrefetchArticleContentEnabled)
@@ -169,15 +169,6 @@ class MenuBarViewModelTest : KoinTestBase() {
             assertEquals(FeedOrder.OLDEST_FIRST, viewModel.state.value.feedOrder)
             awaitItem()
         }
-    }
-
-    @Test
-    fun `updateHideReadItems updates state`() = runTest {
-        viewModel.updateHideReadItems(true)
-        assertTrue(viewModel.state.value.isHideReadItemsEnabled)
-
-        viewModel.updateHideReadItems(false)
-        assertFalse(viewModel.state.value.isHideReadItemsEnabled)
     }
 
     @Test

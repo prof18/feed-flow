@@ -29,16 +29,10 @@ class ReadingBehaviorSettingsViewModel internal constructor(
                 settingsRepository.showReadArticlesTimelineFlow,
                 settingsRepository.hideReadItemsFlow,
                 settingsRepository.markFeedAsReadWhenScrollingFlow,
-            ) { showRead, hideRead, _ ->
-                Triple(showRead, hideRead, settingsRepository.getReadArticlesVisibility())
-            }.collect { (showRead, hideRead, visibility) ->
-                stateMutableFlow.update {
-                    it.copy(
-                        isShowReadItemsEnabled = showRead,
-                        isHideReadItemsEnabled = hideRead,
-                        readArticlesVisibility = visibility,
-                    )
-                }
+            ) { _, _, _ ->
+                settingsRepository.getReadArticlesVisibility()
+            }.collect { visibility ->
+                stateMutableFlow.update { it.copy(readArticlesVisibility = visibility) }
             }
         }
     }
@@ -47,8 +41,6 @@ class ReadingBehaviorSettingsViewModel internal constructor(
         val isSaveReaderModeContentEnabled = settingsRepository.isSaveItemContentOnOpenEnabled()
         val isPrefetchArticleContentEnabled = settingsRepository.isPrefetchArticleContentEnabled()
         val isMarkReadWhenScrollingEnabled = settingsRepository.getMarkFeedAsReadWhenScrolling()
-        val isShowReadItemsEnabled = settingsRepository.getShowReadArticlesTimeline()
-        val isHideReadItemsEnabled = settingsRepository.getHideReadItems()
         val articleOpenMode = settingsRepository.getArticleOpenMode()
 
         stateMutableFlow.update {
@@ -56,8 +48,6 @@ class ReadingBehaviorSettingsViewModel internal constructor(
                 isSaveReaderModeContentEnabled = isSaveReaderModeContentEnabled,
                 isPrefetchArticleContentEnabled = isPrefetchArticleContentEnabled,
                 isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
-                isShowReadItemsEnabled = isShowReadItemsEnabled,
-                isHideReadItemsEnabled = isHideReadItemsEnabled,
                 readArticlesVisibility = settingsRepository.getReadArticlesVisibility(),
                 articleOpenMode = articleOpenMode,
                 articleBrowserId = settingsRepository.getArticleBrowserId(),
@@ -108,28 +98,6 @@ class ReadingBehaviorSettingsViewModel internal constructor(
         if (!value) {
             feedStateRepository.reapplyAutoHideToCurrentList()
         } else if (settingsRepository.getHideReadItems()) {
-            viewModelScope.launch {
-                feedStateRepository.getFeeds()
-            }
-        }
-    }
-
-    fun updateShowReadItemsOnTimeline(value: Boolean) {
-        settingsRepository.setShowReadArticlesTimeline(value)
-        stateMutableFlow.update {
-            it.copy(isShowReadItemsEnabled = value)
-        }
-        viewModelScope.launch {
-            feedStateRepository.getFeeds()
-        }
-    }
-
-    fun updateHideReadItems(value: Boolean) {
-        settingsRepository.setHideReadItems(value)
-        stateMutableFlow.update {
-            it.copy(isHideReadItemsEnabled = value)
-        }
-        if (!value) {
             viewModelScope.launch {
                 feedStateRepository.getFeeds()
             }

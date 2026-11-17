@@ -109,7 +109,6 @@
     <string name="icloud_sync_success">Llogaria juaj iCloud u lidh me sukses</string>
     <string name="no_icloud_sync_yet">Të dhënat ende nuk janë sinkronizuar me iCloud. Kliko butonin e kopjes rezervë për të nisur sinkronizimin</string>
     <string name="settings_hide_duplicated_title_from_desc">Fshih titullin nga përshkrimi i artikullit</string>
-    <string name="settings_hide_description">Fshih përshkrimin e artikullit</string>
     <string name="settings_hide_images">Fshih imazhin e artikullit</string>
     <string name="reader_mode_font_size">Madhësia e tekstit</string>
     <string name="edit_feed_source_name_button">Redakto</string>

@@ -58,7 +58,7 @@
     <string name="reader_mode_font_size">Размер на шрифта</string>
     <string name="feed_added_message">Емисията %s е добавена</string>
     <string name="feed_url_placeholder">https://myfavouriteblog.com/feed</string>
-    <string name="feed_url">URL адрес на емисия</string>
+    <string name="feed_url">Връзка към емисията</string>
     <string name="delete_feed">Изтриване</string>
     <string name="refresh_feeds">Обновяване на емисии</string>
     <string name="no_feeds_found_message">Няма намерени емисии. Моля, добавете нова емисия!</string>

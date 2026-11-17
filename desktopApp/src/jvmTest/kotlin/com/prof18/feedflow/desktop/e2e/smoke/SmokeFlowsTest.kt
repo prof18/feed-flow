@@ -28,7 +28,6 @@ import com.prof18.feedflow.desktop.e2e.harness.scrollToText
 import com.prof18.feedflow.desktop.e2e.harness.setSwitch
 import com.prof18.feedflow.desktop.e2e.harness.sidebarCount
 import com.prof18.feedflow.desktop.e2e.harness.sidebarRow
-import com.prof18.feedflow.desktop.e2e.harness.switchIn
 import com.prof18.feedflow.desktop.e2e.harness.toggleReaderButton
 import com.prof18.feedflow.desktop.e2e.harness.typeIntoFocused
 import com.prof18.feedflow.desktop.e2e.harness.visibleArticleRows
@@ -232,11 +231,11 @@ class SmokeFlowsTest {
     }
 
     /**
-     * layout, hide image, order, date format: desktop settings/FeedListPane.kt:97-206
-     * (feedLayoutTitle, settingsHideImages, settingsFeedOrderTitle, dateFormatTitle)
+     * layout, show image, order, date format: desktop settings/FeedListPane.kt:91-250
+     * (feedLayoutTitle, settingsShowImages, settingsFeedOrderTitle, dateFormatTitle)
      *
      * Article images sit inside the clickable row, whose merged semantics drop the image test tags, so
-     * the flow checks the persisted "Hide article image" switch instead of the missing image.
+     * the flow checks the persisted "Image" switch instead of the missing image.
      */
     @Test
     fun `SM-009 feed list settings persist`() {
@@ -246,7 +245,7 @@ class SmokeFlowsTest {
         val settings = flow.strings.settingsTitle
         flow.openSettings(flow.strings.settingsFeedListTitle)
         flow.choose(settings, flow.strings.feedLayoutTitle, flow.strings.settingsFeedLayoutCard)
-        flow.setSwitch(settings, flow.strings.settingsHideImages, on = true)
+        flow.setSwitch(settings, flow.strings.settingsShowImages, on = false)
         flow.choose(settings, flow.strings.dateFormatTitle, flow.strings.dateFormatDayMonthDot)
         flow.choose(settings, flow.strings.settingsFeedOrderTitle, flow.strings.settingsFeedOrderOldestFirst)
         flow.closeWindow(settings)
@@ -259,49 +258,41 @@ class SmokeFlowsTest {
             assertTrue(firstRow.texts.any { DOTTED_DATE.matches(it) }, "dotted date in ${firstRow.texts}")
         }
         flow.openSettings(flow.strings.settingsFeedListTitle)
-        assertTrue(flow.isSwitchOn(settings, flow.strings.settingsHideImages))
+        assertFalse(flow.isSwitchOn(settings, flow.strings.settingsShowImages))
         assertTrue(flow.strings.settingsFeedLayoutCard in flow.dropdownIn(settings, flow.strings.feedLayoutTitle).texts)
     }
 
-    // open mode, mark read when scrolling: desktop settings/ReadingPane.kt:50,75 (articleOpenMode,
-    // toggleMarkReadWhenScrolling); show read and auto-hide: desktop settings/FeedListPane.kt:264-274
-    // (settingsToggleShowReadArticles, settingsHideReadItems, settingsHideReadItemsDisabledWhileScrolling)
+    // open mode, mark read when scrolling, read articles: desktop settings/ReadingPane.kt:55,82,87
+    // (articleOpenMode, toggleMarkReadWhenScrolling, settingsReadArticlesTitle,
+    // settingsReadArticlesRightAwayDisabled)
     @Test
     fun `SM-010 reading behavior settings persist`() {
         val flow = e2e.start(Seed.ContentRich)
         flow.awaitText(SEED_NEWEST_TITLE)
 
         val settings = flow.strings.settingsTitle
-        flow.openSettings(flow.strings.settingsReadingBehavior)
+        val readArticles = flow.strings.settingsReadArticlesTitle
+        flow.openSettings(flow.strings.settingsReadingTitle)
         flow.choose(settings, flow.strings.articleOpenMode, flow.strings.readerContentSourceFeed)
         flow.setSwitch(settings, flow.strings.toggleMarkReadWhenScrolling, on = false)
-        flow.clickIn(settings, flow.strings.settingsFeedListTitle)
-        flow.setSwitch(settings, flow.strings.settingsToggleShowReadArticles, on = true)
-        assertFalse(flow.switchIn(settings, flow.strings.settingsHideReadItems).isDisabled)
-        flow.setSwitch(settings, flow.strings.settingsHideReadItems, on = true)
-        flow.clickIn(settings, flow.strings.settingsReadingBehavior)
+        flow.choose(settings, readArticles, flow.strings.settingsReadArticlesHideRightAway)
         flow.setSwitch(settings, flow.strings.toggleMarkReadWhenScrolling, on = true)
-        flow.clickIn(settings, flow.strings.settingsFeedListTitle)
-        // Scroll marking disables auto-hide but keeps the saved preference.
-        assertTrue(flow.switchIn(settings, flow.strings.settingsHideReadItems).isDisabled)
-        assertTrue(flow.isSwitchOn(settings, flow.strings.settingsHideReadItems))
-        flow.awaitTextIn(settings, flow.strings.settingsHideReadItemsDisabledWhileScrolling)
+        // Scroll marking turns Hide right away off but keeps the saved preference.
+        flow.awaitTextIn(settings, flow.strings.settingsReadArticlesRightAwayDisabled)
+        assertTrue(flow.strings.settingsReadArticlesHideOnRefresh in flow.dropdownIn(settings, readArticles).texts)
+        flow.choose(settings, readArticles, flow.strings.settingsReadArticlesKeep)
         flow.closeWindow(settings)
 
         flow.scrollToText(SEED_READ_TITLE)
         flow.relaunch()
         flow.scrollToText(SEED_READ_TITLE)
 
-        flow.openSettings(flow.strings.settingsReadingBehavior)
+        flow.openSettings(flow.strings.settingsReadingTitle)
         val openMode = flow.dropdownIn(settings, flow.strings.articleOpenMode)
         assertTrue(flow.strings.readerContentSourceFeed in openMode.texts)
+        assertTrue(flow.strings.settingsReadArticlesKeep in flow.dropdownIn(settings, readArticles).texts)
         flow.setSwitch(settings, flow.strings.toggleMarkReadWhenScrolling, on = false)
-        flow.clickIn(settings, flow.strings.settingsFeedListTitle)
-        // Turning scroll marking off restores the auto-hide preference saved before the relaunch.
-        assertFalse(flow.switchIn(settings, flow.strings.settingsHideReadItems).isDisabled)
-        assertTrue(flow.isSwitchOn(settings, flow.strings.settingsHideReadItems))
-        flow.setSwitch(settings, flow.strings.settingsHideReadItems, on = false)
-        flow.setSwitch(settings, flow.strings.settingsToggleShowReadArticles, on = false)
+        flow.choose(settings, readArticles, flow.strings.settingsReadArticlesHideRightAway)
         flow.closeWindow(settings)
         flow.awaitGone(SEED_READ_TITLE)
 

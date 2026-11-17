@@ -58,8 +58,8 @@ class ArticleReaderFlowsTest {
     }
 
     /**
-     * Desktop has no home "Sort & filter" menu; the order lives in Settings → Feed list → Sort by Date
-     * (settings/FeedListPane.kt:230).
+     * Desktop has no home "Sort & filter" menu; the order lives in Settings → Feed list → Order → Sort by date
+     * (settings/FeedListPane.kt:243).
      *
      * Not covered: Mark all above / below, which are article context menu entries (DEFERRED under T10.8).
      */

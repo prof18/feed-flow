@@ -64,11 +64,6 @@ internal fun FeedListPane(
     onHideUnreadDotUpdate: (Boolean) -> Unit,
     onHideFeedSourceUpdate: (Boolean) -> Unit,
     onDescriptionLineLimitUpdate: (DescriptionLineLimit) -> Unit,
-    isShowReadItemsEnabled: Boolean = false,
-    isHideReadItemsEnabled: Boolean = false,
-    isMarkReadWhenScrollingEnabled: Boolean = false,
-    onShowReadItemsToggled: (Boolean) -> Unit = {},
-    onHideReadItemsToggled: (Boolean) -> Unit = {},
 ) {
     val strings = LocalFeedFlowStrings.current
     val scale = fontSizesState.scaleFactor
@@ -93,7 +88,7 @@ internal fun FeedListPane(
             )
         },
     ) {
-        SettingsSection(title = strings.settingsAppearance) {
+        SettingsSection(title = strings.settingsFeedListSectionLayout) {
             SettingsChoice(
                 title = strings.feedLayoutTitle,
                 selected = settingsState.feedLayout,
@@ -114,7 +109,16 @@ internal fun FeedListPane(
             SettingsBlock {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(strings.settingsFeedListScaleTitle, modifier = Modifier.weight(1f))
-                    Text(scale.toString(), color = JewelTheme.globalColors.text.info)
+                    Text(
+                        scaleLabel(scale, strings.settingsFeedListScaleDefault),
+                        color = JewelTheme.globalColors.text.info,
+                    )
+                    if (scale != 0) {
+                        OutlinedButton(
+                            onClick = { onFontScaleUpdate(0) },
+                            modifier = Modifier.padding(start = 8.dp),
+                        ) { Text(strings.resetButton) }
+                    }
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -154,6 +158,17 @@ internal fun FeedListPane(
                     }
                 }
             }
+        }
+
+        SettingsSection(title = strings.settingsFeedListSectionShowInList) {
+            val descriptionReason = strings.settingsRequiresDescription.takeIf {
+                settingsState.isHideDescriptionEnabled
+            }
+            SettingsSwitch(
+                title = strings.settingsShowDescription,
+                checked = !settingsState.isHideDescriptionEnabled,
+                onCheckedChange = { onHideDescriptionUpdate(!it) },
+            )
             SettingsChoice(
                 title = strings.settingsDescriptionMaxLines,
                 selected = settingsState.descriptionLineLimit,
@@ -163,40 +178,40 @@ internal fun FeedListPane(
                     DescriptionLineLimit.NO_LIMIT to strings.settingsDescriptionLinesNoLimit,
                 ),
                 onSelected = onDescriptionLineLimitUpdate,
-            )
-        }
-
-        SettingsSection {
-            SettingsSwitch(
-                title = strings.settingsHideDescription,
-                checked = settingsState.isHideDescriptionEnabled,
-                onCheckedChange = onHideDescriptionUpdate,
-            )
-            SettingsSwitch(
-                title = strings.settingsHideImages,
-                checked = settingsState.isHideImagesEnabled,
-                onCheckedChange = onHideImagesUpdate,
-            )
-            SettingsSwitch(
-                title = strings.settingsHideDate,
-                checked = settingsState.isHideDateEnabled,
-                onCheckedChange = onHideDateUpdate,
-            )
-            SettingsSwitch(
-                title = strings.settingsHideUnreadDot,
-                checked = settingsState.isHideUnreadDotEnabled,
-                onCheckedChange = onHideUnreadDotUpdate,
-            )
-            SettingsSwitch(
-                title = strings.settingsHideFeedSource,
-                checked = settingsState.isHideFeedSourceEnabled,
-                onCheckedChange = onHideFeedSourceUpdate,
+                enabled = !settingsState.isHideDescriptionEnabled,
+                supportingText = descriptionReason,
             )
             SettingsSwitch(
                 title = strings.settingsHideDuplicatedTitleFromDesc,
                 checked = settingsState.isRemoveTitleFromDescriptionEnabled,
                 onCheckedChange = onRemoveTitleFromDescUpdate,
+                enabled = !settingsState.isHideDescriptionEnabled,
+                supportingText = descriptionReason,
             )
+            SettingsSwitch(
+                title = strings.settingsShowImages,
+                checked = !settingsState.isHideImagesEnabled,
+                onCheckedChange = { onHideImagesUpdate(!it) },
+            )
+            SettingsSwitch(
+                title = strings.settingsShowDate,
+                checked = !settingsState.isHideDateEnabled,
+                onCheckedChange = { onHideDateUpdate(!it) },
+            )
+            SettingsSwitch(
+                title = strings.settingsShowUnreadDot,
+                checked = !settingsState.isHideUnreadDotEnabled,
+                onCheckedChange = { onHideUnreadDotUpdate(!it) },
+            )
+            SettingsSwitch(
+                title = strings.settingsShowFeedSource,
+                checked = !settingsState.isHideFeedSourceEnabled,
+                onCheckedChange = { onHideFeedSourceUpdate(!it) },
+            )
+        }
+
+        SettingsSection(title = strings.settingsFeedListSectionDateTime) {
+            val dateReason = strings.settingsRequiresDate.takeIf { settingsState.isHideDateEnabled }
             SettingsChoice(
                 title = strings.dateFormatTitle,
                 selected = settingsState.dateFormat,
@@ -207,6 +222,8 @@ internal fun FeedListPane(
                     DateFormat.ISO to strings.dateFormatIso,
                 ),
                 onSelected = onDateFormatUpdate,
+                enabled = !settingsState.isHideDateEnabled,
+                supportingText = dateReason,
             )
             SettingsChoice(
                 title = strings.timeFormatTitle,
@@ -216,17 +233,12 @@ internal fun FeedListPane(
                     TimeFormat.HOURS_12 to strings.timeFormatHours12,
                 ),
                 onSelected = onTimeFormatUpdate,
+                enabled = !settingsState.isHideDateEnabled,
+                supportingText = dateReason,
             )
         }
 
-        SettingsSection(title = strings.settingsReadingBehavior) {
-            FeedVisibilitySettings(
-                isShowReadItemsEnabled = isShowReadItemsEnabled,
-                isHideReadItemsEnabled = isHideReadItemsEnabled,
-                isMarkReadWhenScrollingEnabled = isMarkReadWhenScrollingEnabled,
-                onShowReadItemsToggled = onShowReadItemsToggled,
-                onHideReadItemsToggled = onHideReadItemsToggled,
-            )
+        SettingsSection(title = strings.settingsFeedListSectionOrder) {
             SettingsChoice(
                 title = strings.settingsFeedOrderTitle,
                 selected = feedOrder,
@@ -236,6 +248,9 @@ internal fun FeedListPane(
                 ),
                 onSelected = onFeedOrderSelected,
             )
+        }
+
+        SettingsSection(title = strings.settingsFeedListSectionGestures) {
             SettingsChoice(
                 title = strings.settingsLeftSwipeAction,
                 selected = settingsState.leftSwipeActionType,
@@ -252,31 +267,10 @@ internal fun FeedListPane(
     }
 }
 
-@Composable
-internal fun FeedVisibilitySettings(
-    isShowReadItemsEnabled: Boolean,
-    isHideReadItemsEnabled: Boolean,
-    isMarkReadWhenScrollingEnabled: Boolean,
-    onShowReadItemsToggled: (Boolean) -> Unit,
-    onHideReadItemsToggled: (Boolean) -> Unit,
-) {
-    val strings = LocalFeedFlowStrings.current
-    SettingsSwitch(
-        title = strings.settingsToggleShowReadArticles,
-        checked = isShowReadItemsEnabled,
-        onCheckedChange = onShowReadItemsToggled,
-    )
-    SettingsSwitch(
-        title = strings.settingsHideReadItems,
-        checked = isHideReadItemsEnabled,
-        onCheckedChange = onHideReadItemsToggled,
-        enabled = !isMarkReadWhenScrollingEnabled,
-        supportingText = if (isMarkReadWhenScrollingEnabled) {
-            strings.settingsHideReadItemsDisabledWhileScrolling
-        } else {
-            null
-        },
-    )
+private fun scaleLabel(scale: Int, defaultLabel: String): String = when {
+    scale == 0 -> defaultLabel
+    scale > 0 -> "+$scale"
+    else -> scale.toString()
 }
 
 // Renders the same row the article list uses, so every option below previews exactly as it will look.

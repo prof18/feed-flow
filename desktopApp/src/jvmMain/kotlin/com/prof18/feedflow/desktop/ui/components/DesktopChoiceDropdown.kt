@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.modifier.onMove
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -81,17 +83,19 @@ internal fun <T : Any> DesktopChoiceDropdown(
     maxPopupWidth: Dp,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    disabledChoices: ImmutableSet<T> = persistentSetOf(),
 ) {
     val latestEnabled by rememberUpdatedState(enabled)
     val latestOnSelected by rememberUpdatedState(onSelected)
     val selectedIndex = choices.indexOfFirst { it.first == selected }.coerceAtLeast(0)
     val selectedLabel = choices.getOrNull(selectedIndex)?.second.orEmpty()
     val currentSelectedIndex by rememberUpdatedState(selectedIndex)
-    var highlightedIndex by remember { mutableIntStateOf(selectedIndex) }
+    val highlight = remember { ChoiceHighlight(selectedIndex) }
+    highlight.selectable = choices.map { it.first !in disabledChoices }
     val focusRequester = remember { FocusRequester() }
     val popupManager = remember {
         PopupManager(onPopupVisibleChange = { visible ->
-            if (visible) highlightedIndex = currentSelectedIndex
+            if (visible) highlight.index = currentSelectedIndex
         })
     }
     val popupVisible by popupManager.isPopupVisible
@@ -101,7 +105,7 @@ internal fun <T : Any> DesktopChoiceDropdown(
     }
     fun commitChoice(index: Int) {
         if (latestEnabled) {
-            choices.getOrNull(index)?.first?.let { if (it != selected) latestOnSelected(it) }
+            highlight.choiceAt(choices, index)?.let { if (it != selected) latestOnSelected(it) }
         }
         popupManager.setPopupVisible(false)
     }
@@ -151,9 +155,8 @@ internal fun <T : Any> DesktopChoiceDropdown(
                     if (!canSelect || !popupVisible || it.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                     handleChoiceKey(
                         key = it.key,
-                        lastIndex = choices.lastIndex,
-                        onHighlight = { index -> highlightedIndex = index },
-                        onCommit = { commitChoice(highlightedIndex) },
+                        highlight = highlight,
+                        onCommit = { commitChoice(highlight.index) },
                     )
                 }
                 .semantics(mergeDescendants = true) {
@@ -176,8 +179,8 @@ internal fun <T : Any> DesktopChoiceDropdown(
             maxPopupHeight = 320.dp,
             maxPopupWidth = maxPopupWidth,
             popupManager = popupManager,
-            onArrowDownPress = { highlightedIndex = (highlightedIndex + 1).coerceAtMost(choices.lastIndex) },
-            onArrowUpPress = { highlightedIndex = (highlightedIndex - 1).coerceAtLeast(0) },
+            onArrowDownPress = { highlight.moveBy(1) },
+            onArrowUpPress = { highlight.moveBy(-1) },
             labelContent = {
                 Tooltip(tooltip = { Text(selectedLabel) }) {
                     Text(
@@ -194,9 +197,9 @@ internal fun <T : Any> DesktopChoiceDropdown(
                         ChoiceOption(
                             label = item.second,
                             selected = item.first == selected,
-                            highlighted = index == highlightedIndex,
-                            enabled = canSelect,
-                            onHover = { highlightedIndex = index },
+                            highlighted = index == highlight.index,
+                            enabled = highlight.isEnabled(index, canSelect),
+                            onHover = { highlight.hover(index) },
                             onClick = { commitChoice(index) },
                         )
                     }
@@ -223,7 +226,11 @@ private fun ChoiceOption(
     }
     val state = ListItemState(isSelected = highlighted, isActive = true)
     val itemStyle = JewelTheme.simpleListItemStyle
-    val color = itemStyle.colors.contentFor(state).value.takeOrElse { JewelTheme.globalColors.text.normal }
+    val color = if (enabled) {
+        itemStyle.colors.contentFor(state).value.takeOrElse { JewelTheme.globalColors.text.normal }
+    } else {
+        JewelTheme.globalColors.text.disabled
+    }
     Row(
         modifier = modifier
             .bringIntoViewRequester(bringIntoViewRequester)
@@ -254,15 +261,51 @@ private fun ChoiceOption(
     }
 }
 
+/** The highlighted row of an open dropdown; keyboard and hover never land on a disabled choice. */
+private class ChoiceHighlight(initialIndex: Int) {
+    var index by mutableIntStateOf(initialIndex)
+    var selectable: List<Boolean> = emptyList()
+
+    fun isSelectable(candidate: Int): Boolean = selectable.getOrElse(candidate) { false }
+
+    fun isEnabled(candidate: Int, canSelect: Boolean): Boolean = canSelect && isSelectable(candidate)
+
+    /** The choice at [candidate], or null when it is disabled or out of range. */
+    fun <T> choiceAt(choices: List<Pair<T, String>>, candidate: Int): T? =
+        choices.getOrNull(candidate)?.first?.takeIf { isSelectable(candidate) }
+
+    fun moveBy(step: Int) {
+        var candidate = index + step
+        while (candidate in selectable.indices) {
+            if (selectable[candidate]) {
+                index = candidate
+                return
+            }
+            candidate += step
+        }
+    }
+
+    fun moveToFirst() {
+        selectable.indexOfFirst { it }.takeIf { it >= 0 }?.let { index = it }
+    }
+
+    fun moveToLast() {
+        selectable.indexOfLast { it }.takeIf { it >= 0 }?.let { index = it }
+    }
+
+    fun hover(candidate: Int) {
+        if (isSelectable(candidate)) index = candidate
+    }
+}
+
 private fun handleChoiceKey(
     key: Key,
-    lastIndex: Int,
-    onHighlight: (Int) -> Unit,
+    highlight: ChoiceHighlight,
     onCommit: () -> Unit,
 ): Boolean {
     when (key) {
-        Key.MoveHome -> onHighlight(0)
-        Key.MoveEnd -> onHighlight(lastIndex)
+        Key.MoveHome -> highlight.moveToFirst()
+        Key.MoveEnd -> highlight.moveToLast()
         Key.Enter, Key.NumPadEnter -> onCommit()
         else -> return false
     }

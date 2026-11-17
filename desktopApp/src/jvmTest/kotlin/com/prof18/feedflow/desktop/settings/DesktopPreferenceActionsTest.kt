@@ -21,6 +21,7 @@ import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.Density
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.ReadArticlesVisibility
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
 import com.prof18.feedflow.i18n.EnFeedFlowStrings
@@ -232,25 +233,38 @@ class DesktopPreferenceActionsTest {
     }
 
     @Test
-    fun `hide read preference is disabled with explanation while marking read on scroll`() {
-        var hideReadToggles = 0
+    fun `hide right away cannot be selected while marking read on scroll`() {
+        val selections = mutableListOf<ReadArticlesVisibility>()
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
-                    FeedVisibilitySettings(
+                    ReadingPane(
+                        articleOpenMode = ArticleOpenMode.FULL_ARTICLE,
+                        isSaveReaderModeContentEnabled = false,
+                        isPrefetchArticleContentEnabled = false,
                         isMarkReadWhenScrollingEnabled = true,
-                        isShowReadItemsEnabled = true,
-                        isHideReadItemsEnabled = false,
-                        onShowReadItemsToggled = {},
-                        onHideReadItemsToggled = { hideReadToggles++ },
+                        onArticleOpenModeSelected = {},
+                        onSaveReaderModeContentToggled = {},
+                        onPrefetchToggled = {},
+                        onMarkReadWhenScrollingToggled = {},
+                        readArticlesVisibility = ReadArticlesVisibility.HIDE_ON_REFRESH,
+                        onReadArticlesVisibilitySelected = { selections += it },
                     )
                 }
             }
         }
 
-        rule.onNodeWithText(EnFeedFlowStrings.settingsHideReadItems).assertIsNotEnabled()
-        rule.onNodeWithText(EnFeedFlowStrings.settingsHideReadItemsDisabledWhileScrolling).assertExists()
-        rule.runOnIdle { assertEquals(0, hideReadToggles) }
+        rule.onNodeWithText(EnFeedFlowStrings.settingsReadArticlesRightAwayDisabled).assertExists()
+        val comboBox = rule.onNodeWithContentDescription(EnFeedFlowStrings.settingsReadArticlesTitle)
+        comboBox.performClick()
+        rule.onNodeWithText(EnFeedFlowStrings.settingsReadArticlesHideRightAway).assertIsNotEnabled()
+        rule.onNodeWithText(EnFeedFlowStrings.settingsReadArticlesHideRightAway).performClick()
+        rule.runOnIdle { assertEquals(emptyList(), selections) }
+
+        comboBox.requestFocus()
+        comboBox.performKeyInput { pressKey(Key.DirectionDown) }
+        comboBox.performKeyInput { pressKey(Key.Enter) }
+        rule.runOnIdle { assertEquals(emptyList(), selections) }
     }
 
     private fun selectedOption(text: String) = rule.onNode(

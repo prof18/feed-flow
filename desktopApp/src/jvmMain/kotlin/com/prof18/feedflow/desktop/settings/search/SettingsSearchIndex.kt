@@ -71,38 +71,46 @@ internal fun settingsSearchIndex(
 
     val feedList = strings.settingsFeedListTitle
     page(DesktopSettingsCategory.FEED_LIST, feedList)
-    rows(DesktopSettingsCategory.FEED_LIST, feedList, strings.settingsAppearance, strings.feedLayoutTitle)
-    val feedAppearance = strings.settingsAppearance
+    val layout = strings.settingsFeedListSectionLayout
+    rows(DesktopSettingsCategory.FEED_LIST, feedList, layout, strings.feedLayoutTitle)
     if (isGridToggleVisible) {
-        rows(DesktopSettingsCategory.FEED_LIST, feedList, feedAppearance, strings.settingsFeedLayoutGridToggle)
+        rows(DesktopSettingsCategory.FEED_LIST, feedList, layout, strings.settingsFeedLayoutGridToggle)
     }
-    cardRows(DesktopSettingsCategory.FEED_LIST, feedList, feedAppearance, strings.settingsFeedListScaleTitle)
-    rows(DesktopSettingsCategory.FEED_LIST, feedList, strings.settingsAppearance, strings.settingsDescriptionMaxLines)
+    cardRows(DesktopSettingsCategory.FEED_LIST, feedList, layout, strings.settingsFeedListScaleTitle)
     rows(
         DesktopSettingsCategory.FEED_LIST,
         feedList,
-        null,
-        strings.settingsHideDescription,
-        strings.settingsHideImages,
-        strings.settingsHideDate,
-        strings.settingsHideUnreadDot,
-        strings.settingsHideFeedSource,
+        strings.settingsFeedListSectionShowInList,
+        strings.settingsShowDescription,
+        strings.settingsDescriptionMaxLines,
         strings.settingsHideDuplicatedTitleFromDesc,
+        strings.settingsShowImages,
+        strings.settingsShowDate,
+        strings.settingsShowUnreadDot,
+        strings.settingsShowFeedSource,
+    )
+    rows(
+        DesktopSettingsCategory.FEED_LIST,
+        feedList,
+        strings.settingsFeedListSectionDateTime,
         strings.dateFormatTitle,
         strings.timeFormatTitle,
     )
     rows(
         DesktopSettingsCategory.FEED_LIST,
         feedList,
-        strings.settingsReadingBehavior,
-        strings.settingsToggleShowReadArticles,
-        strings.settingsHideReadItems,
+        strings.settingsFeedListSectionOrder,
         strings.settingsFeedOrderTitle,
+    )
+    rows(
+        DesktopSettingsCategory.FEED_LIST,
+        feedList,
+        strings.settingsFeedListSectionGestures,
         strings.settingsLeftSwipeAction,
         strings.settingsRightSwipeAction,
     )
 
-    val reading = strings.settingsReadingBehavior
+    val reading = strings.settingsReadingTitle
     page(DesktopSettingsCategory.READING, reading)
     rows(
         DesktopSettingsCategory.READING,
@@ -112,6 +120,7 @@ internal fun settingsSearchIndex(
         strings.settingsSaveReaderModeContent,
         strings.settingsPrefetchArticleContent,
         strings.toggleMarkReadWhenScrolling,
+        strings.settingsReadArticlesTitle,
     )
     cardRows(
         DesktopSettingsCategory.READING,

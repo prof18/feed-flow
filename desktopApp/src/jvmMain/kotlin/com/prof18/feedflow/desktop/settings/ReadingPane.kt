@@ -12,12 +12,15 @@ import com.prof18.feedflow.core.model.ArticleOpenMode.FEED_CONTENT
 import com.prof18.feedflow.core.model.ArticleOpenMode.FULL_ARTICLE
 import com.prof18.feedflow.core.model.ArticleOpenMode.INTERNAL_BROWSER
 import com.prof18.feedflow.core.model.ArticleOpenMode.PREFERRED_BROWSER
+import com.prof18.feedflow.core.model.ReadArticlesVisibility
 import com.prof18.feedflow.core.model.ReaderFontFamily
 import com.prof18.feedflow.core.model.ReaderModeDefaults
 import com.prof18.feedflow.core.model.globalArticleOpenModes
 import com.prof18.feedflow.desktop.reaadermode.ReaderTextSettingsControls
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
@@ -30,6 +33,8 @@ internal fun ReadingPane(
     onSaveReaderModeContentToggled: (Boolean) -> Unit,
     onPrefetchToggled: (Boolean) -> Unit,
     onMarkReadWhenScrollingToggled: (Boolean) -> Unit,
+    readArticlesVisibility: ReadArticlesVisibility = ReadArticlesVisibility.HIDE_ON_REFRESH,
+    onReadArticlesVisibilitySelected: (ReadArticlesVisibility) -> Unit = {},
     readerFontSize: Int = ReaderModeDefaults.FONT_SIZE,
     readerLineHeight: Int = ReaderModeDefaults.LINE_HEIGHT,
     onReaderFontSizeChanged: (Int) -> Unit = {},
@@ -43,7 +48,7 @@ internal fun ReadingPane(
 ) {
     val strings = LocalFeedFlowStrings.current
     var showPrefetchConfirmation by remember { mutableStateOf(false) }
-    SettingsPage(title = strings.settingsReadingBehavior) {
+    SettingsPage(title = strings.settingsReadingTitle) {
         SettingsSection {
             val displayedMode = if (articleOpenMode == INTERNAL_BROWSER) PREFERRED_BROWSER else articleOpenMode
             SettingsChoice(
@@ -77,6 +82,26 @@ internal fun ReadingPane(
                 title = strings.toggleMarkReadWhenScrolling,
                 checked = isMarkReadWhenScrollingEnabled,
                 onCheckedChange = onMarkReadWhenScrollingToggled,
+            )
+            SettingsChoice(
+                title = strings.settingsReadArticlesTitle,
+                choices = persistentListOf(
+                    ReadArticlesVisibility.KEEP_IN_LIST to strings.settingsReadArticlesKeep,
+                    ReadArticlesVisibility.HIDE_ON_REFRESH to strings.settingsReadArticlesHideOnRefresh,
+                    ReadArticlesVisibility.HIDE_RIGHT_AWAY to strings.settingsReadArticlesHideRightAway,
+                ),
+                selected = readArticlesVisibility,
+                onSelected = onReadArticlesVisibilitySelected,
+                supportingText = if (isMarkReadWhenScrollingEnabled) {
+                    strings.settingsReadArticlesRightAwayDisabled
+                } else {
+                    strings.settingsReadArticlesFooter
+                },
+                disabledChoices = if (isMarkReadWhenScrollingEnabled) {
+                    persistentSetOf(ReadArticlesVisibility.HIDE_RIGHT_AWAY)
+                } else {
+                    persistentSetOf()
+                },
             )
         }
         SettingsSection(title = strings.readerModeTextSettings) {

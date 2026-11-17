@@ -70,7 +70,7 @@ class SettingsCategoryLayoutTest(
             DesktopSettingsCategory.SYNC to EnFeedFlowStrings.settingsSyncAndRefresh,
             DesktopSettingsCategory.STORAGE to EnFeedFlowStrings.settingsStorage,
             DesktopSettingsCategory.FEED_LIST to EnFeedFlowStrings.settingsFeedListTitle,
-            DesktopSettingsCategory.READING to EnFeedFlowStrings.settingsReadingBehavior,
+            DesktopSettingsCategory.READING to EnFeedFlowStrings.settingsReadingTitle,
             DesktopSettingsCategory.ABOUT to EnFeedFlowStrings.settingsAboutAndSupport,
         )
 

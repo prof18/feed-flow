@@ -175,11 +175,6 @@ internal fun SettingsWindow(
                     onHideUnreadDotUpdate = feedListSettingsViewModel::updateHideUnreadDot,
                     onHideFeedSourceUpdate = feedListSettingsViewModel::updateHideFeedSource,
                     onDescriptionLineLimitUpdate = feedListSettingsViewModel::updateDescriptionLineLimit,
-                    isShowReadItemsEnabled = settingsState.isShowReadItemsEnabled,
-                    isHideReadItemsEnabled = settingsState.isHideReadItemsEnabled,
-                    isMarkReadWhenScrollingEnabled = settingsState.isMarkReadWhenScrollingEnabled,
-                    onShowReadItemsToggled = menuBarViewModel::updateShowReadItemsOnTimeline,
-                    onHideReadItemsToggled = menuBarViewModel::updateHideReadItems,
                 )
                 DesktopSettingsCategory.READING -> ReadingPane(
                     articleOpenMode = settingsState.articleOpenMode,
@@ -190,6 +185,8 @@ internal fun SettingsWindow(
                     onSaveReaderModeContentToggled = menuBarViewModel::updateSaveReaderModeContent,
                     onPrefetchToggled = menuBarViewModel::updatePrefetchArticleContent,
                     onMarkReadWhenScrollingToggled = menuBarViewModel::updateMarkReadWhenScrolling,
+                    readArticlesVisibility = settingsState.readArticlesVisibility,
+                    onReadArticlesVisibilitySelected = menuBarViewModel::updateReadArticlesVisibility,
                     readerFontSize = readerFonts.fontSize,
                     readerLineHeight = readerFonts.lineHeight,
                     onReaderFontSizeChanged = settingsRepository::setReaderModeFontSize,

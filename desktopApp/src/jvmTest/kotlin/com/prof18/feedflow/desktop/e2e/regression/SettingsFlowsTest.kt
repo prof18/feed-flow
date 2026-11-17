@@ -93,7 +93,7 @@ class SettingsFlowsTest {
         val flow = e2e.start(Seed.ContentRich)
         flow.awaitText(SEED_NEWEST_TITLE)
 
-        flow.openSettings(flow.strings.settingsReadingBehavior)
+        flow.openSettings(flow.strings.settingsReadingTitle)
         val saveContent = flow.isSwitchOn(SETTINGS(flow), flow.strings.settingsSaveReaderModeContent)
         flow.setSwitch(SETTINGS(flow), flow.strings.settingsSaveReaderModeContent, on = !saveContent)
         val markRead = flow.isSwitchOn(SETTINGS(flow), flow.strings.toggleMarkReadWhenScrolling)
@@ -111,7 +111,7 @@ class SettingsFlowsTest {
         }
     }
 
-    // feed list detail controls: desktop settings/FeedListPane.kt:115-246
+    // feed list detail controls: desktop settings/FeedListPane.kt:91-266
     @Test
     fun `REG-122 feed list settings detail controls`() {
         val flow = e2e.start(Seed.ContentRich)
@@ -120,12 +120,20 @@ class SettingsFlowsTest {
         flow.openSettings(flow.strings.settingsFeedListTitle)
         flow.awaitTextIn(SETTINGS(flow), flow.strings.settingsFeedListScaleTitle)
         flow.click(flow.awaitDescriptionIn(flow.strings.increaseFontSizeButtonContentDescription))
+        flow.awaitTextIn(SETTINGS(flow), "+1")
         listOf(
-            flow.strings.settingsHideDate,
-            flow.strings.settingsHideUnreadDot,
-            flow.strings.settingsHideFeedSource,
-            flow.strings.settingsHideDuplicatedTitleFromDesc,
-        ).forEach { flow.setSwitch(SETTINGS(flow), it, on = true) }
+            flow.strings.settingsShowUnreadDot,
+            flow.strings.settingsShowFeedSource,
+        ).forEach { flow.setSwitch(SETTINGS(flow), it, on = false) }
+        flow.setSwitch(SETTINGS(flow), flow.strings.settingsHideDuplicatedTitleFromDesc, on = true)
+        // Turning Description or Date off disables the rows that depend on it, with the reason.
+        flow.setSwitch(SETTINGS(flow), flow.strings.settingsShowDescription, on = false)
+        flow.awaitTextIn(SETTINGS(flow), flow.strings.settingsRequiresDescription)
+        assertTrue(flow.switchIn(SETTINGS(flow), flow.strings.settingsHideDuplicatedTitleFromDesc).isDisabled)
+        flow.setSwitch(SETTINGS(flow), flow.strings.settingsShowDescription, on = true)
+        flow.setSwitch(SETTINGS(flow), flow.strings.settingsShowDate, on = false)
+        flow.scrollInWindow(SETTINGS(flow), "the Date reason") { flow.strings.settingsRequiresDate in it.texts }
+        flow.setSwitch(SETTINGS(flow), flow.strings.settingsShowDate, on = true)
         flow.choose(
             SETTINGS(flow),
             flow.strings.settingsDescriptionMaxLines,
@@ -175,8 +183,8 @@ class SettingsFlowsTest {
 
     /**
      * Desktop has no home "more" menu: Refresh feeds is a toolbar button (not pressed: it would fetch live
-     * feeds), sort and show-read live in Settings → Feed list, and Delete week-old articles in Settings →
-     * Storage.
+     * feeds), sort lives in Settings → Feed list, read articles in Settings → Reading, and Delete
+     * week-old articles in Settings → Storage.
      */
     @Test
     fun `REG-124 home overflow secondary actions`() {
@@ -190,7 +198,8 @@ class SettingsFlowsTest {
 
         flow.openSettings(flow.strings.settingsFeedListTitle)
         flow.choose(SETTINGS(flow), flow.strings.settingsFeedOrderTitle, flow.strings.settingsFeedOrderOldestFirst)
-        flow.setSwitch(SETTINGS(flow), flow.strings.settingsToggleShowReadArticles, on = true)
+        flow.clickIn(SETTINGS(flow), flow.strings.settingsReadingTitle)
+        flow.choose(SETTINGS(flow), flow.strings.settingsReadArticlesTitle, flow.strings.settingsReadArticlesKeep)
         flow.clickIn(SETTINGS(flow), flow.strings.settingsStorage)
         flow.clickSettingsButton(flow.strings.clearOldArticlesButton)
         flow.awaitTextIn(flow.dialogTitle(), flow.strings.clearOldArticlesDialogMessage, exact = false)

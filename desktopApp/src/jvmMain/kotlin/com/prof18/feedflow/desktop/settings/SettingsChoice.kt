@@ -17,6 +17,8 @@ import com.prof18.feedflow.desktop.settings.search.settingsSearchHighlight
 import com.prof18.feedflow.desktop.ui.components.DesktopChoiceDropdown
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 
@@ -29,6 +31,7 @@ internal fun <T : Any> SettingsChoice(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     supportingText: String? = null,
+    disabledChoices: ImmutableSet<T> = persistentSetOf(),
 ) {
     val fontScale = LocalDensity.current.fontScale
     val inSection = LocalInSettingsSection.current
@@ -59,6 +62,7 @@ internal fun <T : Any> SettingsChoice(
                 selected = selected,
                 onSelected = onSelected,
                 enabled = enabled,
+                disabledChoices = disabledChoices,
                 maxPopupWidth = maxWidth.coerceAtMost(440.dp),
                 modifier = Modifier.width(controlWidth),
             )

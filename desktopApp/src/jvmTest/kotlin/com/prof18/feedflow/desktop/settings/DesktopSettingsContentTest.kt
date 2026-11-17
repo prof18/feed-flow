@@ -105,17 +105,17 @@ class DesktopSettingsContentTest {
             repeat(times = 5) { pressKey(Key.DirectionDown) }
             pressKey(Key.Enter)
         }
-        val readingCategory = compose.onNodeWithText(EnFeedFlowStrings.settingsReadingBehavior)
+        val readingCategory = compose.onNodeWithText(EnFeedFlowStrings.settingsReadingTitle)
         readingCategory.assertIsSelected()
         val detailAction = compose.onNodeWithTag(DETAIL_ACTION_TAG)
         detailAction.requestFocus()
         detailAction.assertIsFocused()
-        compose.onNodeWithText(EnFeedFlowStrings.settingsReadingBehavior).assertIsSelected()
+        compose.onNodeWithText(EnFeedFlowStrings.settingsReadingTitle).assertIsSelected()
 
         categoryList.requestFocus()
 
         categoryList.assertIsFocused()
-        compose.onNodeWithText(EnFeedFlowStrings.settingsReadingBehavior).assertIsSelected()
+        compose.onNodeWithText(EnFeedFlowStrings.settingsReadingTitle).assertIsSelected()
         compose.onNodeWithTag(DETAIL_TAG).assertTextEquals(DesktopSettingsCategory.READING.name)
     }
 
@@ -238,7 +238,7 @@ class DesktopSettingsContentTest {
         compose.onNode(hasText(EnFeedFlowStrings.settingsHideUnreadCount) and isSelected()).assertExists()
         field.performKeyInput { pressKey(Key.DirectionDown) }
 
-        compose.onNode(hasText(EnFeedFlowStrings.settingsHideUnreadDot) and isSelected()).assertExists()
+        compose.onNode(hasText(EnFeedFlowStrings.settingsShowUnreadDot) and isSelected()).assertExists()
         compose.onNode(hasText(EnFeedFlowStrings.settingsHideUnreadCount) and isNotSelected()).assertExists()
     }
 

@@ -123,7 +123,7 @@ internal fun SettingsContent(
         DesktopSettingsCategory.SYNC to strings.settingsSyncAndRefresh,
         DesktopSettingsCategory.STORAGE to strings.settingsStorage,
         DesktopSettingsCategory.FEED_LIST to strings.settingsFeedListTitle,
-        DesktopSettingsCategory.READING to strings.settingsReadingBehavior,
+        DesktopSettingsCategory.READING to strings.settingsReadingTitle,
         DesktopSettingsCategory.ABOUT to strings.settingsAboutAndSupport,
     )
     val categoryListState = rememberSingleSelectionLazyListState(initialSelectedKey = initialCategory)

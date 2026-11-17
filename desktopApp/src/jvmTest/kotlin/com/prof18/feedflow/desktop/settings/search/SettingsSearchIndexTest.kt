@@ -27,7 +27,7 @@ class SettingsSearchIndexTest {
         )
         assertTrue(
             results.any {
-                it.title == EnFeedFlowStrings.settingsHideUnreadDot && it.category == DesktopSettingsCategory.FEED_LIST
+                it.title == EnFeedFlowStrings.settingsShowUnreadDot && it.category == DesktopSettingsCategory.FEED_LIST
             },
         )
     }
@@ -109,6 +109,32 @@ class SettingsSearchIndexTest {
     }
 
     @Test
+    fun `read articles picker is on the reading page`() {
+        val entry = index().single { it.title == EnFeedFlowStrings.settingsReadArticlesTitle }
+
+        assertEquals(DesktopSettingsCategory.READING, entry.category)
+        assertEquals(EnFeedFlowStrings.settingsReadingTitle, entry.pageTitle)
+    }
+
+    @Test
+    fun `image is in the show in list section of the feed list page`() {
+        val entry = index().single { it.title == EnFeedFlowStrings.settingsShowImages }
+
+        assertEquals(DesktopSettingsCategory.FEED_LIST, entry.category)
+        assertEquals(EnFeedFlowStrings.settingsFeedListSectionShowInList, entry.sectionTitle)
+    }
+
+    @Test
+    fun `feed list has no appearance or reading behavior sections`() {
+        val feedListSections = index()
+            .filter { it.category == DesktopSettingsCategory.FEED_LIST }
+            .map { it.sectionTitle }
+
+        assertTrue(EnFeedFlowStrings.settingsAppearance !in feedListSections)
+        assertTrue(EnFeedFlowStrings.settingsReadingBehavior !in feedListSections)
+    }
+
+    @Test
     fun `faq is in the about category`() {
         assertEquals(
             DesktopSettingsCategory.ABOUT,
@@ -132,7 +158,7 @@ class SettingsSearchIndexTest {
             DesktopSettingsCategory.SYNC to EnFeedFlowStrings.settingsSyncAndRefresh,
             DesktopSettingsCategory.STORAGE to EnFeedFlowStrings.settingsStorage,
             DesktopSettingsCategory.FEED_LIST to EnFeedFlowStrings.settingsFeedListTitle,
-            DesktopSettingsCategory.READING to EnFeedFlowStrings.settingsReadingBehavior,
+            DesktopSettingsCategory.READING to EnFeedFlowStrings.settingsReadingTitle,
             DesktopSettingsCategory.ABOUT to EnFeedFlowStrings.settingsAboutAndSupport,
         )
         val entries = index()

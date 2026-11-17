@@ -23,9 +23,9 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     text: "Sort & filter"
 - tapOn:
-    text: "Oldest First"
+    text: "Oldest first"
 - tapOn:
-    text: "Newest First"
+    text: "Newest first"
 - tapOn:
     text: "Done"
 - scrollUntilVisible:

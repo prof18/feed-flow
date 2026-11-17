@@ -26,11 +26,27 @@ appId: com.prof18.feedflow.dev
     text: "Card"
 - assertVisible:
     id: article_image_1
+# Rows half-hidden under the pinned preview still count as visible, so anchor on a row above the toggle.
+- scrollUntilVisible:
+    element: "Date and time"
+    direction: DOWN
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Description lines"
+    direction: UP
+    timeout: 10000
 - tapOn:
     id: feed_list_settings_hide_images
     point: "90%,50%"
 - assertNotVisible:
     id: article_image_1
+- scrollUntilVisible:
+    element: "Date format"
+    direction: DOWN
+    timeout: 10000
+- tapOn: "Date format"
+- tapOn: "Day\\.Month"
+- assertVisible: "Day\\.Month"
 - scrollUntilVisible:
     element:
       id: feed_list_settings_order
@@ -39,14 +55,7 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: feed_list_settings_order
 - tapOn:
-    text: "Oldest First"
-- scrollUntilVisible:
-    element: "Date format"
-    direction: DOWN
-    timeout: 10000
-- tapOn: "Date format"
-- tapOn: "Day\\.Month"
-- assertVisible: "Day\\.Month"
+    text: "Oldest first"
 - tapOn:
     id: BackButton
 - tapOn:

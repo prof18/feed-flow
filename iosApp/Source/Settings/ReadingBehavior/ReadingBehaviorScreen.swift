@@ -38,13 +38,9 @@ struct ReadingBehaviorScreen: View {
                 get: { settingsState.isMarkReadWhenScrollingEnabled },
                 set: { vmStoreOwner.instance.updateMarkReadWhenScrolling(value: $0) }
             ),
-            isShowReadItemEnabled: Binding(
-                get: { settingsState.isShowReadItemsEnabled },
-                set: { vmStoreOwner.instance.updateShowReadItemsOnTimeline(value: $0) }
-            ),
-            isHideReadItemsEnabled: Binding(
-                get: { settingsState.isHideReadItemsEnabled },
-                set: { vmStoreOwner.instance.updateHideReadItems(value: $0) }
+            readArticlesVisibility: Binding(
+                get: { settingsState.readArticlesVisibility },
+                set: { vmStoreOwner.instance.updateReadArticlesVisibility(value: $0) }
             )
         )
         // Saving a new links browser can rewrite the stored article mode.

@@ -6,8 +6,7 @@ struct ReadingBehaviorScreenContent: View {
     @Binding var articleOpenMode: ArticleOpenMode
     let onArticleBrowserSelected: (String) -> Void
     @Binding var isMarkReadWhenScrollingEnabled: Bool
-    @Binding var isShowReadItemEnabled: Bool
-    @Binding var isHideReadItemsEnabled: Bool
+    @Binding var readArticlesVisibility: ReadArticlesVisibility
 
     private let feedFlowStrings = Deps.shared.getStrings()
 
@@ -49,19 +48,24 @@ struct ReadingBehaviorScreenContent: View {
                 }
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.markReadWhenScrollingToggle)
 
-                Toggle(isOn: $isShowReadItemEnabled) {
-                    Text(feedFlowStrings.settingsToggleShowReadArticles)
+                Picker(selection: $readArticlesVisibility) {
+                    Text(feedFlowStrings.settingsReadArticlesKeep)
+                        .tag(ReadArticlesVisibility.keepInList)
+                    Text(feedFlowStrings.settingsReadArticlesHideOnRefresh)
+                        .tag(ReadArticlesVisibility.hideOnRefresh)
+                    Text(feedFlowStrings.settingsReadArticlesHideRightAway)
+                        .tag(ReadArticlesVisibility.hideRightAway)
+                        .selectionDisabled(isMarkReadWhenScrollingEnabled)
+                        .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.readArticlesHideRightAwayOption)
+                } label: {
+                    Text(feedFlowStrings.settingsReadArticlesTitle)
                 }
-                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.showReadToggle)
-
-                Toggle(isOn: $isHideReadItemsEnabled) {
-                    Text(feedFlowStrings.settingsHideReadItems)
-                }
-                .disabled(isMarkReadWhenScrollingEnabled)
-                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.hideReadToggle)
+                .pickerStyle(.inline)
             } footer: {
                 if isMarkReadWhenScrollingEnabled {
-                    Text(feedFlowStrings.settingsHideReadItemsDisabledWhileScrolling)
+                    Text(feedFlowStrings.settingsReadArticlesRightAwayDisabled)
+                } else {
+                    Text(feedFlowStrings.settingsReadArticlesFooter)
                 }
             }
         }

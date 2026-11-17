@@ -22,63 +22,20 @@ appId: com.prof18.feedflow.dev
     id: reading_behavior_article_open_mode
 - tapOn:
     id: article_open_mode_feed_content
-- assertVisible: "Reader \\(feed\\)"
-- tapOn:
-    id: reading_behavior_mark_read_when_scrolling
-    point: "90%,50%"
-- tapOn:
-    id: reading_behavior_show_read
-    point: "90%,50%"
+- assertVisible: ".*Reader \\(feed\\)"
+# "Mark as read when scrolling" is on: Hide right away stays listed but cannot be selected.
 - scrollUntilVisible:
-    element:
-      text: "Auto-hide articles when marked as read"
-    direction: DOWN
-    timeout: 10000
-- tapOn:
-    id: reading_behavior_hide_read
-    point: "90%,50%"
-- scrollUntilVisible:
-    element:
-      id: reading_behavior_mark_read_when_scrolling
-    direction: UP
-    timeout: 10000
-- tapOn:
-    id: reading_behavior_mark_read_when_scrolling
-    point: "90%,50%"
-- scrollUntilVisible:
-    element:
-      id: reading_behavior_hide_read
+    element: "Hide right away is off while.*articles stay in place as you scroll.*"
     direction: DOWN
     timeout: 10000
 - assertVisible:
-    id: reading_behavior_hide_read
+    id: reading_behavior_read_articles_hide_right_away
     enabled: false
-    checked: true
-- assertVisible: "Auto-hide is disabled when.*articles stay in place as you scroll.*"
-- tapOn:
-    id: reading_behavior_hide_read
-    point: "90%,50%"
-- assertVisible:
-    id: reading_behavior_hide_read
-    enabled: false
-    checked: true
-- scrollUntilVisible:
-    element:
-      id: reading_behavior_mark_read_when_scrolling
-    direction: UP
-    timeout: 10000
-- tapOn:
-    id: reading_behavior_mark_read_when_scrolling
-    point: "90%,50%"
-- scrollUntilVisible:
-    element:
-      id: reading_behavior_hide_read
-    direction: DOWN
-    timeout: 10000
-- assertVisible:
-    id: reading_behavior_hide_read
-    enabled: true
-    checked: true
+- tapOn: "Hide right away"
+- assertNotVisible:
+    id: reading_behavior_read_articles_hide_right_away
+    selected: true
+- tapOn: "Keep in list"
 - tapOn:
     id: BackButton
 - tapOn:
@@ -103,8 +60,19 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: settings_reading_behavior
 - tapOn:
-    id: reading_behavior_show_read
+    id: reading_behavior_mark_read_when_scrolling
     point: "90%,50%"
+- scrollUntilVisible:
+    element: "Choose when articles you have read leave your lists\\."
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: reading_behavior_read_articles_hide_right_away
+    enabled: true
+- tapOn: "Hide right away"
+- assertVisible:
+    id: reading_behavior_read_articles_hide_right_away
+    selected: true
 - tapOn:
     id: BackButton
 - tapOn:
@@ -114,3 +82,24 @@ appId: com.prof18.feedflow.dev
     optional: true
 - assertNotVisible:
     text: "E2E Read Article.*"
+- stopApp
+- launchApp
+- tapOn:
+    id: drawer_menu_button
+- tapOn:
+    id: drawer_settings_button
+- scrollUntilVisible:
+    element:
+      id: settings_reading_behavior
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: settings_reading_behavior
+- scrollUntilVisible:
+    element:
+      id: reading_behavior_read_articles_hide_right_away
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: reading_behavior_read_articles_hide_right_away
+    selected: true

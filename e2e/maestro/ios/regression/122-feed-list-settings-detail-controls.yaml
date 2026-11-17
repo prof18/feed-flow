@@ -19,18 +19,25 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: settings_feed_list
 - assertVisible: "Text scale"
-- assertVisible: "Hide article date"
+- assertVisible: "Default"
 - tapOn:
-    id: feed_list_settings_hide_date
+    id: feed_list_settings_show_description
     point: "90%,50%"
-- assertVisible: "Hide unread indicator"
+- assertVisible:
+    id: feed_list_settings_remove_title
+    enabled: false
+- scrollUntilVisible:
+    element: "Turn on Description to change this\\."
+    direction: DOWN
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Text scale"
+    direction: UP
+    timeout: 10000
 - tapOn:
-    id: feed_list_settings_hide_unread_dot
+    id: feed_list_settings_show_description
     point: "90%,50%"
-- assertVisible: "Hide feed name"
-- tapOn:
-    id: feed_list_settings_hide_feed_source
-    point: "90%,50%"
+- assertNotVisible: "Turn on Description to change this\\."
 - scrollUntilVisible:
     element: "Description lines"
     direction: DOWN
@@ -43,12 +50,48 @@ appId: com.prof18.feedflow.dev
     id: feed_list_settings_remove_title
     point: "90%,50%"
 - scrollUntilVisible:
+    element: "Date and time"
+    direction: DOWN
+    timeout: 10000
+- assertVisible: "Unread indicator"
+- tapOn:
+    id: feed_list_settings_hide_unread_dot
+    point: "90%,50%"
+- assertVisible: "Feed name"
+- tapOn:
+    id: feed_list_settings_hide_feed_source
+    point: "90%,50%"
+# Rows half-hidden under the pinned preview still count as visible: pull the Date row down before tapping it.
+- swipe:
+    start: "50%,55%"
+    end: "50%,75%"
+- assertVisible: "Date"
+- tapOn:
+    id: feed_list_settings_hide_date
+    point: "90%,50%"
+- scrollUntilVisible:
+    element: "Turn on Date to change this\\."
+    direction: DOWN
+    timeout: 10000
+- swipe:
+    start: "50%,55%"
+    end: "50%,75%"
+- tapOn:
+    id: feed_list_settings_hide_date
+    point: "90%,50%"
+- assertNotVisible: "Turn on Date to change this\\."
+- scrollUntilVisible:
     element: "Date format"
     direction: DOWN
     timeout: 10000
 - tapOn: "Date format"
 - tapOn: "Year-Month-Day"
 - assertVisible: "Year-Month-Day"
+- scrollUntilVisible:
+    element: "Time format"
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn: "Time format"
 - tapOn: "12 hours"
 - assertVisible: "12 hours"

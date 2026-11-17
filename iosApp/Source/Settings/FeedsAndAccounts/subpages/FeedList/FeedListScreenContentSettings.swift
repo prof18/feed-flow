@@ -94,29 +94,6 @@ struct FeedListSettingsScreenContent: View {
 
             Form(content: {
                 Section {
-                    VStack(alignment: .leading) {
-                        Text(feedFlowStrings.settingsFeedListScaleTitle)
-                            .padding(.top)
-
-                        HStack {
-                            Image(systemName: "minus")
-
-                            Slider(
-                                value: Binding(
-                                    get: { scaleFactor },
-                                    set: { newValue in
-                                        scaleFactor = newValue
-                                        onScaleFactorChange(newValue)
-                                    }
-                                ),
-                                in: -4 ... 16,
-                                step: 1.0
-                            )
-
-                            Image(systemName: "plus")
-                        }
-                    }.padding(.bottom, Spacing.regular)
-
                     Picker(selection: $feedLayout) {
                         Text(feedFlowStrings.settingsFeedLayoutList)
                             .tag(FeedLayout.list)
@@ -135,29 +112,16 @@ struct FeedListSettingsScreenContent: View {
                         }
                     }
 
-                    Toggle(isOn: $isHideDescriptionEnabled) {
-                        Text(feedFlowStrings.settingsHideDescription)
-                    }
+                    textScaleControl
+                } header: {
+                    Text(feedFlowStrings.settingsFeedListSectionLayout)
+                }
 
-                    Toggle(isOn: $isHideImagesEnabled) {
-                        Text(feedFlowStrings.settingsHideImages)
+                Section {
+                    Toggle(isOn: inverted($isHideDescriptionEnabled)) {
+                        Text(feedFlowStrings.settingsShowDescription)
                     }
-                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideImagesToggle)
-
-                    Toggle(isOn: $isHideDateEnabled) {
-                        Text(feedFlowStrings.settingsHideDate)
-                    }
-                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideDateToggle)
-
-                    Toggle(isOn: $isHideUnreadDotEnabled) {
-                        Text(feedFlowStrings.settingsHideUnreadDot)
-                    }
-                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideUnreadDotToggle)
-
-                    Toggle(isOn: $isHideFeedSourceEnabled) {
-                        Text(feedFlowStrings.settingsHideFeedSource)
-                    }
-                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideFeedSourceToggle)
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.showDescriptionToggle)
 
                     Picker(selection: $descriptionLineLimit) {
                         Text(feedFlowStrings.settingsDescriptionLinesThree)
@@ -169,42 +133,56 @@ struct FeedListSettingsScreenContent: View {
                     } label: {
                         Text(feedFlowStrings.settingsDescriptionMaxLines)
                     }
+                    .disabled(isHideDescriptionEnabled)
 
                     Toggle(isOn: $isRemoveTitleFromDescriptionEnabled) {
                         Text(feedFlowStrings.settingsHideDuplicatedTitleFromDesc)
                     }
+                    .disabled(isHideDescriptionEnabled)
                     .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.removeTitleToggle)
 
+                    Toggle(isOn: inverted($isHideImagesEnabled)) {
+                        Text(feedFlowStrings.settingsShowImages)
+                    }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideImagesToggle)
+
+                    Toggle(isOn: inverted($isHideDateEnabled)) {
+                        Text(feedFlowStrings.settingsShowDate)
+                    }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideDateToggle)
+
+                    Toggle(isOn: inverted($isHideUnreadDotEnabled)) {
+                        Text(feedFlowStrings.settingsShowUnreadDot)
+                    }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideUnreadDotToggle)
+
+                    Toggle(isOn: inverted($isHideFeedSourceEnabled)) {
+                        Text(feedFlowStrings.settingsShowFeedSource)
+                    }
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.hideFeedSourceToggle)
+                } header: {
+                    Text(feedFlowStrings.settingsFeedListSectionShowInList)
+                } footer: {
+                    if isHideDescriptionEnabled {
+                        Text(feedFlowStrings.settingsRequiresDescription)
+                    }
+                }
+
+                Section {
                     DateFormatSection(dateFormat: $dateFormat)
+                        .disabled(isHideDateEnabled)
 
                     TimeFormatSection(timeFormat: $timeFormat)
-
-                    Picker(selection: $leftSwipeAction) {
-                        Text(feedFlowStrings.settingsSwipeActionToggleRead)
-                            .tag(SwipeActionType.toggleReadStatus)
-                        Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
-                            .tag(SwipeActionType.toggleBookmarkStatus)
-                        Text(feedFlowStrings.settingsSwipeActionOpenInBrowser)
-                            .tag(SwipeActionType.openInBrowser)
-                        Text(feedFlowStrings.settingsSwipeActionNone)
-                            .tag(SwipeActionType.none)
-                    } label: {
-                        Text(feedFlowStrings.settingsLeftSwipeAction)
+                        .disabled(isHideDateEnabled)
+                } header: {
+                    Text(feedFlowStrings.settingsFeedListSectionDateTime)
+                } footer: {
+                    if isHideDateEnabled {
+                        Text(feedFlowStrings.settingsRequiresDate)
                     }
+                }
 
-                    Picker(selection: $rightSwipeAction) {
-                        Text(feedFlowStrings.settingsSwipeActionToggleRead)
-                            .tag(SwipeActionType.toggleReadStatus)
-                        Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
-                            .tag(SwipeActionType.toggleBookmarkStatus)
-                        Text(feedFlowStrings.settingsSwipeActionOpenInBrowser)
-                            .tag(SwipeActionType.openInBrowser)
-                        Text(feedFlowStrings.settingsSwipeActionNone)
-                            .tag(SwipeActionType.none)
-                    } label: {
-                        Text(feedFlowStrings.settingsRightSwipeAction)
-                    }
-
+                Section {
                     Picker(selection: $feedOrder) {
                         Text(feedFlowStrings.settingsFeedOrderNewestFirst)
                             .tag(FeedOrder.newestFirst)
@@ -214,6 +192,24 @@ struct FeedListSettingsScreenContent: View {
                         Text(feedFlowStrings.settingsFeedOrderTitle)
                     }
                     .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.orderPicker)
+                } header: {
+                    Text(feedFlowStrings.settingsFeedListSectionOrder)
+                }
+
+                Section {
+                    Picker(selection: $leftSwipeAction) {
+                        swipeActionOptions
+                    } label: {
+                        Text(feedFlowStrings.settingsLeftSwipeAction)
+                    }
+
+                    Picker(selection: $rightSwipeAction) {
+                        swipeActionOptions
+                    } label: {
+                        Text(feedFlowStrings.settingsRightSwipeAction)
+                    }
+                } header: {
+                    Text(feedFlowStrings.settingsFeedListSectionGestures)
                 }
             })
             .scrollContentBackground(.hidden)
@@ -221,6 +217,72 @@ struct FeedListSettingsScreenContent: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.secondaryBackgroundColor.ignoresSafeArea())
+    }
+    private var textScaleControl: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Text(feedFlowStrings.settingsFeedListScaleTitle)
+                Spacer()
+                Text(scaleLabel)
+                    .foregroundStyle(.secondary)
+                if scaleFactor != 0 {
+                    Button(feedFlowStrings.resetButton) {
+                        scaleFactor = 0
+                        onScaleFactorChange(0)
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityIdentifier(FeedListSettingsAccessibilityIdentifiers.scaleResetButton)
+                }
+            }
+            .padding(.top)
+
+            HStack {
+                Image(systemName: "minus")
+
+                Slider(
+                    value: Binding(
+                        get: { scaleFactor },
+                        set: { newValue in
+                            scaleFactor = newValue
+                            onScaleFactorChange(newValue)
+                        }
+                    ),
+                    in: -4 ... 16,
+                    step: 1.0
+                )
+                .accessibilityLabel(Text(feedFlowStrings.settingsFeedListScaleTitle))
+                .accessibilityValue(Text(scaleLabel))
+
+                Image(systemName: "plus")
+            }
+        }
+        .padding(.bottom, Spacing.regular)
+    }
+
+    private var scaleLabel: String {
+        let step = Int(scaleFactor)
+        if step == 0 {
+            return feedFlowStrings.settingsFeedListScaleDefault
+        }
+        return step > 0 ? "+\(step)" : "\(step)"
+    }
+
+    @ViewBuilder private var swipeActionOptions: some View {
+        Text(feedFlowStrings.settingsSwipeActionToggleRead)
+            .tag(SwipeActionType.toggleReadStatus)
+        Text(feedFlowStrings.settingsSwipeActionToggleBookmark)
+            .tag(SwipeActionType.toggleBookmarkStatus)
+        Text(feedFlowStrings.settingsSwipeActionOpenInBrowser)
+            .tag(SwipeActionType.openInBrowser)
+        Text(feedFlowStrings.settingsSwipeActionNone)
+            .tag(SwipeActionType.none)
+    }
+
+    private func inverted(_ binding: Binding<Bool>) -> Binding<Bool> {
+        Binding(
+            get: { !binding.wrappedValue },
+            set: { binding.wrappedValue = !$0 }
+        )
     }
 }
 

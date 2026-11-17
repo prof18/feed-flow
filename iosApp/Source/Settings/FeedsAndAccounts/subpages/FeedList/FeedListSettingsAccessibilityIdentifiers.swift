@@ -6,4 +6,6 @@ enum FeedListSettingsAccessibilityIdentifiers {
     static let layoutPicker = "feed_list_settings_layout"
     static let orderPicker = "feed_list_settings_order"
     static let removeTitleToggle = "feed_list_settings_remove_title"
+    static let scaleResetButton = "feed_list_settings_scale_reset"
+    static let showDescriptionToggle = "feed_list_settings_show_description"
 }

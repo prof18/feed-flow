@@ -29,7 +29,7 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     id: feed_list_settings_order
 - tapOn:
-    text: "Oldest First"
+    text: "Oldest first"
 - tapOn:
     id: BackButton
 - assertVisible:

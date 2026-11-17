@@ -133,11 +133,8 @@ class MenuBarViewModel internal constructor(
                 settingsRepository.getMarkFeedAsReadWhenScrolling()
             if (blocked || value == settingsRepository.getReadArticlesVisibility()) return@launch
             settingsRepository.setReadArticlesVisibility(value)
-            when (value) {
-                ReadArticlesVisibility.KEEP_IN_LIST -> feedStateRepository.getFeeds()
-                ReadArticlesVisibility.HIDE_RIGHT_AWAY -> feedStateRepository.reapplyAutoHideToCurrentList()
-                ReadArticlesVisibility.HIDE_ON_REFRESH -> Unit
-            }
+            // Same rule as ReadingBehaviorSettingsViewModel.updateReadArticlesVisibility.
+            if (value != ReadArticlesVisibility.HIDE_ON_REFRESH) feedStateRepository.getFeeds()
         }
     }
 

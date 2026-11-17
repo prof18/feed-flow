@@ -227,6 +227,62 @@ class ReadingBehaviorSettingsViewModelTest : KoinTestBase() {
         assertEquals(listOf(itemId.id), feedStateRepository.feedState.value.map { it.id })
     }
 
+    @Test
+    fun `switching from keep in list to hide right away loads unread articles past an all-read page`() = runTest {
+        seedAllReadFirstPage()
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
+        settingsRepository.setShowReadArticlesTimeline(true)
+        feedStateRepository.getFeeds()
+        assertTrue(feedStateRepository.feedState.value.all { it.isRead })
+
+        viewModel.updateReadArticlesVisibility(ReadArticlesVisibility.HIDE_RIGHT_AWAY)
+        advanceUntilIdle()
+
+        assertEquals(listOf("item-40"), feedStateRepository.feedState.value.map { it.id })
+    }
+
+    @Test
+    fun `hide right away after hide on next refresh loads unread articles past an all-read page`() = runTest {
+        seedAllReadFirstPage()
+        settingsRepository.setMarkFeedAsReadWhenScrolling(false)
+        settingsRepository.setShowReadArticlesTimeline(true)
+        feedStateRepository.getFeeds()
+
+        viewModel.updateReadArticlesVisibility(ReadArticlesVisibility.HIDE_ON_REFRESH)
+        advanceUntilIdle()
+        assertTrue(feedStateRepository.feedState.value.all { it.isRead })
+        viewModel.updateReadArticlesVisibility(ReadArticlesVisibility.HIDE_RIGHT_AWAY)
+        advanceUntilIdle()
+
+        assertEquals(listOf("item-40"), feedStateRepository.feedState.value.map { it.id })
+    }
+
+    private suspend fun seedAllReadFirstPage() {
+        val source = FeedItemGenerator.unreadFeedItem().feedSource
+        databaseHelper.insertFeedSource(
+            listOf(
+                ParsedFeedSource(
+                    id = source.id,
+                    url = source.url,
+                    title = source.title,
+                    category = source.category,
+                    logoUrl = source.logoUrl,
+                    websiteUrl = source.websiteUrl,
+                ),
+            ),
+        )
+        val items = List(41) { index ->
+            FeedItemGenerator.unreadFeedItem(
+                id = "item-$index",
+                url = "https://example.com/article-$index",
+                feedSource = source,
+                pubDateMillis = 1_704_067_200_000L - index * 60_000L,
+            )
+        }
+        databaseHelper.insertFeedItems(items, lastSyncTimestamp = 0)
+        items.take(40).forEach { databaseHelper.updateReadStatus(FeedItemId(it.id), isRead = true) }
+    }
+
     private suspend fun populateDatabase() {
         val feedItem = FeedItemGenerator.unreadFeedItem()
         databaseHelper.insertFeedSource(

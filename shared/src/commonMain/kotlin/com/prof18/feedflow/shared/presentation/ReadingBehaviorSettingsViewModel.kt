@@ -109,10 +109,10 @@ class ReadingBehaviorSettingsViewModel internal constructor(
             settingsRepository.getMarkFeedAsReadWhenScrolling()
         if (blocked || value == settingsRepository.getReadArticlesVisibility()) return
         settingsRepository.setReadArticlesVisibility(value)
-        when (value) {
-            ReadArticlesVisibility.KEEP_IN_LIST -> viewModelScope.launch { feedStateRepository.getFeeds() }
-            ReadArticlesVisibility.HIDE_RIGHT_AWAY -> feedStateRepository.reapplyAutoHideToCurrentList()
-            ReadArticlesVisibility.HIDE_ON_REFRESH -> Unit
+        // Hide on next refresh leaves the current list alone. The other two reload it, so the list matches
+        // what a refresh shows and unread articles past an all-read page still appear.
+        if (value != ReadArticlesVisibility.HIDE_ON_REFRESH) {
+            viewModelScope.launch { feedStateRepository.getFeeds() }
         }
     }
 }

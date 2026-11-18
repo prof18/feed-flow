@@ -38,6 +38,7 @@ class NotificationsViewModel internal constructor(
             searchQuery = "",
             isEnabledForAll = false,
             notificationMode = NotificationMode.FEED_SOURCE,
+            isLoading = true,
         ),
     )
     val notificationSettingState = notificationSettingsMutableStateFlow.asStateFlow()

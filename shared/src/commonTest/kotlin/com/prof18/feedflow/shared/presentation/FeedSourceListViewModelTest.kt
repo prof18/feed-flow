@@ -23,6 +23,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import com.prof18.feedflow.core.model.DatabaseError as DatabaseErrorCode
 
@@ -35,6 +36,26 @@ class FeedSourceListViewModelTest : KoinTestBase() {
     @Test
     fun `initial state is empty`() = runTest(testDispatcher) {
         assertTrue(viewModel.feedSourcesState.value.isEmpty())
+    }
+
+    @Test
+    fun `an empty database stops loading and stays empty`() = runTest(testDispatcher) {
+        advanceUntilIdle()
+
+        val state = viewModel.feedSourcesState.value
+        assertFalse(state.isLoading)
+        assertTrue(state.isEmpty())
+    }
+
+    @Test
+    fun `toggling a category keeps the loaded state`() = runTest(testDispatcher) {
+        val techCategory = FeedSourceCategory(id = "tech", title = "Tech")
+        insertFeedSources(databaseHelper, createFeedSource(id = "tech-source", title = "Tech", category = techCategory))
+        advanceUntilIdle()
+
+        viewModel.expandCategory(CategoryId("tech"))
+
+        assertFalse(viewModel.feedSourcesState.value.isLoading)
     }
 
     @Test

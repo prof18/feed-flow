@@ -34,8 +34,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.prof18.feedflow.android.ui.components.LoadingSpinner
+import com.prof18.feedflow.android.ui.components.rememberLoadingPhase
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
+import com.prof18.feedflow.shared.presentation.LoadingPhase
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -45,8 +48,11 @@ fun BlockedWordsContent(
     onAddWord: (String) -> Unit,
     onRemoveWord: (String) -> Unit,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     bottomPadding: Dp = 0.dp,
 ) {
+    val loadingPhase = rememberLoadingPhase(isLoading)
+
     Column(
         modifier = modifier.padding(Spacing.regular),
         verticalArrangement = Arrangement.spacedBy(Spacing.regular),
@@ -59,7 +65,15 @@ fun BlockedWordsContent(
 
         AddWordInput(onAddWord = onAddWord)
 
-        if (keywords.isEmpty()) {
+        if (loadingPhase == LoadingPhase.Spinner) {
+            LoadingSpinner(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = Spacing.regular),
+            )
+        } else if (loadingPhase == LoadingPhase.Pending) {
+            // Loading briefly: render nothing so the empty state doesn't flash.
+        } else if (keywords.isEmpty()) {
             Text(
                 text = LocalFeedFlowStrings.current.blockedWordsEmptyState,
                 style = MaterialTheme.typography.bodyMedium,

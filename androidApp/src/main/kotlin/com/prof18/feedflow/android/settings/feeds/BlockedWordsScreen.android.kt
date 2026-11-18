@@ -19,6 +19,7 @@ import com.prof18.feedflow.android.settings.SettingsE2eIds
 import com.prof18.feedflow.android.ui.settings.BlockedWordsContent
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
+import kotlinx.collections.immutable.persistentListOf
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -52,7 +53,8 @@ fun BlockedWordsScreen(
     ) { paddingValues ->
         val layoutDir = LocalLayoutDirection.current
         BlockedWordsContent(
-            keywords = keywords,
+            keywords = keywords ?: persistentListOf(),
+            isLoading = keywords == null,
             onAddWord = viewModel::onAddWord,
             onRemoveWord = viewModel::onRemoveWord,
             modifier = Modifier

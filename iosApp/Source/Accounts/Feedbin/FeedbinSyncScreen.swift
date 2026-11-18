@@ -16,7 +16,7 @@ struct FeedbinSyncScreen: View {
         Deps.shared.getFeedbinSyncViewModel()
     )
 
-    @State private var uiState: AccountConnectionUiState = .Unlinked()
+    @State private var uiState: AccountConnectionUiState = .Loading()
     @State private var isLoginLoading = false
     @State private var hasLocalSubscriptions = false
     @State private var didHandleLinkedAccount = false

@@ -12,11 +12,12 @@ import SwiftUI
 struct BlockedWordsScreen: View {
     @StateObject private var vmStoreOwner = VMStoreOwner<BlockedWordsViewModel>(Deps.shared.getBlockedWordsViewModel())
 
-    @State private var words: [String] = []
+    @State private var words: [String]?
 
     var body: some View {
             BlockedWordsScreenContent(
-                words: words,
+                words: words ?? [],
+                isLoading: words == nil,
                 onAddWord: { word in
                     vmStoreOwner.instance.onAddWord(input: word)
                 },

@@ -107,7 +107,8 @@ class FeedSourceListViewModel internal constructor(
         }
     }
 
-    private val feedsMutableState: MutableStateFlow<FeedSourceListState> = MutableStateFlow(FeedSourceListState())
+    private val feedsMutableState: MutableStateFlow<FeedSourceListState> =
+        MutableStateFlow(FeedSourceListState(isLoading = true))
     val feedSourcesState: StateFlow<FeedSourceListState> = feedsMutableState.asStateFlow()
 
     private val mutableUIErrorState: MutableSharedFlow<UIErrorState> = MutableSharedFlow()
@@ -244,10 +245,7 @@ class FeedSourceListViewModel internal constructor(
                     feedSourceState
                 }
             }
-            FeedSourceListState(
-                feedSourcesWithoutCategory = oldState.feedSourcesWithoutCategory,
-                feedSourcesWithCategory = newFeedSourceStates.toImmutableList(),
-            )
+            oldState.copy(feedSourcesWithCategory = newFeedSourceStates.toImmutableList())
         }
     }
 

@@ -35,6 +35,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.prof18.feedflow.android.ui.components.LoadingSpinner
+import com.prof18.feedflow.android.ui.components.rememberLoadingPhase
 import com.prof18.feedflow.android.ui.style.Spacing
 import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.android.widget.FeedFlowWidget
@@ -44,6 +46,7 @@ import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.data.WidgetSettingsRepository
 import com.prof18.feedflow.shared.domain.feed.FeedWidgetRepository
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.presentation.LoadingPhase
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -61,7 +64,7 @@ fun WidgetSettingsScreen(
     val syncPeriod by settingsRepository.syncPeriodFlow.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     var widgets by remember {
-        mutableStateOf<ImmutableList<WidgetListItem>>(persistentListOf())
+        mutableStateOf<ImmutableList<WidgetListItem>?>(null)
     }
 
     LaunchedEffect(context, lifecycleOwner) {
@@ -98,7 +101,8 @@ fun WidgetSettingsScreen(
     }
 
     WidgetSettingsScreenContent(
-        widgets = widgets,
+        widgets = widgets ?: persistentListOf(),
+        isLoading = widgets == null,
         syncPeriod = syncPeriod,
         navigateBack = navigateBack,
         navigateToWidgetInstanceSettings = navigateToWidgetInstanceSettings,
@@ -108,12 +112,14 @@ fun WidgetSettingsScreen(
 @Composable
 private fun WidgetSettingsScreenContent(
     widgets: ImmutableList<WidgetListItem>,
+    isLoading: Boolean,
     syncPeriod: SyncPeriod,
     navigateBack: () -> Unit,
     navigateToWidgetInstanceSettings: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val strings = LocalFeedFlowStrings.current
+    val loadingPhase = rememberLoadingPhase(isLoading)
 
     Scaffold(
         modifier = modifier,
@@ -155,7 +161,17 @@ private fun WidgetSettingsScreenContent(
                     )
                 }
             }
-            if (widgets.isEmpty()) {
+            if (loadingPhase == LoadingPhase.Spinner) {
+                item {
+                    LoadingSpinner(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Spacing.regular),
+                    )
+                }
+            } else if (loadingPhase == LoadingPhase.Pending) {
+                // Loading briefly: render nothing so the empty state doesn't flash.
+            } else if (widgets.isEmpty()) {
                 item {
                     Text(
                         text = strings.widgetListEmpty,

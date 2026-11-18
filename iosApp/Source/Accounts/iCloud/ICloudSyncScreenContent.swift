@@ -26,7 +26,7 @@ struct ICloudSyncScreenContent: View {
     @ViewBuilder private var content: some View {
         switch onEnum(of: connectionState) {
         case .loading:
-            ProgressView()
+            DelayedProgressView()
 
         case .unlinked:
             disconnectedView

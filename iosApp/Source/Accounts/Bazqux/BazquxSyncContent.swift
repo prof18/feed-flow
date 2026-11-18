@@ -41,7 +41,7 @@ struct BazquxSyncContent: View {
     private func loadingView() -> some View {
         VStack {
             Spacer()
-            ProgressView()
+            DelayedProgressView()
             Spacer()
         }
     }

@@ -16,7 +16,7 @@ struct DropboxSyncScreen: View {
 
     @StateObject private var vmStoreOwner = VMStoreOwner<DropboxSyncViewModel>(Deps.shared.getDropboxSyncViewModel())
 
-    @State private var uiState: AccountConnectionUiState = .Unlinked()
+    @State private var uiState: AccountConnectionUiState = .Loading()
 
     var body: some View {
         DropboxSyncScreenContent(

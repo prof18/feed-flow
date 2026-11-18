@@ -15,7 +15,7 @@ struct ICloudSyncScreen: View {
     private var appState
     @StateObject private var vmStoreOwner = VMStoreOwner<ICloudSyncViewModel>(Deps.shared.getICloudSyncViewModel())
 
-    @State private var uiState: AccountConnectionUiState = .Unlinked()
+    @State private var uiState: AccountConnectionUiState = .Loading()
     @State private var didHandleLinkedAccount = false
 
     let onAccountLinked: (() -> Void)?

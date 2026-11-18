@@ -18,7 +18,8 @@ struct FeedSourceListScreen: View {
 
     @State private var feedState: FeedSourceListState = .init(
         feedSourcesWithoutCategory: [],
-        feedSourcesWithCategory: []
+        feedSourcesWithCategory: [],
+        isLoading: true
     )
     @State private var recoveryStates: [String: FeedSourceRecoveryUiState] = [:]
 

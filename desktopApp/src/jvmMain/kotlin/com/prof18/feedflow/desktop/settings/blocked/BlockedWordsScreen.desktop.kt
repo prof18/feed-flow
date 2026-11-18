@@ -41,12 +41,16 @@ import com.prof18.feedflow.desktop.settings.SettingsSection
 import com.prof18.feedflow.desktop.settings.settingsRowSeparator
 import com.prof18.feedflow.desktop.ui.LocalFeedFlowStrings
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
+import com.prof18.feedflow.desktop.ui.components.LoadingSpinner
+import com.prof18.feedflow.desktop.ui.components.rememberLoadingPhase
 import com.prof18.feedflow.shared.presentation.BlockedWordsViewModel
+import com.prof18.feedflow.shared.presentation.LoadingPhase
 import com.prof18.feedflow.shared.presentation.model.BlockedWordAction
 import com.prof18.feedflow.shared.presentation.model.BlockedWordOperationState
 import com.prof18.feedflow.shared.presentation.model.BlockedWordOperationStatus
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.DefaultButton
@@ -68,7 +72,7 @@ internal fun BlockedWordsScreen(
     val operations by viewModel.operationStates.collectAsState()
     Column(modifier.fillMaxSize()) {
         BlockedWordsContent(
-            words,
+            words ?: persistentListOf(),
             viewModel::onAddWord,
             viewModel::onRemoveWord,
             onCloseRequest = {},
@@ -77,6 +81,7 @@ internal fun BlockedWordsScreen(
             showCloseButton = false,
             operationStates = operations,
             onRetryOperation = viewModel::retryOperation,
+            isLoading = words == null,
         )
     }
 }
@@ -93,8 +98,10 @@ internal fun BlockedWordsContent(
     onRetryOperation: (String) -> Unit = {},
     draft: BlockedWordDraft = rememberBlockedWordDraft(),
     showCloseButton: Boolean = true,
+    isLoading: Boolean = false,
 ) {
     val strings = LocalFeedFlowStrings.current
+    val loadingPhase = rememberLoadingPhase(isLoading)
     val inputFocus = remember { FocusRequester() }
     val actionHeight = with(LocalDensity.current) { JewelTheme.defaultTextStyle.lineHeight.toDp() } + 16.dp
     val currentOperations by rememberUpdatedState(operationStates)
@@ -121,7 +128,13 @@ internal fun BlockedWordsContent(
                 )
             }
             SettingsSection(title = strings.settingsBlockedWords) {
-                if (words.isEmpty()) {
+                if (loadingPhase == LoadingPhase.Spinner) {
+                    SettingsBlock {
+                        LoadingSpinner(modifier = Modifier.fillMaxWidth())
+                    }
+                } else if (loadingPhase == LoadingPhase.Pending) {
+                    // Loading briefly: render nothing so the empty state doesn't flash.
+                } else if (words.isEmpty()) {
                     SettingsBlock {
                         Text(strings.blockedWordsEmptyState, color = JewelTheme.globalColors.text.info)
                     }

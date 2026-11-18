@@ -10,7 +10,6 @@ import com.prof18.feedflow.shared.presentation.model.BlockedWordOperationState
 import com.prof18.feedflow.shared.presentation.model.BlockedWordOperationStatus
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentMap
@@ -39,13 +38,14 @@ class BlockedWordsViewModel internal constructor(
     private val operationMutex = Mutex()
     private var operationGeneration = 0L
 
-    val wordsState: StateFlow<ImmutableList<String>> = databaseHelper
+    /** `null` until the words have been read from the database for the first time. */
+    val wordsState: StateFlow<ImmutableList<String>?> = databaseHelper
         .observeBlockedWords()
         .map { list -> list.distinct().toImmutableList() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = persistentListOf(),
+            initialValue = null,
         )
 
     fun onAddWord(input: String) {

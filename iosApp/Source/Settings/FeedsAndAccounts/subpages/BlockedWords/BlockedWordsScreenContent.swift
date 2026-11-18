@@ -11,8 +11,10 @@ import SwiftUI
 
 struct BlockedWordsScreenContent: View {
     @State private var newWord: String = ""
+    @State private var loadingPhase: DelayedLoadingPhase = .pending
 
     let words: [String]
+    let isLoading: Bool
     let onAddWord: (String) -> Void
     let onRemoveWord: (String) -> Void
 
@@ -55,37 +57,52 @@ struct BlockedWordsScreenContent: View {
                 }
                 }
 
-                if words.isEmpty {
+                switch loadingPhase {
+                case .pending:
+                    EmptyView()
+                case .spinner:
                     Section {
-                        Text(feedFlowStrings.blockedWordsEmptyState)
-                            .foregroundColor(.secondary)
+                        ProgressView()
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
-                } else {
-                    Section(feedFlowStrings.settingsBlockedWords) {
-                        ForEach(words, id: \.self) { word in
-                            HStack {
-                                Text(word)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.row(word))
-
-                                Button {
-                                    onRemoveWord(word)
-                                } label: {
-                                    Image(systemName: "trash")
-                                        .foregroundColor(.red)
-                                }
-                                .buttonStyle(.borderless)
-                                .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.deleteButton(word))
-                            }
-                        }
-                    }
+                case .ready:
+                    wordsSection
                 }
             }
         }
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
         .background(Color.secondaryBackgroundColor)
+        .delayedLoadingPhase(isLoading: isLoading, phase: $loadingPhase)
+    }
+
+    @ViewBuilder private var wordsSection: some View {
+        if words.isEmpty {
+            Section {
+                Text(feedFlowStrings.blockedWordsEmptyState)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+        } else {
+            Section(feedFlowStrings.settingsBlockedWords) {
+                ForEach(words, id: \.self) { word in
+                    HStack {
+                        Text(word)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.row(word))
+
+                        Button {
+                            onRemoveWord(word)
+                        } label: {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                        }
+                        .buttonStyle(.borderless)
+                        .accessibilityIdentifier(BlockedWordsAccessibilityIdentifiers.deleteButton(word))
+                    }
+                }
+            }
+        }
     }
 
     private func addWord() {

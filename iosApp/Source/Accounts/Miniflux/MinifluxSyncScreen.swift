@@ -16,7 +16,7 @@ struct MinifluxSyncScreen: View {
         Deps.shared.getMinifluxSyncViewModel()
     )
 
-    @State private var uiState: AccountConnectionUiState = .Unlinked()
+    @State private var uiState: AccountConnectionUiState = .Loading()
     @State private var isLoginLoading = false
     @State private var hasLocalSubscriptions = false
     @State private var didHandleLinkedAccount = false

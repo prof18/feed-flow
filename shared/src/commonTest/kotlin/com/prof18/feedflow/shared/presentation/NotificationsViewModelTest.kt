@@ -25,6 +25,15 @@ class NotificationsViewModelTest : KoinTestBase() {
     private val settingsRepository: SettingsRepository by inject()
 
     @Test
+    fun `an empty database stops loading`() = runTest {
+        viewModel.notificationSettingState.test {
+            var state = awaitItem()
+            while (state.isLoading) state = awaitItem()
+            assertTrue(state.feedSources.isEmpty())
+        }
+    }
+
+    @Test
     fun `initial state is loaded correctly`() = runTest {
         val feedSource1 = ParsedFeedSource(
             id = "id1",

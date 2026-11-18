@@ -43,7 +43,7 @@ struct DropboxSyncScreenContent: View {
     @ViewBuilder private var content: some View {
         switch connectionState {
         case is AccountConnectionUiState.Loading:
-            ProgressView()
+            DelayedProgressView()
 
         case is AccountConnectionUiState.Unlinked:
             disconnectedView

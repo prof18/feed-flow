@@ -32,6 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prof18.feedflow.android.notifications.BackgroundRefreshTurnedOnSnackbar
 import com.prof18.feedflow.android.notifications.rememberNotificationPermission
 import com.prof18.feedflow.android.settings.SettingsE2eIds
+import com.prof18.feedflow.android.ui.components.LoadingSpinner
+import com.prof18.feedflow.android.ui.components.rememberLoadingPhase
 import com.prof18.feedflow.android.ui.settings.CompactSettingDropdownRow
 import com.prof18.feedflow.android.ui.settings.NotificationToggleRow
 import com.prof18.feedflow.android.ui.settings.SettingDropdownOption
@@ -42,6 +44,7 @@ import com.prof18.feedflow.android.ui.utils.LocalFeedFlowStrings
 import com.prof18.feedflow.core.model.NotificationMode
 import com.prof18.feedflow.core.model.NotificationSettingState
 import com.prof18.feedflow.shared.domain.model.SyncPeriod
+import com.prof18.feedflow.shared.presentation.LoadingPhase
 import com.prof18.feedflow.shared.presentation.NotificationsViewModel
 import kotlinx.collections.immutable.persistentListOf
 import org.koin.compose.viewmodel.koinViewModel
@@ -92,6 +95,7 @@ internal fun NotificationSettingsScreenContent(
     snackbarHost: @Composable () -> Unit = {},
 ) {
     val strings = LocalFeedFlowStrings.current
+    val loadingPhase = rememberLoadingPhase(notificationState.isLoading)
 
     Scaffold(
         snackbarHost = snackbarHost,
@@ -113,7 +117,15 @@ internal fun NotificationSettingsScreenContent(
             )
         },
     ) { paddingValues ->
-        if (notificationState.feedSources.isEmpty()) {
+        if (loadingPhase == LoadingPhase.Spinner) {
+            LoadingSpinner(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+            )
+        } else if (loadingPhase == LoadingPhase.Pending) {
+            // Loading briefly: render nothing so the empty state doesn't flash.
+        } else if (notificationState.feedSources.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize(),

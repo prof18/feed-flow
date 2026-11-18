@@ -14,6 +14,7 @@ data class FeedSourceState(
 data class FeedSourceListState(
     val feedSourcesWithoutCategory: ImmutableList<FeedSource> = persistentListOf(),
     val feedSourcesWithCategory: ImmutableList<FeedSourceState> = persistentListOf(),
+    val isLoading: Boolean = false,
 ) {
     fun isEmpty(): Boolean =
         feedSourcesWithoutCategory.isEmpty() && feedSourcesWithCategory.isEmpty()

@@ -14,6 +14,8 @@ struct NotificationsSettingsScreenContent: View {
     let onNotificationModeChanged: (NotificationMode) -> Void
     let onSearchQueryChanged: (String) -> Void
 
+    @State private var loadingPhase: DelayedLoadingPhase = .pending
+
     private let feedFlowStrings = Deps.shared.getStrings()
 
     var body: some View {
@@ -41,15 +43,26 @@ struct NotificationsSettingsScreenContent: View {
                     backgroundAppRefreshSection
                 }
                 warningSection
-                notificationModeSection
-                feedsSection
+                switch loadingPhase {
+                case .pending:
+                    EmptyView()
+                case .spinner:
+                    Section {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                    }
+                case .ready:
+                    notificationModeSection
+                    feedsSection
+                }
             } else {
-                ProgressView()
+                DelayedProgressView()
                     .frame(maxWidth: .infinity)
             }
         }
         .scrollContentBackground(.hidden)
         .background(Color.secondaryBackgroundColor)
+        .delayedLoadingPhase(isLoading: notificationSettingState.isLoading, phase: $loadingPhase)
     }
 
     private func permissionSection(status: UNAuthorizationStatus) -> some View {

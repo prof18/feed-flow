@@ -9,12 +9,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.prof18.feedflow.android.ui.components.LoadingSpinner
+import com.prof18.feedflow.android.ui.components.rememberLoadingPhase
 import com.prof18.feedflow.android.ui.preview.PreviewPhone
 import com.prof18.feedflow.android.ui.theme.FeedFlowTheme
 import com.prof18.feedflow.core.model.CategoryId
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceListState
 import com.prof18.feedflow.core.model.FeedSourceState
+import com.prof18.feedflow.shared.presentation.LoadingPhase
 import com.prof18.feedflow.shared.presentation.preview.feedSourcesState
 import kotlinx.collections.immutable.persistentListOf
 
@@ -41,6 +44,7 @@ fun FeedSourceListContent(
         feedSourceListState.feedSourcesWithCategory.size > 1 ||
         feedSourceListState.feedSourcesWithCategory.any { it.feedSources.size > 1 }
     val editModeActive = isEditMode && canReorderAnything
+    val loadingPhase = rememberLoadingPhase(feedSourceListState.isLoading)
 
     Scaffold(
         modifier = modifier,
@@ -55,14 +59,19 @@ fun FeedSourceListContent(
             )
         },
     ) { paddingValues ->
-        if (feedSourceListState.isEmpty()) {
-            NoFeedSourcesView(
+        when {
+            loadingPhase == LoadingPhase.Pending -> Unit
+            loadingPhase == LoadingPhase.Spinner -> LoadingSpinner(
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxSize(),
             )
-        } else {
-            FeedSourcesWithCategoryList(
+            feedSourceListState.isEmpty() -> NoFeedSourcesView(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+            )
+            else -> FeedSourcesWithCategoryList(
                 feedSourceState = feedSourceListState,
                 onExpandClicked = onExpandClicked,
                 onDeleteFeedSourceClick = onDeleteFeedClick,

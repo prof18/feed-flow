@@ -23,6 +23,7 @@ struct FeedSourceListScreenContent: View {
 
     @State private var showDeleteFeedDialog = false
     @State private var feedToDelete: FeedSource?
+    @State private var loadingPhase: DelayedLoadingPhase = .pending
 
     let feedState: FeedSourceListState
     let recoveryStates: [String: FeedSourceRecoveryUiState]
@@ -38,13 +39,22 @@ struct FeedSourceListScreenContent: View {
 
     var body: some View {
         VStack {
-            if feedState.isEmpty() {
-                emptyView
-            } else {
-                feedSourcesList
+            switch loadingPhase {
+            case .pending:
+                EmptyView()
+            case .spinner:
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            case .ready:
+                if feedState.isEmpty() {
+                    emptyView
+                } else {
+                    feedSourcesList
+                }
             }
             Spacer()
         }
+        .delayedLoadingPhase(isLoading: feedState.isLoading, phase: $loadingPhase)
         .accessibilityIdentifier(FeedSourceListAccessibilityIdentifiers.screen)
         .scrollContentBackground(.hidden)
         .background(Color.secondaryBackgroundColor)

@@ -14,7 +14,8 @@ struct NotificationsSettingsScreen: View {
         feedGroups: [],
         searchQuery: "",
         isEnabledForAll: false,
-        notificationMode: .feedSource
+        notificationMode: .feedSource,
+        isLoading: true
     )
     @State private var permissionStatus: UNAuthorizationStatus?
     @State private var backgroundRefreshStatus: UIBackgroundRefreshStatus = UIApplication.shared.backgroundRefreshStatus

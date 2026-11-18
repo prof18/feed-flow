@@ -10,6 +10,7 @@ data class NotificationSettingState(
     val searchQuery: String,
     val isEnabledForAll: Boolean,
     val notificationMode: NotificationMode,
+    val isLoading: Boolean = false,
 )
 
 data class FeedSourceNotificationPreference(

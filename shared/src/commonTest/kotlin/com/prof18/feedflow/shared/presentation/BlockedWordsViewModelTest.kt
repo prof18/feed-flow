@@ -1,5 +1,6 @@
 package com.prof18.feedflow.shared.presentation
 
+import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import com.prof18.feedflow.core.model.FeedFilter
 import com.prof18.feedflow.core.model.FeedOrder
@@ -8,6 +9,7 @@ import com.prof18.feedflow.database.DatabaseHelper
 import com.prof18.feedflow.shared.domain.feed.FeedStateRepository
 import com.prof18.feedflow.shared.test.KoinTestBase
 import com.prof18.feedflow.shared.test.generators.FeedItemGenerator
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -22,26 +24,27 @@ class BlockedWordsViewModelTest : KoinTestBase() {
     private val databaseHelper: DatabaseHelper by inject()
 
     @Test
-    fun `initial state is empty list`() = runTest {
-        val initialState = viewModel.wordsState.value
-        assertTrue(initialState.isEmpty())
+    fun `words load as an empty list when none are blocked`() = runTest {
+        viewModel.wordsState.test {
+            assertEquals(emptyList(), awaitWords())
+        }
     }
 
     @Test
     fun `onAddWord adds word to state`() = runTest {
         viewModel.wordsState.test {
-            assertEquals(emptyList(), awaitItem())
+            assertEquals(emptyList(), awaitWords())
             viewModel.onAddWord("test")
-            assertEquals(listOf("test"), awaitItem())
+            assertEquals(listOf("test"), awaitWords())
         }
     }
 
     @Test
     fun `onAddWord trims whitespace from word`() = runTest {
         viewModel.wordsState.test {
-            assertEquals(emptyList(), awaitItem())
+            assertEquals(emptyList(), awaitWords())
             viewModel.onAddWord("  trimmed  ")
-            assertEquals(listOf("trimmed"), awaitItem())
+            assertEquals(listOf("trimmed"), awaitWords())
         }
     }
 
@@ -66,12 +69,12 @@ class BlockedWordsViewModelTest : KoinTestBase() {
     @Test
     fun `onRemoveWord removes word from state`() = runTest {
         viewModel.wordsState.test {
-            assertEquals(emptyList(), awaitItem())
+            assertEquals(emptyList(), awaitWords())
             viewModel.onAddWord("word1")
-            val afterAdd = awaitItem()
+            val afterAdd = awaitWords()
             assertTrue(afterAdd.contains("word1"))
             viewModel.onRemoveWord("word1")
-            val afterRemove = awaitItem()
+            val afterRemove = awaitWords()
             assertFalse(afterRemove.contains("word1"))
         }
     }
@@ -170,4 +173,10 @@ class BlockedWordsViewModelTest : KoinTestBase() {
             showReadItems = true,
             sortOrder = FeedOrder.NEWEST_FIRST,
         ).size
+
+    private suspend fun ReceiveTurbine<ImmutableList<String>?>.awaitWords(): List<String> {
+        var words = awaitItem()
+        while (words == null) words = awaitItem()
+        return words
+    }
 }

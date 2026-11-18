@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feed_added_message">Feed %s adicionado</string>
-    <string name="feed_url">URL do feed</string>
+    <string name="feed_url">Link da fonte</string>
     <string name="feed_url_placeholder">https://meublogfavorito.com.br/feed</string>
     <string name="add_feed">Adicionar um feed</string>
     <string name="feeds_title">Feeds</string>
@@ -83,4 +83,17 @@
     <string name="export_articles_button">Exportar artigos para CSV</string>
     <string name="export_articles_dialog_title">Gravar ficheiro CSV</string>
     <string name="articles_importing_message">A importar artigos</string>
+    <string name="feed_already_exists_message">%s já está nas tuas fontes.</string>
+    <string name="hide_youtube_shorts">Esconder YouTube Shots</string>
+    <string name="hide_youtube_shorts_description">Apenas vídeos normais deste canal serão incluídos. Shorts e Ao Vivo são excluídos.</string>
+    <string name="hide_youtube_shorts_fallback">Os vídeos Short não puderam ser escondidos para este canal, por isso a fonte completa foi adicionada.</string>
+    <string name="hide_youtube_shorts_edit_fallback">O vídeos Shorts não puderam ser escondidos para este canal. Todas as outras alterações foram gravadas.</string>
+    <string name="clear_old_articles_button">Apagar artigos com mais de uma semana</string>
+    <string name="about_the_app">"O FeedFlow é um leitor de RSS minimalista que oferece uma linha temporal limpa e cronológica — sem algoritmos, sem poluição visual. Abre artigos no teu browser favorito ou lê-os sem distrações com o modo de leitor. Guarda os artigos completos para ler offline em qualquer lugar.\n\nSincroniza as suas fontes, estado de leitura e favoritos entre Android, iOS, macOS, Windows e Linux utilizando o iCloud, Dropbox, Google Drive, FreshRSS, Miniflux, Feedbin ou BazQux. Organiza as fontes em categorias, bloqueia palavras  irrelevantes e importa ou exporta tudo para um ficheiro OPML."</string>
+    <string name="database_save_error">Não foi possível gravas as tuas alterações. Espera um momento e tenta novamente - código de erro: %s</string>
+    <string name="database_recovered_from_corruption">Os teus dados locais foram corrompidos, pelo que o FeedFlow iniciou com uma base de dados nova. Uma cópia dos dados antigos foi mantida na pasta de dados do FeedFlow.</string>
+    <string name="database_startup_locked">O FeedFlow não consegue abrir os dados porque outro programa os está a utilizar. Fecha as outras janelas do FeedFlow e abre-o novamente.</string>
+    <string name="database_startup_storage">O FeedFlow não consegue ler nem escrever dados na pasta. Verifica se existe espaço livre no disco e se o FeedFlow tem acesso à pasta.</string>
+    <string name="database_startup_native">O FeedFlow não conseguiu carregar um componente necessário. Reinstala ou atualiza o FeedFlow. Os teus dados não foram alterados.</string>
+    <string name="database_startup_generic">O FeedFlow não conseguiu abrir os dados. Os teus arquivos não foram apagados.</string>
 </resources>

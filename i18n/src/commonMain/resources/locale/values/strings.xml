@@ -122,8 +122,9 @@
     <string name="settings_read_articles_keep">Keep in list</string>
     <string name="settings_read_articles_hide_on_refresh">Hide on next refresh</string>
     <string name="settings_read_articles_hide_right_away">Hide right away</string>
-    <string name="settings_read_articles_footer">Choose when articles you have read leave your lists.</string>
-    <string name="settings_read_articles_right_away_disabled">Hide right away is off while “Mark as read when scrolling” is on, so articles stay in place as you scroll.</string>
+    <string name="settings_read_articles_footer">When articles you have read leave the Timeline</string>
+    <string name="settings_read_articles_right_away_disabled">Unavailable while “Mark as read when scrolling” is on, so articles stay in place as you scroll.</string>
+    <string name="settings_read_articles_right_away_disabled_note">Hide right away is unavailable while “Mark as read when scrolling” is on, so articles stay in place as you scroll.</string>
     <string name="menu_add_to_bookmark">Add to bookmarks</string>
     <string name="menu_remove_from_bookmark">Remove from bookmarks</string>
     <string name="drawer_title_bookmarks">Bookmarks</string>

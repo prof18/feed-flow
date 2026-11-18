@@ -124,27 +124,25 @@ private fun ReadArticlesVisibilityRow(
         title = strings.settingsReadArticlesTitle,
         currentValue = readArticlesVisibility,
         options = persistentListOf(
-            SettingDropdownOption(ReadArticlesVisibility.KEEP_IN_LIST, strings.settingsReadArticlesKeep),
             SettingDropdownOption(
-                ReadArticlesVisibility.HIDE_ON_REFRESH,
-                strings.settingsReadArticlesHideOnRefresh,
+                value = ReadArticlesVisibility.KEEP_IN_LIST,
+                label = strings.settingsReadArticlesKeep,
+            ),
+            SettingDropdownOption(
+                value = ReadArticlesVisibility.HIDE_ON_REFRESH,
+                label = strings.settingsReadArticlesHideOnRefresh,
             ),
             SettingDropdownOption(
                 value = ReadArticlesVisibility.HIDE_RIGHT_AWAY,
                 label = strings.settingsReadArticlesHideRightAway,
                 e2eId = SettingsE2eIds.READING_BEHAVIOR_READ_ARTICLES_HIDE_RIGHT_AWAY,
+                subtitle = strings.settingsReadArticlesRightAwayDisabled.takeIf { isMarkReadWhenScrollingEnabled },
                 enabled = !isMarkReadWhenScrollingEnabled,
             ),
         ),
         onOptionSelected = onReadArticlesVisibilitySelected,
         supportingText = {
-            Text(
-                if (isMarkReadWhenScrollingEnabled) {
-                    strings.settingsReadArticlesRightAwayDisabled
-                } else {
-                    strings.settingsReadArticlesFooter
-                },
-            )
+            Text(strings.settingsReadArticlesFooter)
         },
     )
 }

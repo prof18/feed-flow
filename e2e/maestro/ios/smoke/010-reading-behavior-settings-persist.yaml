@@ -25,17 +25,24 @@ appId: com.prof18.feedflow.dev
 - assertVisible: ".*Reader \\(feed\\)"
 # "Mark as read when scrolling" is on: Hide right away stays listed but cannot be selected.
 - scrollUntilVisible:
-    element: "Hide right away is off while.*articles stay in place as you scroll.*"
+    element:
+      id: reading_behavior_read_articles
     direction: DOWN
     timeout: 10000
+- tapOn:
+    id: reading_behavior_read_articles
+- assertVisible: "Unavailable while.*articles stay in place as you scroll.*"
 - assertVisible:
     id: reading_behavior_read_articles_hide_right_away
     enabled: false
-- tapOn: "Hide right away"
+- tapOn:
+    id: reading_behavior_read_articles_hide_right_away
 - assertNotVisible:
     id: reading_behavior_read_articles_hide_right_away
     selected: true
-- tapOn: "Keep in list"
+- tapOn:
+    id: reading_behavior_read_articles_keep
+- assertVisible: ".*Read articles.*Keep in list.*"
 - tapOn:
     id: BackButton
 - tapOn:
@@ -63,16 +70,19 @@ appId: com.prof18.feedflow.dev
     id: reading_behavior_mark_read_when_scrolling
     point: "90%,50%"
 - scrollUntilVisible:
-    element: "Choose when articles you have read leave your lists\\."
+    element:
+      id: reading_behavior_read_articles
     direction: DOWN
     timeout: 10000
+- tapOn:
+    id: reading_behavior_read_articles
+- assertNotVisible: "Unavailable while.*"
 - assertVisible:
     id: reading_behavior_read_articles_hide_right_away
     enabled: true
-- tapOn: "Hide right away"
-- assertVisible:
+- tapOn:
     id: reading_behavior_read_articles_hide_right_away
-    selected: true
+- assertVisible: ".*Read articles.*Hide right away.*"
 - tapOn:
     id: BackButton
 - tapOn:
@@ -95,11 +105,14 @@ appId: com.prof18.feedflow.dev
     timeout: 10000
 - tapOn:
     id: settings_reading_behavior
+- assertVisible: ".*Reader \\(feed\\)"
 - scrollUntilVisible:
     element:
-      id: reading_behavior_read_articles_hide_right_away
+      id: reading_behavior_read_articles
     direction: DOWN
     timeout: 10000
+- tapOn:
+    id: reading_behavior_read_articles
 - assertVisible:
     id: reading_behavior_read_articles_hide_right_away
     selected: true

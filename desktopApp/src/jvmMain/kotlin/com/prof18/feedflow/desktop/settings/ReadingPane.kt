@@ -93,7 +93,7 @@ internal fun ReadingPane(
                 selected = readArticlesVisibility,
                 onSelected = onReadArticlesVisibilitySelected,
                 supportingText = if (isMarkReadWhenScrollingEnabled) {
-                    strings.settingsReadArticlesRightAwayDisabled
+                    strings.settingsReadArticlesRightAwayDisabledNote
                 } else {
                     strings.settingsReadArticlesFooter
                 },

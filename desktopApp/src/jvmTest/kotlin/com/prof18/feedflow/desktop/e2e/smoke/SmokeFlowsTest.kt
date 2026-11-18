@@ -264,7 +264,7 @@ class SmokeFlowsTest {
 
     // open mode, mark read when scrolling, read articles: desktop settings/ReadingPane.kt:55,82,87
     // (articleOpenMode, toggleMarkReadWhenScrolling, settingsReadArticlesTitle,
-    // settingsReadArticlesRightAwayDisabled)
+    // settingsReadArticlesRightAwayDisabledNote)
     @Test
     fun `SM-010 reading behavior settings persist`() {
         val flow = e2e.start(Seed.ContentRich)
@@ -278,7 +278,7 @@ class SmokeFlowsTest {
         flow.choose(settings, readArticles, flow.strings.settingsReadArticlesHideRightAway)
         flow.setSwitch(settings, flow.strings.toggleMarkReadWhenScrolling, on = true)
         // Scroll marking turns Hide right away off but keeps the saved preference.
-        flow.awaitTextIn(settings, flow.strings.settingsReadArticlesRightAwayDisabled)
+        flow.awaitTextIn(settings, flow.strings.settingsReadArticlesRightAwayDisabledNote)
         assertTrue(flow.strings.settingsReadArticlesHideOnRefresh in flow.dropdownIn(settings, readArticles).texts)
         flow.choose(settings, readArticles, flow.strings.settingsReadArticlesKeep)
         flow.closeWindow(settings)

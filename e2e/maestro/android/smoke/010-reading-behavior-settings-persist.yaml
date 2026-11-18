@@ -21,10 +21,11 @@ appId: com.prof18.feedflow.debug
     id: reading_behavior_article_open_mode
 - tapOn:
     id: article_open_mode_feed_content
-# "Mark as read when scrolling" is on: Hide right away stays listed but disabled, with the reason shown.
-- assertVisible: "Hide right away is off while.*articles stay in place as you scroll.*"
+# "Mark as read when scrolling" is on: Hide right away stays listed but disabled, with the reason as its subtitle.
+- assertVisible: "When articles you have read leave the Timeline"
 - tapOn:
     id: reading_behavior_read_articles
+- assertVisible: "Unavailable while.*articles stay in place as you scroll.*"
 - assertVisible:
     id: reading_behavior_read_articles_hide_right_away
     enabled: false
@@ -60,9 +61,10 @@ appId: com.prof18.feedflow.debug
     id: settings_reading_behavior
 - assertVisible: "Keep in list"
 - tapOn: "Mark as read when scrolling"
-- assertVisible: "Choose when articles you have read leave your lists\\."
+- assertVisible: "When articles you have read leave the Timeline"
 - tapOn:
     id: reading_behavior_read_articles
+- assertNotVisible: "Unavailable while.*"
 - tapOn: "Hide right away"
 - assertVisible: "Hide right away"
 - tapOn:

@@ -254,7 +254,7 @@ class DesktopPreferenceActionsTest {
             }
         }
 
-        rule.onNodeWithText(EnFeedFlowStrings.settingsReadArticlesRightAwayDisabled).assertExists()
+        rule.onNodeWithText(EnFeedFlowStrings.settingsReadArticlesRightAwayDisabledNote).assertExists()
         val comboBox = rule.onNodeWithContentDescription(EnFeedFlowStrings.settingsReadArticlesTitle)
         comboBox.performClick()
         rule.onNodeWithText(EnFeedFlowStrings.settingsReadArticlesHideRightAway).assertIsNotEnabled()

@@ -9,9 +9,9 @@ featured: true
 To change this, go to **Settings → Reading behavior** (on desktop, **Settings → Reading**):
 
 - Turn off **Mark as read when scrolling** to mark articles as read only when you open them.
-- **Read articles** chooses when read articles leave your lists:
-  - **Keep in list**: read articles stay in the list.
-  - **Hide on next refresh**: read articles stay until the list reloads. This is the default.
+- **Read articles** chooses when read articles leave the Timeline. They always stay in **Read**:
+  - **Keep in list**: read articles stay in the Timeline.
+  - **Hide on next refresh**: read articles stay until the Timeline reloads. This is the default.
   - **Hide right away**: articles disappear as soon as they're read. This option is unavailable while **Mark as read when scrolling** is on, so articles stay in place as you scroll.
 
 To keep one feed unread while you scroll, open its settings and turn on **Keep unread when scrolling**.

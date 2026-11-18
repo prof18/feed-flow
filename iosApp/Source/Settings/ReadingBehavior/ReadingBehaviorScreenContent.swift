@@ -47,26 +47,20 @@ struct ReadingBehaviorScreenContent: View {
                     Text(feedFlowStrings.toggleMarkReadWhenScrolling)
                 }
                 .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.markReadWhenScrollingToggle)
+            }
 
-                Picker(selection: $readArticlesVisibility) {
-                    Text(feedFlowStrings.settingsReadArticlesKeep)
-                        .tag(ReadArticlesVisibility.keepInList)
-                    Text(feedFlowStrings.settingsReadArticlesHideOnRefresh)
-                        .tag(ReadArticlesVisibility.hideOnRefresh)
-                    Text(feedFlowStrings.settingsReadArticlesHideRightAway)
-                        .tag(ReadArticlesVisibility.hideRightAway)
-                        .selectionDisabled(isMarkReadWhenScrollingEnabled)
-                        .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.readArticlesHideRightAwayOption)
+            Section {
+                NavigationLink {
+                    ReadArticlesSelectionScreen(
+                        readArticlesVisibility: $readArticlesVisibility,
+                        isMarkReadWhenScrollingEnabled: isMarkReadWhenScrollingEnabled
+                    )
                 } label: {
-                    Text(feedFlowStrings.settingsReadArticlesTitle)
+                    LabeledContent(feedFlowStrings.settingsReadArticlesTitle, value: readArticlesPreview)
                 }
-                .pickerStyle(.inline)
+                .accessibilityIdentifier(ReadingBehaviorAccessibilityIdentifiers.readArticlesPicker)
             } footer: {
-                if isMarkReadWhenScrollingEnabled {
-                    Text(feedFlowStrings.settingsReadArticlesRightAwayDisabled)
-                } else {
-                    Text(feedFlowStrings.settingsReadArticlesFooter)
-                }
+                Text(feedFlowStrings.settingsReadArticlesFooter)
             }
         }
         .scrollContentBackground(.hidden)
@@ -81,6 +75,17 @@ struct ReadingBehaviorScreenContent: View {
             browserSelector.articleBrowserId()
         default:
             nil
+        }
+    }
+
+    private var readArticlesPreview: String {
+        switch readArticlesVisibility {
+        case .keepInList:
+            feedFlowStrings.settingsReadArticlesKeep
+        case .hideRightAway:
+            feedFlowStrings.settingsReadArticlesHideRightAway
+        default:
+            feedFlowStrings.settingsReadArticlesHideOnRefresh
         }
     }
 

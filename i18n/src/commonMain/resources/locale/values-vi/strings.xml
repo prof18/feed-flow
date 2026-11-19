@@ -220,7 +220,7 @@
     <string name="cancel_button">Hủy bỏ</string>
     <string name="reader_mode_comments_button_content_description">Mở bình luận</string>
     <string name="settings_save_reader_mode_content">Lưu nội dung bài viết khi mở</string>
-    <string name="settings_prefetch_article_content">Tải trước nội dung bài viết</string>
+    <string name="settings_prefetch_article_content">Tạo bản sao offline khi làm mới</string>
     <string name="settings_prefetch_article_content_warning">Bật tùy chọn này sẽ khiến làm mới nguồn tin lâu hơn và tốn dữ liệu di động, vì toàn bộ nội dung bài viết sẽ được FeedFlow tải xuống trong quá trình cập nhật nguồn tin. Nếu bạn có nhiều bài viết, điều này cũng có thể ảnh hưởng đến hiệu suất. Chỉ bật tùy chọn này nếu bạn cần truy cập offline nội dung bài viết.</string>
     <string name="reader_mode_archive_button">Mở trong archive.is</string>
     <string name="previous_article">Bài viết trước</string>
@@ -631,4 +631,9 @@
     <string name="settings_offline_copies_delete_failed">Không thể xóa các bản sao offline</string>
     <string name="settings_image_cache_cleared">Bộ nhớ đệm hình ảnh đã bị xóa</string>
     <string name="settings_image_cache_clear_failed">Không thể xóa bộ nhớ đệm hình ảnh</string>
+    <string name="settings_save_reader_mode_content_description">Giữ những bài viết bạn mở trong chế độ đọc khả dụng offline.</string>
+    <string name="settings_prefetch_article_content_description">Lấy trọn vẹn bài viết từ mỗi trang web khi làm mới bảng tin.</string>
+    <string name="settings_auto_delete_description">Xóa những bài viết đã đọc và chưa. Giữ những bài viết đã lưu.</string>
+    <string name="settings_offline_copies_section_title">Bản sao offline</string>
+    <string name="settings_clear_downloaded_articles_description">Bỏ mọi bản sao offline, kể cả những bài viết đã lưu.</string>
 </resources>

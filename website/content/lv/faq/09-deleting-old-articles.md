@@ -4,7 +4,7 @@ weight: 90
 ---
 
 - **Auto-delete old articles** (Settings → Storage) removes articles older than
-  one day, one week, two weeks or one month.
+  one day, one week, two weeks or one month, unread articles included.
 - **Delete week-old articles**, in the menu, removes articles older than a week
   from the list you're viewing: the Timeline, a category or a single feed.
 

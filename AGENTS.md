@@ -344,6 +344,10 @@ When creating commits:
 - The `flatpak=true` property in `desktopApp/src/jvmMain/resources/props.properties` is used to disable platform-specific features (e.g., Google Drive sync) in Flatpak builds
 - HiDPI scaling for the JVM uses `sun.java2d.uiScale` JVM argument. For local testing: `./gradlew --quiet --console=plain desktopApp:run -PjvmArgs="-Dsun.java2d.uiScale=2.0"`
 
+### Local Android release build
+- CI signs releases from repository secrets. For a signed release on a local machine, run `tools/signing/build-release.sh [gradle task ...]` (default `:androidApp:bundleGooglePlayRelease`). It reads the signing values from the 1Password item named by `FEEDFLOW_SIGNING_ITEM`, writes a temporary `keystore.properties` for the build and restores the previous one afterwards.
+- Never keep signing values in `keystore.properties` or a keystore in the repo; the local file holds only the debug keys. If `FEEDFLOW_SIGNING_ITEM` is unset in an agent shell, read it with `zsh -ic 'printf %s "$FEEDFLOW_SIGNING_ITEM"'`, and stop and ask if it is still empty. Verify the bundle with `jarsigner -verify` before using it.
+
 ### CI/CD
 - CI config: `.github/workflows/code-checks.yaml`
 - Pipeline: every job starts in parallel. `checks` (macos-26) runs swiftlint, `allTests` without the JVM/Android suites (Kotlin/Native, cloud sync, Swift `CloudSyncTests`), `.scripts/ios-tests.sh` and the macOS desktop tests; `jvm-checks` (Linux) runs detekt and the Android host/unit tests; `tests-desktop` runs `jvmTest` on Linux and Windows; `build-android-app`, `build-desktop-app` and `build-ios-app` build the apps. PR runs cancel when a newer push arrives. macOS runners are the scarce, slow resource (7 GB RAM, few concurrent slots), so keep work that does not need macOS off the `checks` job. The iOS build job and the iOS release job run on GitHub's `xcode-27` runner (a preview image) and select Xcode 27.1 with `maxim-lobanov/setup-xcode`: the iPhone Duo layout uses iOS 27.1 SDK APIs, so Xcode 27.0 cannot build the app.

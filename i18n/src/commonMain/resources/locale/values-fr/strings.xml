@@ -249,7 +249,7 @@
     <string name="menu_mark_all_above_as_read">Marquer les articles précédents comme lus</string>
     <string name="menu_mark_all_below_as_read">Marquer les articles suivants comme lus</string>
     <string name="about_menu_faq">FAQ</string>
-    <string name="settings_prefetch_article_content">Créer des copies hors ligne lors de l’actualisation des flux</string>
+    <string name="settings_prefetch_article_content">Faire des copies hors ligne à chaque actualisation</string>
     <string name="settings_prefetch_article_content_warning">Activer cette option ralentit le rafraîchissement des flux et augmente la consommation de données, car FeedFlow récupère l’article complet de chaque site web à chaque rafraîchissement. Si vous avez un grand nombre d’articles, cela peut également affecter les performances. Activez cette option uniquement si vous avez besoin de lire les articles complets hors ligne.</string>
     <string name="settings_reduce_motion">Réduire les mouvements et les animations</string>
     <string name="search_filter_all">Tout</string>
@@ -320,7 +320,7 @@
     <string name="articles_export_filter_title">Articles exportés</string>
     <string name="articles_export_filter_description">Choisissez le type d\'articles que vous voulez exporter.</string>
     <string name="settings_desktop_multi_pane_layout">Utiliser l\'affichage multi-fenêtre du menu principal</string>
-    <string name="settings_save_reader_mode_content">Conserver des copies hors ligne des articles que vous ouvrez</string>
+    <string name="settings_save_reader_mode_content">Garder les articles que vous ouvrez hors ligne</string>
     <string name="bazqux_login_free_trial_expired">Échec de la connexion : votre essai gratuit a expiré</string>
     <string name="feedbin_account_connected">Votre compte Feedbin a été connecté avec succès</string>
     <string name="feedbin_last_sync">Dernière synchronisation : %s</string>
@@ -631,4 +631,9 @@
     <string name="settings_offline_copies_delete_failed">Impossible de supprimer les copies hors ligne</string>
     <string name="settings_image_cache_cleared">Cache d\'images effacée</string>
     <string name="settings_image_cache_clear_failed">Impossible de vider le cache d\'images</string>
+    <string name="settings_save_reader_mode_content_description">Les articles que vous ouvrez en mode lecture restent disponibles hors ligne.</string>
+    <string name="settings_prefetch_article_content_description">Récupère l\'article complet depuis chaque site web lors de l\'actualisation des flux. Utilise plus de données.</string>
+    <string name="settings_auto_delete_description">Supprime les articles lus et non lus. Les articles mis en favori sont conservés.</string>
+    <string name="settings_offline_copies_section_title">Copies hors ligne</string>
+    <string name="settings_clear_downloaded_articles_description">Supprime toutes les copies hors ligne, y compris celles des articles mis en favori.</string>
 </resources>

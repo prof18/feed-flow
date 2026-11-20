@@ -219,8 +219,8 @@
     <string name="confirm_button">确认</string>
     <string name="cancel_button">取消</string>
     <string name="reader_mode_comments_button_content_description">打开评论</string>
-    <string name="settings_save_reader_mode_content">保留你打开的文章的离线副本</string>
-    <string name="settings_prefetch_article_content">订阅源刷新时生成离线副本</string>
+    <string name="settings_save_reader_mode_content">离线保存您打开的文章</string>
+    <string name="settings_prefetch_article_content">刷新时生成离线副本</string>
     <string name="settings_prefetch_article_content_warning">启用此选项会增加订阅源刷新时间和数据使用量，因为 Feedflow 每次刷新期间从每个网站获取完整文章。如果你有很多文章，这也可能影响性能。仅在需要离线阅读完整文章时才打开此选项。</string>
     <string name="reader_mode_archive_button">在 archive.is 中打开</string>
     <string name="previous_article">上一篇文章</string>
@@ -631,4 +631,9 @@
     <string name="feed_verification_checking_body">内容准备就绪后，FeedFlow 将自动继续。</string>
     <string name="feed_verification_check_again">再次检查</string>
     <string name="feed_verification_retry_body">无法检索内容。请尝试再次检查，或关闭此屏幕并重试。</string>
+    <string name="settings_offline_copies_section_title">离线副本</string>
+    <string name="settings_clear_downloaded_articles_description">移除所有离线副本，包括已加书签的文章的离线副本。</string>
+    <string name="settings_auto_delete_description">删除已读和未读文章。保留已加书签的文章。</string>
+    <string name="settings_save_reader_mode_content_description">您在阅读模式下打开的文章在离线状态下仍然可用。</string>
+    <string name="settings_prefetch_article_content_description">当订阅源刷新时，从每个网站获取完整文章。会使用更多数据。</string>
 </resources>

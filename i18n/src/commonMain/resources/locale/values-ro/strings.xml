@@ -138,8 +138,8 @@
     <string name="about_menu_faq">Întrebări frecvente</string>
     <string name="rename_feed_source_name_button">Redenumește</string>
     <string name="in_app_browser">Browser integrat</string>
-    <string name="settings_save_reader_mode_content">Păstrează copii offline ale articolelor pe care le deschizi</string>
-    <string name="settings_prefetch_article_content">Creează copii offline când fluxurile sunt actualizate</string>
+    <string name="settings_save_reader_mode_content">Păstrează offline articolele pe care le deschizi</string>
+    <string name="settings_prefetch_article_content">Creează copii offline după actualizare</string>
     <string name="settings_prefetch_article_content_warning">Activarea acestei opțiuni încetinește actualizarea fluxurilor și utilizează mai multe date, deoarece FeedFlow preia articolul complet de pe fiecare site la fiecare actualizare. Dacă ai multe articole, acest lucru poate afecta și performanța. Activează opțiunea doar dacă ai nevoie să citești offline articolele complete.</string>
     <string name="settings_reduce_motion">Redu mișcarea și animațiile</string>
     <string name="settings_force_english">Forțează limba engleză</string>
@@ -630,4 +630,9 @@
     <string name="settings_offline_copies_delete_failed">Nu am putut șterge copiile offline</string>
     <string name="settings_image_cache_cleared">Cache-ul imaginilor a fost șters</string>
     <string name="settings_image_cache_clear_failed">Nu am putut șterge cache-ul imaginilor</string>
+    <string name="settings_save_reader_mode_content_description">Articolele pe care le deschizi în modul de citire rămân disponibile offline.</string>
+    <string name="settings_prefetch_article_content_description">Obține articolul complet de pe fiecare site web când fluxurile sunt actualizate. Consumă mai multe date.</string>
+    <string name="settings_auto_delete_description">Șterge articolele citite și necitite. Articolele marcate sunt păstrate.</string>
+    <string name="settings_offline_copies_section_title">Copii offline</string>
+    <string name="settings_clear_downloaded_articles_description">Elimină toate copiile offline, inclusiv cele ale articolelor marcate.</string>
 </resources>

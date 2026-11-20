@@ -54,7 +54,7 @@
     <string name="issue_content_template">Будь ласка, опишіть проблему, вкажіть платформу, яку ви використовуєте, версію програми та надайте посилання на RSS-канал, який спричиняє проблеми. Якщо можливо, додайте знімок екрана та файл OPML</string>
     <string name="missing_title_and_link">Виникла помилка при отриманні заголовка стрічки</string>
     <string name="wrong_link_report_title">Наступні стрічки не додано, оскільки вони недійсні</string>
-    <string name="feed_url">URL стрічки</string>
+    <string name="feed_url">Посилання стрічки</string>
     <string name="about_button">Про програму</string>
     <string name="import_export_description">FeedFlow підтримує імпорт та експорт ваших підписок за допомогою файлу OPML для кращої сумісності з іншими програмами для читання стрічок.</string>
     <string name="about_app_version">Версія додатка: %s</string>
@@ -321,7 +321,7 @@
     <string name="settings_notification_mode_category">За категорією</string>
     <string name="settings_notification_mode_grouped">Усе разом</string>
     <string name="settings_theme_oled">Чорний</string>
-    <string name="open_feed_website_button">Відкрити веб-сайт стрічки</string>
+    <string name="open_feed_website_button">Відкрити веб-сайт</string>
     <string name="settings_hide_read_items">Автоматично приховувати статті, позначені як прочитані</string>
     <string name="exit_menu">Вихід</string>
     <string name="browser_launch_error">Не вдається відкрити посилання. Перевірте налаштування браузера.</string>
@@ -456,4 +456,17 @@
     <string name="reader_mode_tts_error">Не вдається прочитати цю статтю вголос. Спробуйте ще раз.</string>
     <string name="reader_mode_tts_preparing">Підготовка озвучення статті…</string>
     <string name="date_format_day_month_dot">День.Місяць</string>
+    <string name="hide_youtube_shorts">Приховати коротульки</string>
+    <string name="hide_youtube_shorts_description">Будуть включені лише звичайні відео з цього каналу. Короткі відео та прямі трансляції виключені.</string>
+    <string name="hide_youtube_shorts_fallback">Не вдалося приховати короткі відео для цього каналу, тому замість цього було додано повну стрічку.</string>
+    <string name="hide_youtube_shorts_edit_fallback">Не вдалося приховати короткі відео для цього каналу. Інші ваші зміни збережено.</string>
+    <string name="database_save_error">Не вдалося зберегти зміни. Спробуйте ще раз за мить – код помилки: %s</string>
+    <string name="database_recovered_from_corruption">Ваші локальні дані було пошкоджено, тому FeedFlow запустився з нової бази даних. Копія старих даних зберігалася в папці даних FeedFlow.</string>
+    <string name="database_startup_locked">FeedFlow не може відкрити свої дані, оскільки їх використовує інша програма. Закрийте інші вікна FeedFlow, а потім знову відкрийте FeedFlow.</string>
+    <string name="database_startup_storage">FeedFlow не може читати або записувати дані зі своєї папки даних. Перевірте, чи є на диску вільне місце та чи FeedFlow має доступ до папки.</string>
+    <string name="database_startup_native">Feed Flow не зміг завантажити необхідний компонент. Перевстановіть або оновіть Feed Flow. Ваші дані не буде змінено.</string>
+    <string name="database_startup_generic">Feed Flow не зміг відкрити свої дані. Ваші файли не видалено.</string>
+    <string name="database_open_data_folder">Відкрити папку з даними</string>
+    <string name="database_quit">Вийти</string>
+    <string name="desktop_already_running">FeedFlow вже запущено.</string>
 </resources>

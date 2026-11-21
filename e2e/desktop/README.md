@@ -69,8 +69,8 @@ The app reads these properties only in debug builds. A passing test deletes its 
 - REG-169: the Bookmarks footer's Mark all as read acts without the bookmarks-specific confirmation, which belongs to the File menu entry.
 - REG-184: the large-content articles point at e2e.feedflow.local, so the reader shows "Unable to parse article"; the flow follows the selected row.
 - REG-121: the Reading pane has no Browser row; desktop opens links in the system default browser.
-- REG-123: the Android-only background sync Wi-Fi and charging restrictions are skipped.
-- REG-124: desktop has no home "more" menu; the flow uses the Refresh feeds toolbar button (not pressed), Settings → Feed list for order and read articles, and Settings → Sync & storage → Delete week-old articles.
+- REG-123: the Android-only background refresh Wi-Fi and charging restrictions are skipped.
+- REG-124: desktop has no home "more" menu; the flow uses the Refresh feeds toolbar button (not pressed), Settings → Feed list for order and read articles, and Settings → Storage → Delete week-old articles.
 - REG-132: the crash-reporting switch renders only in release builds, so the flow asserts it is absent.
 - REG-172: the sidebar is toggled with the article list toolbar's navigation button; the View menu shortcut is not reachable.
 - iCloud is unavailable in this debug build: the Accounts subpage (Settings → Sync & refresh → Accounts) has no iCloud entry (setupICloudSupport() in Main.kt). REG-118 covers Dropbox only, and REG-138 and REG-142 check the entry is absent.

@@ -333,7 +333,7 @@ When creating commits:
 
 ### Website FAQ
 - The FAQ lives in `website/content/en/faq/`, one Markdown file per question, ordered by `weight` (filename number × 10); `featured: true` puts a question in the homepage "Common questions" section. The apps' FAQ entry opens it through `Websites.faqUrl`.
-- When a change alters something an answer describes, update that answer in the same change: setting names or locations, defaults, refresh/background sync, notifications, sync providers and per-build availability (F-Droid, Flathub), reader and link-opening options, import/export, error codes in `ErrorCode.kt`, platforms and minimum OS versions. Remove statements that stop being true.
+- When a change alters something an answer describes, update that answer in the same change: setting names or locations, defaults, refresh and background refresh, notifications, sync providers and per-build availability (F-Droid, Flathub), reader and link-opening options, import/export, error codes in `ErrorCode.kt`, platforms and minimum OS versions. Remove statements that stop being true.
 - When a new user-visible feature or behaviour is likely to raise questions (non-obvious defaults, platform differences, limits, something users can't find), add an entry or extend the closest one. Ask the user if unsure whether it belongs in the FAQ.
 - Write answers like the UI copy: plain English, no "we", settings as **Settings → Section → Option** with the exact English string names. Don't mention pricing, tips or analytics. Add only the English files; translations go in `content/<lang>/faq/` with the same filename and fall back to English per entry.
 

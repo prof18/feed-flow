@@ -190,7 +190,7 @@
     <string name="date_format_normal">Ngày/Tháng</string>
     <string name="date_format_american">Tháng/Ngày</string>
     <string name="enable_notifications_for_feed">Thông báo khi có bài viết mới</string>
-    <string name="settings_feed_order_title">Thứ tự</string>
+    <string name="settings_feed_order_title">Xếp theo ngày</string>
     <string name="settings_feed_order_newest_first">Mới nhất trước</string>
     <string name="settings_feed_order_oldest_first">Cũ nhất trước</string>
     <string name="settings_feed_layout_list">Danh sách</string>
@@ -630,4 +630,25 @@
     <string name="settings_auto_delete_description">Xóa những bài viết đã đọc và chưa. Giữ những bài viết đã lưu.</string>
     <string name="settings_offline_copies_section_title">Bản sao offline</string>
     <string name="settings_clear_downloaded_articles_description">Bỏ mọi bản sao offline, kể cả những bài viết đã lưu.</string>
+    <string name="settings_read_articles_title">Đọc bài viết</string>
+    <string name="settings_read_articles_keep">Giữ trong danh sách</string>
+    <string name="settings_read_articles_hide_on_refresh">Ẩn trong lần làm mới kế tiếp</string>
+    <string name="settings_read_articles_hide_right_away">Ẩn ngay</string>
+    <string name="settings_read_articles_footer">Khi những bài viết bạn đã đọc rời Bảng tin</string>
+    <string name="settings_read_articles_right_away_disabled">Không khả dụng khi tùy chọn \"Đánh dấu đã đọc khi cuộn\" được bật, do đó bài viết sẽ giữ nguyên vị trí khi bạn cuộn.</string>
+    <string name="settings_read_articles_right_away_disabled_note">Ẩn ngay không khả dụng khi tùy chọn \"Đánh dấu đã đọc khi cuộn\" được bật, nên bài viết sẽ vẫn hiển thị ở vị trí cũ khi bạn cuộn.</string>
+    <string name="settings_show_description">Mô tả</string>
+    <string name="settings_show_images">Hình ảnh</string>
+    <string name="settings_show_date">Ngày tháng</string>
+    <string name="settings_show_unread_dot">Chỉ báo chưa đọc</string>
+    <string name="settings_show_feed_source">Tên nguồn tin</string>
+    <string name="settings_requires_description">Bật Mô tả để thay đổi.</string>
+    <string name="settings_requires_date">Bật Ngày tháng để thay đổi.</string>
+    <string name="settings_feed_list_section_layout">Bố cục</string>
+    <string name="settings_feed_list_section_show_in_list">Hiện trong danh sách</string>
+    <string name="settings_feed_list_section_date_time">Ngày và giờ</string>
+    <string name="settings_feed_list_section_order">Thứ tự</string>
+    <string name="settings_feed_list_section_gestures">Cử chỉ</string>
+    <string name="settings_feed_list_scale_default">Mặc định</string>
+    <string name="settings_reading_title">Đọc</string>
 </resources>

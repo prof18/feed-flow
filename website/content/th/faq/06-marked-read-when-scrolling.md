@@ -8,13 +8,19 @@ featured: true
 it has completely scrolled out of the list. By default, read articles don't
 appear in the Timeline, so they're gone the next time the list reloads.
 
-To change this, go to **Settings → Reading behavior**:
+To change this, go to **Settings → Reading behavior** (on desktop, **Settings →
+Reading**):
 
 - Turn off **Mark as read when scrolling** to mark articles as read only when
   you open them.
-- Turn on **Show read articles in lists** to keep read articles in the list.
-- **Auto-hide articles when marked as read** removes articles as soon as they're
-  read. It only works when mark as read when scrolling is off.
+- **Read articles** chooses when read articles leave the Timeline. They always
+  stay in **Read**:
+  - **Keep in list**: read articles stay in the Timeline.
+  - **Hide on next refresh**: read articles stay until the Timeline reloads.
+    This is the default.
+  - **Hide right away**: articles disappear as soon as they're read. This option
+    is unavailable while **Mark as read when scrolling** is on, so articles stay
+    in place as you scroll.
 
 To keep one feed unread while you scroll, open its settings and turn on **Keep
 unread when scrolling**.

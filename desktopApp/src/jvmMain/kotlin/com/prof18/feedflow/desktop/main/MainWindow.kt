@@ -24,15 +24,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
-import androidx.compose.ui.window.WindowPlacement
-import androidx.compose.ui.window.WindowState
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -78,7 +75,6 @@ import com.prof18.feedflow.desktop.ui.components.ConfirmationDialog
 import com.prof18.feedflow.desktop.ui.components.DesktopDesignTokens
 import com.prof18.feedflow.desktop.ui.components.FeedFlowTheme
 import com.prof18.feedflow.desktop.ui.components.SnackbarHost
-import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.presentation.HomeViewModel
 import com.prof18.feedflow.shared.presentation.ReaderModeViewModel
@@ -90,12 +86,10 @@ import org.jetbrains.jewel.ui.component.Text
 import org.koin.compose.viewmodel.koinViewModel
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
-import kotlin.math.roundToInt
 
 @Suppress("ViewModelForwarding")
 @Composable
 internal fun FrameWindowScope.MainWindow(
-    windowState: WindowState,
     isDarkTheme: Boolean,
     useOledTheme: Boolean,
     appConfig: DesktopConfig,
@@ -105,7 +99,6 @@ internal fun FrameWindowScope.MainWindow(
 
     MainWindowEffects(
         composeWindow = window,
-        windowState = windowState,
         snackbarHostState = snackbarHostState,
     )
 
@@ -148,12 +141,10 @@ private fun BackupInProgressScreen(
 @Composable
 private fun MainWindowEffects(
     composeWindow: ComposeWindow,
-    windowState: WindowState,
     snackbarHostState: DesktopFeedbackState,
 ) {
     val scope = rememberCoroutineScope()
     val flowStrings = LocalFeedFlowStrings.current
-    val desktopWindowSettingsRepository = DI.koin.get<DesktopWindowSettingsRepository>()
     val feedSyncRepo = DI.koin.get<FeedSyncRepository>()
     val messageQueue = DI.koin.get<FeedSyncMessageQueue>()
 
@@ -190,40 +181,6 @@ private fun MainWindowEffects(
         onDispose {
             composeWindow.removeWindowFocusListener(listener)
         }
-    }
-
-    LaunchedEffect(windowState) {
-        snapshotFlow { windowState.placement }
-            .collect { placement ->
-                // The window reports Floating again while it is being disposed on exit,
-                // so ignore placement changes that happen after it stopped showing.
-                if (!composeWindow.isShowing) {
-                    return@collect
-                }
-                desktopWindowSettingsRepository.setDesktopWindowPlacement(placement.name)
-            }
-    }
-
-    LaunchedEffect(windowState) {
-        snapshotFlow { windowState.placement to windowState.size }
-            .collect { (placement, size) ->
-                if (placement != WindowPlacement.Floating) {
-                    return@collect
-                }
-                desktopWindowSettingsRepository.setDesktopWindowWidthDp(size.width.value.roundToInt())
-                desktopWindowSettingsRepository.setDesktopWindowHeightDp(size.height.value.roundToInt())
-            }
-    }
-
-    LaunchedEffect(windowState) {
-        snapshotFlow { windowState.placement to windowState.position }
-            .collect { (placement, position) ->
-                if (placement != WindowPlacement.Floating) {
-                    return@collect
-                }
-                desktopWindowSettingsRepository.setDesktopWindowXPositionDp(position.x.value)
-                desktopWindowSettingsRepository.setDesktopWindowYPositionDp(position.y.value)
-            }
     }
 
     LaunchedEffect(messageQueue) {

@@ -5,7 +5,11 @@ import com.russhwolf.settings.set
 
 class DesktopWindowSettingsRepository(
     private val settings: Settings,
+    private val flush: () -> Unit = {},
 ) {
+    fun hasSavedWindowState(): Boolean =
+        DesktopWindowSettingsFields.entries.any { settings.hasKey(it.name) }
+
     fun getDesktopWindowWidthDp(): Int =
         settings.getInt(
             DesktopWindowSettingsFields.DESKTOP_WINDOW_WIDTH_DP.name,
@@ -30,6 +34,11 @@ class DesktopWindowSettingsRepository(
     fun setDesktopWindowXPositionDp(value: Float) =
         settings.set(DesktopWindowSettingsFields.DESKTOP_WINDOW_X_POSITION_DP.name, value)
 
+    fun removeDesktopWindowPosition() {
+        settings.remove(DesktopWindowSettingsFields.DESKTOP_WINDOW_X_POSITION_DP.name)
+        settings.remove(DesktopWindowSettingsFields.DESKTOP_WINDOW_Y_POSITION_DP.name)
+    }
+
     fun getDesktopWindowYPositionDp(): Float? =
         settings.getFloatOrNull(DesktopWindowSettingsFields.DESKTOP_WINDOW_Y_POSITION_DP.name)
 
@@ -41,6 +50,13 @@ class DesktopWindowSettingsRepository(
 
     fun setDesktopWindowPlacement(value: String) =
         settings.set(DesktopWindowSettingsFields.DESKTOP_WINDOW_PLACEMENT.name, value)
+
+    fun clearDesktopWindowState() {
+        DesktopWindowSettingsFields.entries.forEach { settings.remove(it.name) }
+    }
+
+    /** Blocks until the window values written so far are on disk. Throws when the backing store fails. */
+    fun flushDesktopWindowState() = flush()
 
     private companion object {
         const val DEFAULT_DESKTOP_WINDOW_WIDTH_DP = 800

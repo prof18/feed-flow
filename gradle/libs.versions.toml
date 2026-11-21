@@ -92,6 +92,7 @@ sqlite-jdbc = "3.53.4.0"
 stately-concurrency = "2.1.0"
 triplet-play = "4.1.2"
 turbine = "1.2.1"
+winkeep = "0.0.1-alpha01"
 workmanager = "2.12.0"
 flatpack-gradle-generator = "1.9.0"
 telemetry-deck = "7.3.1"
@@ -243,6 +244,7 @@ touchlab-kermit-crash = { module = "co.touchlab:kermit-crashlytics", version.ref
 touchlab-kermit-simple = { module = "co.touchlab:kermit-simple", version.ref = "kermit" }
 touchlab-kermit-test = { module = "co.touchlab:kermit-test", version.ref = "kermit" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+winkeep = { module = "com.prof18:winkeep", version.ref = "winkeep" }
 workmanager-testing = { module = "androidx.work:work-testing", version.ref = "workmanager" }
 workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "workmanager" }
 telemetry-deck = { module = "com.telemetrydeck:kotlin-sdk", version.ref = "telemetry-deck" }

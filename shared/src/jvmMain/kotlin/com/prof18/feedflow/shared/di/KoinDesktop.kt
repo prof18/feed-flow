@@ -117,13 +117,17 @@ internal actual fun getPlatformModule(appEnvironment: AppEnvironment): Module = 
         )
     }
 
+    // One Preferences node backs Settings and lets the window repository flush that same node.
+    single { DesktopSettingsBacking(Preferences.userRoot().node(desktopPreferencesNodeName(appEnvironment))) }
+
     single<Settings> {
-        PreferencesSettings(Preferences.userRoot().node(desktopPreferencesNodeName(appEnvironment)))
+        PreferencesSettings(get<DesktopSettingsBacking>().preferences)
     }
 
     single {
         DesktopWindowSettingsRepository(
             settings = get(),
+            flush = get<DesktopSettingsBacking>().preferences::flush,
         )
     }
 
@@ -236,3 +240,5 @@ internal fun desktopPreferencesNodeName(
 } else {
     DesktopE2eProperties.debugValue(appEnvironment, DesktopE2eProperties.PREFS_NODE, read) ?: "feedflow-dev"
 }
+
+internal class DesktopSettingsBacking(val preferences: Preferences)

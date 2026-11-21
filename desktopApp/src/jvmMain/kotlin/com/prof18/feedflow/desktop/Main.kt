@@ -8,18 +8,18 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.SwingWindow
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import app.cash.sqldelight.db.SqlDriver
@@ -33,8 +33,8 @@ import com.prof18.feedflow.core.utils.getDesktopOS
 import com.prof18.feedflow.core.utils.isMacOs
 import com.prof18.feedflow.database.DesktopDatabaseFailure
 import com.prof18.feedflow.desktop.di.DI
+import com.prof18.feedflow.desktop.main.MAIN_WINDOW_MINIMUM_SIZE
 import com.prof18.feedflow.desktop.main.applyMainWindowMinimumSize
-import com.prof18.feedflow.desktop.main.restoredMainWindowSize
 import com.prof18.feedflow.desktop.resources.Res
 import com.prof18.feedflow.desktop.resources.icon
 import com.prof18.feedflow.desktop.startup.AlreadyRunningWindow
@@ -50,12 +50,13 @@ import com.prof18.feedflow.desktop.startup.handleStartupCrash
 import com.prof18.feedflow.desktop.telemetry.TelemetryDeckClient
 import com.prof18.feedflow.desktop.testing.DesktopE2eHooks
 import com.prof18.feedflow.desktop.ui.DesktopWindowBackground
-import com.prof18.feedflow.desktop.ui.components.restoreInitialLinuxWindowSize
 import com.prof18.feedflow.desktop.ui.desktopMainWindowTitle
 import com.prof18.feedflow.desktop.ui.desktopWindowBackgroundColor
 import com.prof18.feedflow.desktop.ui.rememberDesktopDarkTheme
 import com.prof18.feedflow.desktop.utils.initSentry
 import com.prof18.feedflow.desktop.utils.integrateAppImageIfNeeded
+import com.prof18.feedflow.desktop.window.FeedFlowWindowStateStore
+import com.prof18.feedflow.desktop.window.MainWindowCloseSequence
 import com.prof18.feedflow.shared.data.DesktopWindowSettingsRepository
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.DatabaseCloser
@@ -64,6 +65,8 @@ import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.e2e.E2eSeedRunner
 import com.prof18.feedflow.shared.logging.DatabaseFailureReporterConfig
 import com.prof18.feedflow.shared.logging.reportDesktopDatabaseFailure
+import com.prof18.winkeep.WinKeepEffect
+import com.prof18.winkeep.rememberWinKeepState
 import io.sentry.Sentry
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -75,7 +78,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
 import java.awt.Desktop
-import java.awt.Toolkit
 import java.io.File
 import java.io.InputStream
 import java.util.Properties
@@ -189,7 +191,6 @@ private fun runDesktopApp(args: Array<String>, onConfigReady: (DesktopConfig) ->
             }
         }
 
-        val scope = rememberCoroutineScope()
         val icon = painterResource(Res.drawable.icon)
         val systemDarkTheme = rememberDesktopDarkTheme()
 
@@ -213,65 +214,94 @@ private fun runDesktopApp(args: Array<String>, onConfigReady: (DesktopConfig) ->
         }
 
         if (startupState == StartupState.Ready && runtimeFailure == null) {
-            val desktopWindowSettingsRepository = remember { DI.koin.get<DesktopWindowSettingsRepository>() }
-            val settingsRepository = remember { DI.koin.get<SettingsRepository>() }
-            val windowState = windowState(desktopWindowSettingsRepository)
-            var showBackupLoader by remember { mutableStateOf(false) }
-
-            val themeMode by settingsRepository.themeModeFlow.collectAsState()
-            val isDarkTheme = when (themeMode) {
-                ThemeMode.SYSTEM -> systemDarkTheme
-                ThemeMode.LIGHT -> false
-                ThemeMode.DARK -> true
-                ThemeMode.OLED -> true
-            }
-
-            SwingWindow(
-                onCloseRequest = {
-                    scope.launch {
-                        showBackupLoader = true
-                        try {
-                            DI.koin.get<DesktopAutoRefreshScheduler>().stop()
-                            DI.koin.get<FeedSyncRepository>().performBackup()
-                            DI.koin.get<DatabaseCloser>().close()
-                        } catch (e: Exception) {
-                            DI.koin.get<Logger>().e("Error during cleanup", e)
-                        } finally {
-                            exitApplication()
-                        }
-                    }
-                },
-                title = desktopMainWindowTitle(),
-                state = windowState,
-                init = { window ->
-                    window.applyMainWindowMinimumSize()
-                    window.restoreInitialLinuxWindowSize(windowState.size) {
-                        windowState.placement == WindowPlacement.Floating
-                    }
-                },
+            MainAppWindow(
+                appConfig = appConfig,
+                systemDarkTheme = systemDarkTheme,
                 icon = icon,
                 visible = showMainWindow,
-                onPreviewKeyEvent = { false },
-            ) {
-                DesktopWindowBackground(window, desktopWindowBackgroundColor(isDarkTheme, themeMode == ThemeMode.OLED))
-
-                LaunchedEffect(window) {
-                    activationRequests.collect { window.bringToFront(windowState) }
-                }
-
-                LaunchedEffect(Unit) {
+                onComposed = {
                     initProgress = 1f
                     delay(100.milliseconds)
                     showMainWindow = true
-                }
-
-                AppContent(
-                    showBackupLoader = showBackupLoader,
-                    windowState = windowState,
-                    appConfig = appConfig,
-                )
-            }
+                },
+            )
         }
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+private fun ApplicationScope.MainAppWindow(
+    appConfig: DesktopConfig,
+    systemDarkTheme: Boolean,
+    icon: Painter,
+    visible: Boolean,
+    onComposed: suspend () -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    val currentOnComposed by rememberUpdatedState(onComposed)
+    val settingsRepository = remember { DI.koin.get<SettingsRepository>() }
+    val windowStore = remember { FeedFlowWindowStateStore(DI.koin.get<DesktopWindowSettingsRepository>()) }
+    val winKeepState = rememberWinKeepState(
+        appId = if (appConfig.appEnvironment.isRelease()) "feedflow" else "feedflow-dev",
+        windowId = "main",
+        minimumSize = MAIN_WINDOW_MINIMUM_SIZE,
+        store = windowStore,
+        onError = { error ->
+            DI.koin.get<Logger>().e("Main window state ${error.operation} failed", error.cause)
+        },
+    )
+    var showBackupLoader by remember { mutableStateOf(false) }
+    val closeSequence = remember(winKeepState) {
+        MainWindowCloseSequence(
+            saveWindowState = { winKeepState.saveOnClose() },
+            cleanup = {
+                showBackupLoader = true
+                try {
+                    DI.koin.get<DesktopAutoRefreshScheduler>().stop()
+                    DI.koin.get<FeedSyncRepository>().performBackup()
+                    DI.koin.get<DatabaseCloser>().close()
+                } catch (e: Exception) {
+                    DI.koin.get<Logger>().e("Error during cleanup", e)
+                }
+            },
+            exit = ::exitApplication,
+        )
+    }
+
+    val themeMode by settingsRepository.themeModeFlow.collectAsState()
+    val isDarkTheme = when (themeMode) {
+        ThemeMode.SYSTEM -> systemDarkTheme
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+        ThemeMode.OLED -> true
+    }
+
+    // Composing the window only once the saved geometry is loaded avoids a flash at the default size.
+    if (!winKeepState.isReady) return
+    val windowState = winKeepState.windowState
+    SwingWindow(
+        onCloseRequest = { scope.launch { closeSequence.run() } },
+        title = desktopMainWindowTitle(),
+        state = windowState,
+        init = { window -> window.applyMainWindowMinimumSize() },
+        icon = icon,
+        visible = visible,
+        onPreviewKeyEvent = { false },
+    ) {
+        WinKeepEffect(winKeepState)
+        DesktopWindowBackground(window, desktopWindowBackgroundColor(isDarkTheme, themeMode == ThemeMode.OLED))
+
+        LaunchedEffect(window) {
+            activationRequests.collect { window.bringToFront(windowState) }
+        }
+
+        LaunchedEffect(Unit) { currentOnComposed() }
+
+        AppContent(
+            showBackupLoader = showBackupLoader,
+            appConfig = appConfig,
+        )
     }
 }
 
@@ -449,51 +479,6 @@ private fun setupTelemetryAndCrashReporting(appConfig: DesktopConfig) {
     val telemetryClient = DI.koin.get<TelemetryDeckClient>()
     telemetryClient.signal("TelemetryDeck.Session.started")
 }
-
-@Composable
-private fun windowState(desktopWindowSettingsRepository: DesktopWindowSettingsRepository): WindowState {
-    val savedWidthDp = desktopWindowSettingsRepository.getDesktopWindowWidthDp()
-    val savedHeightDp = desktopWindowSettingsRepository.getDesktopWindowHeightDp()
-    val savedPositionX = desktopWindowSettingsRepository.getDesktopWindowXPositionDp()
-    val savedPositionY = desktopWindowSettingsRepository.getDesktopWindowYPositionDp()
-
-    val toolkit = Toolkit.getDefaultToolkit()
-    val screenSize = toolkit.screenSize
-    val maxWidth = screenSize.width.dp
-    val maxHeight = screenSize.height.dp
-
-    val (width, height) = restoredMainWindowSize(savedWidthDp, savedHeightDp, DpSize(maxWidth, maxHeight))
-
-    val xPos = savedPositionX?.dp
-        ?.coerceIn(0.dp, (maxWidth - width).coerceAtLeast(minimumValue = 0.dp))
-        ?: Dp.Unspecified
-
-    val yPos = savedPositionY?.dp
-        ?.coerceIn(0.dp, (maxHeight - height).coerceAtLeast(minimumValue = 0.dp))
-        ?: Dp.Unspecified
-
-    val position = if (xPos != Dp.Unspecified && yPos != Dp.Unspecified) {
-        WindowPosition.Absolute(
-            x = xPos,
-            y = yPos,
-        )
-    } else {
-        WindowPosition.PlatformDefault
-    }
-
-    return rememberWindowState(
-        size = DpSize(width, height),
-        position = position,
-        placement = savedPlacement(desktopWindowSettingsRepository),
-    )
-}
-
-private fun savedPlacement(desktopWindowSettingsRepository: DesktopWindowSettingsRepository): WindowPlacement =
-    when (desktopWindowSettingsRepository.getDesktopWindowPlacement()) {
-        WindowPlacement.Maximized.name -> WindowPlacement.Maximized
-        WindowPlacement.Fullscreen.name -> WindowPlacement.Fullscreen
-        else -> WindowPlacement.Floating
-    }
 
 data class DesktopConfig(
     val sentryDns: String?,

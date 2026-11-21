@@ -137,6 +137,7 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.date.time)
                 implementation(libs.flatlaf)
+                implementation(libs.winkeep)
             }
         }
 
@@ -145,6 +146,8 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.turbine)
+                implementation(libs.multiplatform.settings)
+                implementation(libs.multiplatform.settings.test)
                 implementation(libs.sqlite.jdbc)
                 implementation(libs.sqldelight.sqlite.driver)
                 implementation(compose.desktop.uiTestJUnit4)

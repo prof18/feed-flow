@@ -75,11 +75,33 @@ replaces estimated title-bar insets after mapping. The correction can arrive
 after the native window-open event for frames. A desktop-only observer restores
 size once at opening or on a resize that exactly matches the inset change; it
 detaches after correction, the first unrelated resize after opening, or window close. Later
-user resizing remains unrestricted. The main window restores size only while
-its placement is Floating, preserving maximized/fullscreen placement. Both frame
-and dialog factories use the pinned Compose `SwingWindow`/`SwingDialog`
-initialization hooks so the observer exists before the first native open. The
-startup splash is undecorated and needs no inset correction.
+user resizing remains unrestricted. Dialog windows attach it through the pinned
+Compose `SwingDialog` initialization hook so the observer exists before the first
+native open. The startup splash is undecorated and needs no inset correction.
+
+## Main window geometry
+
+The main window reopens with its last size, position and placement (floating,
+maximized or fullscreen) through [WinKeep](https://github.com/prof18/winkeep)
+(`com.prof18:winkeep` from Maven Central). `Main.kt` creates the state with
+`rememberWinKeepState`, composes the `SwingWindow` only once it is ready, and
+attaches `WinKeepEffect` inside it. WinKeep fits the window fully on one monitor,
+raises it to `MAIN_WINDOW_MINIMUM_SIZE` (360 × 294), and runs its own one-time
+Linux inset correction, so the main window does not use the observer above.
+
+`FeedFlowWindowStateStore` keeps the geometry in the `DESKTOP_WINDOW_*` keys of the
+`feedflow` (release) or `feedflow-dev` (debug) Preferences node. Those keys predate
+WinKeep, so existing users keep their window and an older build still reads what
+this one writes. The keys hold no monitor, so WinKeep restores on the
+monitor that overlaps the saved bounds most. `DesktopWindowSettingsRepository`
+flushes the same Preferences node that backs `Settings`.
+
+Closing the window runs `MainWindowCloseSequence`: `saveOnClose()` while the
+window still shows, then the backup and database cleanup, then exit. The File
+menu's Exit item sends the same close request, and on macOS ⌘Q closes all windows
+(`QuitStrategy.CLOSE_ALL_WINDOWS`) so it takes that path too. While the window is
+open, WinKeep saves changes 250 ms after they settle without flushing them, so a
+force-quit can lose the geometry changed since the last flush.
 
 ## Menus, shortcuts and secondary windows
 

@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.window.FrameWindowScope
-import androidx.compose.ui.window.WindowState
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import com.formdev.flatlaf.FlatDarkLaf
@@ -35,7 +34,6 @@ import javax.swing.UIManager
 @Composable
 internal fun FrameWindowScope.AppContent(
     showBackupLoader: Boolean,
-    windowState: WindowState,
     appConfig: DesktopConfig,
 ) {
     val koin = DI.koin
@@ -82,7 +80,6 @@ internal fun FrameWindowScope.AppContent(
                     showBackupLoader = showBackupLoader,
                     isDarkTheme = isDarkTheme,
                     useOledTheme = useOledTheme,
-                    windowState = windowState,
                     appConfig = appConfig,
                 )
             }

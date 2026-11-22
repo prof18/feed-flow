@@ -630,4 +630,25 @@
     <string name="settings_auto_delete_description">删除已读和未读文章。保留已加书签的文章。</string>
     <string name="settings_save_reader_mode_content_description">您在阅读模式下打开的文章在离线状态下仍然可用。</string>
     <string name="settings_prefetch_article_content_description">当订阅源刷新时，从每个网站获取完整文章。会使用更多数据。</string>
+    <string name="settings_read_articles_title">已读文章</string>
+    <string name="settings_read_articles_keep">保留在列表中</string>
+    <string name="settings_read_articles_hide_on_refresh">下次刷新时隐藏</string>
+    <string name="settings_read_articles_hide_right_away">立即隐藏</string>
+    <string name="settings_show_description">描述</string>
+    <string name="settings_show_images">图片</string>
+    <string name="settings_show_date">日期</string>
+    <string name="settings_show_unread_dot">未读指示器</string>
+    <string name="settings_show_feed_source">订阅源名称</string>
+    <string name="settings_requires_description">开启描述以更改此设置。</string>
+    <string name="settings_requires_date">开启日期以更改此设置。</string>
+    <string name="settings_feed_list_section_layout">布局</string>
+    <string name="settings_feed_list_section_show_in_list">在列表中显示</string>
+    <string name="settings_feed_list_section_date_time">日期和时间</string>
+    <string name="settings_feed_list_section_order">排序</string>
+    <string name="settings_feed_list_section_gestures">手势</string>
+    <string name="settings_feed_list_scale_default">默认</string>
+    <string name="settings_reading_title">阅读</string>
+    <string name="settings_read_articles_footer">当已读文章离开时间线时</string>
+    <string name="settings_read_articles_right_away_disabled">当“滚动时标记为已读”开启时不可用，因此当您滚动时文章会保持在原位。</string>
+    <string name="settings_read_articles_right_away_disabled_note">当“滚动时标记为已读”开启时立即隐藏不可用，因此当您滚动时文章会保持在原位。</string>
 </resources>

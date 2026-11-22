@@ -120,9 +120,10 @@ fun AndroidHomeScreenContent(
     )
 
     @Suppress("MagicNumber")
-    val showScrollToTopButton by remember {
+    val showScrollToTopButton by remember(hasFeedItems) {
         derivedStateOf {
             shouldShowScrollToTopButton(
+                hasFeedItems = hasFeedItems,
                 isGridArrangement = isGridArrangement,
                 listState = listState,
                 gridState = gridState,
@@ -495,12 +496,16 @@ private fun AcknowledgeRevealOnEmptyFeed(
     }
 }
 
+// The list states keep their last position while the empty view replaces the list.
 private fun shouldShowScrollToTopButton(
+    hasFeedItems: Boolean,
     isGridArrangement: Boolean,
     listState: LazyListState,
     gridState: LazyStaggeredGridState,
 ): Boolean =
-    if (isGridArrangement) {
+    if (!hasFeedItems) {
+        false
+    } else if (isGridArrangement) {
         gridState.firstVisibleItemIndex > 1
     } else {
         listState.firstVisibleItemIndex > 1

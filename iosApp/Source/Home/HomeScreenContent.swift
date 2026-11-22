@@ -295,7 +295,8 @@ private extension HomeContent {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isCompactPhone)
             .toolbar(removing: isCompactPhone ? .sidebarToggle : nil)
-            .showsScrollToTop(isVisible: showScrollToTop, onScrollToTop: {
+            // The last scroll position survives the empty view, so an empty list never shows the button.
+            .showsScrollToTop(isVisible: showScrollToTop && !feedState.isEmpty, onScrollToTop: {
                 withAnimation {
                     proxy.scrollTo(feedState.first?.id)
                     showScrollToTop = false

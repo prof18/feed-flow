@@ -193,7 +193,7 @@
     <string name="settings_feed_order_newest_first">Plus récents d\'abord</string>
     <string name="settings_feed_order_oldest_first">Plus anciens d\'abord</string>
     <string name="settings_feed_layout_card">Cartes</string>
-    <string name="feed_layout_title">Mise en page</string>
+    <string name="feed_layout_title">Mise en page du flux</string>
     <string name="settings_swipe_action_toggle_read">Marquer comme lu ou non lu</string>
     <string name="settings_swipe_action_toggle_bookmark">Ajouter/Retirer le favori</string>
     <string name="settings_theme_dark">Sombre</string>
@@ -630,4 +630,25 @@
     <string name="settings_auto_delete_description">Supprime les articles lus et non lus. Les articles mis en favori sont conservés.</string>
     <string name="settings_offline_copies_section_title">Copies hors ligne</string>
     <string name="settings_clear_downloaded_articles_description">Supprime toutes les copies hors ligne, y compris celles des articles mis en favori.</string>
+    <string name="settings_read_articles_title">Articles lus</string>
+    <string name="settings_read_articles_keep">Garder dans la liste</string>
+    <string name="settings_read_articles_hide_on_refresh">Masquer à la prochaine actualisation</string>
+    <string name="settings_read_articles_hide_right_away">Masquer tout de suite</string>
+    <string name="settings_read_articles_footer">Quand les articles que vous avez lus quittent le fil d\'actualités</string>
+    <string name="settings_read_articles_right_away_disabled">Indisponible lorsque l\'option « Marquer comme lu en faisant défiler » est activée, donc les articles restent en place pendant le défilement.</string>
+    <string name="settings_read_articles_right_away_disabled_note">Masquer immédiatement n\'est pas disponible lorsque l\'option « Marquer comme lu en faisant défiler » est activée, donc les articles restent en place pendant que vous faites défiler.</string>
+    <string name="settings_show_description">Description</string>
+    <string name="settings_show_images">Image</string>
+    <string name="settings_show_date">Date</string>
+    <string name="settings_show_unread_dot">Indicateur de non-lu</string>
+    <string name="settings_show_feed_source">Nom du flux</string>
+    <string name="settings_requires_description">Activer « Description » pour modifier cela.</string>
+    <string name="settings_requires_date">Activer « Date » pour modifier cela.</string>
+    <string name="settings_feed_list_section_layout">Mise en page</string>
+    <string name="settings_feed_list_section_show_in_list">Afficher en liste</string>
+    <string name="settings_feed_list_section_date_time">Date et heure</string>
+    <string name="settings_feed_list_section_order">Ordre</string>
+    <string name="settings_feed_list_section_gestures">Gestes</string>
+    <string name="settings_feed_list_scale_default">Par défaut</string>
+    <string name="settings_reading_title">Lecture</string>
 </resources>

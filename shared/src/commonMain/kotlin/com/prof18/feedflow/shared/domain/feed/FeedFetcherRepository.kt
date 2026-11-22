@@ -332,11 +332,14 @@ class FeedFetcherRepository internal constructor(
         feedSourceUrls: List<FeedSource>,
         forceRefresh: Boolean,
     ) {
-        val allFeedItems = mutableListOf<FeedItem>()
+        // Articles are saved in batches while the refresh runs. Holding every parsed article of a
+        // large subscription list until the end exhausts the heap on Android (hundreds of feeds
+        // times their back-catalogue, each with its full content).
+        val pendingFeedItems = mutableListOf<FeedItem>()
         // Every source that fetched successfully (with or without new items, including 304s).
         // Used to clear the fetch-failed flag and refresh the last-sync timestamp.
-        val syncedFeedSourceIds = mutableListOf<String>()
-        val updatedCacheInfo = mutableListOf<FeedSourceCacheInfo>()
+        val pendingSyncedFeedSourceIds = mutableListOf<String>()
+        val pendingCacheInfo = mutableListOf<FeedSourceCacheInfo>()
 
         val ticket = recoveryRepository.issueTicket()
         val recoveryRecords = recoveryRepository.records(ticket.accountEpoch)
@@ -401,14 +404,14 @@ class FeedFetcherRepository internal constructor(
                 when (result) {
                     is FeedFetchResult.Success -> {
                         logger.d { "Collected ${result.feedItems.size} items" }
-                        allFeedItems.addAll(result.feedItems)
-                        syncedFeedSourceIds.add(result.feedSource.id)
-                        updatedCacheInfo.add(cacheInfo)
+                        pendingFeedItems.addAll(result.feedItems)
+                        pendingSyncedFeedSourceIds.add(result.feedSource.id)
+                        pendingCacheInfo.add(cacheInfo)
                     }
 
                     is FeedFetchResult.NotModified -> {
-                        syncedFeedSourceIds.add(result.feedSource.id)
-                        updatedCacheInfo.add(cacheInfo)
+                        pendingSyncedFeedSourceIds.add(result.feedSource.id)
+                        pendingCacheInfo.add(cacheInfo)
                     }
 
                     is FeedFetchResult.Failure -> {
@@ -417,25 +420,49 @@ class FeedFetcherRepository internal constructor(
                     }
                 }
                 result.recoveryUpdate?.let { applyRecoveryUpdate(it, ticket) }
+                if (pendingFeedItems.size >= FEED_ITEM_PERSIST_BATCH_SIZE) {
+                    persistRefreshBatch(pendingFeedItems, pendingSyncedFeedSourceIds, pendingCacheInfo)
+                }
             }
 
-        val syncTimestamp = dateFormatter.currentTimeMillis()
+        persistRefreshBatch(pendingFeedItems, pendingSyncedFeedSourceIds, pendingCacheInfo)
+    }
 
-        logger.d { "Saving ${allFeedItems.size} items into database" }
-        // Always runs: the timestamps clear the fetch-failed flag and the cache info keeps the HTTP
-        // validators even for sources that returned no new items (e.g. an empty or unchanged feed).
+    /**
+     * Writes one batch and empties the buffers, so a refresh never retains more than
+     * [FEED_ITEM_PERSIST_BATCH_SIZE] articles at a time.
+     *
+     * The timestamps also clear the fetch-failed flag, and the cache info keeps the HTTP validators
+     * for sources that returned no new items (an empty or unchanged feed), so a batch with no
+     * articles is still worth writing.
+     */
+    private suspend fun persistRefreshBatch(
+        feedItems: MutableList<FeedItem>,
+        syncedFeedSourceIds: MutableList<String>,
+        updatedCacheInfo: MutableList<FeedSourceCacheInfo>,
+    ) {
+        if (feedItems.isEmpty() && syncedFeedSourceIds.isEmpty() && updatedCacheInfo.isEmpty()) {
+            return
+        }
+        logger.d { "Saving ${feedItems.size} items into database" }
         try {
             databaseHelper.persistFeedRefresh(
-                feedItems = allFeedItems,
+                feedItems = feedItems,
                 syncedFeedSourceIds = syncedFeedSourceIds,
-                lastSyncTimestamp = syncTimestamp,
+                lastSyncTimestamp = dateFormatter.currentTimeMillis(),
                 updatedCacheInfo = updatedCacheInfo,
                 markFirstSyncItemsAsNotified = true,
             )
+        } catch (e: CancellationException) {
+            // A cancelled refresh must stop collecting instead of running on to the next batch.
+            throw e
         } catch (e: Throwable) {
             if (e.isDatabaseFailure()) throw e
             logger.d(e) { "Failed to insert feed items into database" }
         }
+        feedItems.clear()
+        syncedFeedSourceIds.clear()
+        updatedCacheInfo.clear()
     }
 
     private suspend fun fetchFeed(feedSource: FeedSource, record: FeedRecoveryRecord?): FeedFetchResult {
@@ -576,6 +603,9 @@ class FeedFetcherRepository internal constructor(
 
     private companion object {
         const val HTTP_NOT_MODIFIED = 304
+
+        /** Caps how many parsed articles a refresh keeps in memory before writing them out. */
+        const val FEED_ITEM_PERSIST_BATCH_SIZE = 500
     }
 }
 

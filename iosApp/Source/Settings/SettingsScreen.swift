@@ -93,6 +93,8 @@ struct SettingsScreen: View {
                     NavigationLink(destination: AboutAndSupportScreen()) {
                         Label(feedFlowStrings.settingsAboutAndSupport, systemImage: "info.circle")
                     }
+                } header: {
+                    Text(feedFlowStrings.aboutNavBar)
                 } footer: {
                     if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                         Text(feedFlowStrings.aboutAppVersion(appVersion))

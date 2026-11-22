@@ -191,6 +191,10 @@ internal fun SettingsScreenContent(
                 }
             }
 
+            item {
+                SettingsSectionHeader(title = LocalFeedFlowStrings.current.aboutNavBar)
+            }
+
             if (showSupportProject) {
                 item {
                     SettingItem(

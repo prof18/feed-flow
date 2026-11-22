@@ -118,4 +118,42 @@ class ReaderModeMarkdownTest {
             readerModeContentDirection(title = null, siteName = null, markdown = markdown),
         )
     }
+
+    @Test
+    fun `reader direction skips a very long inline image destination without overflowing the stack`() {
+        val markdown = "![](data:image/png;base64,${"A".repeat(LONG_TOKEN_LENGTH)})\n\nمتن مقاله"
+
+        assertEquals(ContentDirection.RIGHT_TO_LEFT, directionOnUiSizedStack(markdown))
+    }
+
+    @Test
+    fun `reader direction skips a very long angle-bracket destination without overflowing the stack`() {
+        val markdown = "[](<https://example.com/${"a b".repeat(LONG_TOKEN_LENGTH / 3)}>) متن مقاله"
+
+        assertEquals(ContentDirection.RIGHT_TO_LEFT, directionOnUiSizedStack(markdown))
+    }
+
+    @Test
+    fun `reader direction skips a very long link title without overflowing the stack`() {
+        val markdown = "[](https://example.com \"${"Latin ".repeat(LONG_TOKEN_LENGTH / 6)}\") متن مقاله"
+
+        assertEquals(ContentDirection.RIGHT_TO_LEFT, directionOnUiSizedStack(markdown))
+    }
+
+    // The desktop reader resolves the direction during composition, on AWT-EventQueue-0, which has the JVM's
+    // default 1 MB thread stack.
+    private fun directionOnUiSizedStack(markdown: String): ContentDirection? {
+        var result: Result<ContentDirection?>? = null
+        val thread = Thread(null, {
+            result = runCatching { readerModeContentDirection(title = null, siteName = null, markdown = markdown) }
+        }, "reader-direction", UI_THREAD_STACK_BYTES)
+        thread.start()
+        thread.join()
+        return checkNotNull(result).getOrThrow()
+    }
+
+    private companion object {
+        const val LONG_TOKEN_LENGTH = 7_000
+        const val UI_THREAD_STACK_BYTES = 1024L * 1024L
+    }
 }

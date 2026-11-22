@@ -59,9 +59,11 @@ private fun String.withoutMarkupForDirection(): String = directionMarkupRegexes.
 private const val DIRECTION_SCAN_WINDOW = 8000
 
 // A link destination as Klead writes it: parentheses escaped, wrapped in <> when it has spaces,
-// optionally followed by a quoted title with escaped quotes.
+// optionally followed by a quoted title with escaped quotes. Each run of plain characters is one greedy
+// character class and only escapes start a new group iteration: java.util.regex recurses once per iteration
+// of a repeated group, so `(?:\\.|[^)])*` overflows the UI thread's stack on a long URL such as a data: image.
 private const val MARKDOWN_DESTINATION =
-    """\((?:<(?:\\.|[^>\\])*>|(?:\\.|[^)\\\s])*)(?:\s+"(?:\\.|[^"\\])*")?\)"""
+    """\((?:<[^>\\]*(?:\\.[^>\\]*)*>|[^)\\\s]*(?:\\.[^)\\\s]*)*)(?:\s+"[^"\\]*(?:\\.[^"\\]*)*")?\)"""
 private val directionMarkupRegexes = listOf(
     Regex("""!\[[^]]*]$MARKDOWN_DESTINATION"""),
     Regex("""]$MARKDOWN_DESTINATION"""),

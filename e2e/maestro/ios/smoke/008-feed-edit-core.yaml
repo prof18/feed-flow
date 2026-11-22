@@ -54,7 +54,7 @@ appId: com.prof18.feedflow.dev
     id: edit_feed_cancel
 - assertVisible: "Discard changes\\?"
 # iOS 26+ shows the dialog as a popover without a cancel button; a tap outside keeps editing
-- tapOn: "Feed name"
+- tapOn: "dismiss popup"
 - assertNotVisible: "Discard changes\\?"
 - tapOn:
     id: edit_feed_save

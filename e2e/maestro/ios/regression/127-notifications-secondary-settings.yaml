@@ -7,8 +7,10 @@ appId: com.prof18.feedflow.dev
 - tapOn:
     text: "^Open$"
     optional: true
-- assertVisible:
-    id: e2e_seed_complete
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 10000
 - tapOn:
     id: drawer_menu_button
 - tapOn:
@@ -62,8 +64,10 @@ appId: com.prof18.feedflow.dev
     direction: DOWN
     timeout: 10000
 - tapOn: "Search feeds"
-- inputText: "Android Central"
-- assertVisible: "Android Central RSS Feed"
+- inputText: "Central"
+- extendedWaitUntil:
+    visible: "Android Central RSS Feed"
+    timeout: 5000
 - assertNotVisible: "VeneziaToday"
 - eraseText: 20
 - scrollUntilVisible:

@@ -2,6 +2,7 @@ package com.prof18.feedflow.android.settings.feedlist
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -111,7 +112,9 @@ internal fun FeedListSettingsScreenContent(
                 ),
             )
 
-            LazyColumn {
+            LazyColumn(
+                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+            ) {
                 item {
                     SettingsSectionHeader(title = strings.settingsFeedListSectionLayout)
                 }

@@ -23,6 +23,12 @@ appId: com.prof18.feedflow.debug
     id: feed_list_settings_layout
 - tapOn:
     text: "Card"
+- scrollUntilVisible:
+    element:
+      id: feed_list_settings_hide_images
+    direction: DOWN
+    timeout: 10000
+    centerElement: true
 - tapOn:
     id: feed_list_settings_hide_images
 - scrollUntilVisible:

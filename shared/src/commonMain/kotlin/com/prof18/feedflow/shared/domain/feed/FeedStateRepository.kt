@@ -90,7 +90,7 @@ internal class FeedStateRepository(
                     sortOrder = feedOrder,
                 )
             }
-            if (keepListIfAwayFromTop && isFeedListAwayFromTop.value) {
+            if (keepListIfAwayFromTop && isHoldingScrolledList()) {
                 // Scrolled away while the query ran: keep the list and leave the update deferred.
                 refreshPendingNewArticlesCount()
                 return true
@@ -141,12 +141,17 @@ internal class FeedStateRepository(
     suspend fun publishFetchedFeeds() {
         // Set before reading the scroll flag: a concurrent return to the top then always sees it.
         hasDeferredFeedUpdate.update { true }
-        if (isFeedListAwayFromTop.value) {
+        if (isHoldingScrolledList()) {
             refreshPendingNewArticlesCount()
         } else {
             reloadFeeds(keepListIfAwayFromTop = true)
         }
     }
+
+    // An empty list has no scroll position to keep. The empty view replaces the list without
+    // reporting a return to the top, so the last reported position can still say "away from top".
+    private fun isHoldingScrolledList(): Boolean =
+        isFeedListAwayFromTop.value && feedState.value.isNotEmpty()
 
     suspend fun refreshPendingNewArticlesCount() {
         try {

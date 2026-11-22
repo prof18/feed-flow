@@ -140,6 +140,23 @@ class FeedStateRepositoryTest : KoinTestBase() {
     }
 
     @Test
+    fun `publishing fetched feeds reloads an empty list even when last reported away from top`() =
+        runTest(testDispatcher) {
+            val source = createSource("source-1")
+            insertSources(source)
+            repository.getFeeds()
+            // The list was scrolled down before every article was read and hidden: the empty
+            // view replaced it without ever reporting a return to the top.
+            repository.setFeedListAwayFromTop(true)
+            insertItem("new-item", 2, source)
+
+            repository.publishFetchedFeeds()
+
+            assertEquals(listOf("new-item"), repository.feedState.value.map { it.id })
+            assertEquals(0, repository.pendingNewArticlesState.value)
+        }
+
+    @Test
     fun `returning to top reports a deferred update`() = runTest(testDispatcher) {
         val source = createSource("source-1")
         insertSources(source)

@@ -205,7 +205,7 @@
     <string name="settings_feed_list_scale_title">Scalare text</string>
     <string name="settings_font_scale_title_example">Titlul articolului</string>
     <string name="settings_font_scale_subtitle_example">Acesta este subtitlul articolului</string>
-    <string name="settings_font_scale_feed_source_example">Numele fluxului</string>
+    <string name="settings_font_scale_feed_source_example">Numele Fluxului</string>
     <string name="deleting_feed_dialog_title">Se șterge...</string>
     <string name="add_feed_generic_error">A apărut o eroare la adăugarea fluxului. Te rog să încerci din nou</string>
     <string name="edit_feed_generic_error">A apărut o eroare în timpul editării fluxului. Te rog să încerci din nou.</string>
@@ -369,7 +369,7 @@
     <string name="settings_feed_layout_big_image">Card cu imagine mare</string>
     <string name="settings_feed_layout_grid">Grilă</string>
     <string name="settings_feed_layout_grid_toggle">Utilizează grila pe ecranele late</string>
-    <string name="feed_layout_title">Aranjament flux</string>
+    <string name="feed_layout_title">Aspectul fluxului</string>
     <string name="settings_feed_order_title">Sortează după dată</string>
     <string name="settings_feed_order_newest_first">Noile primele</string>
     <string name="settings_feed_order_oldest_first">Vechile primele</string>
@@ -629,4 +629,18 @@
     <string name="settings_auto_delete_description">Șterge articolele citite și necitite. Articolele marcate sunt păstrate.</string>
     <string name="settings_offline_copies_section_title">Copii offline</string>
     <string name="settings_clear_downloaded_articles_description">Elimină toate copiile offline, inclusiv cele ale articolelor marcate.</string>
+    <string name="settings_show_description">Descriere</string>
+    <string name="settings_show_images">Imagine</string>
+    <string name="settings_show_date">Dată</string>
+    <string name="settings_show_unread_dot">Indicator de necitit</string>
+    <string name="settings_show_feed_source">Numele fluxului</string>
+    <string name="settings_requires_description">Activează „Descriere” pentru a modifica asta.</string>
+    <string name="settings_requires_date">Activează „Dată” pentru a modifica asta.</string>
+    <string name="settings_feed_list_section_layout">Afișare</string>
+    <string name="settings_feed_list_section_show_in_list">Afișează în listă</string>
+    <string name="settings_feed_list_section_date_time">Data și ora</string>
+    <string name="settings_feed_list_section_order">Ordine</string>
+    <string name="settings_feed_list_section_gestures">Gesturi</string>
+    <string name="settings_feed_list_scale_default">Implicit</string>
+    <string name="settings_reading_title">Citire</string>
 </resources>

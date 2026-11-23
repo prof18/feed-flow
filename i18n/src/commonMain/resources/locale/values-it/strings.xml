@@ -547,4 +547,11 @@
     <string name="reader_font_latin_script_only">Questo font supporta solo le lingue che usano l\'alfabeto latino. Il testo in altri sistemi di scrittura usa il font di sistema.</string>
     <string name="reader_mode_preview_title">Una mattina senza fretta con un buon articolo</string>
     <string name="reader_mode_preview_body">Questa anteprima cambia mentre modifichi i font e le dimensioni, così puoi trovare un\'impostazione comoda da leggere prima di tornare all\'articolo.</string>
+    <string name="settings_read_articles_title">Leggi articoli</string>
+    <string name="settings_read_articles_keep">Mantieni in elenco</string>
+    <string name="settings_read_articles_hide_on_refresh">Nascondi al prossimo aggiornamento</string>
+    <string name="settings_read_articles_hide_right_away">Nascondi subito</string>
+    <string name="settings_read_articles_footer">Quando gli articoli che hai letto escono dalla timeline</string>
+    <string name="settings_read_articles_right_away_disabled">Non disponibile con “Contrassegna come letto durante lo scorrimento” attivo, così gli articoli restano al loro posto mentre scorri.</string>
+    <string name="settings_read_articles_right_away_disabled_note">Nascondi subito non è disponibile con “Contrassegna come letto durante lo scorrimento” attivo, così gli articoli restano al loro posto mentre scorri.</string>
 </resources>

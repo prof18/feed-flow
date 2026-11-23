@@ -160,28 +160,42 @@ class DesktopFeedManagementSelectionTest {
 
     @Test
     fun `move confirmation uses current feed metadata while cancel makes no change`() {
-        var drawer by mutableStateOf(NavDrawerState(feedSourcesWithoutCategory = sources.toImmutableList()))
+        val destination = FeedSourceCategory(id = "destination", title = "Destination")
+        val uncategorized = sources.map { it.copy(feedSource = it.feedSource.copy(category = null)) }
+        var drawer by mutableStateOf(
+            NavDrawerState(
+                categories = persistentListOf(DrawerItem.DrawerCategory(destination, unreadCount = 0)),
+                feedSourcesWithoutCategory = uncategorized.toImmutableList(),
+            ),
+        )
         val moved = mutableListOf<List<FeedSource>>()
         setHost(drawerState = { drawer }, onMove = { feeds, _ -> moved.add(feeds) }, onActivate = {})
         modifiedClick("Feed 0", toggleKey)
         modifiedClick("Feed 1", toggleKey)
         batchAction("Feed 1", EnFeedFlowStrings.desktopMoveSelectedFeeds)
         rule.onNodeWithText(EnFeedFlowStrings.cancelButton).performSemanticsAction(SemanticsActions.OnClick) { it() }
+        rule.waitUntil(timeoutMillis = 5_000) {
+            rule.onAllNodesWithText(EnFeedFlowStrings.cancelButton).fetchSemanticsNodes().isEmpty()
+        }
         assertEquals(emptyList(), moved)
         batchAction("Feed 1", EnFeedFlowStrings.desktopMoveSelectedFeeds)
         rule.runOnIdle {
-            val updated = sources.first().copy(
-                feedSource = sources.first().feedSource.copy(title = "Renamed", isPinned = true),
+            val updated = uncategorized.first().copy(
+                feedSource = uncategorized.first().feedSource.copy(title = "Renamed", isPinned = true),
             )
-            drawer = drawer.copy(feedSourcesWithoutCategory = (listOf(updated) + sources.drop(1)).toImmutableList())
+            drawer = drawer.copy(
+                feedSourcesWithoutCategory = (listOf(updated) + uncategorized.drop(1)).toImmutableList(),
+            )
         }
-        // The dialog opens on the category the feeds are already in, so a destination has to be picked first.
-        moveDestination(EnFeedFlowStrings.noCategory).performSemanticsAction(SemanticsActions.OnClick) { it() }
+        moveDestination(destination.title).performSemanticsAction(SemanticsActions.OnClick) { it() }
         rule.waitUntil(timeoutMillis = 5_000) {
-            rule.onAllNodes(moveDestinationMatcher(EnFeedFlowStrings.noCategory) and isSelected())
+            rule.onAllNodes(moveDestinationMatcher(destination.title) and isSelected())
                 .fetchSemanticsNodes().size == 1
         }
         rule.onNodeWithText(EnFeedFlowStrings.confirmButton).performSemanticsAction(SemanticsActions.OnClick) { it() }
+        rule.waitUntil(timeoutMillis = 5_000) {
+            rule.onAllNodesWithText(EnFeedFlowStrings.confirmButton).fetchSemanticsNodes().isEmpty()
+        }
         rule.runOnIdle {
             assertEquals(1, moved.size)
             val renamed = moved.single().single { it.id == sources.first().feedSource.id }

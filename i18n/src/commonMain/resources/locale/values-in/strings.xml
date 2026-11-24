@@ -562,8 +562,6 @@
     <string name="reader_mode_opened_externally_message">Tautan ini mengarah ke berkas, seperti PDF, yang tidak dapat ditampilkan oleh FeedFlow, sehingga dibuka di peramban Anda.</string>
     <string name="reader_mode_open_again_in_browser">Buka di peramban</string>
     <string name="settings_notification_mode_article">Per artikel</string>
-    <string name="settings_notification_mode_article_desc">Tampilkan judul artikel dan gambar yang tersedia. Setiap penyegaran menampilkan hingga 20 artikel, beserta ringkasan artikel lainnya.</string>
-    <string name="notification_article_overflow_body">Artikel baru lainnya: %s</string>
     <string name="reader_mode_tts_listen">Dengarkan artikel</string>
     <string name="reader_mode_tts_stop">Berhenti mendengarkan</string>
     <string name="reader_mode_tts_error">Tidak dapat membacakan artikel ini. Coba lagi.</string>

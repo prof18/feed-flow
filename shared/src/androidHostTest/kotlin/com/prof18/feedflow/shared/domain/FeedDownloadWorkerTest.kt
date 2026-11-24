@@ -6,8 +6,8 @@ import androidx.work.Data
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.testing.TestListenableWorkerBuilder
-import com.prof18.feedflow.core.model.ArticleNotificationBatch
 import com.prof18.feedflow.core.model.ArticleOpenMode
+import com.prof18.feedflow.core.model.ArticleToNotify
 import com.prof18.feedflow.core.model.FeedItem
 import com.prof18.feedflow.core.model.FeedSource
 import com.prof18.feedflow.core.model.FeedSourceCacheInfo
@@ -201,7 +201,7 @@ class FeedDownloadWorkerTest : KoinTestBase() {
             val source = addFreshSource()
             insertNotificationItems(source, listOf("article-one", "article-two", "article-three"))
             articleNotifier.action = { batch, acknowledge ->
-                val selectedId = batch.articles.first().id
+                val selectedId = batch.first().id
                 insertNotificationItems(source, listOf("arrived-after-snapshot"))
                 acknowledge(listOf(selectedId))
             }
@@ -210,11 +210,11 @@ class FeedDownloadWorkerTest : KoinTestBase() {
 
             assertTrue(result is ListenableWorker.Result.Success)
             assertEquals(1, articleNotifier.batches.size)
-            assertEquals(3, articleNotifier.batches.single().articles.size)
+            assertEquals(3, articleNotifier.batches.single().size)
             assertTrue(notificationCalls.isEmpty())
             assertEquals(
                 setOf("article-one", "article-two", "article-three", "arrived-after-snapshot") -
-                    articleNotifier.batches.single().articles.first().id,
+                    articleNotifier.batches.single().first().id,
                 databaseHelper.getArticlesToNotify().map { it.id }.toSet(),
             )
         }
@@ -352,8 +352,8 @@ class FeedDownloadWorkerTest : KoinTestBase() {
     }
 
     private class RecordingArticleNotifier : ArticleNotifier {
-        val batches = mutableListOf<ArticleNotificationBatch>()
-        var action: suspend (ArticleNotificationBatch, suspend (List<String>) -> Unit) -> Unit = { _, _ -> }
+        val batches = mutableListOf<List<ArticleToNotify>>()
+        var action: suspend (List<ArticleToNotify>, suspend (List<String>) -> Unit) -> Unit = { _, _ -> }
 
         fun reset() {
             batches.clear()
@@ -361,10 +361,10 @@ class FeedDownloadWorkerTest : KoinTestBase() {
         }
 
         override suspend fun showArticleNotifications(
-            prepareBatch: suspend () -> ArticleNotificationBatch,
+            pendingArticles: suspend () -> List<ArticleToNotify>,
             acknowledge: suspend (List<String>) -> Unit,
         ) {
-            val batch = prepareBatch()
+            val batch = pendingArticles()
             batches += batch
             action(batch, acknowledge)
         }

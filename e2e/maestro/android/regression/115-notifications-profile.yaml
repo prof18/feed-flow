@@ -30,7 +30,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     text: "Per article"
 - assertVisible:
-    text: "Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest."
+    text: "Show a notification for each new article, with its title and image when available."
 - back
 - tapOn:
     id: settings_notifications
@@ -57,7 +57,7 @@ appId: com.prof18.feedflow.debug
 - tapOn:
     text: "By category"
 - assertNotVisible:
-    text: "Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest."
+    text: "Show a notification for each new article, with its title and image when available."
 - assertVisible:
     text: "Enable all notifications"
 - scrollUntilVisible:

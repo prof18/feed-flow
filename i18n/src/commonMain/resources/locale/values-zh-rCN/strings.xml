@@ -604,8 +604,6 @@
     <string name="reader_mode_opened_externally_message">此链接是一个文件，例如 PDF，FeedFlow 无法显示，因此已在您的浏览器中打开。</string>
     <string name="reader_mode_open_again_in_browser">在浏览器中打开</string>
     <string name="settings_notification_mode_article">按文章</string>
-    <string name="settings_notification_mode_article_desc">显示文章标题和可用图片。每次刷新最多显示 20 篇文章，以及其余文章的摘要。</string>
-    <string name="notification_article_overflow_body">更多新文章：%s</string>
     <string name="desktop_expand_feed_category">展开 %s</string>
     <string name="desktop_collapse_feed_category">收起 %s</string>
     <string name="feed_verify_website">验证网站</string>

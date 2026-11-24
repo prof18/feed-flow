@@ -530,8 +530,6 @@
     <string name="keep_unread_when_scrolling_for_feed_description">Bu akıştaki makaleler, kaydırıp geçtiğinizde okundu olarak işaretlenmeyecektir.</string>
     <string name="keep_unread_when_scrolling_for_feed_disabled">“Kaydırırken okundu olarak işaretle” açık hâldeyken kullanılabilir.</string>
     <string name="settings_notification_mode_article">Her bir makale</string>
-    <string name="settings_notification_mode_article_desc">Makale başlıklarını ve olan görsellerini göster. Her yenileme 20 makaleye kadar ve geriye kalanların özetini gösterir.</string>
-    <string name="notification_article_overflow_body">Daha fazla yeni makaleler: %s</string>
     <string name="feed_verify_website">İnternet sitesini doğrula</string>
     <string name="feed_verification_failed">İnternet sitesine ulaşılamadı. İptal edin ve tekrar deneyin.</string>
     <string name="feed_verification_unsupported">İnternet sitesi doğrulaması bu cihazda kullanılamıyor.</string>

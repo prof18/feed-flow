@@ -571,8 +571,6 @@
     <string name="reader_mode_opened_externally_message">Tento odkaz je soubor, například PDF, který FeedFlow nedokáže zobrazit, a proto se otevřel ve vašem prohlížeči.</string>
     <string name="reader_mode_open_again_in_browser">Otevřít v prohlížeči</string>
     <string name="settings_notification_mode_article">Na článek</string>
-    <string name="settings_notification_mode_article_desc">Zobrazit názvy článků a dostupné obrázky. Při každém obnovení se zobrazí až 20 článků a souhrn zbývajících.</string>
-    <string name="notification_article_overflow_body">Další nové články: %s</string>
     <string name="reader_mode_tts_listen">Poslechněte si článek</string>
     <string name="reader_mode_tts_stop">Přestat poslouchat</string>
     <string name="reader_mode_tts_error">Tento článek nelze přečíst nahlas. Zkuste to znovu.</string>

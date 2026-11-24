@@ -5,7 +5,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.prof18.feedflow.core.model.ArticleNotificationBatch
 import com.prof18.feedflow.core.model.ArticleToNotify
 import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.NotificationMode
@@ -51,7 +50,7 @@ class AndroidNotifierRegressionTest {
                 images++
                 null
             },
-            activeNotificationKeys = { error("notification manager unavailable") },
+            activeNotifications = { error("notification manager unavailable") },
             postArticleNotification = { _, _ -> posts++ },
         )
 
@@ -73,7 +72,7 @@ class AndroidNotifierRegressionTest {
         val notifier = AndroidNotifier(
             context = context,
             settingsRepository = settings,
-            activeNotificationKeys = { emptySet() },
+            activeNotifications = { emptyList() },
             postArticleNotification = { _, _ -> posts++ },
         )
 
@@ -92,12 +91,12 @@ class AndroidNotifierRegressionTest {
         val posts = mutableListOf<String>()
         val acknowledgements = mutableListOf<List<String>>()
         var query = 0
-        val unrelated = { count: Int -> (1..count).map { "other-$it" to 0 }.toSet() }
+        val unrelated = { count: Int -> others(count) }
         val notifier = AndroidNotifier(
             context = context,
             settingsRepository = settings,
             imageLoader = { _, _ -> null },
-            activeNotificationKeys = {
+            activeNotifications = {
                 query += 1
                 when (query) {
                     1, 2 -> unrelated(38)
@@ -114,28 +113,23 @@ class AndroidNotifierRegressionTest {
     }
 
     @Test
-    fun `capacity for only the overflow folds every article into it`() = runTest {
-        val imageCalls = mutableListOf<String?>()
+    fun `a single free slot posts the newest article and keeps the rest pending`() = runTest {
         val posts = mutableListOf<String>()
         val acknowledgements = mutableListOf<List<String>>()
         val notifier = AndroidNotifier(
             context = context,
             settingsRepository = settings,
-            imageLoader = { url, _ ->
-                imageCalls += url
-                null
-            },
-            activeNotificationKeys = { (1..39).map { "other-$it" to 0 }.toSet() },
+            imageLoader = { _, _ -> null },
+            activeNotifications = { others(39) },
             postArticleNotification = { tag, _ -> posts += tag },
         )
 
-        notifier.showArticleNotifications({ batch("article", remainderIds = listOf("rest")) }) {
+        notifier.showArticleNotifications({ batch("newest", "older") }) {
             acknowledgements += it
         }
 
-        assertTrue(imageCalls.isEmpty())
-        assertEquals(listOf("article-overflow"), posts)
-        assertEquals(listOf(listOf("article", "rest")), acknowledgements)
+        assertEquals(listOf("article-newest"), posts)
+        assertEquals(listOf(listOf("newest")), acknowledgements)
     }
 
     @Test
@@ -191,10 +185,11 @@ class AndroidNotifierRegressionTest {
         assertTrue(manager.activeNotifications.isEmpty())
     }
 
-    private fun batch(vararg ids: String, remainderIds: List<String> = emptyList()) = ArticleNotificationBatch(
-        articles = ids.map { ArticleToNotify(it, "Title $it", "Source", "https://example.com/image.jpg") },
-        remainderIds = remainderIds,
-    )
+    private fun batch(vararg ids: String) =
+        ids.map { ArticleToNotify(it, "Title $it", "Source", "https://example.com/image.jpg") }
+
+    private fun others(count: Int) =
+        (1..count).map { ActiveNotification(tag = "other-$it", id = 0, isOnNewArticlesChannel = false, postTime = 0) }
 
     private companion object {
         const val CHANNEL_ID = "feedflow_new_articles_channel"

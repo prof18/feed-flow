@@ -8,6 +8,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.coroutineScope
+import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
@@ -39,11 +40,15 @@ import com.prof18.feedflow.shared.domain.feed.PendingReadStatusActionRetrier
 import com.prof18.feedflow.shared.domain.feedsync.FeedSyncRepository
 import com.prof18.feedflow.shared.domain.notification.ArticleNotifier
 import com.prof18.feedflow.shared.domain.notification.Notifier
+import com.prof18.feedflow.shared.domain.notification.ReadNotificationResolver
 import com.prof18.feedflow.shared.domain.recovery.FeedRecoveryRepository
 import com.prof18.feedflow.shared.domain.recovery.WebsiteProfileCleaner
 import com.prof18.feedflow.shared.domain.tts.ReaderSpeechText
 import com.prof18.feedflow.shared.presentation.WidgetRefreshState
 import com.prof18.feedflow.shared.presentation.WidgetUpdater
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -64,6 +69,9 @@ open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
     private val appForegroundState by inject<AppForegroundState>()
     private val browserManager by inject<BrowserManager>()
     private val pendingReadStatusActionRetrier by inject<PendingReadStatusActionRetrier>()
+    private val androidNotifier by inject<AndroidNotifier>()
+    private val readNotificationResolver by inject<ReadNotificationResolver>()
+    private val readNotificationLogger by inject<Logger>(parameters = { parametersOf("ReadNotifications") })
 
     override fun onCreate() {
         super.onCreate()
@@ -181,6 +189,7 @@ open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
         feedDownloadWorkerEnqueuer.enqueueWork()
 
         with(ProcessLifecycleOwner.get()) {
+            lifecycle.coroutineScope.launch(Dispatchers.Default) { dismissReadNotifications() }
             lifecycle.addObserver(
                 object : DefaultLifecycleObserver {
                     override fun onStart(owner: LifecycleOwner) {
@@ -214,6 +223,20 @@ open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
                     }
                 },
             )
+        }
+    }
+
+    // Every write to the articles is a chance that a posted notification has nothing unread left.
+    private suspend fun dismissReadNotifications() {
+        readNotificationResolver.changes().collectLatest {
+            try {
+                androidNotifier.dismissReadNotifications(readNotificationResolver::staleTags)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (e: Exception) {
+                // The next change tries again.
+                readNotificationLogger.e(e) { "Failed to dismiss notifications of read articles" }
+            }
         }
     }
 

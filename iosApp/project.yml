@@ -515,6 +515,8 @@ targets:
       - path: Source/Notifications/IOSArticleNotifier.swift
       - path: Source/Notifications/NotificationImageAttachmentLoader.swift
       - path: Source/Notifications/NotificationDeepLinkStore.swift
+      - path: Source/Notifications/ReadNotificationWatcher.swift
+      - path: Source/Notifications/DeliveredNotification.swift
       - path: Source/Utils/CustomNotification.swift
     settings:
       base:

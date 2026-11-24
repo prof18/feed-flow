@@ -18,6 +18,7 @@ struct FeedFlowApp: App {
     @State private var appearance: AppAppearance
     @State private var browserSelector: BrowserSelector
     @State private var audioPlayback: AudioPlaybackController
+    @State private var readNotificationWatcher = ReadNotificationWatcher()
 
     private var feedSyncTimer: FeedSyncTimer = .init()
 
@@ -108,11 +109,11 @@ struct FeedFlowApp: App {
                         let mode = Deps.shared.getSettingsRepository().getNotificationMode()
                         if mode == .article {
                             do {
-                                let articles = Deps.shared.getArticleNotificationRepository()
-                                let batch = try await articles.prepareBatch()
+                                let notifications = Deps.shared.getArticleNotificationRepository()
+                                let pending = try await notifications.pendingArticles()
                                 let notifier = IOSArticleNotifier(strings: feedFlowStrings)
-                                try await notifier.showArticleNotifications(batch: batch) { ids in
-                                    try await articles.acknowledge(ids: ids)
+                                try await notifier.showArticleNotifications(articles: pending) { ids in
+                                    try await notifications.acknowledge(ids: ids)
                                 }
                             } catch {
                                 finish(success: false)
@@ -191,6 +192,9 @@ struct FeedFlowApp: App {
                             )
                         }
                     }
+                }
+                .onAppear {
+                    readNotificationWatcher.start()
                 }
                 .onChange(of: scenePhase) {
                     switch scenePhase {

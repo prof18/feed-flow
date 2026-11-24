@@ -157,15 +157,31 @@ class DatabaseHelper(
             }
             .mapToList(backgroundDispatcher)
             .pausedInBackground()
-            .map { feedSources ->
-                feedSources.map { source ->
-                    FeedSourceWithUnreadCount(
-                        feedSource = transformToFeedSourceWithCount(source),
-                        unreadCount = source.unread_count,
-                    )
-                }
-            }
+            .map { feedSources -> feedSources.map(::transformToFeedSourceWithUnreadCount) }
             .flowOn(backgroundDispatcher)
+
+    suspend fun getFeedSourcesWithUnreadCount(): List<FeedSourceWithUnreadCount> =
+        withContext(backgroundDispatcher) {
+            dbRef.viewQueries.getFeedSourcesWithUnreadCount()
+                .executeAsList()
+                .map(::transformToFeedSourceWithUnreadCount)
+        }
+
+    /**
+     * Emits once on subscription and after every write to the articles. The query itself never
+     * runs: the flow only signals that something changed.
+     */
+    fun getFeedItemChangesFlow(): Flow<Unit> =
+        dbRef.feedItemQueries.countFeedItems()
+            .asFlow()
+            .map { }
+            .pausedInBackground()
+
+    private fun transformToFeedSourceWithUnreadCount(source: GetFeedSourcesWithUnreadCount) =
+        FeedSourceWithUnreadCount(
+            feedSource = transformToFeedSourceWithCount(source),
+            unreadCount = source.unread_count,
+        )
 
     suspend fun getFeedItems(
         feedFilter: FeedFilter,
@@ -1613,6 +1629,12 @@ class DatabaseHelper(
                 feedSourceTitle = item.feed_source_title,
                 imageUrl = item.image_url,
             )
+        }
+    }
+
+    suspend fun getUnreadItemIds(ids: List<String>): Set<String> = withContext(backgroundDispatcher) {
+        ids.chunked(ArticleNotificationPolicy.ACK_CHUNK_SIZE).flatMapTo(mutableSetOf()) { chunk ->
+            dbRef.feedItemQueries.selectUnreadItemIds(chunk).executeAsList()
         }
     }
 

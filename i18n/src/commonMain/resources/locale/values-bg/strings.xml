@@ -548,8 +548,6 @@
     <string name="reader_mode_opened_externally_message">Тази връзка е файл, като PDF, който FeedFlow не може да покаже, така че е била отворена във вашия браузър.</string>
     <string name="reader_mode_open_again_in_browser">Отвори в браузър</string>
     <string name="settings_notification_mode_article">На статия</string>
-    <string name="settings_notification_mode_article_desc">Показване на заглавията на статиите и наличните изображения. Всяко обновяване показва до 20 статии, плюс обобщение на останалите.</string>
-    <string name="notification_article_overflow_body">Още нови статии: %s</string>
     <string name="desktop_expand_feed_category">Разгъване %s</string>
     <string name="desktop_collapse_feed_category">Свиване %s</string>
     <string name="feed_verify_website">Проверете уебсайта</string>

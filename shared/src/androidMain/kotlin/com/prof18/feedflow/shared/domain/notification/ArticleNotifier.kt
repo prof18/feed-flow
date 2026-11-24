@@ -1,10 +1,10 @@
 package com.prof18.feedflow.shared.domain.notification
 
-import com.prof18.feedflow.core.model.ArticleNotificationBatch
+import com.prof18.feedflow.core.model.ArticleToNotify
 
 interface ArticleNotifier {
     suspend fun showArticleNotifications(
-        prepareBatch: suspend () -> ArticleNotificationBatch,
+        pendingArticles: suspend () -> List<ArticleToNotify>,
         acknowledge: suspend (List<String>) -> Unit,
     )
 }

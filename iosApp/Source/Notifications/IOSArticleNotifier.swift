@@ -31,7 +31,7 @@ final class IOSArticleNotifier {
     }
 
     func showArticleNotifications(
-        batch: ArticleNotificationBatch,
+        articles: [ArticleToNotify],
         acknowledge: ([String]) async throws -> Void
     ) async throws {
         try Task.checkCancellation()
@@ -40,7 +40,7 @@ final class IOSArticleNotifier {
         var submitted = false
         var imageElapsed: Double = 0
         let policy = ArticleNotificationPolicy.shared
-        for article in batch.articles {
+        for article in articles {
             try Task.checkCancellation()
             let remaining = max(0, policy.IMAGE_BATCH_BUDGET_MS - Int64(imageElapsed * 1_000))
             let allowance = min(policy.IMAGE_TIMEOUT_MS, remaining)
@@ -67,16 +67,6 @@ final class IOSArticleNotifier {
                 try await acknowledge([article.id])
             }
         }
-        if !batch.remainderIds.isEmpty {
-            try Task.checkCancellation()
-            let content = UNMutableNotificationContent()
-            content.title = strings.newArticlesNotificationTitle
-            content.body = strings.notificationArticleOverflowBody(String(batch.remainderIds.count))
-            content.sound = submitted ? nil : .default
-            if try await submit(identifier: policy.OVERFLOW_ID, content: content) {
-                try await acknowledge(batch.remainderIds)
-            }
-        }
     }
 
     private func articleContent(_ article: ArticleToNotify, silent: Bool) -> UNMutableNotificationContent {
@@ -85,6 +75,9 @@ final class IOSArticleNotifier {
         content.title = title.flatMap { $0.isEmpty ? nil : $0 } ?? strings.newArticlesNotificationTitle
         content.body = article.feedSourceTitle
         content.sound = silent ? nil : .default
+        var userInfo: [String: Any] = [
+            NotificationTag.shared.USER_INFO_KEY: NotificationTag.shared.forArticle(articleId: article.id)
+        ]
         var components = URLComponents()
         components.scheme = "feedflow"
         components.host = "feed"
@@ -92,8 +85,9 @@ final class IOSArticleNotifier {
         allowed.remove(charactersIn: "/%")
         if let segment = article.id.addingPercentEncoding(withAllowedCharacters: allowed) {
             components.percentEncodedPath = "/" + segment
-            if let url = components.url { content.userInfo = ["url": url.absoluteString] }
+            if let url = components.url { userInfo["url"] = url.absoluteString }
         }
+        content.userInfo = userInfo
         return content
     }
 

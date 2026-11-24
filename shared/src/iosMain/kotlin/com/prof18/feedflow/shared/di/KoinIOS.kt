@@ -44,6 +44,7 @@ import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.model.CurrentOS
 import com.prof18.feedflow.shared.domain.notification.ArticleNotificationRepository
 import com.prof18.feedflow.shared.domain.notification.Notifier
+import com.prof18.feedflow.shared.domain.notification.ReadNotificationResolver
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandler
 import com.prof18.feedflow.shared.domain.opml.OpmlFeedHandlerIos
 import com.prof18.feedflow.shared.domain.opml.OpmlInput
@@ -391,6 +392,7 @@ object Deps : KoinComponent {
     fun getFeedHttpCacheStore() = getKoin().get<FeedHttpCacheStore>()
     fun getNotificationsViewModel() = getKoin().get<NotificationsViewModel>()
     fun getNotifier() = getKoin().get<Notifier>()
+    fun getReadNotificationResolver() = getKoin().get<ReadNotificationResolver>()
     fun getBlockedWordsViewModel() = getKoin().get<BlockedWordsViewModel>()
     fun getContentPrefetchManager() = getKoin().get<ContentPrefetchRepository>()
     fun getLiveQueryGate() = getKoin().get<LiveQueryGate>()

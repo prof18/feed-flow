@@ -93,17 +93,17 @@ For anything deeper — SDK package management (`android sdk ...`), device inter
 
 ### Running & validating the Desktop app
 
-When you need to run the Desktop app for testing, UI iteration, or user-visible validation, drive it through the Compose Hot Reload MCP server configured in `.mcp.json`. The agent harness already starts that server (`:desktopApp:hotMcpServerJvm`); it only attaches to an app launched with hot reload, so start the app yourself, in the background:
+When you need to run the Desktop app for testing, UI iteration, or user-visible validation, start it yourself, in the background:
 
 ```bash
 ./gradlew --quiet --console=plain :desktopApp:hotRunJvm
 ```
 
-Do not start `hotMcpServerJvm` by hand: it launches no app, and the MCP `status` stays `connected: false`. Once the app writes `desktopApp/build/run/jvmMain/jvmMain.pid`, `status` reports `connected: true`.
+The Compose Hot Reload MCP server (`:desktopApp:hotMcpServerJvm`) is deliberately **not** configured any more. It used to sit in `.mcp.json`, so every session opened in this folder started it: a cold `--no-daemon` Gradle JVM that never exits, paid for even by sessions that never touch the desktop app, and left behind when the session ended. Drive the app with `.scripts/desktop-ax.sh` and sigillum instead (below), or fall back to `./gradlew --quiet --console=plain desktopApp:run`.
 
-Use the Gradle daemon for manual local runs so repeated desktop iterations stay fast. The checked-in `.mcp.json` may still pass `--no-daemon` because JetBrains' AI-agent example does that for MCP client-managed server processes.
+If a piece of desktop work really needs the MCP tools (status, reload, list windows, semantic tree, click/type/scroll, resize), add the server back to `.mcp.json` for that session and revert it afterwards. It only attaches to an app launched with hot reload, reports `connected: true` once the app writes `desktopApp/build/run/jvmMain/jvmMain.pid`, and never sees dialog windows (Add feed, Settings, Feed suggestions), because Compose Hot Reload skips a dialog's entry point as nested in the main window's. Starting `hotMcpServerJvm` by hand launches no app and leaves `status` at `connected: false`.
 
-Use the MCP tools when you need to interact with the running Desktop app: check status, reload code changes, list windows, inspect the semantic tree, click/type/scroll, or resize windows. Its `take_screenshot` grabs the screen area under the window, so other windows on top show up in it. The MCP server is experimental in Compose Hot Reload; if it is unavailable or not connected, fall back to `./gradlew --quiet --console=plain desktopApp:run` and note the limitation in handoff. Dialog windows (Add feed, Settings, Feed suggestions) are not registered with the MCP: Compose Hot Reload skips a dialog's entry point as nested in the main window's, so `list_windows` shows only the main window.
+Use the Gradle daemon for manual local runs so repeated desktop iterations stay fast.
 
 For dialogs, use `.scripts/desktop-ax.sh`, which reads and presses elements of any app window through macOS Accessibility, in the background and without a computer-use grant: `.scripts/desktop-ax.sh dump "Add feed"` lists the elements, and `.scripts/desktop-ax.sh press "Add feed" AXButton:Cancel` presses one (the optional `AXRole:` prefix picks among same-named elements). It cannot type: Compose ignores Accessibility value writes and drops key events sent to a background window, so a flow that needs text in a dialog field still needs the user.
 

@@ -21,6 +21,14 @@ To get notifications:
 3. Pick a **Notification style**: per article (with titles and images), by feed,
    by category, or all combined.
 
+On Android, iPhone and iPad, notifications go away by themselves as you read.
+With **Per article**, each notification goes when you read its article. With
+**By feed**, **By category** or **All combined**, a notification goes once that
+feed, that category, or everything has nothing left unread — so **Mark all as
+read** always clears them. On iPhone and iPad this happens while FeedFlow is
+open, so notifications for articles you read on another device clear the next
+time you open the app.
+
 **Android**: make sure battery optimisation is off for FeedFlow. Some phones,
 such as Huawei, Honor, Xiaomi and Samsung, also need FeedFlow to be allowed to
 run in the background or to auto-start.

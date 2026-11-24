@@ -515,6 +515,7 @@ LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferen
 LEFT JOIN feed_source_category ON feed_source.category_id = feed_source_category.id
 WHERE feed_source_preferences.notifications_enabled = 1
 AND feed_item.notification_sent = 0
+AND feed_item.is_read = 0
 AND is_blocked = 0
 GROUP BY feed_source.url_hash
 ORDER BY pub_date DESC;
@@ -529,6 +530,7 @@ INNER JOIN feed_source ON feed_item.feed_source_id = feed_source.url_hash
 LEFT JOIN feed_source_preferences ON feed_source.url_hash = feed_source_preferences.feed_source_id
 WHERE feed_source_preferences.notifications_enabled = 1
 AND feed_item.notification_sent = 0
+AND feed_item.is_read = 0
 AND feed_item.is_blocked = 0
 ORDER BY feed_item.pub_date DESC, feed_item.url_hash DESC;
 
@@ -544,6 +546,13 @@ WHERE url_hash IN (
     AND feed_item.notification_sent = 0
     AND is_blocked = 0
 );
+
+selectUnreadItemIds:
+SELECT url_hash
+FROM feed_item
+WHERE url_hash IN :ids
+AND is_read = 0
+AND is_blocked = 0;
 
 markArticleItemsNotified:
 UPDATE feed_item

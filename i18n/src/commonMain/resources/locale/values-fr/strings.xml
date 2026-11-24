@@ -547,8 +547,6 @@
     <string name="keep_unread_when_scrolling_for_feed_description">Les articles de ce flux ne seront pas marqués comme lus lors du défilement.</string>
     <string name="keep_unread_when_scrolling_for_feed_disabled">Disponible lorsque « Marquer comme lu lors du défilement » est activé.</string>
     <string name="settings_notification_mode_article">Par article</string>
-    <string name="settings_notification_mode_article_desc">Afficher les titres des articles et les images disponibles. Chaque actualisation affiche jusqu\'à 20 articles, ainsi qu\'un résumé des autres.</string>
-    <string name="notification_article_overflow_body">Nouveaux articles : %s</string>
     <string name="feed_verify_website">Vérifier le site web</string>
     <string name="feed_verification_failed">Impossible de récupérer le site web. Annulez et réessayez.</string>
     <string name="feed_verification_unsupported">La vérification du site web n\'est pas disponible sur cet appareil.</string>

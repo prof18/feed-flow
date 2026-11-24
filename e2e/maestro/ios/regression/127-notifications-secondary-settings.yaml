@@ -34,7 +34,7 @@ appId: com.prof18.feedflow.dev
 - assertVisible: "By feed"
 - tapOn: "Notification style"
 - tapOn: "Per article"
-- assertVisible: "Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest."
+- assertVisible: "Show a notification for each new article, with its title and image when available."
 - tapOn:
     id: BackButton
 - tapOn:
@@ -56,7 +56,7 @@ appId: com.prof18.feedflow.dev
 - assertVisible: "Per article"
 - tapOn: "Notification style"
 - tapOn: "All combined"
-- assertNotVisible: "Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest."
+- assertNotVisible: "Show a notification for each new article, with its title and image when available."
 - tapOn: "Enable all notifications"
 - scrollUntilVisible:
     element:

@@ -526,8 +526,6 @@
     <string name="desktop_expand_feed_category">Extinde %s</string>
     <string name="desktop_collapse_feed_category">Restrânge %s</string>
     <string name="settings_notification_mode_article">Pe articol</string>
-    <string name="settings_notification_mode_article_desc">Afișează titlurile articolelor și imaginile disponibile. La fiecare actualizare sunt afișate până la 20 de articole, plus un rezumat al celorlalte.</string>
-    <string name="notification_article_overflow_body">Alte articole noi: %s</string>
     <string name="feed_verify_website">Verifică site-ul web</string>
     <string name="feed_verification_failed">Nu s-a putut accesa site-ul web. Anulează și încearcă din nou.</string>
     <string name="feed_verification_unsupported">Verificarea site-ului web nu este disponibilă pe acest dispozitiv.</string>

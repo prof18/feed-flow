@@ -16,10 +16,11 @@ import androidx.core.net.toUri
 import com.prof18.feedflow.android.MainActivity
 import com.prof18.feedflow.android.R
 import com.prof18.feedflow.android.ui.utils.feedFlowStringsFor
-import com.prof18.feedflow.core.model.ArticleNotificationBatch
 import com.prof18.feedflow.core.model.ArticleNotificationPolicy
+import com.prof18.feedflow.core.model.ArticleToNotify
 import com.prof18.feedflow.core.model.FeedSourceToNotify
 import com.prof18.feedflow.core.model.NotificationMode
+import com.prof18.feedflow.core.model.NotificationTag
 import com.prof18.feedflow.i18n.FeedFlowStrings
 import com.prof18.feedflow.shared.data.SettingsRepository
 import com.prof18.feedflow.shared.domain.notification.ArticleNotifier
@@ -38,13 +39,23 @@ class AndroidNotifier(
     private val settingsRepository: SettingsRepository,
     private val imageLoader: suspend (String?, Long) -> Bitmap? = AndroidNotificationImageLoader(context)::load,
     private val monotonicMillis: () -> Long = SystemClock::elapsedRealtime,
-    private val activeNotificationKeys: () -> Set<Pair<String?, Int>> = {
-        context.getSystemService(NotificationManager::class.java).activeNotifications.map { it.tag to it.id }.toSet()
+    private val activeNotifications: () -> List<ActiveNotification> = {
+        context.getSystemService(NotificationManager::class.java).activeNotifications.map {
+            ActiveNotification(
+                tag = it.tag,
+                id = it.id,
+                isOnNewArticlesChannel = it.notification.channelId == CHANNEL_ID,
+                postTime = it.postTime,
+            )
+        }
     },
     // Callers check areNotificationsEnabled() before posting, as showNewArticlesNotification does.
     @SuppressLint("MissingPermission")
     private val postArticleNotification: (String, Notification) -> Unit = { tag, notification ->
         NotificationManagerCompat.from(context).notify(tag, 0, notification)
+    },
+    private val cancelNotification: (String?, Int) -> Unit = { tag, id ->
+        NotificationManagerCompat.from(context).cancel(tag, id)
     },
 ) : Notifier, ArticleNotifier {
 
@@ -52,15 +63,31 @@ class AndroidNotifier(
 
     private val articleMutex = Mutex()
 
+    /** Cancels the new-article notifications whose tags [staleTags] reports as read. */
+    suspend fun dismissReadNotifications(staleTags: suspend (List<String>) -> List<String>) = articleMutex.withLock {
+        val posted = activeNotifications().filter { it.isOnNewArticlesChannel && it.tag != null }
+        if (posted.isEmpty()) return@withLock
+        val stale = staleTags(posted.mapNotNull { it.tag }).toSet()
+        for (notification in posted) {
+            if (notification.tag in stale) cancelNotification(notification.tag, notification.id)
+        }
+    }
+
     override suspend fun showArticleNotifications(
-        prepareBatch: suspend () -> ArticleNotificationBatch,
+        pendingArticles: suspend () -> List<ArticleToNotify>,
         acknowledge: suspend (List<String>) -> Unit,
     ) = articleMutex.withLock {
         if (!notificationManager.areNotificationsEnabled()) return@withLock
         createNotificationChannel()
         if (!isNotificationChannelEnabled()) return@withLock
-        val initialKeys = queryActiveKeys() ?: return@withLock
-        val batch = fitToActiveCapacity(prepareBatch(), initialKeys) ?: return@withLock
+        val active = queryActiveNotifications() ?: return@withLock
+        val pending = pendingArticles()
+        // Only the newest that fit within the limit can be shown. Left pending, the older ones would
+        // push those out on the next refresh, so they are marked notified instead.
+        val beyondCapacity = pending.drop(ACTIVE_LIMIT)
+        if (beyondCapacity.isNotEmpty()) acknowledge(beyondCapacity.map { it.id })
+        val room = makeRoomForBatch(pending.take(ACTIVE_LIMIT), active)
+        if (room.articles.isEmpty()) return@withLock
 
         val strings = feedFlowStrings()
         val postedKeys = mutableSetOf<Pair<String?, Int>>()
@@ -69,9 +96,10 @@ class AndroidNotifier(
 
         suspend fun submit(tag: String, notification: Notification, ids: List<String>): Boolean {
             currentCoroutineContext().ensureActive()
-            val activeKeys = queryActiveKeys() ?: return false
+            val activeKeys = queryActiveNotifications()?.keys() ?: return false
             val key = tag to 0
-            if ((activeKeys + postedKeys + key).size > ArticleNotificationPolicy.ANDROID_ACTIVE_SOFT_LIMIT) return false
+            // Android frees an evicted slot in its own time, so this batch's evictions don't count.
+            if ((activeKeys - room.evicted + postedKeys + key).size > ACTIVE_LIMIT) return false
             try {
                 postArticleNotification(tag, notification)
             } catch (cancelled: CancellationException) {
@@ -85,7 +113,7 @@ class AndroidNotifier(
             return true
         }
 
-        for (article in batch.articles) {
+        for (article in room.articles) {
             currentCoroutineContext().ensureActive()
             val allowance = minOf(
                 ArticleNotificationPolicy.IMAGE_TIMEOUT_MS,
@@ -99,7 +127,6 @@ class AndroidNotifier(
             } else {
                 null
             }
-            val tag = ArticleNotificationPolicy.ARTICLE_ID_PREFIX + article.id
             val url = Uri.Builder().scheme("feedflow").authority("feed").appendPath(article.id).build()
             val builder = articleNotificationBuilder(
                 title = articleTitle(article.title, strings),
@@ -112,50 +139,40 @@ class AndroidNotifier(
                     NotificationCompat.BigPictureStyle().bigPicture(bitmap).bigLargeIcon(null as Bitmap?),
                 )
             }
-            if (!submit(tag, builder.build(), listOf(article.id))) return@withLock
-        }
-        if (batch.remainderIds.isNotEmpty()) {
-            val notification = articleNotificationBuilder(
-                title = strings.newArticlesNotificationTitle,
-                body = strings.notificationArticleOverflowBody(batch.remainderIds.size.toString()),
-                url = null,
-                silent = submitted,
-            ).build()
-            submit(ArticleNotificationPolicy.OVERFLOW_ID, notification, batch.remainderIds)
+            if (!submit(NotificationTag.forArticle(article.id), builder.build(), listOf(article.id))) return@withLock
         }
     }
 
     /**
-     * Keeps the tray under the soft limit by posting only the newest articles that fit and folding
-     * the rest into the overflow notification. Returns null when not even the overflow fits.
+     * Android refuses a new notification once an app is at its limit and keeps the older ones, so a
+     * full tray would block every later article. The oldest article notifications make room for the
+     * newest; their articles stay unread in the timeline.
      */
-    private fun fitToActiveCapacity(
-        batch: ArticleNotificationBatch,
-        activeKeys: Set<Pair<String?, Int>>,
-    ): ArticleNotificationBatch? {
-        fun cost(tag: String) = if ((tag to 0) in activeKeys) 0 else 1
-        fun articleTag(id: String) = ArticleNotificationPolicy.ARTICLE_ID_PREFIX + id
+    private fun makeRoomForBatch(articles: List<ArticleToNotify>, active: List<ActiveNotification>): BatchRoom {
+        val activeKeys = active.keys()
+        fun cost(id: String) = if ((NotificationTag.forArticle(id) to 0) in activeKeys) 0 else 1
 
-        val freeSlots = ArticleNotificationPolicy.ANDROID_ACTIVE_SOFT_LIMIT - activeKeys.size
-        val overflowCost = cost(ArticleNotificationPolicy.OVERFLOW_ID)
-        val fullCost = batch.articles.sumOf { cost(articleTag(it.id)) } +
-            if (batch.remainderIds.isNotEmpty()) overflowCost else 0
-        if (fullCost <= freeSlots) return batch
-
-        val articleBudget = freeSlots - overflowCost
-        if (articleBudget < 0) return null
-        var used = 0
-        var fittingCount = 0
-        for (article in batch.articles) {
-            val articleCost = cost(articleTag(article.id))
-            if (used + articleCost > articleBudget) break
-            used += articleCost
-            fittingCount++
+        val needed = articles.sumOf { cost(it.id) }
+        val evicted = mutableSetOf<Pair<String?, Int>>()
+        val shortfall = needed - (ACTIVE_LIMIT - activeKeys.size)
+        if (shortfall > 0) {
+            val batchTags = articles.mapTo(mutableSetOf()) { NotificationTag.forArticle(it.id) }
+            active.filter { it.isArticle && it.tag !in batchTags }
+                .sortedBy { it.postTime }
+                .take(shortfall)
+                .forEach { oldest ->
+                    cancelNotification(oldest.tag, oldest.id)
+                    evicted += oldest.key
+                }
         }
-        return ArticleNotificationBatch(
-            articles = batch.articles.take(fittingCount),
-            remainderIds = batch.articles.drop(fittingCount).map { it.id } + batch.remainderIds,
-        )
+
+        val freeSlots = ACTIVE_LIMIT - activeKeys.size + evicted.size
+        var used = 0
+        val fitting = articles.takeWhile { article ->
+            used += cost(article.id)
+            used <= freeSlots
+        }
+        return BatchRoom(fitting, evicted)
     }
 
     private suspend fun loadArticleImage(url: String?, allowance: Long): Bitmap? = try {
@@ -169,8 +186,8 @@ class AndroidNotifier(
     private fun articleTitle(title: String?, strings: FeedFlowStrings): String =
         title?.trim()?.takeIf { it.isNotEmpty() } ?: strings.newArticlesNotificationTitle
 
-    private fun queryActiveKeys(): Set<Pair<String?, Int>>? = try {
-        activeNotificationKeys()
+    private fun queryActiveNotifications(): List<ActiveNotification>? = try {
+        activeNotifications()
     } catch (cancelled: CancellationException) {
         throw cancelled
     } catch (_: Exception) {
@@ -226,6 +243,7 @@ class AndroidNotifier(
                 }
                 for (sourceToNotify in feedSourcesToNotify) {
                     showNotification(
+                        tag = NotificationTag.forFeedSource(sourceToNotify.feedSourceId),
                         notificationId = newNotificationId(sourceToNotify.feedSourceId),
                         title = feedFlowStrings.newArticlesNotificationTitle,
                         content = sourceToNotify.feedSourceTitle,
@@ -236,12 +254,14 @@ class AndroidNotifier(
             }
 
             NotificationMode.CATEGORY -> {
-                val groupedByCategory = feedSourcesToNotify.groupBy { it.categoryTitle }
+                // Grouped by id, not title: two categories can share a title, and the tag a
+                // notification carries decides which category's read state cancels it.
+                val groupedByCategory = feedSourcesToNotify.groupBy { it.categoryId }
                 if (groupedByCategory.isEmpty()) {
                     return false
                 }
-                for ((categoryTitle, sources) in groupedByCategory) {
-                    val categoryId = sources.first().categoryId
+                for ((categoryId, sources) in groupedByCategory) {
+                    val categoryTitle = sources.first().categoryTitle
                     val deeplink = if (categoryId != null) {
                         "feedflow://category/$categoryId"
                     } else {
@@ -254,6 +274,7 @@ class AndroidNotifier(
                         feedFlowStrings.notificationGroupedBody
                     }
                     showNotification(
+                        tag = NotificationTag.forCategory(categoryId),
                         notificationId = newNotificationId(categoryId ?: categoryTitle ?: "uncategorized"),
                         title = feedFlowStrings.newArticlesNotificationTitle,
                         content = content,
@@ -266,6 +287,7 @@ class AndroidNotifier(
             NotificationMode.GROUPED -> {
                 if (feedSourcesToNotify.isEmpty()) return false
                 showNotification(
+                    tag = NotificationTag.GROUPED,
                     notificationId = newNotificationId("grouped"),
                     title = feedFlowStrings.newArticlesNotificationTitle,
                     content = feedFlowStrings.notificationGroupedBody,
@@ -278,6 +300,7 @@ class AndroidNotifier(
 
     @SuppressLint("MissingPermission")
     private fun showNotification(
+        tag: String,
         notificationId: Int,
         title: String,
         content: String,
@@ -306,7 +329,7 @@ class AndroidNotifier(
             .setAutoCancel(true)
             .build()
 
-        notificationManager.notify(notificationId, notification)
+        notificationManager.notify(tag, notificationId, notification)
     }
 
     private fun createNotificationChannel() {
@@ -332,5 +355,28 @@ class AndroidNotifier(
 
     companion object {
         private const val CHANNEL_ID = "feedflow_new_articles_channel"
+        private const val ACTIVE_LIMIT = ArticleNotificationPolicy.ANDROID_ACTIVE_SOFT_LIMIT
     }
 }
+
+/** One of the app's active notifications, as far as posting and dismissing need it. */
+data class ActiveNotification(
+    val tag: String?,
+    val id: Int,
+    val isOnNewArticlesChannel: Boolean,
+    val postTime: Long,
+) {
+    val key: Pair<String?, Int>
+        get() = tag to id
+
+    val isArticle: Boolean
+        get() = isOnNewArticlesChannel && tag?.startsWith(ArticleNotificationPolicy.ARTICLE_ID_PREFIX) == true
+}
+
+/** The articles of a batch that fit within the limit, and the keys cancelled to fit them. */
+private data class BatchRoom(
+    val articles: List<ArticleToNotify>,
+    val evicted: Set<Pair<String?, Int>>,
+)
+
+private fun List<ActiveNotification>.keys(): Set<Pair<String?, Int>> = mapTo(mutableSetOf()) { it.key }

@@ -56,6 +56,7 @@ import com.prof18.feedflow.shared.domain.feedsync.PendingCloudChangesManager
 import com.prof18.feedflow.shared.domain.mappers.RssChannelMapper
 import com.prof18.feedflow.shared.domain.notification.ArticleNotificationRepository
 import com.prof18.feedflow.shared.domain.notification.NotificationRefreshEnabler
+import com.prof18.feedflow.shared.domain.notification.ReadNotificationResolver
 import com.prof18.feedflow.shared.domain.parser.KleadArticleContentParser
 import com.prof18.feedflow.shared.domain.parser.readerContentFormat
 import com.prof18.feedflow.shared.domain.recovery.FeedAttempt
@@ -207,6 +208,8 @@ private fun getCoreModule(appConfig: AppConfig) = module {
     }
 
     single { ArticleNotificationRepository(databaseHelper = get()) }
+
+    single { ReadNotificationResolver(databaseHelper = get()) }
 
     factory {
         UserFeedbackReporter(

@@ -527,8 +527,6 @@
     <string name="desktop_expand_feed_category">Erweitere %s</string>
     <string name="desktop_collapse_feed_category">%s reduzieren</string>
     <string name="settings_notification_mode_article">Je Artikel</string>
-    <string name="settings_notification_mode_article_desc">Titel der Artikel und verfügbare Bilder anzeigen. Jeder Refresh zeigt bis zu 20 Artikel und eine Zusammenfassung der restlichen.</string>
-    <string name="notification_article_overflow_body">Mehr neue Artikel: %s</string>
     <string name="feed_verify_website">Webseite überprüfen</string>
     <string name="feed_verification_failed">Die Webseite konnte nicht abgerufen werden. Abbrechen und nochmals versuchen.</string>
     <string name="feed_verification_unsupported">Eine Überprüfung von Webseiten ist auf diesem Gerät nicht verfügbar.</string>

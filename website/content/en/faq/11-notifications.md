@@ -11,6 +11,8 @@ To get notifications:
 2. Turn on notifications in **Settings → Notifications**, for all feeds or for the feeds you choose, or with **Enable notifications for new articles** when you add a feed or open its **Feed settings**. Allow FeedFlow to send notifications when asked.
 3. Pick a **Notification style**: per article (with titles and images), by feed, by category, or all combined.
 
+On Android, iPhone and iPad, notifications go away by themselves as you read. With **Per article**, each notification goes when you read its article. With **By feed**, **By category** or **All combined**, a notification goes once that feed, that category, or everything has nothing left unread — so **Mark all as read** always clears them. On iPhone and iPad this happens while FeedFlow is open, so notifications for articles you read on another device clear the next time you open the app.
+
 **Android**: make sure battery optimisation is off for FeedFlow. Some phones, such as Huawei, Honor, Xiaomi and Samsung, also need FeedFlow to be allowed to run in the background or to auto-start.
 
 **iPhone and iPad**: notifications can only be sent when iOS lets FeedFlow check for new articles in the background, which happens at most every couple of hours and only when iOS decides it's a good moment (see “How often does FeedFlow check for new articles?”). Keep **Background App Refresh** on for FeedFlow in the iOS Settings. **Settings → Notifications** shows a warning when it's off. Delays of hours are normal and outside FeedFlow's control.

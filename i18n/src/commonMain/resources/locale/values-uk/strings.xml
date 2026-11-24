@@ -630,8 +630,6 @@
     <string name="reader_mode_opened_externally_message">Це посилання веде на файл, наприклад PDF, який FeedFlow не може показати, тому його відкрито у вашому браузері.</string>
     <string name="reader_mode_open_again_in_browser">Відкрити в браузері</string>
     <string name="settings_notification_mode_article">Для кожної статті</string>
-    <string name="settings_notification_mode_article_desc">Показувати заголовки статей і доступні зображення. Після кожного оновлення відображається до 20 статей і зведення про решту.</string>
-    <string name="notification_article_overflow_body">Інші нові статті: %s</string>
     <string name="desktop_expand_feed_category">Розгорнути категорію %s</string>
     <string name="desktop_collapse_feed_category">Згорнути категорію %s</string>
     <string name="feed_verify_website">Перевірити вебсайт</string>

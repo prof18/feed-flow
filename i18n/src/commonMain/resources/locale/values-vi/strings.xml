@@ -527,8 +527,6 @@
     <string name="desktop_collapse_feed_category">Thu gọn %s</string>
     <string name="desktop_pane_width">Chiều rộng %s pixel</string>
     <string name="settings_notification_mode_article">Mỗi bài viết</string>
-    <string name="settings_notification_mode_article_desc">Hiện tựa đề bài viết và ảnh nếu có. Mỗi lần làm mới hiện tối đa 20 bài viết, bao gồm một mô tả cho tất cả.</string>
-    <string name="notification_article_overflow_body">Thêm bài viết mới khác: %s</string>
     <string name="feed_verify_website">Xác minh website</string>
     <string name="feed_verification_failed">Không thể lấy website. Hủy bỏ và thử lại.</string>
     <string name="feed_verification_unsupported">Xác minh website không khả dụng trên thiết bị này.</string>

@@ -626,8 +626,6 @@
     <string name="reader_mode_opened_externally_message">Эта ссылка ведёт на файл (например, PDF), который FeedFlow не может отобразить, поэтому она открыта в браузере.</string>
     <string name="reader_mode_open_again_in_browser">Открыть в браузере</string>
     <string name="settings_notification_mode_article">Для каждой статьи</string>
-    <string name="settings_notification_mode_article_desc">Показывать заголовки статей и доступные изображения. При каждом обновлении показывается до 20 статей, а остальные объединяются в сводку.</string>
-    <string name="notification_article_overflow_body">Ещё новых статей: %s</string>
     <string name="reader_mode_tts_listen">Прослушать статью</string>
     <string name="reader_mode_tts_stop">Остановить прослушивание</string>
     <string name="reader_mode_tts_error">Не удалось прочитать эту статью вслух. Попробуйте ещё раз.</string>

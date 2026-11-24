@@ -7,31 +7,28 @@ final class IOSArticleNotifierTests: XCTestCase {
     private var requests: [UNNotificationRequest] = []
     private var acknowledged: [[String]] = []
 
-    func testPayloadsStableIDsEncodedURLAndOverflow() async throws {
+    func testPayloadsStableIDsAndEncodedURL() async throws {
         let sender = makeSender()
-        let batch = ArticleNotificationBatch(
-            articles: [article("a/b", title: "  Title  "), article("blank", title: " \n")],
-            remainderIds: ["r1", "r2"]
-        )
-        try await sender.showArticleNotifications(batch: batch) { self.acknowledged.append($0) }
-        XCTAssertEqual(requests.map(\.identifier), ["article-a/b", "article-blank", "article-overflow"])
+        let articles = [article("a/b", title: "  Title  "), article("blank", title: " \n")]
+        try await sender.showArticleNotifications(articles: articles) { self.acknowledged.append($0) }
+        XCTAssertEqual(requests.map(\.identifier), ["article-a/b", "article-blank"])
         XCTAssertEqual(requests[0].content.title, "Title")
         XCTAssertEqual(requests[0].content.body, "Source")
         XCTAssertEqual(requests[0].content.userInfo["url"] as? String, "feedflow://feed/a%2Fb")
+        // The watcher reads the tag back to decide when the article's read state retires it.
+        XCTAssertEqual(requests[0].content.userInfo[NotificationTag.shared.USER_INFO_KEY] as? String, "article-a/b")
         XCTAssertNil(requests[0].trigger)
         XCTAssertNotNil(requests[0].content.sound)
         XCTAssertNil(requests[1].content.sound)
         XCTAssertEqual(requests[1].content.title, EnFeedFlowStringsKt.EnFeedFlowStrings.newArticlesNotificationTitle)
-        XCTAssertEqual(requests[2].content.body, EnFeedFlowStringsKt.EnFeedFlowStrings.notificationArticleOverflowBody("2"))
-        XCTAssertTrue(requests[2].content.userInfo.isEmpty)
-        XCTAssertEqual(acknowledged, [["a/b"], ["blank"], ["r1", "r2"]])
+        XCTAssertEqual(acknowledged, [["a/b"], ["blank"]])
     }
 
     func testDeniedAndEmptyBatchesDoNotSubmit() async throws {
         let denied = makeSender(authorization: { .denied })
-        try await denied.showArticleNotifications(batch: batch("a")) { _ in XCTFail("denied ack") }
+        try await denied.showArticleNotifications(articles: articles("a")) { _ in XCTFail("denied ack") }
         try await makeSender().showArticleNotifications(
-            batch: ArticleNotificationBatch(articles: [], remainderIds: [])
+            articles: []
         ) { _ in XCTFail("empty ack") }
         XCTAssertTrue(requests.isEmpty)
     }
@@ -41,7 +38,7 @@ final class IOSArticleNotifierTests: XCTestCase {
             if request.identifier == "article-a" { throw TestError.failed }
             self.requests.append(request)
         })
-        try await sender.showArticleNotifications(batch: batch("a", "b", "c")) { self.acknowledged.append($0) }
+        try await sender.showArticleNotifications(articles: articles("a", "b", "c")) { self.acknowledged.append($0) }
         XCTAssertEqual(acknowledged, [["b"], ["c"]])
         XCTAssertNotNil(requests[0].content.sound)
         XCTAssertNil(requests[1].content.sound)
@@ -49,7 +46,9 @@ final class IOSArticleNotifierTests: XCTestCase {
 
     func testAcknowledgementErrorStopsBatch() async {
         do {
-            try await makeSender().showArticleNotifications(batch: batch("a", "b")) { _ in throw TestError.failed }
+            try await makeSender().showArticleNotifications(articles: articles("a", "b")) { _ in
+                throw TestError.failed
+            }
             XCTFail("must throw")
         } catch {
             XCTAssertEqual(requests.count, 1)
@@ -59,7 +58,7 @@ final class IOSArticleNotifierTests: XCTestCase {
     func testCancellationStopsSubmissionAndAcknowledgement() async {
         let sender = makeSender(add: { _ in throw CancellationError() })
         do {
-            try await sender.showArticleNotifications(batch: batch("a", "b")) { _ in XCTFail("cancelled ack") }
+            try await sender.showArticleNotifications(articles: articles("a", "b")) { _ in XCTFail("cancelled ack") }
             XCTFail("must cancel")
         } catch {
             XCTAssertTrue(error is CancellationError)
@@ -77,7 +76,7 @@ final class IOSArticleNotifierTests: XCTestCase {
             add: { request in self.requests.append(request); time += 100 },
             monotonicSeconds: { time }
         )
-        try await sender.showArticleNotifications(batch: batch("1", "2", "3", "4", "5", "6")) { _ in }
+        try await sender.showArticleNotifications(articles: articles("1", "2", "3", "4", "5", "6")) { _ in }
         XCTAssertEqual(allowances, [1000, 1000, 1000, 1000, 1000])
         XCTAssertEqual(requests.count, 6)
     }
@@ -95,7 +94,7 @@ final class IOSArticleNotifierTests: XCTestCase {
             XCTAssertTrue(request.content.attachments.isEmpty)
             self.requests.append(request)
         })
-        try await sender.showArticleNotifications(batch: batch("a")) { self.acknowledged.append($0) }
+        try await sender.showArticleNotifications(articles: articles("a")) { self.acknowledged.append($0) }
         XCTAssertEqual(attempts, 2)
         XCTAssertEqual(acknowledged, [["a"]])
         XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
@@ -109,7 +108,7 @@ final class IOSArticleNotifierTests: XCTestCase {
                 throw TestError.failed
             })
             do {
-                try await sender.showArticleNotifications(batch: batch("a")) { _ in XCTFail("failure ack") }
+                try await sender.showArticleNotifications(articles: articles("a")) { _ in XCTFail("failure ack") }
                 XCTAssertFalse(cancellation)
             } catch { XCTAssertTrue(cancellation) }
             XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
@@ -131,8 +130,8 @@ final class IOSArticleNotifierTests: XCTestCase {
         ArticleToNotify(id: id, title: title, feedSourceTitle: "Source", imageUrl: "https://example.com/image.jpg")
     }
 
-    private func batch(_ ids: String...) -> ArticleNotificationBatch {
-        ArticleNotificationBatch(articles: ids.map { article($0) }, remainderIds: [])
+    private func articles(_ ids: String...) -> [ArticleToNotify] {
+        ids.map { article($0) }
     }
 
     private func temporaryJPEG() throws -> URL {

@@ -62,7 +62,7 @@ class FeedDownloadWorker internal constructor(
     private suspend fun sendNotifications() {
         if (settingsRepository.getNotificationMode() == NotificationMode.ARTICLE) {
             articleNotifier.showArticleNotifications(
-                prepareBatch = { articleNotificationRepository.prepareBatch() },
+                pendingArticles = { articleNotificationRepository.pendingArticles() },
                 acknowledge = { ids -> articleNotificationRepository.acknowledge(ids) },
             )
             return

@@ -625,8 +625,7 @@
     <string name="settings_notification_mode_category">By category</string>
     <string name="settings_notification_mode_grouped">All combined</string>
     <string name="settings_notification_mode_article">Per article</string>
-    <string name="settings_notification_mode_article_desc">Show article titles and available images. Each refresh shows up to 20 articles, plus a summary of the rest.</string>
-    <string name="notification_article_overflow_body">More new articles: %s</string>
+    <string name="settings_notification_mode_article_desc">Show a notification for each new article, with its title and image when available.</string>
     <string name="sort_and_filter_button">Sort &amp; filter</string>
     <string name="reader_mode_tts_listen">Listen to article</string>
     <string name="reader_mode_tts_stop">Stop listening</string>

@@ -217,6 +217,8 @@ open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
         }
     }
 
+    // Application.getProcessName() is API 28+. Older versions have no reports of the secondary-process crash,
+    // so they are treated as the main process.
     private fun isMainProcess(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.P || getProcessName() == packageName
 

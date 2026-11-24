@@ -2,6 +2,7 @@ package com.prof18.feedflow.android
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -67,6 +68,12 @@ open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
     override fun onCreate() {
         super.onCreate()
 
+        // The system can create the Application in a process that isn't the app's own, such as a WebView
+        // zygote child without network access, where RevenueCat refuses to start.
+        if (!isMainProcess()) {
+            return
+        }
+
         val isGooglePlayFlavor = when (BuildConfig.FLAVOR) {
             "googlePlay" -> true
             else -> false
@@ -84,7 +91,7 @@ open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
             isIcloudSyncEnabled = false,
             appVersion = BuildConfig.VERSION_NAME,
             platformName = "Android",
-            platformVersion = "${android.os.Build.VERSION.RELEASE} - API ${android.os.Build.VERSION.SDK_INT}",
+            platformVersion = "${Build.VERSION.RELEASE} - API ${Build.VERSION.SDK_INT}",
         )
 
         RevenueCatSupport.configure(
@@ -209,6 +216,9 @@ open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
             )
         }
     }
+
+    private fun isMainProcess(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.P || getProcessName() == packageName
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
         val appEnvironment = if (BuildConfig.DEBUG) {

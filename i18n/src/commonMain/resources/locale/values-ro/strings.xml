@@ -648,4 +648,5 @@
     <string name="settings_read_articles_footer">Când articolele pe care le-ai citit părăsesc Cronologia</string>
     <string name="settings_read_articles_right_away_disabled">Indisponibil cât timp „Marchează ca fiind citit la derulare” este activat, astfel încât articolele rămân pe loc când derulezi.</string>
     <string name="settings_read_articles_right_away_disabled_note">Ascunderea imediată este indisponibilă cât timp „Marchează ca fiind citit la derulare” este activat, astfel încât articolele rămân pe loc când derulezi.</string>
+    <string name="settings_notification_mode_article_desc">Afișează o notificare pentru fiecare articol nou, cu titlul și imaginea sa când sunt disponibile.</string>
 </resources>

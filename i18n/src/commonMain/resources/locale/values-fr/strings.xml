@@ -649,4 +649,5 @@
     <string name="settings_feed_list_section_gestures">Gestes</string>
     <string name="settings_feed_list_scale_default">Par défaut</string>
     <string name="settings_reading_title">Lecture</string>
+    <string name="settings_notification_mode_article_desc">Afficher une notification pour chaque nouvel article, avec son titre et son image lorsqu\'elle est disponible.</string>
 </resources>

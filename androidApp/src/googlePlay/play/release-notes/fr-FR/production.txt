@@ -1,6 +1,6 @@
-• Les sites et apps qui proposent un lien FeedFlow ou feed:// peuvent ouvrir « Ajouter un flux » avec l'adresse déjà remplie
-• La liste suit quand vous passez à l'article suivant ou précédent dans le lecteur
-• Trouvez des réponses dans la nouvelle FAQ, dans Paramètres → À propos
-• Ouvrez les paramètres du flux directement depuis la liste des flux
-• Retour ferme maintenant le menu latéral et ramène d'un filtre au Fil principal
-• FeedFlow est désormais disponible en roumain et en indonésien
+• Les notifications disparaissent une fois l'article lu
+• Les paramètres sont réorganisés, avec des sections et des descriptions plus claires
+• Améliorations de l'expérience utilisateur
+• Les vidéos s'arrêtent quand vous quittez un article
+• Le mode lecture ouvre désormais certains sites qui le refusaient.
+• Les très grosses actualisations ne manquent plus de mémoire.

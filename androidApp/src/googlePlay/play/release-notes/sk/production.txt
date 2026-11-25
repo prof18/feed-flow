@@ -1,6 +1,6 @@
-• Weby a aplikácie s odkazom FeedFlow alebo feed:// môžu otvoriť „Pridať feed“ s už vyplnenou adresou
-• Zoznam článkov sa posúva s vami, keď v čítačke prejdete na ďalší alebo predchádzajúci článok
-• Odpovede nájdete v novom FAQ v Nastavenia → O aplikácii
-• Nastavenia feedu otvoríte priamo zo zoznamu feedov
-• Späť teraz zavrie bočné menu a z filtra sa vráti na Časovú os
-• FeedFlow je teraz dostupný v rumunčine a indonézštine
+• Upozornenia zmiznú, keď si článok prečítate
+• Nastavenia sú preusporiadané s prehľadnejšími sekciami a popismi
+• Vylepšenia používateľského zážitku
+• Videá sa zastavia, keď článok opustíte
+• Režim čítania teraz otvorí aj niektoré weby, ktoré ho predtým odmietali.
+• Veľmi veľké obnovenia už nevyčerpajú pamäť.

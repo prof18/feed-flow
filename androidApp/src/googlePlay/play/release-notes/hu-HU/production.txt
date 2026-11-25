@@ -1,6 +1,6 @@
-• A FeedFlow- vagy feed://-hivatkozást kínáló oldalak és appok kitöltött címmel nyithatják meg a „Hírforrás hozzáadása” képernyőt
-• A cikklista követi, amikor az olvasóban a következő vagy előző cikkre lépsz
-• Válaszokat az új GYIK-ban találsz: Beállítások → Névjegy
-• A hírfolyam beállításai közvetlenül a hírforrások listájából is megnyithatók
-• A Vissza gomb most bezárja az oldalsó menüt, és szűrőből visszavisz az Idővonalra
-• A FeedFlow mostantól románul és indonézül is elérhető
+• Az értesítések eltűnnek, miután elolvastad a cikket
+• A beállítások új elrendezést kaptak, világosabb szakaszokkal és leírásokkal
+• Felhasználói élmény fejlesztések
+• A videók leállnak, amikor elhagysz egy cikket
+• Az Olvasó mód most már olyan oldalakat is megnyit, amelyek korábban elutasították.
+• A nagyon nagy frissítések már nem fogynak ki a memóriából.

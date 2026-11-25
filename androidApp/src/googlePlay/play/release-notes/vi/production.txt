@@ -1,6 +1,6 @@
-• Các trang web và ứng dụng có liên kết FeedFlow hoặc feed:// có thể mở "Thêm nguồn tin" với địa chỉ đã được điền sẵn
-• Danh sách bài viết sẽ đi theo khi bạn chuyển sang bài tiếp theo hoặc trước đó trong trình đọc
-• Tìm câu trả lời trong FAQ mới, tại Cài đặt → Giới thiệu
-• Mở Thiết lập nguồn tin ngay từ danh sách nguồn tin
-• Nút Quay lại giờ đóng ngăn kéo và đưa bạn từ bộ lọc về Bảng tin của tôi
-• FeedFlow nay đã có tiếng Romania và tiếng Indonesia
+• Thông báo được gỡ khi bạn đã đọc bài viết
+• Phần thiết lập được sắp xếp lại với các mục và mô tả rõ ràng hơn
+• Cải thiện trải nghiệm người dùng
+• Video ngừng phát khi bạn rời khỏi bài viết
+• Chế độ đọc giờ mở được một số trang trước đây từ chối nó.
+• Các lần làm mới rất lớn không còn bị hết bộ nhớ.

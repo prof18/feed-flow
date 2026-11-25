@@ -1,6 +1,6 @@
-• Websites und Apps mit einem FeedFlow- oder feed://-Link öffnen „Feed hinzufügen“ mit bereits ausgefüllter Adresse
-• Die Artikelliste folgt mit, wenn du im Reader zum nächsten oder vorherigen Artikel wechselst
-• Antworten findest du in den neuen FAQ unter Einstellungen → Über
-• Öffne die Feed-Einstellungen direkt aus der Feed-Liste
-• Zurück schließt jetzt das Seitenmenü und führt von einem Filter zurück zur Zeitleiste
-• FeedFlow ist jetzt auf Rumänisch und Indonesisch verfügbar
+• Benachrichtigungen verschwinden, sobald du den Artikel gelesen hast
+• Die Einstellungen sind neu geordnet, mit klareren Abschnitten und Beschreibungen
+• Verbesserungen bei der Bedienung
+• Videos stoppen, wenn du einen Artikel verlässt
+• Der Lesemodus öffnet jetzt einige Websites, die ihn bisher verweigert haben.
+• Sehr große Aktualisierungen führen nicht mehr zu Speichermangel.

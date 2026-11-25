@@ -87,6 +87,18 @@
   </content_rating>
 
   <releases>
+  <release version="1.22.0" date="2026-11-25">
+      <description>
+            <p>Settings are reorganized with clearer sections and descriptions</p>
+            <p>Improvements in the user experience</p>
+            <p>Feed settings switches apply right away, and you're warned before leaving unsaved changes to the name, link or category.</p>
+            <p>Feed suggestions show clearer feedback and let you undo.</p>
+            <p>Account errors now show inline, next to the account.</p>
+            <p>Empty categories show a proper empty state, and the Open another feed button works again.</p>
+            <p>Reader Mode now opens some sites that used to refuse it.</p>
+            <p>Very large refreshes no longer run out of memory.</p>
+      </description>
+  </release>
   <release version="1.21.0" date="2026-11-10">
       <description>
             <p>Sites and apps that offer a FeedFlow or feed:// link can open the add-feed window with the address filled in.</p>

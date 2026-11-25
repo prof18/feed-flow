@@ -1,6 +1,6 @@
-• Vietnes un lietotnes, kas piedāvā FeedFlow vai feed:// saiti, var atvērt “Pievienot ziņu plūsmu” ar jau aizpildītu adresi
-• Rakstu saraksts seko līdzi, kad lasītājā pārej uz nākamo vai iepriekšējo rakstu
-• Atbildes atradīsi jaunajā BUJ sadaļā: Iestatījumi → Par lietotni
-• Atver ziņu plūsmas iestatījumus tieši no ziņu plūsmu saraksta
-• Atpakaļ tagad aizver sānu izvēlni un no filtra atgriež Rakstu hronikā
-• FeedFlow tagad pieejama rumāņu un indonēziešu valodā
+• Paziņojumi tiek noņemti, tiklīdz izlasi rakstu
+• Iestatījumi ir pārkārtoti ar skaidrākām sadaļām un aprakstiem
+• Lietošanas pieredzes uzlabojumi
+• Video pārstāj atskaņoties, kad pamet rakstu
+• Lasīšanas režīms tagad atver dažas vietnes, kas to agrāk atteica.
+• Ļoti lieli atjauninājumi vairs nepaliek bez atmiņas.

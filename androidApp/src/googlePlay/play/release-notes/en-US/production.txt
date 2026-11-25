@@ -1,6 +1,6 @@
-• Sites and apps that offer a FeedFlow or feed:// link can open the add-feed screen with the address filled in
-• The article list follows along when you move to the next or previous article in the reader
-• Find answers in the new FAQ, under Settings → About
-• Open Feed settings straight from the Feeds list
-• Back now closes the drawer and returns from a filter to the Timeline
-• FeedFlow is now available in Romanian and Indonesian
+• Notifications are removed once you read the article
+• Settings are reorganized with clearer sections and descriptions
+• Improvements in the user experience
+• Videos stop playing when you leave an article
+• Reader Mode now opens some sites that used to refuse it.
+• Very large refreshes no longer run out of memory.

@@ -1,6 +1,6 @@
-• Saidid ja rakendused, mis pakuvad FeedFlow' või feed:// linki, saavad avada „Lisa uudisvoog“ juba täidetud aadressiga
-• Artiklite loend liigub kaasa, kui lugejas järgmisele või eelmisele artiklile lähed
-• Vastused leiad uuest KKK-st: Seadistused → Rakenduse teave
-• Ava uudisvoo seadistused otse uudisvoogude loendist
-• Tagasi sulgeb nüüd külgmenüü ja viib filtrist tagasi Ajajoonele
-• FeedFlow on nüüd saadaval rumeenia ja indoneesia keeles
+• Teavitused eemaldatakse, kui oled artikli läbi lugenud
+• Seadistused on ümber korraldatud selgemate jaotiste ja kirjeldustega
+• Kasutuskogemuse täiustused
+• Videod peatuvad, kui artiklist lahkud
+• Lugemisvaade avab nüüd ka mõned saidid, mis seda varem ei lubanud.
+• Väga suured värskendused ei jookse enam mälust tühjaks.

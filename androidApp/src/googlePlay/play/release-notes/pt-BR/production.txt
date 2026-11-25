@@ -1,6 +1,6 @@
-• Sites e apps que oferecem um link do FeedFlow ou feed:// podem abrir "Adicionar um feed" com o endereço já preenchido
-• A lista de artigos acompanha quando você passa para o artigo seguinte ou anterior no leitor
-• Encontre respostas no novo FAQ, em Configurações → Sobre
-• Abra a configuração do feed direto da lista de feeds
-• Voltar agora fecha o menu lateral e retorna de um filtro para a Linha do tempo
-• O FeedFlow agora está disponível em romeno e indonésio
+• As notificações são removidas quando você lê o artigo
+• As configurações foram reorganizadas com seções e descrições mais claras
+• Melhorias na experiência de uso
+• Os vídeos param de tocar quando você sai de um artigo
+• O Modo leitor agora abre alguns sites que antes o recusavam.
+• Atualizações muito grandes não ficam mais sem memória.

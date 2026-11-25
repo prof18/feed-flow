@@ -1,6 +1,6 @@
-• I siti e le app che offrono un link FeedFlow o feed:// possono aprire "Aggiungi feed" con l'indirizzo già inserito
-• L'elenco degli articoli ti segue quando passi all'articolo successivo o precedente nel lettore
-• Trova risposte nelle nuove FAQ, in Impostazioni → Informazioni
-• Apri le impostazioni del feed direttamente dall'elenco dei feed
-• Indietro ora chiude il menu laterale e da un filtro torna alla Timeline
-• FeedFlow ora è disponibile in rumeno e indonesiano
+• Le notifiche vengono rimosse quando leggi l'articolo
+• Le impostazioni sono riorganizzate con sezioni e descrizioni più chiare
+• Miglioramenti all'esperienza d'uso
+• I video smettono di riprodursi quando esci da un articolo
+• La modalità lettura ora apre alcuni siti che prima la rifiutavano.
+• Gli aggiornamenti molto grandi non esauriscono più la memoria.

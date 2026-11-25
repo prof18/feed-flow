@@ -136,7 +136,10 @@ struct FeedListView: View {
                             .onPreferenceChange(FeedItemVisibilityPreferenceKey.self) { items in
                                 visibleItemsChanged(items: items, viewportHeight: listProxy.size.height)
                             }
-                            .centeredScrollContent(margin: centeringMargin)
+                            .centeredScrollContent(
+                                margin: centeringMargin,
+                                safeAreaInsets: listProxy.safeAreaInsets
+                            )
                         }
                     }
                     .transaction { transaction in
@@ -348,8 +351,13 @@ struct FeedListView: View {
 
 private extension View {
     /// Centers the scroll content within the available width.
-    func centeredScrollContent(margin: CGFloat) -> some View {
-        contentMargins(.horizontal, margin, for: .scrollContent)
+    ///
+    /// The list scrolls under the floating iPad sidebar, which reaches it as a leading safe area inset.
+    /// A content margin overlaps that inset instead of adding to it, so the inset is added explicitly;
+    /// otherwise the content sticks to the sidebar and leaves the centering gap on the trailing side.
+    func centeredScrollContent(margin: CGFloat, safeAreaInsets: EdgeInsets) -> some View {
+        contentMargins(.leading, margin + safeAreaInsets.leading, for: .scrollContent)
+            .contentMargins(.trailing, margin + safeAreaInsets.trailing, for: .scrollContent)
     }
 }
 

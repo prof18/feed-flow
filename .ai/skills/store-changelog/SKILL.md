@@ -84,7 +84,7 @@ All platforms use the same bullet format: one `• ` bullet per line, one senten
 ### Windows (Microsoft Store)
 
 - File: `assets/storecopy/microsoft-store-release-notes.json`. It keeps the top-level `notes` object. Each locale value is an array of bullet strings that include the leading `• `.
-- Update every existing locale key. Alias keys (`de`/`de-de`, `es`/`es-es`, `gl`/`gl-es`, `zh-cn`/`zh-hans`) get identical text. A missing locale fails the publish.
+- Update every existing locale key, and add a key for every locale in `pcenter locales list` that the file lacks: a language added to the Store listing (as Romanian was for 1.22.0) has no key yet. Alias keys (`de`/`de-de`, `es`/`es-es`, `gl`/`gl-es`, `zh-cn`/`zh-hans`) get identical text. A missing locale fails the publish.
 - Use the desktop list. Mention only the sync providers the Windows app has.
 
 ### Linux (Flatpak)

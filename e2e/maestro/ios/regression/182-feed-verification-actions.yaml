@@ -20,6 +20,8 @@ appId: com.prof18.feedflow.dev
       id: e2e_seed_complete
     timeout: 15000
 - tapOn:
+    id: e2e_seed_complete
+- tapOn:
     id: drawer_menu_button
 - tapOn:
     id: drawer_settings_button
@@ -57,3 +59,26 @@ appId: com.prof18.feedflow.dev
     id: website_verification_cancel
 - assertNotVisible:
     id: website_verification_screen
+
+# Clear the pending challenge. Left behind, the next flow's launch prompts for it, and
+# iOS keeps that alert up when the flow's reset removes the challenge while it animates in.
+# So relaunch to leave Settings, dismiss the launch prompt, and only then reset.
+- launchApp
+- extendedWaitUntil:
+    visible: "Open website"
+    timeout: 10000
+- tapOn: "Cancel"
+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
+- tapOn:
+    text: "^Open$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: e2e_seed_complete
+    timeout: 15000
+- launchApp
+- assertVisible:
+    id: article_row_e2e_article_newest_unread
+- waitForAnimationToEnd:
+    timeout: 5000
+- assertNotVisible: "Open website"

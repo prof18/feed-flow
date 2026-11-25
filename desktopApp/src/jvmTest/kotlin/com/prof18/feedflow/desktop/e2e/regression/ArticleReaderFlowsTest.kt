@@ -18,6 +18,7 @@ import com.prof18.feedflow.desktop.e2e.harness.hasButton
 import com.prof18.feedflow.desktop.e2e.harness.isArticleShown
 import com.prof18.feedflow.desktop.e2e.harness.isOnScreen
 import com.prof18.feedflow.desktop.e2e.harness.openArticle
+import com.prof18.feedflow.desktop.e2e.harness.openSearch
 import com.prof18.feedflow.desktop.e2e.harness.openSettings
 import com.prof18.feedflow.desktop.e2e.harness.readerButton
 import com.prof18.feedflow.desktop.e2e.harness.scrollToTag
@@ -466,8 +467,7 @@ class ArticleReaderFlowsTest {
     }
 
     private fun Flow.search(query: String) {
-        click(awaitContentDescription(strings.searchButtonContentDescription))
-        awaitTag("search-query")
+        openSearch()
         typeIntoFocused(query)
     }
 

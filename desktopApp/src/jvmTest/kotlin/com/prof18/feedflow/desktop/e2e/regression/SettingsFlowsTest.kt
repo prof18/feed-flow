@@ -13,6 +13,7 @@ import com.prof18.feedflow.desktop.e2e.harness.dropdownIn
 import com.prof18.feedflow.desktop.e2e.harness.isSwitchOn
 import com.prof18.feedflow.desktop.e2e.harness.nodesIn
 import com.prof18.feedflow.desktop.e2e.harness.openAddMenuItem
+import com.prof18.feedflow.desktop.e2e.harness.openSearch
 import com.prof18.feedflow.desktop.e2e.harness.openSettings
 import com.prof18.feedflow.desktop.e2e.harness.scrollInWindow
 import com.prof18.feedflow.desktop.e2e.harness.scrollToText
@@ -214,8 +215,7 @@ class SettingsFlowsTest {
         flow.clickIn(dialog, flow.strings.confirmButton)
         flow.awaitWindowGone(dialog)
         flow.closeWindow(SETTINGS(flow))
-        flow.click(flow.awaitContentDescription(flow.strings.searchButtonContentDescription))
-        flow.awaitTag(SEARCH_FIELD_TAG)
+        flow.openSearch()
         flow.typeIntoFocused(OLD_ARTICLE_SEARCH)
         flow.awaitText(flow.strings.searchNoData(OLD_ARTICLE_SEARCH))
     }
@@ -395,7 +395,6 @@ class SettingsFlowsTest {
         val SETTINGS: (Flow) -> String = { it.strings.settingsTitle }
         const val OLD_ARTICLE_TITLE = "E2E Old Article Eligible For Delete: Venezia council"
         const val OLD_ARTICLE_SEARCH = "Venezia council"
-        const val SEARCH_FIELD_TAG = "search-query"
         const val ABOUT_TEXT_START = "FeedFlow is a minimal RSS reader"
     }
 }

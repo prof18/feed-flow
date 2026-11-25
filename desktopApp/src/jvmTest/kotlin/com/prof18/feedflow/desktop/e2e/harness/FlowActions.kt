@@ -11,6 +11,7 @@ private const val MAX_SCROLLS = 60
 private const val MAX_WINDOW_SCROLLS = 8
 private const val CLICK_ATTEMPTS = 3
 private const val RETRY_WAIT_MS = 3_000L
+private const val SEARCH_TAG = "search-query"
 
 /** Nodes of a window or dialog, by title (dialogs are popups in windows()). */
 fun Flow.nodesIn(windowTitle: String): List<NodeSnapshotDto> {
@@ -64,6 +65,29 @@ fun Flow.clickSidebar(name: String) {
 
 /** The unread count shown next to a sidebar entry, or null when it shows none. */
 fun Flow.sidebarCount(name: String): String? = sidebarRow(name).texts.drop(1).firstOrNull()
+
+/**
+ * Opens search from the home toolbar and waits for the query field. A click on a window that has just
+ * started can be swallowed, so it clicks again if the field does not show up.
+ */
+fun Flow.openSearch() {
+    repeat(CLICK_ATTEMPTS - 1) {
+        click(awaitContentDescription(strings.searchButtonContentDescription))
+        if (runCatching { awaitTag(SEARCH_TAG, RETRY_WAIT_MS) }.isSuccess) return
+    }
+    click(awaitContentDescription(strings.searchButtonContentDescription))
+    awaitTag(SEARCH_TAG)
+}
+
+/**
+ * Scrolls a list from one of its rows. A lazy list can recycle that row between reading it and scrolling,
+ * so a failed scroll is ignored: the caller reads the rows again before the next one.
+ */
+fun Flow.scrollFromRow(row: NodeSnapshotDto, amount: Int) {
+    val failure = runCatching { scroll(row, amount) }.exceptionOrNull() ?: return
+    if (failure !is SpectreAgentException) throw failure
+    idle()
+}
 
 /** Opens a sidebar feed or category menu with Shift+F10 on the focused row (FACT context-menu). */
 fun Flow.openSidebarMenu(name: String) {
@@ -141,7 +165,7 @@ fun Flow.scrollToTag(tag: String): NodeSnapshotDto {
         nodes().firstOrNull { it.testTag == tag && it.isOnScreen && it.bounds.height > MIN_ROW_HEIGHT }
             ?.let { return it }
         val anchor = visibleArticleRows().lastOrNull() ?: awaitTagPrefix("article_row_").first()
-        scroll(anchor, SCROLL_STEP)
+        scrollFromRow(anchor, SCROLL_STEP)
     }
     return awaitTag(tag)
 }
@@ -152,7 +176,7 @@ fun Flow.scrollToText(text: String, exact: Boolean = true): NodeSnapshotDto {
         nodes().firstOrNull { it.isOnScreen && it.matches(text, exact) && it.key.startsWith(MAIN_SURFACE) }
             ?.let { return it }
         val anchor = visibleArticleRows().lastOrNull() ?: return awaitText(text, exact)
-        scroll(anchor, SCROLL_STEP)
+        scrollFromRow(anchor, SCROLL_STEP)
     }
     return awaitText(text, exact)
 }

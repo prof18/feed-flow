@@ -35,6 +35,14 @@ appId: com.prof18.feedflow.dev
     timeout: 5000
 - tapOn:
     point: 18%,43%
+# The system file picker can ignore a tap while its search results settle; tap again if so.
+- runFlow:
+    when:
+      notVisible:
+        id: import_export_feed_import_success
+    commands:
+      - tapOn:
+          point: 18%,43%
 - extendedWaitUntil:
     visible:
       id: import_export_feed_import_success
@@ -58,6 +66,13 @@ appId: com.prof18.feedflow.dev
     timeout: 5000
 - tapOn:
     point: 18%,43%
+- runFlow:
+    when:
+      notVisible:
+        id: import_export_article_import_success
+    commands:
+      - tapOn:
+          point: 18%,43%
 - extendedWaitUntil:
     visible:
       id: import_export_article_import_success

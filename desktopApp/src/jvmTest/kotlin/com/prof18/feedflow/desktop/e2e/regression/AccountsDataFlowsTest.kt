@@ -12,7 +12,9 @@ import com.prof18.feedflow.desktop.e2e.harness.clickSidebar
 import com.prof18.feedflow.desktop.e2e.harness.closeWindow
 import com.prof18.feedflow.desktop.e2e.harness.nodesIn
 import com.prof18.feedflow.desktop.e2e.harness.openAddMenuItem
+import com.prof18.feedflow.desktop.e2e.harness.openSearch
 import com.prof18.feedflow.desktop.e2e.harness.openSettings
+import com.prof18.feedflow.desktop.e2e.harness.scrollFromRow
 import com.prof18.feedflow.desktop.e2e.harness.scrollToTag
 import com.prof18.feedflow.desktop.e2e.harness.typeIntoFocused
 import com.prof18.feedflow.desktop.e2e.harness.visibleArticleRows
@@ -280,8 +282,7 @@ class AccountsDataFlowsTest {
         flow.awaitTag(flow.largeRow(1))
         flow.scrollToTag(flow.largeRow(PAST_FIRST_PAGE))
 
-        flow.click(flow.awaitContentDescription(flow.strings.searchButtonContentDescription))
-        flow.awaitTag(SEARCH_FIELD_TAG)
+        flow.openSearch()
         flow.typeIntoFocused("Pagination Needle")
         flow.awaitText(NEEDLE_TITLE)
     }
@@ -325,7 +326,7 @@ class AccountsDataFlowsTest {
             found()?.let { return it }
             val rows = visibleArticleRows()
             val anchor = (if (down) rows.lastOrNull() else rows.firstOrNull()) ?: return await(title) { found() }
-            scroll(anchor, if (down) SCROLL_STEP else -SCROLL_STEP)
+            scrollFromRow(anchor, if (down) SCROLL_STEP else -SCROLL_STEP)
         }
         return await("row '$title' after $MAX_TIMELINE_SCROLLS scrolls") { found() }
     }
@@ -379,7 +380,6 @@ class AccountsDataFlowsTest {
     private companion object {
         val SETTINGS = com.prof18.feedflow.i18n.EnFeedFlowStrings.settingsTitle
         const val MAIN_SURFACE_TAG = "desktop_main_window_surface"
-        const val SEARCH_FIELD_TAG = "search-query"
         const val BACKUP_BUTTON_TAG = "account_backup_button"
         const val INVALID_OPML = "e2e/fixtures/opml/zz-feedflow-invalid-opml.xml"
         const val VALID_OPML = "feedflow-valid-opml-smoke.xml"

@@ -21,6 +21,7 @@ import com.prof18.feedflow.desktop.e2e.harness.isArticleShown
 import com.prof18.feedflow.desktop.e2e.harness.isSwitchOn
 import com.prof18.feedflow.desktop.e2e.harness.openAddMenuItem
 import com.prof18.feedflow.desktop.e2e.harness.openArticle
+import com.prof18.feedflow.desktop.e2e.harness.openSearch
 import com.prof18.feedflow.desktop.e2e.harness.openSettings
 import com.prof18.feedflow.desktop.e2e.harness.openSidebarMenu
 import com.prof18.feedflow.desktop.e2e.harness.replaceText
@@ -159,8 +160,7 @@ class SmokeFlowsTest {
         val flow = e2e.start(Seed.ContentRich)
         flow.awaitText(SEED_NEWEST_TITLE)
 
-        flow.click(flow.awaitContentDescription(flow.strings.searchButtonContentDescription))
-        flow.awaitTag(SEARCH_FIELD_TAG)
+        flow.openSearch()
         flow.typeIntoFocused("Pixel")
         flow.awaitText(SEED_BOOKMARKED_UNREAD_TITLE)
         flow.awaitText(ARTICLE_WITH_COMMENTS)
@@ -339,8 +339,7 @@ class SmokeFlowsTest {
         flow.closeWindow(flow.strings.settingsTitle)
 
         flow.awaitGone(SEED_BOOKMARKED_UNREAD_TITLE)
-        flow.click(flow.awaitContentDescription(flow.strings.searchButtonContentDescription))
-        flow.awaitTag(SEARCH_FIELD_TAG)
+        flow.openSearch()
         flow.typeIntoFocused("Pixel")
         flow.awaitText(flow.strings.searchNoData("Pixel"))
         flow.assertAbsent(SEED_BOOKMARKED_UNREAD_TITLE)

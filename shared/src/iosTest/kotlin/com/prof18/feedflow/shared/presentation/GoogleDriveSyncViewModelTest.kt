@@ -72,6 +72,19 @@ class GoogleDriveSyncViewModelTest : KoinTestBase() {
     }
 
     @Test
+    fun `restoreAccount keeps a saved account Linked when the restore fails so it can be disconnected`() = runTest {
+        fakePlatformClient.restoreSuccess = false
+        googleDriveSettings.setGoogleDriveLinked(true)
+
+        val savedAccountViewModel: GoogleDriveSyncViewModel = getKoin().get()
+
+        savedAccountViewModel.googleDriveConnectionUiState.test {
+            assertTrue(awaitItem() is AccountConnectionUiState.Linked)
+        }
+        assertEquals(SyncAccounts.GOOGLE_DRIVE, accountsRepository.getCurrentSyncAccount())
+    }
+
+    @Test
     fun `startAuthentication updates state and settings on success`() = runTest {
         fakePlatformClient.authenticateSuccess = true
 

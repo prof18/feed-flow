@@ -65,6 +65,12 @@ class GoogleDriveSyncViewModel internal constructor(
                 googleDriveSyncUiMutableState.update {
                     AccountConnectionUiState.Linked(syncState = getSyncState())
                 }
+            } else if (googleDriveSettings.isGoogleDriveLinked()) {
+                // Sign-in expired or Drive access is missing: keep Disconnect reachable so the
+                // account can be unlinked and linked again, as the re-auth message asks.
+                googleDriveSyncUiMutableState.update {
+                    AccountConnectionUiState.Linked(syncState = getSyncState())
+                }
             } else {
                 googleDriveSyncUiMutableState.update { AccountConnectionUiState.Unlinked }
             }

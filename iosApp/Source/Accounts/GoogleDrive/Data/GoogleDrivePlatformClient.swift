@@ -14,6 +14,11 @@ import GoogleSignIn
 class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
     private var service: GoogleDriveServiceClient?
 
+    /// GoogleSignIn keeps one set of in-flight options, so a silent restore started by a background
+    /// sync while the consent screen is open would replace them and drop the sign-in result.
+    private let interactiveSignInLock = NSLock()
+    private var isInteractiveSignInActive = false
+
     init(service: GoogleDriveServiceClient? = nil) {
         self.service = service
     }
@@ -31,45 +36,52 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
                 return
             }
 
-            let scopes = [kGTLRAuthScopeDriveAppdata]
+            setInteractiveSignInActive(true)
+            let onResult: (KotlinBoolean) -> Void = { [weak self] success in
+                self?.setInteractiveSignInActive(false)
+                onResult(success)
+            }
 
             GIDSignIn.sharedInstance.signIn(
                 withPresenting: rootVC,
                 hint: nil,
-                additionalScopes: scopes,
+                additionalScopes: GoogleDriveScope.required,
                 nonce: nil
             ) { [weak self] result, error in
-                guard let self = self, let user = result?.user, error == nil else {
-                    if let error = error {
+                guard let self, let user = result?.user, error == nil else {
+                    if let error {
                         print("GoogleDrive: Error during sign-in: \(error.localizedDescription)")
                     }
                     onResult(KotlinBoolean(value: false))
                     return
                 }
 
-                let newService = GTLRDriveService()
-                newService.authorizer = user.fetcherAuthorizer
-                self.service = GoogleDriveServiceClientImpl(service: newService)
-                onResult(KotlinBoolean(value: true))
+                if GoogleDriveScope.hasDriveAccess(grantedScopes: user.grantedScopes) {
+                    self.setService(for: user)
+                    onResult(KotlinBoolean(value: true))
+                } else {
+                    self.requestDriveScope(for: user, presenting: rootVC, onResult: onResult)
+                }
             }
         #endif
     }
 
     func restorePreviousSignIn(onResult: @escaping (KotlinBoolean) -> Void) {
+        if interactiveSignInLock.withLock({ isInteractiveSignInActive }) {
+            onResult(KotlinBoolean(value: false))
+            return
+        }
         GIDSignIn.sharedInstance.restorePreviousSignIn { [weak self] user, error in
-            if error != nil {
+            guard let self,
+                  let user,
+                  error == nil,
+                  GoogleDriveScope.hasDriveAccess(grantedScopes: user.grantedScopes)
+            else {
                 onResult(KotlinBoolean(value: false))
                 return
             }
-
-            if let user = user {
-                let newService = GTLRDriveService()
-                newService.authorizer = user.fetcherAuthorizer
-                self?.service = GoogleDriveServiceClientImpl(service: newService)
-                onResult(KotlinBoolean(value: true))
-            } else {
-                onResult(KotlinBoolean(value: false))
-            }
+            self.setService(for: user)
+            onResult(KotlinBoolean(value: true))
         }
     }
 
@@ -422,6 +434,47 @@ class GoogleDrivePlatformClient: GoogleDrivePlatformClientIos {
     private static func isNotFound(_ error: Error) -> Bool {
         (error as NSError).code == 404
     }
+}
+
+private extension GoogleDrivePlatformClient {
+    func setInteractiveSignInActive(_ active: Bool) {
+        interactiveSignInLock.withLock { isInteractiveSignInActive = active }
+    }
+
+    func setService(for user: GIDGoogleUser) {
+        let newService = GTLRDriveService()
+        newService.authorizer = user.fetcherAuthorizer
+        service = GoogleDriveServiceClientImpl(service: newService)
+    }
+
+    #if !APP_EXTENSION
+        /// Asks again when the user signed in but left the Drive permission unticked.
+        func requestDriveScope(
+            for user: GIDGoogleUser,
+            presenting rootVC: UIViewController,
+            onResult: @escaping (KotlinBoolean) -> Void
+        ) {
+            user.addScopes(GoogleDriveScope.required, presenting: rootVC) { [weak self] result, error in
+                guard let self else {
+                    onResult(KotlinBoolean(value: false))
+                    return
+                }
+                guard let user = result?.user,
+                      error == nil,
+                      GoogleDriveScope.hasDriveAccess(grantedScopes: user.grantedScopes)
+                else {
+                    if let error {
+                        print("GoogleDrive: Drive access not granted: \(error.localizedDescription)")
+                    }
+                    self.signOut()
+                    onResult(KotlinBoolean(value: false))
+                    return
+                }
+                self.setService(for: user)
+                onResult(KotlinBoolean(value: true))
+            }
+        }
+    #endif
 }
 
 private enum GoogleDriveDiscoveryError: LocalizedError {

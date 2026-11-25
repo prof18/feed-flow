@@ -65,15 +65,11 @@ struct SidebarDrawer: View {
     let onReorderCategories: ([DrawerItem.DrawerFeedSource.DrawerFeedSourceFeedSourceCategoryWrapper]) -> Void
     let onReorderFeedSources: ([FeedSource]) -> Void
 
-    @ViewBuilder private var styledList: some View {
-        if isCompactPhone {
-            sidebarList
-                .listStyle(.sidebar)
-                .scrollContentBackground(.hidden)
-                .background(Color.sidebarBackground)
-        } else {
-            sidebarList.listStyle(.sidebar)
-        }
+    private var styledList: some View {
+        sidebarList
+            .listStyle(.sidebar)
+            .scrollContentBackground(.hidden)
+            .background(Color.sidebarBackground)
     }
 
     private var sidebarList: some View {

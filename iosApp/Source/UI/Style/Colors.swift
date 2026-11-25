@@ -12,7 +12,8 @@ extension Color {
     static let colorOnBackground = Color("ColorOnBackground")
     static let secondaryBackgroundColor = Color(uiColor: .systemGroupedBackground)
 
-    // The phone drawer shares the feed list's background, so moving between them doesn't change the surface.
+    // The sidebar shares the feed list's background on every layout, so the selection pill looks the same
+    // on iPhone and iPad and moving between sidebar and list doesn't change the surface.
     static let sidebarBackground = Color(uiColor: .systemBackground)
     static let sidebarSelection = Color(uiColor: UIColor { traits in
         traits.userInterfaceStyle == .dark

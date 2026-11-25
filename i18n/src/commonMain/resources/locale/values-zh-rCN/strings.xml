@@ -649,4 +649,5 @@
     <string name="settings_read_articles_footer">当已读文章离开时间线时</string>
     <string name="settings_read_articles_right_away_disabled">当“滚动时标记为已读”开启时不可用，因此当您滚动时文章会保持在原位。</string>
     <string name="settings_read_articles_right_away_disabled_note">当“滚动时标记为已读”开启时立即隐藏不可用，因此当您滚动时文章会保持在原位。</string>
+    <string name="settings_notification_mode_article_desc">每篇新文章显示一条通知，带标题和图片（如有）。</string>
 </resources>

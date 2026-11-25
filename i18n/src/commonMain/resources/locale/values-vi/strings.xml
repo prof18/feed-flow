@@ -649,4 +649,5 @@
     <string name="settings_feed_list_section_gestures">Cử chỉ</string>
     <string name="settings_feed_list_scale_default">Mặc định</string>
     <string name="settings_reading_title">Đọc</string>
+    <string name="settings_notification_mode_article_desc">Hiện thông báo cho mỗi một bài viết mới, kèm tựa đề và hình ảnh nếu có.</string>
 </resources>

@@ -10,6 +10,7 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isEnabled
 import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -104,8 +105,8 @@ class DesktopFeedMoveDialogTest {
         // The new category is picked for the move without a second trip through the list.
         rule.waitUntilExactlyOneExists(hasText("Reading") and isSelected(), timeoutMillis = 5_000)
 
-        rule.onNodeWithText(EnFeedFlowStrings.confirmButton)
-            .performSemanticsAction(SemanticsActions.OnClick) { it() }
+        confirmMove()
+        rule.waitUntil(timeoutMillis = 5_000) { moved != null }
         rule.runOnIdle {
             assertEquals(listOf(source), moved?.first)
             assertEquals("created-1", moved?.second?.id)
@@ -137,13 +138,20 @@ class DesktopFeedMoveDialogTest {
         rule.onNodeWithText(EnFeedFlowStrings.noCategory)
             .performSemanticsAction(SemanticsActions.OnClick) { it() }
         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.noCategory) and isSelected(), timeoutMillis = 5_000)
-        rule.onNodeWithText(EnFeedFlowStrings.confirmButton)
-            .performSemanticsAction(SemanticsActions.OnClick) { it() }
+        confirmMove()
+        rule.waitUntil(timeoutMillis = 5_000) { moved != null }
 
         rule.runOnIdle {
             assertEquals(listOf(source), moved?.first)
             assertNull(moved?.second)
         }
+    }
+
+    // A click on a still-disabled Confirm is silently dropped, so wait for the destination to enable it.
+    private fun confirmMove() {
+        rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.confirmButton) and isEnabled(), timeoutMillis = 5_000)
+        rule.onNodeWithText(EnFeedFlowStrings.confirmButton)
+            .performSemanticsAction(SemanticsActions.OnClick) { it() }
     }
 
     private fun feedSource(category: FeedSourceCategory? = null) = FeedSource(

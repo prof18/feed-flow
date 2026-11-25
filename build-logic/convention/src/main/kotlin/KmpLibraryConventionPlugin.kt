@@ -33,6 +33,7 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                     freeCompilerArgs.add("-Xexpect-actual-classes")
                 }
             }
+            serializeKotlinNativeSimulatorTests()
         }
     }
 

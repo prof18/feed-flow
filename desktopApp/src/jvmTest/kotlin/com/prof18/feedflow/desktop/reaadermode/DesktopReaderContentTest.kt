@@ -15,6 +15,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import coil3.ImageLoader
 import coil3.PlatformContext
+import coil3.intercept.Interceptor
+import coil3.request.ErrorResult
+import coil3.request.ImageResult
 import com.prof18.feedflow.core.model.ArticleOpenMode
 import com.prof18.feedflow.core.model.ArticleReportUiState
 import com.prof18.feedflow.core.model.FeedItemId
@@ -37,6 +40,18 @@ class DesktopReaderContentTest {
     val rule = createComposeRule()
 
     private val imageLoader = ImageLoader.Builder(PlatformContext.INSTANCE).build()
+
+    // Fails every request at once, so the failed-image state never waits on real file I/O.
+    private val failingImageLoader = ImageLoader.Builder(PlatformContext.INSTANCE)
+        .components {
+            add(
+                object : Interceptor {
+                    override suspend fun intercept(chain: Interceptor.Chain): ImageResult =
+                        ErrorResult(null, chain.request, IllegalStateException("Image load disabled in tests"))
+                },
+            )
+        }
+        .build()
 
     @Test
     fun `loading transitions to actual Jewel content without retaining the spinner`() {
@@ -150,7 +165,10 @@ class DesktopReaderContentTest {
     fun `an image without alt text that fails to load links with a label instead of its URL`() {
         val imageUrl = "file:///feedflow-missing-image.avif"
         val state = success()
-        showBody(state.copy(readerModeData = state.readerModeData.copy(content = "$BODY_TEXT\n\n![]($imageUrl)")))
+        showBody(
+            state.copy(readerModeData = state.readerModeData.copy(content = "$BODY_TEXT\n\n![]($imageUrl)")),
+            imageLoader = failingImageLoader,
+        )
         // While loading, Jewel's inline placeholder text is the raw `![Open image](url)`, holding both the label
         // and the URL, so wait for the failed-image link to replace it.
         rule.waitUntil(timeoutMillis = 5_000) {
@@ -196,7 +214,11 @@ class DesktopReaderContentTest {
         }
     }
 
-    private fun showBody(state: ReaderModeState, onOpenInBrowser: (String) -> Unit = {}) {
+    private fun showBody(
+        state: ReaderModeState,
+        onOpenInBrowser: (String) -> Unit = {},
+        imageLoader: ImageLoader = this.imageLoader,
+    ) {
         rule.setContent {
             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
@@ -246,6 +268,7 @@ class DesktopReaderContentTest {
     @After
     fun closeImageLoader() {
         imageLoader.shutdown()
+        failingImageLoader.shutdown()
     }
 
     private fun success(url: String = ARTICLE_URL) = ReaderModeState.Success(

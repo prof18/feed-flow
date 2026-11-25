@@ -1,5 +1,6 @@
 package com.prof18.feedflow.database
 
+import app.cash.sqldelight.Query
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlCursor
 import app.cash.sqldelight.db.SqlDriver
@@ -15,6 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -34,6 +38,7 @@ class DatabaseHelperLiveQueryGateTest {
         val liveQueryRuns = driver.executedSql.count { it == liveQuerySql }
 
         gate.pause()
+        driver.awaitNoLiveQueries()
         helper.insertFeedSource(listOf(parsedSource(SOURCE_B)))
 
         assertNull(emissions.itemOrNull())
@@ -41,11 +46,12 @@ class DatabaseHelperLiveQueryGateTest {
     }
 
     @Test
-    fun `resuming the gate re-runs the live query with the current data`() = withHelper { helper, gate, _ ->
+    fun `resuming the gate re-runs the live query with the current data`() = withHelper { helper, gate, driver ->
         val emissions = helper.observeSourceIds()
         assertEquals(listOf(SOURCE_A), emissions.awaitItem())
 
         gate.pause()
+        driver.awaitNoLiveQueries()
         helper.insertFeedSource(listOf(parsedSource(SOURCE_B)))
         gate.resume()
 
@@ -101,6 +107,7 @@ class DatabaseHelperLiveQueryGateTest {
 
     private class RecordingDriver(private val delegate: SqlDriver) : SqlDriver by delegate {
         val executedSql: MutableList<String> = CopyOnWriteArrayList()
+        private val registeredListeners = MutableStateFlow(0)
 
         override fun <R> executeQuery(
             identifier: Int?,
@@ -111,6 +118,22 @@ class DatabaseHelperLiveQueryGateTest {
         ): QueryResult<R> {
             executedSql += sql
             return delegate.executeQuery(identifier, sql, mapper, parameters, binders)
+        }
+
+        override fun addListener(vararg queryKeys: String, listener: Query.Listener) {
+            delegate.addListener(*queryKeys, listener = listener)
+            registeredListeners.update { it + 1 }
+        }
+
+        override fun removeListener(vararg queryKeys: String, listener: Query.Listener) {
+            delegate.removeListener(*queryKeys, listener = listener)
+            registeredListeners.update { it - 1 }
+        }
+
+        // Pausing the gate cancels the live queries asynchronously; a write sent before they
+        // unsubscribe still re-runs them.
+        suspend fun awaitNoLiveQueries() {
+            withTimeout(TIMEOUT_MS) { registeredListeners.first { it == 0 } }
         }
     }
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.native.DefaultSimulatorTestRun
 
 class CloudSyncTestsPlugin : Plugin<Project> {
     override fun apply(project: Project) = with(project) {
+        serializeKotlinNativeSimulatorTests()
         // Ordinary tests remain independently runnable without artifact setup.
         tasks.withType<AbstractTestTask>().configureEach {
             if (!name.contains("cloudArtifact", ignoreCase = true)) {
@@ -48,6 +49,7 @@ class CloudSyncTestsPlugin : Plugin<Project> {
                     derivedDataDirectory.set(rootProject.layout.buildDirectory.dir("ios-test-derived-data"))
                     outputDirectory.set(layout.buildDirectory.dir("reports/tests/swiftCloudSyncTest"))
                     destination.set(providers.gradleProperty("feedflow.swiftCloudSyncDestination"))
+                    usesService(iosSimulatorTestLock())
                 }
                 tasks.named("allTests") { dependsOn(swiftTests) }
             }

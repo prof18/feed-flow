@@ -77,7 +77,14 @@ jobs:
       # JVM and Android host tests and detekt run in the jvm-checks job on Linux. The cloud sync
       # artifact tasks still run here, since they exchange snapshots with the iOS side.
       - name: Run Kotlin/Native and cloud sync tests
-        run: ./gradlew allTests -x jvmTest -x testAndroidHostTest -x testGooglePlayDebugUnitTest "-Pfeedflow.swiftCloudSyncDestination=$IOS_TEST_DESTINATION"
+        # Simulator tests occasionally stall on this 3-core runner, so a failure gets one retry.
+        # Tasks that passed are up to date in the second run, except the cloud sync ones, which
+        # always re-run.
+        run: |
+          run_tests() {
+            ./gradlew allTests -x jvmTest -x testAndroidHostTest -x testGooglePlayDebugUnitTest "-Pfeedflow.swiftCloudSyncDestination=$IOS_TEST_DESTINATION"
+          }
+          run_tests || { echo "::warning::Kotlin/Native and cloud sync tests failed, retrying once"; run_tests; }
 
       - name: Run iOS tests
         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}

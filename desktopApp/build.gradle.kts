@@ -273,7 +273,9 @@ compose {
                     }
                 }
 
-                modules("java.instrument", "java.sql", "jdk.unsupported", "jdk.httpserver")
+                // jdk.accessibility holds the Java Access Bridge that AWT loads on Windows
+                // whenever the OS reports an assistive-technology client (#1744).
+                modules("java.instrument", "java.sql", "jdk.unsupported", "jdk.httpserver", "jdk.accessibility")
 
                 val distributionFormats = mutableListOf(
                     TargetFormat.Dmg,

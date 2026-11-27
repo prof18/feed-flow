@@ -649,4 +649,5 @@
     <string name="settings_clear_downloaded_articles_description">Entfernt jede Offline-Kopie, auch die Artikel mit Lesezeichen.</string>
     <string name="settings_read_articles_right_away_disabled">Nicht verfügbar, wenn \'Beim Scrollen als gelesen markieren\' aktiv ist; somit bleiben Artikel beim Scrollen an ihrem Platz.</string>
     <string name="settings_read_articles_right_away_disabled_note">\'Sofort verbergen\' ist nicht verfügbar, wenn \'Beim Scrollen als gelesen markieren\' aktiv ist; somit bleiben Artikel beim Scrollen an ihrem Platz.</string>
+    <string name="settings_notification_mode_article_desc">Zeigt eine Benachrichtigung für jeden neuen Artikel, mit Titel und Bild, sofern verfügbar.</string>
 </resources>

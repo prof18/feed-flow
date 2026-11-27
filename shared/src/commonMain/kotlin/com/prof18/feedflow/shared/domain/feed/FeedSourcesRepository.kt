@@ -404,7 +404,7 @@ internal class FeedSourcesRepository(
         }
 
         logger.d { "Trying to get: $originalUrl" }
-        val url = discoverFeedUrlAfterGuessing(originalUrl)
+        val url = discoverDeclaredFeedUrl(originalUrl)
             ?: return FeedAddedState.Error.InvalidUrl(canForceAdd = false)
         logger.d { "Found url: $url" }
 
@@ -593,7 +593,7 @@ internal class FeedSourcesRepository(
         }
 
         logger.d { "Trying to get: $originalUrl" }
-        val url = discoverFeedUrlAfterGuessing(originalUrl)
+        val url = discoverDeclaredFeedUrl(originalUrl)
             ?: return FeedAddedState.Error.InvalidUrl(canForceAdd = false)
         logger.d { "Found url: $url" }
 
@@ -692,48 +692,54 @@ internal class FeedSourcesRepository(
     }
 
     private suspend fun guessLinkAndParseFeed(originalUrl: String): GuessOutcome {
-        var originalHttpStatus: Int? = null
+        val trimmedUrl = originalUrl.trim()
+        val guess = FeedGuess(trimmedUrl)
+        val candidates = getCandidateFeedUrls(originalUrl)
+        candidates.firstOrNull()?.let { url ->
+            guess.tryUrl(url, allowBrowserTier = url == trimmedUrl)?.let { return it }
+        }
+        // The feeds a page declares beat suffix guesses: on WordPress, <any page>/feed is that
+        // page's comments feed, not the site feed the page links to.
+        val declared = discoverDeclaredFeeds(originalUrl)
+        val declaredUrls = declared.feedUrls
+        for (url in pageFeedUrls(declared.pageUrl, declaredUrls)) {
+            guess.tryUrl(url, allowBrowserTier = true)?.takeIf { it.result.channel.hasArticles() }?.let { return it }
+        }
+        declaredUrls.firstOrNull()?.let { url -> guess.tryUrl(url, allowBrowserTier = true)?.let { return it } }
+        for (url in candidates.drop(1)) {
+            guess.tryUrl(url, allowBrowserTier = url == trimmedUrl)?.let { return it }
+        }
+        return guess.failure()
+    }
+
+    private inner class FeedGuess(private val originalUrl: String) {
+        private var originalHttpStatus: Int? = null
+
         // Website verification is the last resort: the other candidates still get a chance first
-        var originalChallenge: FeedVerificationRequired? = null
-        var otherChallenge: FeedVerificationRequired? = null
-        for (actualUrl in getCandidateFeedUrls(originalUrl)) {
-            logger.d { "Trying with actualUrl: $actualUrl" }
-            try {
-                val channel = rssParserWrapper.getRssChannel(
-                    actualUrl,
-                    allowBrowserTier = actualUrl == originalUrl.trim(),
-                )
-                return GuessOutcome.Found(AddResult(channel = channel, usedUrl = actualUrl))
+        private var originalChallenge: FeedVerificationRequired? = null
+        private var otherChallenge: FeedVerificationRequired? = null
+        private val triedUrls = mutableSetOf<String>()
+
+        suspend fun tryUrl(url: String, allowBrowserTier: Boolean): GuessOutcome.Found? {
+            if (!triedUrls.add(url)) return null
+            logger.d { "Trying with url: $url" }
+            return try {
+                val channel = rssParserWrapper.getRssChannel(url, allowBrowserTier = allowBrowserTier)
+                GuessOutcome.Found(AddResult(channel = channel, usedUrl = url))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: FeedVerificationRequired) {
-                if (actualUrl == originalUrl.trim()) originalChallenge = e else otherChallenge = otherChallenge ?: e
-                logger.d { "Website verification required: $actualUrl" }
+                if (url == originalUrl) originalChallenge = e else otherChallenge = otherChallenge ?: e
+                logger.d { "Website verification required: $url" }
+                null
             } catch (e: Throwable) {
-                if (actualUrl == originalUrl.trim()) {
-                    originalHttpStatus = (e as? HttpException)?.code
-                }
-                logger.d(e) { "Failed to parse rssChannel: $actualUrl" }
+                if (url == originalUrl) originalHttpStatus = (e as? HttpException)?.code
+                logger.d(e) { "Failed to parse rssChannel: $url" }
+                null
             }
         }
 
-        logger.d { "Trying to get: $originalUrl" }
-        val url = discoverFeedUrlAfterGuessing(originalUrl)
-        if (url != null) {
-            logger.d { "Found url: $url" }
-            try {
-                val channel = rssParserWrapper.getRssChannel(url, allowBrowserTier = true)
-                return GuessOutcome.Found(AddResult(channel = channel, usedUrl = url))
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: FeedVerificationRequired) {
-                otherChallenge = otherChallenge ?: e
-                logger.d { "Website verification required: $url" }
-            } catch (e: Throwable) {
-                logger.d(e) { "Failed to parse discovered rssChannel: $url" }
-            }
-        }
-        return guessFailure(originalChallenge ?: otherChallenge, originalHttpStatus)
+        fun failure(): GuessOutcome = guessFailure(originalChallenge ?: otherChallenge, originalHttpStatus)
     }
 
     private fun guessFailure(challenge: FeedVerificationRequired?, originalHttpStatus: Int?): GuessOutcome = when {
@@ -757,12 +763,29 @@ internal class FeedSourcesRepository(
             knownUrlSuffix.map { it.buildUrl(originalUrl).trim() }
         }
 
-    private suspend fun discoverFeedUrlAfterGuessing(originalUrl: String): String? =
+    private suspend fun discoverDeclaredFeedUrl(originalUrl: String): String? =
+        discoverDeclaredFeeds(originalUrl).feedUrls.firstOrNull()
+
+    private suspend fun discoverDeclaredFeeds(originalUrl: String): DeclaredFeeds =
         if (YouTubeChannelUrl.parse(originalUrl) != null || isYouTubeFeedUrl(originalUrl)) {
-            null
+            DeclaredFeeds(pageUrl = originalUrl, feedUrls = emptyList())
         } else {
-            feedUrlRetriever.getFeedUrl(originalUrl)
+            feedUrlRetriever.getDeclaredFeeds(originalUrl)
         }
+
+    /**
+     * A category page declares its own feed after the site feed. A single post or page does the same
+     * with its comments feed, so callers only take one of these when it carries articles.
+     */
+    private fun pageFeedUrls(pageUrl: String, declaredUrls: List<String>): List<String> {
+        val pagePrefix = pageUrl.substringBefore('#').substringBefore('?').trimEnd('/') + "/"
+        val siteFeedUrl = declaredUrls.firstOrNull() ?: return emptyList()
+        if (siteFeedUrl.startsWith(pagePrefix)) return emptyList()
+        return declaredUrls.drop(1).filter { it.startsWith(pagePrefix) }
+    }
+
+    private fun RssChannel.hasArticles(): Boolean =
+        items.isNotEmpty() && items.none { it.link?.contains("#comment-") == true }
 
     private fun isYouTubeFeedUrl(url: String): Boolean =
         YouTubeChannelUrl.normalizeFeedUrl(url) != null || YouTubeChannelUrl.normalizePlaylistUrl(url) != null

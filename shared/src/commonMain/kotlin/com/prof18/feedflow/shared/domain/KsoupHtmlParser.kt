@@ -28,20 +28,16 @@ internal class KsoupHtmlParser(
 
     override fun getRssUrl(html: String): String? {
         val doc = Ksoup.parse(html, "")
-        val queries = listOf(
-            "link[type='application/rss+xml']",
-            "link[type='application/atom+xml']",
-            "link[type='application/json']",
-            "link[type='application/feed+json']",
-        )
-        for (query in queries) {
-            val rssElement = doc.select(query).firstOrNull()
-            val rssUrl = rssElement?.attr("href")
-            if (rssUrl != null) {
-                return rssUrl
-            }
-        }
-        return null
+        return FEED_LINK_QUERIES.firstNotNullOfOrNull { query -> doc.select(query).firstOrNull()?.attr("href") }
+    }
+
+    override fun getRssUrls(html: String, pageUrl: String): List<String> {
+        val doc = Ksoup.parse(html, pageUrl)
+        // An empty href resolves to the page itself, so drop it before resolving
+        return FEED_LINK_QUERIES.flatMap { query -> doc.select(query).filter { it.attr("href").isNotBlank() } }
+            .map { it.absUrl("href") }
+            .filter { it.isNotBlank() }
+            .distinct()
     }
 
     override fun getCanonicalUrl(html: String): String? {
@@ -68,5 +64,14 @@ internal class KsoupHtmlParser(
             logger.d(e) { "Unable to parse feed content, skipping" }
             ParsedFeedContent(text = null, commentsUrl = null)
         }
+    }
+
+    private companion object {
+        val FEED_LINK_QUERIES = listOf(
+            "link[type='application/rss+xml']",
+            "link[type='application/atom+xml']",
+            "link[type='application/json']",
+            "link[type='application/feed+json']",
+        )
     }
 }

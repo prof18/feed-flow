@@ -30,11 +30,13 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
     private val feedSourcesRepository: FeedSourcesRepository by inject()
     private val databaseHelper: DatabaseHelper by inject()
     private val fakeRssParserWrapper: FakeRssParserWrapper by inject()
+    private val htmlParser: EntityDecodingHtmlParser by inject()
 
     override fun getTestModules(): List<Module> = TestModules.createTestModules() + module {
         single { FakeRssParserWrapper() }
         single<RssParserWrapper> { get<FakeRssParserWrapper>() }
-        single<HtmlParser> { EntityDecodingHtmlParser() }
+        single { EntityDecodingHtmlParser() }
+        single<HtmlParser> { get<EntityDecodingHtmlParser>() }
     }
 
     @Test
@@ -52,6 +54,104 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
         assertIs<FeedAddedState.FeedAdded>(result)
         assertEquals("https://example.com/feed.rss", databaseHelper.getFeedSources().single().url)
         assertEquals("https://example.com/feed.rss", fakeRssParserWrapper.requestedUrls.last())
+    }
+
+    @Test
+    fun `a feed the page declares wins over a guessed suffix feed`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        // WordPress serves a comments feed at <any page>/feed, while the page links the site feed
+        fakeRssParserWrapper.reset(
+            supportedUrls = setOf("https://example.com/news/feed", "https://example.com/feed/"),
+        )
+        htmlParser.declaredFeedUrls = listOf("https://example.com/feed/", "https://example.com/comments/feed/")
+
+        val result = feedSourcesRepository.addFeedSource("https://example.com/news/", null, false)
+        advanceUntilIdle()
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        assertEquals("https://example.com/feed/", databaseHelper.getFeedSources().single().url)
+        assertEquals(
+            listOf("https://example.com/news/", "https://example.com/feed/"),
+            fakeRssParserWrapper.requestedUrls,
+        )
+    }
+
+    @Test
+    fun `a category page subscribes to the category feed it declares after the site feed`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        fakeRssParserWrapper.reset(
+            supportedUrls = setOf("https://example.com/feed/", "https://example.com/category/news/feed/"),
+            items = articles(0 until 2),
+        )
+        htmlParser.declaredFeedUrls = listOf(
+            "https://example.com/feed/",
+            "https://example.com/comments/feed/",
+            "https://example.com/category/news/feed/",
+        )
+
+        val result = feedSourcesRepository.addFeedSource("https://example.com/category/news/", null, false)
+        advanceUntilIdle()
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        assertEquals("https://example.com/category/news/feed/", databaseHelper.getFeedSources().single().url)
+    }
+
+    @Test
+    fun `a page URL with a query still matches the feed it declares under its path`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        fakeRssParserWrapper.reset(
+            supportedUrls = setOf("https://example.com/feed/", "https://example.com/category/news/feed/"),
+            items = articles(0 until 2),
+        )
+        htmlParser.declaredFeedUrls = listOf(
+            "https://example.com/feed/",
+            "https://example.com/category/news/feed/",
+        )
+
+        val result = feedSourcesRepository.addFeedSource("https://example.com/category/news/?lang=en", null, false)
+        advanceUntilIdle()
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        assertEquals("https://example.com/category/news/feed/", databaseHelper.getFeedSources().single().url)
+    }
+
+    @Test
+    fun `a page's own comments feed loses to the site feed`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        fakeRssParserWrapper.reset(
+            supportedUrls = setOf("https://example.com/feed/", "https://example.com/news/feed/"),
+            itemsByUrl = mapOf(
+                "https://example.com/feed/" to articles(0 until 2),
+                "https://example.com/news/feed/" to listOf(
+                    RssItemGenerator.rssItem(link = "https://example.com/news/#comment-1", guid = "comment-1"),
+                ),
+            ),
+        )
+        htmlParser.declaredFeedUrls = listOf(
+            "https://example.com/feed/",
+            "https://example.com/comments/feed/",
+            "https://example.com/news/feed/",
+        )
+
+        val result = feedSourcesRepository.addFeedSource("https://example.com/news/", null, false)
+        advanceUntilIdle()
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        assertEquals("https://example.com/feed/", databaseHelper.getFeedSources().single().url)
+    }
+
+    @Test
+    fun `suffix guesses still run when the declared feed fails`() = runTest(testDispatcher) {
+        setupLocalAccount()
+        fakeRssParserWrapper.reset(supportedUrl = "https://example.com/rss.xml")
+        htmlParser.declaredFeedUrls = listOf("https://example.com/broken")
+
+        val result = feedSourcesRepository.addFeedSource("https://example.com", null, false)
+        advanceUntilIdle()
+
+        assertIs<FeedAddedState.FeedAdded>(result)
+        assertEquals("https://example.com/rss.xml", databaseHelper.getFeedSources().single().url)
+        assertEquals(1, fakeRssParserWrapper.requestedUrls.count { it == "https://example.com/broken" })
     }
 
     @Test
@@ -238,9 +338,10 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
     }
 
     private class FakeRssParserWrapper : RssParserWrapper {
-        private var supportedUrl: String? = null
+        private var supportedUrls: Set<String> = emptySet()
         private var feedTitle = "Example Feed"
         private var items: List<RssItem> = emptyList()
+        private var itemsByUrl: Map<String, List<RssItem>> = emptyMap()
         private var httpErrors: Map<String, Int> = emptyMap()
         val requestedUrls = mutableListOf<String>()
         val requestedRequests = mutableListOf<Pair<String, Boolean>>()
@@ -249,7 +350,7 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
             requestedUrls.add(url)
             requestedRequests.add(url to allowBrowserTier)
             httpErrors[url]?.let { throw HttpException(code = it, message = "Refused") }
-            check(url == supportedUrl) { "Unsupported url: $url" }
+            check(url in supportedUrls) { "Unsupported url: $url" }
             return RssChannel(
                 title = feedTitle,
                 link = "https://example.com",
@@ -257,19 +358,22 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
                 image = null,
                 lastBuildDate = null,
                 updatePeriod = null,
-                items = items,
+                items = itemsByUrl[url] ?: items,
                 itunesChannelData = null,
                 youtubeChannelData = null,
             )
         }
 
         fun reset(
-            supportedUrl: String,
+            supportedUrl: String = "unused",
+            supportedUrls: Set<String> = setOf(supportedUrl),
             feedTitle: String = "Example Feed",
             items: List<RssItem> = emptyList(),
+            itemsByUrl: Map<String, List<RssItem>> = emptyMap(),
             httpErrors: Map<String, Int> = emptyMap(),
         ) {
-            this.supportedUrl = supportedUrl
+            this.itemsByUrl = itemsByUrl
+            this.supportedUrls = supportedUrls
             this.feedTitle = feedTitle
             this.items = items
             this.httpErrors = httpErrors
@@ -279,9 +383,12 @@ class FeedSourcesRepositoryLocalSuffixLookupTest : KoinTestBase() {
     }
 
     private class EntityDecodingHtmlParser : HtmlParser {
+        var declaredFeedUrls: List<String> = emptyList()
+
         override fun getTextFromHTML(html: String): String = html.replace("&#8238;", "\u202E")
         override fun getFaviconUrl(html: String): String? = null
-        override fun getRssUrl(html: String): String? = null
+        override fun getRssUrl(html: String): String? = declaredFeedUrls.firstOrNull()
+        override fun getRssUrls(html: String, pageUrl: String): List<String> = declaredFeedUrls
         override fun parseFeedContent(html: String, baseUrl: String?): ParsedFeedContent =
             ParsedFeedContent(text = html, commentsUrl = null)
     }

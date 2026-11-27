@@ -94,13 +94,35 @@ class FeedUrlRetrieverTest : KoinTestBase() {
         assertEquals(listOf("https://example.com/blog"), requestedUrls)
     }
 
-    private fun retriever(html: String, status: HttpStatusCode = HttpStatusCode.OK): FeedUrlRetriever {
+    @Test
+    fun `declared feeds resolve against the page a redirect lands on`() = runTest(testDispatcher) {
+        val retriever = retriever(
+            html = """<link rel="alternate" type="application/rss+xml" href="feed.xml">""",
+            redirects = mapOf("http://example.com/news" to "https://example.com/sections/news/"),
+        )
+
+        val declared = retriever.getDeclaredFeeds("http://example.com/news")
+
+        assertEquals("https://example.com/sections/news/", declared.pageUrl)
+        assertEquals(listOf("https://example.com/sections/news/feed.xml"), declared.feedUrls)
+    }
+
+    private fun retriever(
+        html: String,
+        status: HttpStatusCode = HttpStatusCode.OK,
+        redirects: Map<String, String> = emptyMap(),
+    ): FeedUrlRetriever {
         val logger = Logger.withTag("FeedUrlRetrieverTest")
         val client = HttpClient(MockEngine) {
             engine {
                 addHandler { request ->
                     requestedUrls.add(request.url.toString())
-                    respond(html, status, headersOf(HttpHeaders.ContentType, "text/html"))
+                    val location = redirects[request.url.toString()]
+                    if (location != null) {
+                        respond("", HttpStatusCode.MovedPermanently, headersOf(HttpHeaders.Location, location))
+                    } else {
+                        respond(html, status, headersOf(HttpHeaders.ContentType, "text/html"))
+                    }
                 }
             }
         }

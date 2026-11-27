@@ -59,6 +59,33 @@ class KsoupHtmlParserTest {
     }
 
     @Test
+    fun `getRssUrls resolves relative feed links against the page`() {
+        val html = """<link rel="alternate" type="application/rss+xml" href="/feed/" />"""
+
+        assertEquals(
+            listOf("https://example.com/feed/"),
+            parser.getRssUrls(html, pageUrl = "https://example.com/news/"),
+        )
+    }
+
+    @Test
+    fun `getRssUrls keeps declaration order and drops duplicates and blank links`() {
+        val html = """
+            <link rel="alternate" type="application/rss+xml" title="Feed" href="https://example.com/feed/" />
+            <link rel="alternate" type="application/rss+xml" title="Comments" href="https://example.com/comments/feed/" />
+            <link rel="alternate" type="application/rss+xml" title="RSS2" href="https://example.com/feed/" />
+            <link rel="alternate" type="application/rss+xml" title="Missing" />
+            <link rel="alternate" type="application/rss+xml" title="Empty" href="" />
+            <link rel="alternate" type="application/atom+xml" href="https://example.com/atom.xml" />
+        """.trimIndent()
+
+        assertEquals(
+            listOf("https://example.com/feed/", "https://example.com/comments/feed/", "https://example.com/atom.xml"),
+            parser.getRssUrls(html, pageUrl = "https://example.com/news/"),
+        )
+    }
+
+    @Test
     fun `getRssUrl finds Atom feed link`() {
         val html = """
             <html>

@@ -649,4 +649,5 @@
     <string name="feed_verification_checking_body">FeedFlow продолжит работу автоматически, когда содержимое будет готово.</string>
     <string name="feed_verification_check_again">Проверить снова</string>
     <string name="feed_verification_retry_body">Не удалось загрузить содержимое. Попробуйте проверить снова или закройте этот экран и повторите попытку.</string>
+    <string name="settings_notification_mode_article_desc">Показывать уведомление для каждой новой статьи — с её заголовком и изображением, если оно есть.</string>
 </resources>

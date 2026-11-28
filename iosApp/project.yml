@@ -279,6 +279,7 @@ targets:
       - path: Source/Accounts/GoogleDrive/Data/GoogleDrivePlatformClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClientImpl.swift
+      - path: Source/Accounts/GoogleDrive/Data/GoogleDriveScope.swift
       - path: Source/UI/Style/Spacing.swift
       - path: Source/Utils/SVGImageDecoder.swift
     settings:
@@ -362,6 +363,7 @@ targets:
       - path: Source/Accounts/GoogleDrive/Data/GoogleDrivePlatformClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClient.swift
       - path: Source/Accounts/GoogleDrive/Data/GoogleDriveServiceClientImpl.swift
+      - path: Source/Accounts/GoogleDrive/Data/GoogleDriveScope.swift
       - path: Source/DI/Koin.swift
       - path: Source/UI/Style/Spacing.swift
       - path: Source/Utils/FeedConditionalGetURLProtocol.swift
